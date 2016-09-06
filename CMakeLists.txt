@@ -89,8 +89,8 @@ endif()
 install(TARGETS Falaise_LCAT DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FALAISE_PLUGINLIBDIR})
 
 # Test support:
-option(FalaiseLCATPlugin_ENABLE_TESTING "Build unit testing system for FalaiseLCATPlugin" OFF)
+option(FalaiseLCATPlugin_ENABLE_TESTING "Build unit testing system for FalaiseLCATPlugin" ON)
 if(FalaiseLCATPlugin_ENABLE_TESTING)
-  # enable_testing()
-  # add_subdirectory(testing)
+  enable_testing()
+  add_subdirectory(testing)
 endif()
