@@ -45,10 +45,7 @@ int main(int argc_, char ** argv_)
           DT_LOG_WARNING(logging, "Ignoring option '" << option << "'!");
         }
       } else {
-        std::string argument = token;
-        {
-          DT_LOG_WARNING(logging, "Ignoring argument '" << argument << "'!");
-        }
+        DT_LOG_WARNING(logging, "Ignoring argument '" << token << "'!");
       }
       iarg++;
     }
