@@ -15,8 +15,8 @@
 void generate_gg_hits(const snemo::geometry::gg_locator & ggloc_,
                       snemo::datamodel::calibrated_data::tracker_hit_collection_type & gghits_)
 {
-  // A fake track:
-  for (int i = 0; i < 9; i++) {
+  // A fake hit:
+  for (size_t i = 0; i < 9; i++) {
     snemo::datamodel::calibrated_data::tracker_hit_handle_type hgghit(new snemo::datamodel::calibrated_tracker_hit);
     snemo::datamodel::calibrated_tracker_hit & gghit = hgghit.grab();
     gghit.set_hit_id(i);
@@ -37,8 +37,8 @@ void generate_gg_hits(const snemo::geometry::gg_locator & ggloc_,
     gghits_.push_back(hgghit);
   }
 
-  // A fake track:
-  for (int i = 0; i < 4; i++) {
+  // A fake hit:
+  for (size_t i = 0; i < 4; i++) {
     snemo::datamodel::calibrated_data::tracker_hit_handle_type hgghit(new snemo::datamodel::calibrated_tracker_hit);
     snemo::datamodel::calibrated_tracker_hit & gghit = hgghit.grab();
     gghit.set_hit_id(i);
@@ -59,8 +59,8 @@ void generate_gg_hits(const snemo::geometry::gg_locator & ggloc_,
     gghits_.push_back(hgghit);
   }
 
-  // A fake track:
-  for (int i = 0; i < 3; i++) {
+  // A fake hit:
+  for (size_t i = 0; i < 3; i++) {
     snemo::datamodel::calibrated_data::tracker_hit_handle_type hgghit(new snemo::datamodel::calibrated_tracker_hit);
     snemo::datamodel::calibrated_tracker_hit & gghit = hgghit.grab();
     gghit.set_hit_id(i);
@@ -81,8 +81,8 @@ void generate_gg_hits(const snemo::geometry::gg_locator & ggloc_,
     gghits_.push_back(hgghit);
   }
 
-  // A fake track:
-  for (int i = 0; i < 6; i++) {
+  // A fake hit:
+  for (size_t i = 0; i < 6; i++) {
     snemo::datamodel::calibrated_data::tracker_hit_handle_type hgghit(new snemo::datamodel::calibrated_tracker_hit);
     snemo::datamodel::calibrated_tracker_hit & gghit = hgghit.grab();
     gghit.set_hit_id(i);
@@ -104,7 +104,7 @@ void generate_gg_hits(const snemo::geometry::gg_locator & ggloc_,
   }
 
   // Add random fake hits
-  for (int i = 0; i < 3; i++) {
+  for (size_t i = 0; i < 3; i++) {
     snemo::datamodel::calibrated_data::tracker_hit_handle_type hgghit(new snemo::datamodel::calibrated_tracker_hit);
     snemo::datamodel::calibrated_tracker_hit & gghit = hgghit.grab();
     gghit.set_hit_id(i);
@@ -146,7 +146,7 @@ void display_event(const snemo::geometry::gg_locator & ggloc_,
   // Color context:
   geomtools::color::context & CC = geomtools::gnuplot_draw::color_context();
 
-  for (int i = 0; i < (int) gghits_.size(); i++) {
+  for (size_t i = 0; i < gghits_.size(); i++) {
     const sdm::calibrated_data::tracker_hit_handle_type & hgghit = gghits_[i];
     const sdm::calibrated_tracker_hit & gghit = hgghit.get();
     double x  = gghit.get_x();
@@ -169,7 +169,7 @@ void display_event(const snemo::geometry::gg_locator & ggloc_,
   if (tcd_.has_default_solution()) {
     const sdm::tracker_clustering_solution & tcd_sol = tcd_.get_default_solution();
     tcd_sol.tree_dump(std::cerr, "Clustering solution: ", "DEVEL: ");
-    for (int i = 0; i < (int) tcd_sol.get_clusters().size(); i++) {
+    for (size_t i = 0; i < tcd_sol.get_clusters().size(); i++) {
       const sdm::tracker_clustering_solution::cluster_handle_type & hcluster = tcd_sol.get_clusters()[i];
       const sdm::tracker_cluster & cluster = hcluster.get();
       // cluster.tree_dump(std::cerr, "Cluster: ", "DEVEL: ");
@@ -180,7 +180,7 @@ void display_event(const snemo::geometry::gg_locator & ggloc_,
       if (i == 3)  CC.set_color_code(geomtools::color::COLOR_YELLOW);
       if (i == 4)  CC.set_color_code(geomtools::color::COLOR_ORANGE);
       if (i > 4)  CC.set_color_code(geomtools::color::COLOR_BLUE);
-      for (int j = 0; j < (int) clhits.size(); j++) {
+      for (size_t j = 0; j < clhits.size(); j++) {
         const sdm::calibrated_data::tracker_hit_handle_type & hclhit = clhits[j];
         const sdm::calibrated_tracker_hit & clhit = hclhit.get();
         double x  = clhit.get_x();
@@ -197,7 +197,7 @@ void display_event(const snemo::geometry::gg_locator & ggloc_,
       }
     }
     CC.set_color_code(geomtools::color::COLOR_BLACK);
-    for (int j = 0; j < (int) tcd_sol.get_unclustered_hits().size(); j++) {
+    for (size_t j = 0; j < tcd_sol.get_unclustered_hits().size(); j++) {
       const sdm::calibrated_data::tracker_hit_handle_type & huclhit = tcd_sol.get_unclustered_hits()[j];
       const sdm::calibrated_tracker_hit & uclhit = huclhit.get();
       double x  = uclhit.get_x();
