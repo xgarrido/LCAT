@@ -176,7 +176,7 @@ namespace snemo {
       //             "Setup data for the CAT machine is not checked : "
       //             << _CAT_setup_.get_error_message() << " !");
 
-      // // Configure and initialize the CAT machine :
+      // Configure and initialize the CAT machine :
       // CAT::clusterizer_configure(_CAT_clusterizer_, _CAT_setup_);
       // CAT::sequentiator_configure(_CAT_sequentiator_, _CAT_setup_);
 

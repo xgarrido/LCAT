@@ -22,7 +22,7 @@
  *
  * Description:
  *
- *   A driver class that wraps the Channel/CellularAutomatonTracker tracker clustering algorithm.
+ *   A driver class that wraps the CellularAutomatonTracker tracker clustering algorithm.
  *
  * History:
  *
@@ -36,7 +36,7 @@
 
 // This project
 #include <falaise/snemo/processing/base_tracker_clusterizer.h>
-//#include <CATAlgorithm/CAT_interface.h>
+#include <CAT/CAT_interface.h>
 
 // Forward declaration :
 namespace datatools {
@@ -88,7 +88,7 @@ namespace snemo {
 
     private:
 
-      // CAT::setup_data   _CAT_setup_;         /// Configuration data
+      CAT::setup_data   _CAT_setup_;         /// Configuration data
       // CAT::input_data   _CAT_input_;         /// Input data
       // CAT::output_data  _CAT_output_;        /// Output data
       // CAT::clusterizer  _CAT_clusterizer_;   /// CAT clusterizer

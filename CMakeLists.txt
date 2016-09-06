@@ -14,39 +14,39 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source)
 ############################################################################################
 # - LCAT library:
 
-# list(APPEND LCAT_HEADERS
-#   # source/TrackFit/drawing.h
-#   # source/TrackFit/fit_utils.h
-#   # source/TrackFit/gg_hit.h
-#   # source/TrackFit/helix_fit_mgr.h
-#   # source/TrackFit/i_drift_time_calibration.h
-#   # source/TrackFit/line_fit_mgr.h
-#   )
+list(APPEND LCAT_HEADERS
+  source/CAT/CAT_interface.h
+  # source/TrackFit/fit_utils.h
+  # source/TrackFit/gg_hit.h
+  # source/TrackFit/helix_fit_mgr.h
+  # source/TrackFit/i_drift_time_calibration.h
+  # source/TrackFit/line_fit_mgr.h
+  )
 
-# list(APPEND LCAT_SOURCES
-#   # source/TrackFit/drawing.cc
-#   # source/TrackFit/fit_utils.cc
-#   # source/TrackFit/gg_hit.cc
-#   # source/TrackFit/helix_fit_mgr.cc
-#   # source/TrackFit/i_drift_time_calibration.cc
-#   # source/TrackFit/line_fit_mgr.cc
-#   )
+list(APPEND LCAT_SOURCES
+  source/CAT/CAT_interface.cc
+  # source/TrackFit/fit_utils.cc
+  # source/TrackFit/gg_hit.cc
+  # source/TrackFit/helix_fit_mgr.cc
+  # source/TrackFit/i_drift_time_calibration.cc
+  # source/TrackFit/line_fit_mgr.cc
+  )
 
-# # Build a dynamic library from our sources
-# add_library(LCAT SHARED ${LCAT_HEADERS} ${LCAT_SOURCES})
+# Build a dynamic library from our sources
+add_library(LCAT SHARED ${LCAT_HEADERS} ${LCAT_SOURCES})
 
-# target_link_libraries(LCAT ${Bayeux_LIBRARIES})
+target_link_libraries(LCAT ${Bayeux_LIBRARIES})
 
-# # Apple linker requires dynamic lookup of symbols, so we
-# # add link flags on this platform
-# if(APPLE)
-#   set_target_properties(LCAT
-#     PROPERTIES LINK_FLAGS "-undefined dynamic_lookup"
-#     )
-# endif()
+# Apple linker requires dynamic lookup of symbols, so we
+# add link flags on this platform
+if(APPLE)
+  set_target_properties(LCAT
+    PROPERTIES LINK_FLAGS "-undefined dynamic_lookup"
+    )
+endif()
 
-# # Install it:
-# install(TARGETS LCAT DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FALAISE_PLUGINLIBDIR})
+# Install it:
+install(TARGETS LCAT DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FALAISE_PLUGINLIBDIR})
 
 
 ############################################################################################
@@ -72,8 +72,7 @@ add_library(Falaise_LCAT SHARED
   ${FalaiseLCATPlugin_HEADERS}
   ${FalaiseLCATPlugin_SOURCES})
 
-# target_link_libraries(Falaise_LCAT LCAT Falaise)
-target_link_libraries(Falaise_LCAT Falaise)
+target_link_libraries(Falaise_LCAT LCAT Falaise)
 
 # Apple linker requires dynamic lookup of symbols, so we
 # add link flags on this platform
