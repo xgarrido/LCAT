@@ -1,8 +1,8 @@
 /* -*- mode: c++ -*- */
 // CAT_interface.h
 
-#ifndef _CAT_interface_h_
-#define _CAT_interface_h_ 1
+#ifndef FALAISE_CAT_CAT_INTERFACE_H
+#define FALAISE_CAT_CAT_INTERFACE_H 1
 
 // #include <vector>
 // #include <iostream>
@@ -14,10 +14,6 @@
 // #include <CATAlgorithm/cell_base.h>
 // #include <CATAlgorithm/clusterizer.h>
 // #include <CATAlgorithm/sequentiator.h>
-
-// Third party:
-// - Bayeux/datatools:
-#include <datatools/clhep_units.h>
 
 namespace CAT {
 
@@ -137,6 +133,6 @@ namespace CAT {
 
 }
 
-#endif // _CAT_interface_h_
+#endif // FALAISE_CAT_CAT_INTERFACE_H
 
 // end of CAT_interface.h

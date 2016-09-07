@@ -11,6 +11,8 @@
 // Third party:
 // - Boost:
 #include <boost/algorithm/string.hpp>
+// - Bayeux/datatools:
+#include <datatools/clhep_units.h>
 
 // This project:
 #include <CAT/CAT_interface.h>
