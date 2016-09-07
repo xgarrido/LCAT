@@ -15,7 +15,11 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source)
 # - LCAT library:
 
 list(APPEND LCAT_HEADERS
+  source/CAT/experimental_point.h
+  source/CAT/experimental_double.h
   source/CAT/CAT_interface.h
+  source/CAT/clusterizer.h
+  source/CAT/cell_base.h
   # source/TrackFit/fit_utils.h
   # source/TrackFit/gg_hit.h
   # source/TrackFit/helix_fit_mgr.h
@@ -24,7 +28,11 @@ list(APPEND LCAT_HEADERS
   )
 
 list(APPEND LCAT_SOURCES
+  source/CAT/experimental_point.cc
+  source/CAT/experimental_double.cc
   source/CAT/CAT_interface.cc
+  source/CAT/clusterizer.cc
+  source/CAT/cell_base.cc
   # source/TrackFit/fit_utils.cc
   # source/TrackFit/gg_hit.cc
   # source/TrackFit/helix_fit_mgr.cc
