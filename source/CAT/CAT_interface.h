@@ -11,7 +11,8 @@
 // #include <CATAlgorithm/CAT_config.h>
 // #include <CATAlgorithm/tracked_data_base.h>
 // #include <CATAlgorithm/experimental_point.h>
-// #include <CATAlgorithm/cell_base.h>
+#include <CAT/cell_base.h>
+#include <CAT/calorimeter_hit.h>
 // #include <CATAlgorithm/clusterizer.h>
 // #include <CATAlgorithm/sequentiator.h>
 
@@ -100,27 +101,30 @@ namespace CAT {
 
   };
 
-  // /// Configure the clusterizer from a setup data object
-  // void clusterizer_configure(clusterizer & czer_, const setup_data & setup_);
+  // Forward declaration
+  class clusterizer;
+
+  /// Configure the clusterizer from a setup data object
+  void clusterizer_configure(CAT::clusterizer & czer_, const setup_data & setup_);
 
   // /// Configure the sequentiator from a setup data object
   // void sequentiator_configure(sequentiator & stor_, const setup_data & setup_);
 
-  // /// Input data model
-  // struct input_data
-  // {
-  // public:
-  //   topology::cell & add_cell ();
-  //   topology::calorimeter_hit & add_calo_cell ();
-  //   input_data ();
-  //   bool check () const;
-  //   bool gg_check () const;
-  //   bool calo_check () const;
+  /// Input data model
+  struct input_data
+  {
+  public:
+    CAT::cell & add_cell ();
+    CAT::calorimeter_hit & add_calo_cell ();
+    input_data ();
+    bool check () const;
+    bool gg_check () const;
+    bool calo_check () const;
 
-  // public:
-  //   std::vector<topology::cell> cells;
-  //   std::vector<topology::calorimeter_hit> calo_cells;
-  // };
+  public:
+    std::vector<CAT::cell> cells;
+    std::vector<CAT::calorimeter_hit> calo_cells;
+  };
 
   // /// Output data model
   // struct output_data

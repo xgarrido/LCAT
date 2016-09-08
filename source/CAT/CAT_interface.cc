@@ -16,6 +16,7 @@
 
 // This project:
 #include <CAT/CAT_interface.h>
+#include <CAT/clusterizer.h>
 
 namespace CAT {
 
@@ -169,70 +170,68 @@ namespace CAT {
     return true;
   }
 
-  // void clusterizer_configure (clusterizer & czer_,
-  //                             const setup_data & setup_)
-  // {
-  //   if (! setup_.check ())
-  //     {
-  //       std::ostringstream emess;
-  //       emess << "ERROR: CAT::clusterizer_configure: Invalid setup data :"
-  //            << setup_.get_error_message ();
-  //       throw std::logic_error(emess.str());
-  //     }
+  void clusterizer_configure (CAT::clusterizer & /*czer_*/,
+                              const setup_data & /*setup_*/)
+  {
+    // if (! setup_.check ())
+    //   {
+    //     std::ostringstream emess;
+    //     emess << "ERROR: CAT::clusterizer_configure: Invalid setup data !";
+    //     throw std::logic_error(emess.str());
+    //   }
 
-  //   // General parameters :
-  //   czer_.set_PrintMode (false);
-  //   czer_.set_MaxTime (setup_.MaxTime / CLHEP::ms);
-  //   std::string leveltmp = setup_.level;
-  //   boost::to_upper(leveltmp);
+    // // General parameters :
+    // czer_.set_MaxTime (setup_.MaxTime / CLHEP::ms);
+    // std::string leveltmp = setup_.level;
+    // boost::to_upper(leveltmp);
 
-  //   czer_.set_level (leveltmp); //mybhep::get_info_level (leveltmp));
+    // czer_.set_level (leveltmp); //mybhep::get_info_level (leveltmp));
 
-  //   // Algorithm parameters :
-  //   czer_.set_SmallRadius (setup_.SmallRadius / CLHEP::mm);
-  //   czer_.set_TangentPhi (setup_.TangentPhi / CLHEP::degree);
-  //   czer_.set_TangentTheta (setup_.TangentTheta / CLHEP::degree);
-  //   czer_.set_SmallNumber (setup_.SmallNumber / CLHEP::mm);
-  //   czer_.set_QuadrantAngle (setup_.QuadrantAngle / CLHEP::degree);
-  //   czer_.set_Ratio (setup_.Ratio);
-  //   czer_.set_CompatibilityDistance (setup_.CompatibilityDistance);
-  //   czer_.set_MaxChi2 (setup_.MaxChi2);
-  //   czer_.set_probmin (setup_.probmin);
-  //   czer_.set_nofflayers (setup_.nofflayers);
-  //   czer_.set_first_event (setup_.first_event);
-  //   czer_.set_len (setup_.len);
-  //   czer_.set_rad (setup_.rad);
-  //   czer_.set_vel (setup_.vel);
-  //   czer_.set_CellDistance (setup_.CellDistance);
-  //   czer_.set_FoilRadius (setup_.FoilRadius);
+    // // Algorithm parameters :
+    // czer_.set_SmallRadius (setup_.SmallRadius / CLHEP::mm);
+    // czer_.set_TangentPhi (setup_.TangentPhi / CLHEP::degree);
+    // czer_.set_TangentTheta (setup_.TangentTheta / CLHEP::degree);
+    // czer_.set_SmallNumber (setup_.SmallNumber / CLHEP::mm);
+    // czer_.set_QuadrantAngle (setup_.QuadrantAngle / CLHEP::degree);
+    // czer_.set_Ratio (setup_.Ratio);
+    // czer_.set_CompatibilityDistance (setup_.CompatibilityDistance);
+    // czer_.set_MaxChi2 (setup_.MaxChi2);
+    // czer_.set_probmin (setup_.probmin);
+    // czer_.set_nofflayers (setup_.nofflayers);
+    // czer_.set_first_event (setup_.first_event);
+    // czer_.set_len (setup_.len);
+    // czer_.set_rad (setup_.rad);
+    // czer_.set_vel (setup_.vel);
+    // czer_.set_CellDistance (setup_.CellDistance);
+    // czer_.set_FoilRadius (setup_.FoilRadius);
 
-  //   czer_.set_bfield (setup_.bfield);
-  //   czer_.set_xsize (setup_.xsize);
-  //   czer_.set_ysize (setup_.ysize);
-  //   czer_.set_zsize (setup_.zsize);
+    // czer_.set_bfield (setup_.bfield);
+    // czer_.set_xsize (setup_.xsize);
+    // czer_.set_ysize (setup_.ysize);
+    // czer_.set_zsize (setup_.zsize);
 
-  //   // Geometry description :
-  //   if (setup_.SuperNemo)
-  //     {
-  //       /// Activate the special new mode :
-  //       czer_.set_SuperNemoChannel(true);
+    // // Geometry description :
+    // if (setup_.SuperNemo)
+    //   {
+    //     /// Activate the special new mode :
+    //     czer_.set_SuperNemoChannel(true);
 
-  //       // Layout of the tracking chamber :
-  //       czer_.set_num_blocks (setup_.num_blocks);
-  //       for (int i = 0; i < setup_.num_blocks; i++)
-  //         {
-  //           czer_.set_planes_per_block (i, (int)(setup_.planes_per_block.at (i)+0.5));
-  //         }
-  //       czer_.set_num_cells_per_plane (setup_.num_cells_per_plane);
-  //       czer_.set_GG_CELL_pitch (setup_.cell_size / CLHEP::mm);
-  //     }
-  //   else
-  //     {
-  //       throw std::logic_error ("CAT::clusterizer_configure: Only SuperNEMO setup is supported !");
-  //     }
+    //     // Layout of the tracking chamber :
+    //     czer_.set_num_blocks (setup_.num_blocks);
+    //     for (int i = 0; i < setup_.num_blocks; i++)
+    //       {
+    //         czer_.set_planes_per_block (i, (int)(setup_.planes_per_block.at (i)+0.5));
+    //       }
+    //     czer_.set_num_cells_per_plane (setup_.num_cells_per_plane);
+    //     czer_.set_GG_CELL_pitch (setup_.cell_size / CLHEP::mm);
+    //   }
+    // else
+    //   {
+    //     throw std::logic_error ("CAT::clusterizer_configure: Only SuperNEMO setup is supported !");
+    //   }
 
-  //   return;
-  // }
+    return;
+  }
 
   // void sequentiator_configure (sequentiator & stor_,
   //                              const setup_data & setup_)
@@ -302,165 +301,165 @@ namespace CAT {
 
   /***********************************************************/
 
-  // topology::cell & input_data::add_cell ()
-  // {
-  //   if (cells.size () == 0)
-  //     {
-  //       // memory preallocation at the first cell
-  //       cells.reserve (50);
-  //     }
-  //   {
-  //     topology::cell tmp;
-  //     cells.push_back (tmp);
-  //   }
-  //   return cells.back ();
-  // }
+  CAT::cell & input_data::add_cell ()
+  {
+    if (cells.size () == 0)
+      {
+        // memory preallocation at the first cell
+        cells.reserve (50);
+      }
+    {
+      CAT::cell tmp;
+      cells.push_back (tmp);
+    }
+    return cells.back ();
+  }
 
-  // topology::calorimeter_hit & input_data::add_calo_cell ()
-  // {
+  CAT::calorimeter_hit & input_data::add_calo_cell ()
+  {
 
-  //   if (calo_cells.size () == 0)
-  //     {
-  //       // memory preallocation at the first calo_cell
-  //       calo_cells.reserve (50);
-  //     }
-  //   {
-  //     topology::calorimeter_hit tmp;
-  //     calo_cells.push_back (tmp);
-  //   }
-  //   return calo_cells.back ();
-  // }
+    if (calo_cells.size () == 0)
+      {
+        // memory preallocation at the first calo_cell
+        calo_cells.reserve (50);
+      }
+    {
+      CAT::calorimeter_hit tmp;
+      calo_cells.push_back (tmp);
+    }
+    return calo_cells.back ();
+  }
 
-  // bool input_data::check () const{
-  //   return gg_check() && calo_check();
-  // }
+  bool input_data::check () const{
+    return gg_check() && calo_check();
+  }
 
-  // bool input_data::gg_check () const
-  // {
-  //   // A map would be better to check cell IDs :
-  //   std::map<int,bool> mids;
-  //   for (int i = 0; i < (int) cells.size (); i++)
-  //     {
-  //       const topology::cell & c = cells.at(i);
-  //       int cell_id = c.id();
-  //       if (cell_id < 0 || cell_id > 10000)
-  //         {
-  //           std::cerr << "ERROR: CAT::input_data::check: "
-  //                     << "Out of range cell ID '" <<  cell_id << "' !"
-  //                     << std::endl;
-  //           return false;
-  //         }
-  //       if (mids.find (cell_id) != mids.end ())
-  //         {
-  //           std::cerr << "ERROR: CAT::input_data::check: "
-  //                     << "mids Duplicate cell ID '" <<  cell_id << "' !"
-  //                     << std::endl;
-  //           return false;
-  //         }
-  //       mids[cell_id] = true;
-  //     }
+  bool input_data::gg_check () const
+  {
+    // A map would be better to check cell IDs :
+    std::map<int,bool> mids;
+    for (int i = 0; i < (int) cells.size (); i++)
+      {
+        const CAT::cell & c = cells.at(i);
+        int cell_id = c.id();
+        if (cell_id < 0 || cell_id > 10000)
+          {
+            std::cerr << "ERROR: CAT::input_data::check: "
+                      << "Out of range cell ID '" <<  cell_id << "' !"
+                      << std::endl;
+            return false;
+          }
+        if (mids.find (cell_id) != mids.end ())
+          {
+            std::cerr << "ERROR: CAT::input_data::check: "
+                      << "mids Duplicate cell ID '" <<  cell_id << "' !"
+                      << std::endl;
+            return false;
+          }
+        mids[cell_id] = true;
+      }
 
-  //   // Duplicate test for now :
-  //   std::vector<bool> ids;
-  //   ids.assign (cells.size (), false);
-  //   for (int i = 0; i < (int) cells.size (); i++)
-  //     {
-  //       const topology::cell & c = cells.at(i);
-  //       int cell_id = c.id();
-  //       if ((cell_id < 0) || (cell_id >= (int) cells.size ()))
-  //         {
-  //           std::cerr << "ERROR: CAT::input_data::check: "
-  //                     << "Invalid cell ID '" <<  cell_id << "' !"
-  //                     << std::endl;
-  //           return false;
-  //         }
-  //       if (ids[cell_id])
-  //         {
-  //           std::cerr << "ERROR: CAT::input_data::check: "
-  //                     << "ids Duplicate cell ID '" <<  cell_id << "' !"
-  //                     << std::endl;
-  //           return false;
-  //         }
-  //       ids[cell_id] = true;
-  //     }
-  //   for (int i = 0; i < (int) ids.size (); i++)
-  //     {
-  //       if (! ids[i])
-  //         {
-  //           std::cerr << "ERROR: CAT::input_data::check: "
-  //                     << "Cell ID '" << i << "' is not used ! There are some missing cells !"
-  //                     << std::endl;
-  //           return false;
-  //         }
-  //     }
-  //   return true;
-  // }
+    // Duplicate test for now :
+    std::vector<bool> ids;
+    ids.assign (cells.size (), false);
+    for (int i = 0; i < (int) cells.size (); i++)
+      {
+        const CAT::cell & c = cells.at(i);
+        int cell_id = c.id();
+        if ((cell_id < 0) || (cell_id >= (int) cells.size ()))
+          {
+            std::cerr << "ERROR: CAT::input_data::check: "
+                      << "Invalid cell ID '" <<  cell_id << "' !"
+                      << std::endl;
+            return false;
+          }
+        if (ids[cell_id])
+          {
+            std::cerr << "ERROR: CAT::input_data::check: "
+                      << "ids Duplicate cell ID '" <<  cell_id << "' !"
+                      << std::endl;
+            return false;
+          }
+        ids[cell_id] = true;
+      }
+    for (int i = 0; i < (int) ids.size (); i++)
+      {
+        if (! ids[i])
+          {
+            std::cerr << "ERROR: CAT::input_data::check: "
+                      << "Cell ID '" << i << "' is not used ! There are some missing cells !"
+                      << std::endl;
+            return false;
+          }
+      }
+    return true;
+  }
 
-  // bool input_data::calo_check () const
-  // {
-  //   // A map would be better to check cell IDs :
-  //   std::map<int,bool> mids;
-  //   for (int i = 0; i < (int) calo_cells.size (); i++)
-  //     {
-  //       const topology::calorimeter_hit & c = calo_cells.at(i);
-  //       int calo_cell_id = c.id();
-  //       if (calo_cell_id < 0 || calo_cell_id > 10000)
-  //         {
-  //           std::cerr << "ERROR: CAT::input_data::calo_check: "
-  //                     << "Out of range calo_cell ID '" <<  calo_cell_id << "' !"
-  //                     << std::endl;
-  //           return false;
-  //         }
-  //       if (mids.find (calo_cell_id) != mids.end ())
-  //         {
-  //           std::cerr << "ERROR: CAT::input_data::check: "
-  //                     << "Duplicate calo_cell ID '" <<  calo_cell_id << "' !"
-  //                     << std::endl;
-  //           return false;
-  //         }
-  //       mids[calo_cell_id] = true;
-  //     }
+  bool input_data::calo_check () const
+  {
+    // A map would be better to check cell IDs :
+    std::map<int,bool> mids;
+    for (int i = 0; i < (int) calo_cells.size (); i++)
+      {
+        const CAT::calorimeter_hit & c = calo_cells.at(i);
+        int calo_cell_id = c.id();
+        if (calo_cell_id < 0 || calo_cell_id > 10000)
+          {
+            std::cerr << "ERROR: CAT::input_data::calo_check: "
+                      << "Out of range calo_cell ID '" <<  calo_cell_id << "' !"
+                      << std::endl;
+            return false;
+          }
+        if (mids.find (calo_cell_id) != mids.end ())
+          {
+            std::cerr << "ERROR: CAT::input_data::check: "
+                      << "Duplicate calo_cell ID '" <<  calo_cell_id << "' !"
+                      << std::endl;
+            return false;
+          }
+        mids[calo_cell_id] = true;
+      }
 
-  //   // Duplicate test for now :
-  //   std::vector<bool> ids;
-  //   ids.assign (calo_cells.size (), false);
-  //   for (int i = 0; i < (int) calo_cells.size (); i++)
-  //     {
-  //       const topology::calorimeter_hit & c = calo_cells.at(i);
-  //       int calo_cell_id = c.id();
-  //       if ((calo_cell_id < 0) || (calo_cell_id >= (int) calo_cells.size ()))
-  //         {
-  //           std::cerr << "ERROR: CAT::input_data::check: "
-  //                     << "Invalid calo_cell ID '" <<  calo_cell_id << "' !"
-  //                     << std::endl;
-  //           return false;
-  //         }
-  //       if (ids[calo_cell_id])
-  //         {
-  //           std::cerr << "ERROR: CAT::input_data::check: "
-  //                     << "Duplicate calo_cell ID '" <<  calo_cell_id << "' !"
-  //                     << std::endl;
-  //           return false;
-  //         }
-  //       ids[calo_cell_id] = true;
-  //     }
-  //   for (int i = 0; i < (int) ids.size (); i++)
-  //     {
-  //       if (! ids[i])
-  //         {
-  //           std::cerr << "ERROR: CAT::input_data::check: "
-  //                     << "Calo_Cell ID '" << i << "' is not used ! There are some missing calo_cells !"
-  //                     << std::endl;
-  //           return false;
-  //         }
-  //     }
-  //   return true;
-  // }
+    // Duplicate test for now :
+    std::vector<bool> ids;
+    ids.assign (calo_cells.size (), false);
+    for (int i = 0; i < (int) calo_cells.size (); i++)
+      {
+        const CAT::calorimeter_hit & c = calo_cells.at(i);
+        int calo_cell_id = c.id();
+        if ((calo_cell_id < 0) || (calo_cell_id >= (int) calo_cells.size ()))
+          {
+            std::cerr << "ERROR: CAT::input_data::check: "
+                      << "Invalid calo_cell ID '" <<  calo_cell_id << "' !"
+                      << std::endl;
+            return false;
+          }
+        if (ids[calo_cell_id])
+          {
+            std::cerr << "ERROR: CAT::input_data::check: "
+                      << "Duplicate calo_cell ID '" <<  calo_cell_id << "' !"
+                      << std::endl;
+            return false;
+          }
+        ids[calo_cell_id] = true;
+      }
+    for (int i = 0; i < (int) ids.size (); i++)
+      {
+        if (! ids[i])
+          {
+            std::cerr << "ERROR: CAT::input_data::check: "
+                      << "Calo_Cell ID '" << i << "' is not used ! There are some missing calo_cells !"
+                      << std::endl;
+            return false;
+          }
+      }
+    return true;
+  }
 
-  // input_data::input_data ()
-  // {
-  //   return;
-  // }
+  input_data::input_data ()
+  {
+    return;
+  }
 
   // /***********************************************************/
 

@@ -55,67 +55,67 @@ namespace snemo {
       // Invoke initialization at parent level :
       this->snemo::processing::base_tracker_clusterizer::_initialize(setup_);
 
-      // _CAT_setup_.SuperNemo = true;
-      // _CAT_setup_.FoilRadius = 0.0;
+      _CAT_setup_.SuperNemo = true;
+      _CAT_setup_.FoilRadius = 0.0;
 
-      // // Verbosity level
-      // if (setup_.has_key("CAT.level")) {
-      //   _CAT_setup_.level = setup_.fetch_string("CAT.level");
-      // }
+      // Verbosity level
+      if (setup_.has_key("CAT.level")) {
+        _CAT_setup_.level = setup_.fetch_string("CAT.level");
+      }
 
-      // // Process calorimeter hits
-      // if (setup_.has_key("CAT.process_calo_hits")) {
-      //   _process_calo_hits_ = setup_.fetch_boolean("CAT.process_calo_hits");
-      // }
+      // Process calorimeter hits
+      if (setup_.has_key("CAT.process_calo_hits")) {
+        _process_calo_hits_ = setup_.fetch_boolean("CAT.process_calo_hits");
+      }
 
-      // // Maximum processing time
-      // if (setup_.has_key("CAT.max_time")) {
-      //   _CAT_setup_.MaxTime = setup_.fetch_real("CAT.max_time");
-      //   if (! setup_.has_explicit_unit("CAT.max_time")) {
-      //     _CAT_setup_.MaxTime *= CLHEP::ms;
-      //   }
-      // }
+      // Maximum processing time
+      if (setup_.has_key("CAT.max_time")) {
+        _CAT_setup_.MaxTime = setup_.fetch_real("CAT.max_time");
+        if (! setup_.has_explicit_unit("CAT.max_time")) {
+          _CAT_setup_.MaxTime *= CLHEP::ms;
+        }
+      }
 
-      // // Max radius of cells to be not treated as points in distance unit
-      // if (setup_.has_key("CAT.small_radius")) {
-      //   _CAT_setup_.SmallRadius = setup_.fetch_real("CAT.small_radius");
-      //   if (! setup_.has_explicit_unit("CAT.small_radius")) {
-      //     _CAT_setup_.SmallRadius *= CLHEP::mm;
-      //   }
-      // }
+      // Max radius of cells to be not treated as points in distance unit
+      if (setup_.has_key("CAT.small_radius")) {
+        _CAT_setup_.SmallRadius = setup_.fetch_real("CAT.small_radius");
+        if (! setup_.has_explicit_unit("CAT.small_radius")) {
+          _CAT_setup_.SmallRadius *= CLHEP::mm;
+        }
+      }
 
-      // // Minimal probability away from the straight line
-      // if (setup_.has_key("CAT.probmin")) {
-      //   _CAT_setup_.probmin = setup_.fetch_real("CAT.probmin");
-      // }
+      // Minimal probability away from the straight line
+      if (setup_.has_key("CAT.probmin")) {
+        _CAT_setup_.probmin = setup_.fetch_real("CAT.probmin");
+      }
 
-      // // Number of cells which can be skipped (because the cell did not
-      // // work) and still the cluster is continuous
-      // if (setup_.has_key("CAT.nofflayers")) {
-      //   _CAT_setup_.nofflayers = setup_.fetch_integer("CAT.nofflayers");
-      //   if (_CAT_setup_.nofflayers < 0) {
-      //     DT_THROW_IF(true, std::logic_error,
-      //                 "Invalid number of 'off' layers(" << _CAT_setup_.nofflayers << ") !");
-      //   }
-      // }
+      // Number of cells which can be skipped (because the cell did not
+      // work) and still the cluster is continuous
+      if (setup_.has_key("CAT.nofflayers")) {
+        _CAT_setup_.nofflayers = setup_.fetch_integer("CAT.nofflayers");
+        if (_CAT_setup_.nofflayers < 0) {
+          DT_THROW_IF(true, std::logic_error,
+                      "Invalid number of 'off' layers(" << _CAT_setup_.nofflayers << ") !");
+        }
+      }
 
-      // // 1st event to be processed
-      // if (setup_.has_key("CAT.first_event")) {
-      //   _CAT_setup_.first_event = setup_.fetch_integer("CAT.first_event");
-      // }
+      // 1st event to be processed
+      if (setup_.has_key("CAT.first_event")) {
+        _CAT_setup_.first_event = setup_.fetch_integer("CAT.first_event");
+      }
 
-      // // Ratio of 2nd best to best chi2 which is acceptable as 2nd solution
-      // if (setup_.has_key("CAT.ratio")) {
-      //   _CAT_setup_.Ratio = setup_.fetch_real("CAT.ratio");
-      // }
+      // Ratio of 2nd best to best chi2 which is acceptable as 2nd solution
+      if (setup_.has_key("CAT.ratio")) {
+        _CAT_setup_.Ratio = setup_.fetch_real("CAT.ratio");
+      }
 
-      // // Sigma Z factor
-      // if (setup_.has_key("CAT.sigma_z_factor")) {
-      //   _sigma_z_factor_ = setup_.fetch_real("CAT.sigma_z_factor");
-      //   DT_THROW_IF (_sigma_z_factor_ <= 0.0 || _sigma_z_factor_ >= 100.0,
-      //                std::logic_error,
-      //                "Invalid Sigma Z factor(" << _sigma_z_factor_ << ") !");
-      // }
+      // Sigma Z factor
+      if (setup_.has_key("CAT.sigma_z_factor")) {
+        _sigma_z_factor_ = setup_.fetch_real("CAT.sigma_z_factor");
+        DT_THROW_IF (_sigma_z_factor_ <= 0.0 || _sigma_z_factor_ >= 100.0,
+                     std::logic_error,
+                     "Invalid Sigma Z factor(" << _sigma_z_factor_ << ") !");
+      }
 
       // Get the calorimeter locators from a geometry plugin :
       const geomtools::manager & geo_mgr = get_geometry_manager();
@@ -157,30 +157,29 @@ namespace snemo {
         _gveto_locator_->tree_dump(std::clog, "", "[debug]: ");
       }
 
-      // // Geometry description :
-      // _CAT_setup_.num_blocks = 1;
-      // _CAT_setup_.planes_per_block.clear();
-      // _CAT_setup_.planes_per_block.push_back(_CAT_setup_.num_blocks);
-      // _CAT_setup_.planes_per_block.at(0) = get_gg_locator().get_number_of_layers(0);
-      // _CAT_setup_.num_cells_per_plane    = get_gg_locator().get_number_of_rows(0);
-      // _CAT_setup_.cell_size              = get_gg_locator().get_cell_diameter();
+      // Geometry description :
+      _CAT_setup_.num_blocks = 1;
+      _CAT_setup_.planes_per_block.clear();
+      _CAT_setup_.planes_per_block.push_back(_CAT_setup_.num_blocks);
+      _CAT_setup_.planes_per_block.at(0) = get_gg_locator().get_number_of_layers(0);
+      _CAT_setup_.num_cells_per_plane    = get_gg_locator().get_number_of_rows(0);
+      _CAT_setup_.cell_size              = get_gg_locator().get_cell_diameter();
 
-      // // Hard-coded values of bfield and chamber size
-      // _CAT_setup_.bfield = _magfield_ / CLHEP::tesla;
-      // _CAT_setup_.xsize  = 2500. * CLHEP::mm; // this is y in SnWare coordinates
-      // _CAT_setup_.ysize  = 1350. * CLHEP::mm; // this is z in SnWare coordinates
-      // _CAT_setup_.zsize  =  450. * CLHEP::mm; // this is x in SnWare coordinates
+      // Hard-coded values of bfield and chamber size
+      _CAT_setup_.bfield = 0.0025 * CLHEP::tesla / CLHEP::tesla;
+      _CAT_setup_.xsize  = 2500. * CLHEP::mm; // this is y in SnWare coordinates
+      _CAT_setup_.ysize  = 1350. * CLHEP::mm; // this is z in SnWare coordinates
+      _CAT_setup_.zsize  =  450. * CLHEP::mm; // this is x in SnWare coordinates
 
-      // // Check the validity of the CAT setup data :
-      // DT_THROW_IF(! _CAT_setup_.check(), std::logic_error,
-      //             "Setup data for the CAT machine is not checked : "
-      //             << _CAT_setup_.get_error_message() << " !");
+      // Check the validity of the CAT setup data :
+      DT_THROW_IF(! _CAT_setup_.check(), std::logic_error,
+                  "Setup data for the CAT machine is not checked !");
 
       // Configure and initialize the CAT machine :
-      // CAT::clusterizer_configure(_CAT_clusterizer_, _CAT_setup_);
+      CAT::clusterizer_configure(_CAT_clusterizer_, _CAT_setup_);
       // CAT::sequentiator_configure(_CAT_sequentiator_, _CAT_setup_);
 
-      // _CAT_clusterizer_.initialize ();
+      _CAT_clusterizer_.initialize();
       // _CAT_sequentiator_.initialize();
 
       _set_initialized(true);
@@ -189,7 +188,7 @@ namespace snemo {
 
     void cat_driver::_set_defaults()
     {
-      // _CAT_setup_.reset();
+      _CAT_setup_.reset();
       _calo_locator_  = 0;
       _xcalo_locator_ = 0;
       _gveto_locator_ = 0;
@@ -213,109 +212,108 @@ namespace snemo {
 
 
     /// Main clustering method
-    int cat_driver::_process_algo(const base_tracker_clusterizer::hit_collection_type & /*gg_hits_*/,
+    int cat_driver::_process_algo(const base_tracker_clusterizer::hit_collection_type & gg_hits_,
                                   const base_tracker_clusterizer::calo_hit_collection_type & /*calo_hits_*/,
                                   snemo::datamodel::tracker_clustering_data & /*clustering_*/)
     {
       // namespace ct = CAT::topology;
-      // namespace sdm = snemo::datamodel;
+      namespace sdm = snemo::datamodel;
 
-      // // CAT input data model :
-      // _CAT_input_.cells.clear();
-      // if (_CAT_input_.cells.capacity() < gg_hits_.size()){
-      //   _CAT_input_.cells.reserve(gg_hits_.size());
-      // }
-      // size_t ihit = 0;
+      // CAT input data model :
+      _CAT_input_.cells.clear();
+      if (_CAT_input_.cells.capacity() < gg_hits_.size()){
+        _CAT_input_.cells.reserve(gg_hits_.size());
+      }
+      size_t ihit = 0;
 
-      // // Hit accounting :
-      // std::map<int, sdm::calibrated_data::tracker_hit_handle_type> hits_mapping;
-      // std::map<int, int> hits_status;
+      // Hit accounting :
+      std::map<int, sdm::calibrated_data::tracker_hit_handle_type> hits_mapping;
+      std::map<int, int> hits_status;
 
-      // // GG hit loop :
-      // BOOST_FOREACH(const sdm::calibrated_data::tracker_hit_handle_type & gg_handle,
-      //               gg_hits_) {
-      //   // Skip NULL handle :
-      //   if (! gg_handle) continue;
+      // GG hit loop :
+      for (auto gg_handle : gg_hits_) {
+        // Skip NULL handle :
+        if (! gg_handle) continue;
 
-      //   // Get a const reference on the calibrated Geiger hit :
-      //   const sdm::calibrated_tracker_hit & snemo_gg_hit = gg_handle.get();
+        // Get a const reference on the calibrated Geiger hit :
+        const sdm::calibrated_tracker_hit & a_gg_hit = gg_handle.get();
 
-      //   // Check the geometry ID as a Geiger cell :
-      //   const snemo::geometry::gg_locator & gg_locator = get_gg_locator ();
-      //   const geomtools::geom_id & gg_hit_gid = snemo_gg_hit.get_geom_id ();
-      //   DT_THROW_IF (! gg_locator.is_drift_cell_volume (gg_hit_gid),
-      //                std::logic_error,
-      //                "Calibrated tracker hit can not be located inside detector !");
+        // Check the geometry ID as a Geiger cell :
+        const geomtools::geom_id & gg_hit_gid = a_gg_hit.get_geom_id();
+        const snemo::geometry::gg_locator & gg_locator = get_gg_locator();
+        DT_THROW_IF(! gg_locator.is_drift_cell_volume(gg_hit_gid),
+                    std::logic_error,
+                    "Calibrated tracker hit can not be located inside detector !");
 
-      //   if (!gg_locator.is_drift_cell_volume_in_current_module (gg_hit_gid)) {
-      //     DT_LOG_DEBUG (get_logging_priority (), "Current Geiger cell is not in the module!");
-      //     continue;
-      //   }
+        if (!gg_locator.is_drift_cell_volume_in_current_module (gg_hit_gid)) {
+          DT_LOG_DEBUG (get_logging_priority (), "Current Geiger cell is not in the module!");
+          continue;
+        }
 
-      //   // Extract the numbering scheme of the cell from its geom ID :
-      //   const int side  = gg_locator.extract_side(gg_hit_gid);
-      //   const int layer = gg_locator.extract_layer(gg_hit_gid);
-      //   const int row   = gg_locator.extract_row(gg_hit_gid);
+        // Extract the numbering scheme of the cell from its geom ID :
+        const int side  = gg_locator.extract_side(gg_hit_gid);
+        const int layer = gg_locator.extract_layer(gg_hit_gid);
+        const int row   = gg_locator.extract_row(gg_hit_gid);
 
-      //   // Translate into the CAT's numbering scheme :
-      //   // -1 : negative X side; +1 : positive X side
-      //   const int block_id = (side == 0) ? -1 : +1;
-      //   /* Later number:
-      //    * negative X side: layer from -8, -7, -6, -5, -4, -3, -2, -1, 0
-      //    * positive X side: layer from 0, 1, 2 , 3, 4, 5, 6, 7, 8
-      //    */
-      //   const int layer_id = side == 0 ? -layer: layer;
-      //   // Cell number :  0:113 is mapped to -56:+56
-      //   const int cell_id  = row - (_CAT_setup_.num_cells_per_plane / 2);
+        // Translate into the CAT's numbering scheme :
+        // -1 : negative X side; +1 : positive X side
+        const int block_id = (side == 0) ? -1 : +1;
+        /* Later number:
+         * negative X side: layer from -8, -7, -6, -5, -4, -3, -2, -1, 0
+         * positive X side: layer from 0, 1, 2 , 3, 4, 5, 6, 7, 8
+         */
+        const int layer_id = side == 0 ? -layer: layer;
+        // Cell number :  0:113 is mapped to -56:+56
+        const int cell_id  = row - (_CAT_setup_.num_cells_per_plane / 2);
 
-      //   // X-Y position of the anode wire of the hit cell :
-      //   CAT::topology::experimental_double z; // == X in sngeometry SN module frame
-      //   CAT::topology::experimental_double x; // == Y in sngeometry SN module frame
+        // X-Y position of the anode wire of the hit cell :
+        CAT::experimental_double z; // == X in sngeometry SN module frame
+        CAT::experimental_double x; // == Y in sngeometry SN module frame
 
-      //   // Center of the cell set in CAT's own reference frame:
-      //   z.set_value(snemo_gg_hit.get_x());
-      //   z.set_error(0.0);
-      //   x.set_value(snemo_gg_hit.get_y());
-      //   x.set_error(0.0);
+        // Center of the cell set in CAT's own reference frame:
+        z.set_value(a_gg_hit.get_x());
+        z.set_error(0.0);
+        x.set_value(a_gg_hit.get_y());
+        x.set_error(0.0);
 
-      //   // Transverse Geiger drift distance :
-      //   CAT::topology::experimental_double y;
-      //   // Plasma longitudinal origin along the anode wire :
-      //   y.set_value(snemo_gg_hit.get_z());
-      //   y.set_error(_sigma_z_factor_ * snemo_gg_hit.get_sigma_z());
+        // Transverse Geiger drift distance :
+        CAT::experimental_double y;
+        // Plasma longitudinal origin along the anode wire :
+        y.set_value(a_gg_hit.get_z());
+        y.set_error(_sigma_z_factor_ * a_gg_hit.get_sigma_z());
 
-      //   // Prompt/delayed trait of the hit :
-      //   const bool fast = snemo_gg_hit.is_prompt();
+        // Prompt/delayed trait of the hit :
+        const bool fast = a_gg_hit.is_prompt();
 
-      //   // Transverse Geiger drift distance :
-      //   const double rdrift     = snemo_gg_hit.get_r();
-      //   const double rdrift_err = snemo_gg_hit.get_sigma_r();
+        // Transverse Geiger drift distance :
+        const double rdrift     = a_gg_hit.get_r();
+        const double rdrift_err = a_gg_hit.get_sigma_r();
 
-      //   // Build the Geiger hit position :
-      //   CAT::topology::experimental_point gg_hit_position(x,y,z);
+        // Build the Geiger hit position :
+        CAT::experimental_point gg_hit_position(x,y,z);
 
-      //   // Add a new hit cell in the CAT input data model :
-      //   CAT::topology::cell & c = _CAT_input_.add_cell();
-      //   c.set_type("SN");
-      //   c.set_id(ihit++);
-      //   c.set_probmin(_CAT_setup_.probmin);
-      //   c.set_p(gg_hit_position);
-      //   c.set_r(fast ? rdrift : 0.25 * gg_locator.get_cell_diameter());
-      //   c.set_er(fast ? rdrift_err : 0.25 * gg_locator.get_cell_diameter());
-      //   c.set_layer(layer_id);
-      //   c.set_block(block_id);
-      //   c.set_iid(cell_id);
-      //   c.set_fast(fast);
-      //   c.set_small_radius(_CAT_setup_.SmallRadius);
+        // Add a new hit cell in the CAT input data model :
+        CAT::cell & c = _CAT_input_.add_cell();
+        c.set_type("SN");
+        c.set_id(ihit++);
+        c.set_probmin(_CAT_setup_.probmin);
+        c.set_position(gg_hit_position);
+        c.set_r(fast ? rdrift : 0.25 * gg_locator.get_cell_diameter());
+        c.set_er(fast ? rdrift_err : 0.25 * gg_locator.get_cell_diameter());
+        c.set_layer(layer_id);
+        c.set_block(block_id);
+        c.set_iid(cell_id);
+        c.set_fast(fast);
+        c.set_small_radius(_CAT_setup_.SmallRadius);
 
-      //   // Store mapping info between both data models :
-      //   hits_mapping[c.id()] = gg_handle;
-      //   hits_status[c.id()] = 0;
+        // Store mapping info between both data models :
+        hits_mapping[c.id()] = gg_handle;
+        hits_status[c.id()] = 0;
 
-      //   DT_LOG_DEBUG (get_logging_priority (),
-      //                 "Geiger cell #" << snemo_gg_hit.get_id() << " has been added "
-      //                 << "to CAT input data with id number #" << c.id());
-      // } // BOOST_FOREACH(gg_hits_)
+        DT_LOG_DEBUG (get_logging_priority (),
+                      "Geiger cell #" << a_gg_hit.get_id() << " has been added "
+                      << "to CAT input data with id number #" << c.id());
+      } // BOOST_FOREACH(gg_hits_)
 
       // // Take into account calo hits:
       // _CAT_input_.calo_cells.clear();

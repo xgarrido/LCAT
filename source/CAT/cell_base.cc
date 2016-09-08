@@ -3,33 +3,31 @@
 #include <gsl/gsl_cdf.h>
 
 namespace CAT{
-namespace topology{
-
 
   void cell::set_probmin( double probmin )
-    {
-      probmin_ = probmin;
-    }
+  {
+    probmin_ = probmin;
+  }
 
-    double cell::probmin() const
-    {
-      return probmin_;
-    }
+  double cell::probmin() const
+  {
+    return probmin_;
+  }
 
 
-    double cell::probof(double chi2, int ndof) const
-    {
-      //double p  =  TMath::Prob(chi2, ndof);
-      double p=0.;
-      if( ndof && chi2 )
-	p = gsl_cdf_chisq_Q(chi2, ndof);
-      return p;
-    }
+  double cell::probof(double chi2, int ndof) const
+  {
+    //double p  =  TMath::Prob(chi2, ndof);
+    double p=0.;
+    if( ndof && chi2 )
+      p = gsl_cdf_chisq_Q(chi2, ndof);
+    return p;
+  }
 
-    double cell::get_probmin()const
-    {
-      return probmin_;
-    }
+  double cell::get_probmin()const
+  {
+    return probmin_;
+  }
 
   // experimental_double cell::distance(cell c) const{
 
@@ -220,5 +218,4 @@ namespace topology{
   // }
 
 
-}
 }

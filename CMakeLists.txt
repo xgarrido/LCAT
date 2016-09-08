@@ -20,6 +20,7 @@ list(APPEND LCAT_HEADERS
   source/CAT/CAT_interface.h
   source/CAT/clusterizer.h
   source/CAT/cell_base.h
+  source/CAT/calorimeter_hit.h
   # source/TrackFit/fit_utils.h
   # source/TrackFit/gg_hit.h
   # source/TrackFit/helix_fit_mgr.h
@@ -33,6 +34,7 @@ list(APPEND LCAT_SOURCES
   source/CAT/CAT_interface.cc
   source/CAT/clusterizer.cc
   source/CAT/cell_base.cc
+  source/CAT/calorimeter_hit.cc
   # source/TrackFit/fit_utils.cc
   # source/TrackFit/gg_hit.cc
   # source/TrackFit/helix_fit_mgr.cc

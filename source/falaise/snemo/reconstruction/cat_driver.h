@@ -36,7 +36,9 @@
 
 // This project
 #include <falaise/snemo/processing/base_tracker_clusterizer.h>
+// CAT:
 #include <CAT/CAT_interface.h>
+#include <CAT/clusterizer.h>
 
 // Forward declaration :
 namespace datatools {
@@ -89,13 +91,13 @@ namespace snemo {
     private:
 
       CAT::setup_data   _CAT_setup_;         /// Configuration data
-      // CAT::input_data   _CAT_input_;         /// Input data
+      CAT::input_data   _CAT_input_;         /// Input data
       // CAT::output_data  _CAT_output_;        /// Output data
-      // CAT::clusterizer  _CAT_clusterizer_;   /// CAT clusterizer
+      CAT::clusterizer  _CAT_clusterizer_;   /// CAT clusterizer
       // CAT::sequentiator _CAT_sequentiator_;  /// CAT sequentiator
-      // double            _sigma_z_factor_;    /// Factor for longitudinal error
+      double            _sigma_z_factor_;    /// Factor for longitudinal error
       // double            _magfield_;          /// Enforced magnetic field
-      // bool              _process_calo_hits_; /// Flag to process associated calorimeter hits
+      bool              _process_calo_hits_; /// Flag to process associated calorimeter hits
       // bool     _store_result_as_properties_; /// Flag to store CAT result as data properties
 
       /// Calorimeter locators

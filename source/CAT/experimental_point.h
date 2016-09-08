@@ -5,95 +5,92 @@
 #include <cmath>
 #include <CAT/experimental_double.h>
 
-namespace CAT{
-
-  namespace topology{
+namespace CAT {
 
 
-    //  class experimental_point : public point{
-    class experimental_point {
+  //  class experimental_point : public point{
+  class experimental_point {
 
-      // an experimental point is composed of an ordinary point (x, y, z)
-      // with corresponding error (ex, ey, ez)
+    // an experimental point is composed of an ordinary point (x, y, z)
+    // with corresponding error (ex, ey, ez)
 
-    private:
-      std::string appname_;
+  private:
+    std::string appname_;
 
-      // x coordinate
-      experimental_double x_;
+    // x coordinate
+    experimental_double x_;
 
-      // y coordinate
-      experimental_double y_;
+    // y coordinate
+    experimental_double y_;
 
-      // z coordinate
-      experimental_double z_;
+    // z coordinate
+    experimental_double z_;
 
-      // radius in horizontal view (= x^2 + z^2)
-      experimental_double radius_;
+    // radius in horizontal view (= x^2 + z^2)
+    experimental_double radius_;
 
-    public:
-      //!Default constructor
-      experimental_point();
+  public:
+    //!Default constructor
+    experimental_point();
 
-      //!Default destructor
-      virtual ~experimental_point();
+    //!Default destructor
+    virtual ~experimental_point();
 
-      //! constructor
-      experimental_point(const experimental_double &x, const experimental_double &y, const experimental_double &z);
+    //! constructor
+    experimental_point(const experimental_double &x, const experimental_double &y, const experimental_double &z);
 
-      //! constructor from coordinates with error
-      experimental_point(double x, double y, double z, double ex, double ey, double ez);
+    //! constructor from coordinates with error
+    experimental_point(double x, double y, double z, double ex, double ey, double ez);
 
-      /*** dump ***/
-      virtual void dump (std::ostream & a_out         = std::clog,
-                         const std::string & a_title  = "",
-                         const std::string & a_indent = "",
-                         bool a_inherit               = false) const;
+    /*** dump ***/
+    virtual void dump (std::ostream & a_out         = std::clog,
+                       const std::string & a_title  = "",
+                       const std::string & a_indent = "",
+                       bool a_inherit               = false) const;
 
-      //! set x
-      void set_x(const experimental_double &x);
+    //! set x
+    void set_x(const experimental_double &x);
 
-      //! set ex
-      void set_ex(double ex);
+    //! set ex
+    void set_ex(double ex);
 
-      //! set y
-      void set_y(const experimental_double &y);
+    //! set y
+    void set_y(const experimental_double &y);
 
-      //! set ey
-      void set_ey(double ey);
+    //! set ey
+    void set_ey(double ey);
 
-      //! set z
-      void set_z(const experimental_double &z);
+    //! set z
+    void set_z(const experimental_double &z);
 
-      //! set ez
-      void set_ez(double ez);
+    //! set ez
+    void set_ez(double ez);
 
-      //!get experimental x
-      const experimental_double& x() const;
+    //!get experimental x
+    const experimental_double& x() const;
 
-      //!get experimental y
-      const experimental_double& y() const;
+    //!get experimental y
+    const experimental_double& y() const;
 
-      //!get experimental z
-      const experimental_double& z() const;
+    //!get experimental z
+    const experimental_double& z() const;
 
-      //!get experimental radius
-      const experimental_double& radius() const;
+    //!get experimental radius
+    const experimental_double& radius() const;
 
-      // //! distance
-      //   experimental_double distance(const experimental_point& p2) const;
+    // //! distance
+    //   experimental_double distance(const experimental_point& p2) const;
 
-      // //! distance
-      //   experimental_double hor_distance(const experimental_point& p2) const;
-
-
-    };
+    // //! distance
+    //   experimental_double hor_distance(const experimental_point& p2) const;
 
 
-    // // average
-    // experimental_point average (const std::vector<experimental_point> &vs);
+  };
 
-  }
+
+  // // average
+  // experimental_point average (const std::vector<experimental_point> &vs);
+
 }
 
 #endif
