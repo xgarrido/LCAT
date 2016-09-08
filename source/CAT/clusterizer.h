@@ -2,6 +2,16 @@
 #ifndef FALAISE_CAT_CLUSTERIZER_H
 #define FALAISE_CAT_CLUSTERIZER_H 1
 
+// Standard library
+#include <vector>
+
+// Third party
+// - Bayeux/datatools:
+#include <datatools/logger.h>
+
+// This project
+#include <CAT/cell_base.h>
+
 //#include <CATAlgorithm/CAT_config.h>
 
 // #include <stdexcept>
@@ -12,7 +22,6 @@
 // #include <mybhep/system_of_units.h>
 
 // #include <iostream>
-// #include <vector>
 
 // #include <mybhep/EventManager2.h>
 // //#include <CATUtils/NHistoManager2.h>
@@ -22,7 +31,6 @@
 // #include <CATAlgorithm/experimental_double.h>
 
 // #include <CATAlgorithm/Clock.h>
-// #include <CATAlgorithm/cell_base.h>
 // #include <CATAlgorithm/cluster.h>
 // #include <CATAlgorithm/calorimeter_hit.h>
 // #include <CATAlgorithm/sequence_base.h>
@@ -36,10 +44,19 @@ namespace CAT {
   //   float z;
   // } POINT;
 
+  // Forward declaration
+  class tracked_data;
+
   /// \brief The clusterizer algorithm
-  class clusterizer{
+  class clusterizer {
 
   public:
+
+    /// Setting logging priority
+    void set_logging_priority(const datatools::logger::priority priority_);
+
+    /// Getting logging priority
+    datatools::logger::priority get_logging_priority() const;
 
     /// Constructor
     clusterizer();
@@ -49,6 +66,13 @@ namespace CAT {
 
     /// Initialization method
     void initialize();
+
+    void prepare_event(CAT::tracked_data & tracked_data_);
+
+    void order_cells();
+    void setup_cells();
+
+    void clusterize(CAT::tracked_data & tracked_data_);
 
     // bool initialize( const mybhep::sstore &store, const mybhep::gstore & gs, mybhep::EventManager2 *eman=0);
     // void initializeHistos( void );
@@ -62,14 +86,12 @@ namespace CAT {
     // void FillTrueVertexes( mybhep::particle* p );
     // void FillHistos(mybhep::event& evt );
     // bool read_event(mybhep::event& evt, topology::tracked_data & tracked_data_);
-    // bool prepare_event(topology::tracked_data & tracked_data_);
     // void read_true_sequences(mybhep::event& evt);
     // void read_nemo_sequences(mybhep::event& evt);
     // void read_true_sequences();
     // void read_nemo_sequences();
     // void print_cells(void)const;
     // void print_calos(void)const;
-    // void clusterize(topology::tracked_data & tracked_data_);
     // void clusterize_after_sultan(topology::tracked_data & tracked_data_);
     // void print_clusters(void) const;
     // void print_true_sequences(void)const;
@@ -80,13 +102,14 @@ namespace CAT {
     // double long_resolution(double Z, double d[3])const;
     // double long_resolution_1cthd(double Zdist)const;
     // double GetYError( double y, float tup, float tdown, double direction[3]);
-    // void order_cells();
+
 
     // //! get cells
     // const std::vector<topology::cell>& get_cells()const;
 
-    // //! set cells
-    // void set_cells(const std::vector<topology::cell> & cells);
+
+    //! set cells
+    void set_cells(const std::vector<CAT::cell> & cells);
 
     // //! get clusters
     // const std::vector<topology::cluster>& get_clusters()const;
@@ -109,7 +132,6 @@ namespace CAT {
     // int cell_side( const topology::cell & c);
     // size_t near_level( const topology::cell & c1, const topology::cell & c2 );
     // std::vector<topology::cell> get_near_cells(const topology::cell & c);
-    // void setup_cells();
     // void setup_clusters();
     // topology::calorimeter_hit make_calo_hit(const mybhep::hit & ahit, size_t id);
     // int get_effective_layer(const mybhep::hit & hit);
@@ -218,8 +240,9 @@ namespace CAT {
   //   size_t get_nemo_hit_index(mybhep::hit& hit, bool print);
   //   size_t get_calo_hit_index(const topology::calorimeter_hit &c);
 
-  // protected:
-  //   void _set_defaults ();
+  protected:
+    /// Give default values to data member
+    void _set_defaults();
 
   // public:
 
@@ -318,9 +341,10 @@ namespace CAT {
   //   bool first_event;
 
 
-  // private:
+  private:
 
-  //   std::vector<topology::cell> cells_;
+    datatools::logger::priority _logging_priority_;
+    std::vector<CAT::cell> cells_;
   //   std::vector<topology::cluster> clusters_;
   //   std::vector<topology::calorimeter_hit> calorimeter_hits_;
   //   std::vector<topology::sequence> true_sequences_;

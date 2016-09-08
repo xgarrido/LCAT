@@ -1,11 +1,14 @@
 // Ourselves
 #include <CAT/clusterizer.h>
-
+#include <CAT/cell_base.h>
+#include <CAT/tracked_data_base.h>
 // #include <mybhep/system_of_units.h>
 // #include <sys/time.h>
 // #include <limits>
 // #include <cmath>
 // #include <map>
+
+#include <algorithm>
 
 // #if CAT_WITH_DEVEL_ROOT == 1
 // #include <TApplication.h>
@@ -30,12 +33,12 @@ namespace CAT {
   //   return cells_;
   // }
 
-  // //! set cells
-  // void clusterizer::set_cells(const std::vector<topology::cell> & cells)
-  // {
-  //   //cells_.clear();
-  //   cells_ = cells;
-  // }
+  //! set cells
+  void clusterizer::set_cells(const std::vector<CAT::cell> & cells)
+  {
+    //cells_.clear();
+    cells_ = cells;
+  }
 
   // //! get clusters
   // const std::vector<topology::cluster>& clusterizer::get_clusters()const
@@ -63,9 +66,9 @@ namespace CAT {
   //   calorimeter_hits_ = calorimeter_hits;
   // }
 
-  // void clusterizer::_set_defaults ()
-  // {
-
+  void clusterizer::_set_defaults()
+  {
+    _logging_priority_ = datatools::logger::PRIO_TRACE;
   //   level = mybhep::NORMAL;
   //   m = mybhep::messenger(level);
   //   num_blocks = -1;
@@ -120,14 +123,24 @@ namespace CAT {
   //   run_time = std::numeric_limits<double>::quiet_NaN ();
   //   first_event=true;
 
-  //   return;
-  // }
+    return;
+  }
 
 
+  void clusterizer::set_logging_priority(const datatools::logger::priority priority_)
+  {
+    _logging_priority_ = priority_;
+    return;
+  }
+
+  datatools::logger::priority clusterizer::get_logging_priority() const
+  {
+    return _logging_priority_;
+  }
 
   clusterizer::clusterizer()
   {
-    //_set_defaults();
+    _set_defaults();
     return;
   }
 
@@ -138,7 +151,7 @@ namespace CAT {
 
   void clusterizer::initialize()
   {
-
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
     // m.message("CAT::clusterizer::initialize: Entering...",mybhep::NORMAL);
 
     // m.message("CAT::clusterizer::initialize: Beginning algorithm clusterizer \n",mybhep::VERBOSE);
@@ -153,6 +166,7 @@ namespace CAT {
 
     // m.message("CAT::clusterizer::initialize: Done.",mybhep::NORMAL);
 
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
@@ -184,8 +198,190 @@ namespace CAT {
 
 
 
+  void clusterizer::order_cells()
+  {
 
-//   //*************************************************************
+
+    // clock.start(" clusterizer: order cells ","cumulative");
+
+    // if( cells_.size() ){
+    //   if( level >= mybhep::VVERBOSE ){
+    //     std::clog << "CAT::clusterizer::order_cells: printing cells " << cells_.size() << std::endl;
+    //     print_cells();
+    //     std::clog << "CAT::clusterizer::order_cells: sorting cells " << std::endl;
+    //   }
+
+      //  std::sort( cells_.begin(), cells_.end(), topology::cell::compare );
+      std::sort( cells_.begin(), cells_.end());
+    // }
+
+    // clock.stop(" clusterizer: order cells ");
+
+    return;
+
+  }
+
+  void clusterizer::setup_cells()
+  {
+//     for(std::vector<topology::cell>::iterator icell=cells_.begin(); icell!=cells_.end(); ++icell){
+//       icell->set_print_level(level);
+//       icell->set_probmin(probmin);
+//     }
+
+    return;
+  }
+
+
+
+  void clusterizer::prepare_event(CAT::tracked_data & tracked_data_)
+  {
+
+    // clock.start(" clusterizer: prepare event ","cumulative");
+
+    // event_number ++;
+    // m.message("CAT::clusterizer::prepare_event: local_tracking: preparing event", event_number, mybhep::VERBOSE);
+
+    // if( event_number < first_event_number ){
+    //   m.message("CAT::clusterizer::prepare_event: local_tracking: skip event", event_number, " first event is ", first_event_number,  mybhep::VERBOSE);
+    //   return false;
+    // }
+
+    // parts.clear();
+    // clusters_.clear();
+
+    order_cells();
+    setup_cells();
+
+    tracked_data_.set_cells(cells_);
+    // tracked_data_.set_calos(calorimeter_hits_);
+
+    // clock.stop(" clusterizer: prepare event ");
+
+
+    return;
+
+
+  }
+
+  void clusterizer::clusterize(CAT::tracked_data & /*tracked_data_*/)
+  {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
+
+    if (cells_.empty()) return;
+
+//     if( !select_true_tracks(tracked_data_) ){
+//       m.message("CAT::clusterizer::clusterize: event is not selected at true level ", mybhep::NORMAL);
+//       tracked_data_.set_selected(false);
+//       return;
+//     }
+
+//     float side[2]; // loop on two sides of the foil
+//     side[0] =  1.;
+//     side[1] = -1.;
+
+//     bool fast[2]; // loop on fast and slow hits
+//     fast[0] = true;
+//     fast[1] = false;
+
+//     std::map<int,unsigned int > flags;
+
+  //  Plus nécessaire car le travail est fait par le preclustering
+//     for(size_t ip=0; ip<2; ip++)  // loop on two sides of the foil
+//       {
+//         for(size_t iq=0; iq<2; iq++) // loop on fast and slow hits
+//           {
+//             for(size_t i=0; i<cells_.size(); i++)
+//               {
+//                 flags[cells_[i].id()] = 0;
+//               }
+
+//             for(std::vector<topology::cell>::const_iterator icell=cells_.begin(); icell!=cells_.end(); ++icell){
+//               // pick a cell c that was never added
+//               const topology::cell & c = *icell;
+//               if( (cell_side(c) * side[ip]) < 0) continue;
+//               if( c.fast() != fast[iq] ) continue;
+//               if( flags[c.id()] == 1 ) continue;
+//               flags[c.id()] = 1;
+
+//               // cell c will form a new cluster, i.e. a new list of nodes
+//               topology::cluster cluster_connected_to_c;
+//               std::vector<topology::node> nodes_connected_to_c;
+//               m.message("CAT::clusterizer::clusterize: begin new cluster with cell ", c.id(), mybhep::VERBOSE);
+
+//               // let's get the list of all the cells that can be reached from c
+//               // without jumps
+//               std::vector<topology::cell> cells_connected_to_c;
+//               cells_connected_to_c.push_back(c);
+
+//               for( size_t i=0; i<cells_connected_to_c.size(); i++){ // loop on connected cells
+//                 // take a connected cell (the first one is just c)
+//                 topology::cell cconn = cells_connected_to_c[i];
+
+//                 // the connected cell composes a new node
+//                 topology::node newnode(cconn, level, probmin);
+//                 std::vector<topology::cell_couplet> cc;
+
+//                 // get the list of cells near the connected cell
+//                 std::vector<topology::cell> cells_near_iconn = get_near_cells(cconn);
+
+//                 m.message("CAT::clusterizer::clusterize: cluster ", clusters_.size(), " starts with ", c.id(), " try to add cell ", cconn.id(), " with n of neighbours = ", cells_near_iconn.size(), mybhep::VERBOSE);
+//                 for(std::vector<topology::cell>::const_iterator icnc=cells_near_iconn.begin(); icnc!=cells_near_iconn.end(); ++icnc){
+
+//                   topology::cell cnc = *icnc;
+
+//                   if( !is_good_couplet(& cconn, cnc, cells_near_iconn) ) continue;
+
+//                   topology::cell_couplet ccnc(cconn,cnc,level,probmin);
+//                   cc.push_back(ccnc);
+
+//                   m.message("CAT::clusterizer::clusterize: ... creating couplet ", cconn.id(), " -> ", cnc.id(), mybhep::VERBOSE);
+
+//                   if( flags[cnc.id()] != 1 )
+//                     {
+//                       flags[cnc.id()] = 1 ;
+//                       cells_connected_to_c.push_back(cnc);
+//                     }
+//                 }
+//                 newnode.set_cc(cc);
+//                 newnode.calculate_triplets(Ratio, QuadrantAngle, TangentPhi, TangentTheta);
+//                 nodes_connected_to_c.push_back(newnode);
+
+//                 m.message("CAT::clusterizer::clusterize: cluster started with ", c.id(), " has been given cell ", cconn.id(), " with ", cc.size(), " couplets ", mybhep::VERBOSE);
+
+//               }
+
+//               cluster_connected_to_c.set_nodes(nodes_connected_to_c);
+
+//               clusters_.push_back(cluster_connected_to_c);
+//             }
+
+//           }
+//       }
+
+
+//     setup_clusters();
+
+//     m.message("CAT::clusterizer::clusterize: there are ", clusters_.size(), " clusters of cells ", mybhep::VVERBOSE);
+
+//     if( PrintMode )
+//       make_plots(tracked_data_);
+
+//     if( level >= mybhep::VVERBOSE ){
+//       print_clusters();
+//     }
+
+//     tracked_data_.set_cells(cells_);
+//     tracked_data_.set_clusters(clusters_);
+
+//     clock.stop(" clusterizer: clusterize ");
+
+
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
+    return;
+  }
+
+
+  //   //*************************************************************
 //   double clusterizer::long_resolution(double Z, double d[3])const{
 //     //*************************************************************
 
@@ -336,258 +532,6 @@ namespace CAT {
 
 //   }
 
-//   //*************************************************************
-//   void clusterizer::FillTrueVertexes( mybhep::event& evt ){
-//     //*************************************************************
-
-//     for(size_t i=0; i<evt.true_particles().size(); i++){
-//       FillTrueVertexes( evt.true_particles()[i] );
-//     }
-
-//     return;
-
-//   }
-
-//   //*************************************************************
-//   void clusterizer::FillTrueVertexes( mybhep::particle* tp ){
-//     //*************************************************************
-
-//     if( tp->find_property("foil_vertex") )
-//       tp->change_property("foil_vertex", "1");
-//     else
-//       tp->add_property("foil_vertex", "1");
-
-//     return;
-
-//   }
-
-
-//   //*************************************************************
-//   void clusterizer::GenerateWires( void ){
-//     //*************************************************************
-//     m.message("CAT::clusterizer::GenerateWires: Entering...",mybhep::NORMAL);
-
-//     //clock.start(" clusterizer: generate wires ");
-
-//     DriftWires.clear();
-
-//     if( SuperNemo )
-//       {
-//         m.message("CAT::clusterizer::GenerateWires: SuperNemo geometry...",mybhep::NORMAL);
-
-//         // TRACKING GG BLOCKS
-//         double theta = M_PI/8.;
-//         m.message("CAT::clusterizer::GenerateWires: rad=",
-//                   rad,
-//                   mybhep::NORMAL);
-//         if (std::isnan (GG_CELL_pitch))
-//           {
-//             GG_CELL_pitch = rad*cos(theta);
-//           }
-//         m.message("CAT::clusterizer::GenerateWires: GG_CELL_pitch=",
-//                   GG_CELL_pitch,
-//                   mybhep::NORMAL);
-//         m.message("CAT::clusterizer::GenerateWires: GG_GRND_diam=",
-//                   GG_GRND_diam,
-//                   mybhep::NORMAL);
-//         m.message("CAT::clusterizer::GenerateWires: CHAMBER_X=",
-//                   CHAMBER_X,
-//                   mybhep::NORMAL);
-//         if (num_cells_per_plane <= 0)
-//           {
-//             num_cells_per_plane=(int)((CHAMBER_X-GG_GRND_diam)/GG_CELL_pitch);
-//           }
-//         m.message("CAT::clusterizer::GenerateWires: num_cells_per_plane=",
-//                   num_cells_per_plane,
-//                   mybhep::NORMAL);
-//         GG_BLOCK_X = num_cells_per_plane*GG_CELL_pitch+GG_GRND_diam;
-//         m.message("CAT::clusterizer::GenerateWires: GG_BLOCK_X=",
-//                   GG_BLOCK_X,
-//                   mybhep::NORMAL);
-
-//         std::vector<double> GG_BLOCK_thick;
-//         std::vector<double> GG_BLOCK_posZ;
-//         GG_BLOCK_thick.assign (num_blocks, std::numeric_limits<double>::quiet_NaN ());
-//         GG_BLOCK_posZ.assign (num_blocks, std::numeric_limits<double>::quiet_NaN ());
-//         double distance = SOURCE_thick/2.;
-//         m.message("CAT::clusterizer::GenerateWires: SOURCE_thick=",
-//                   SOURCE_thick,
-//                   mybhep::NORMAL);
-//         //Calculating thickness and positions of blocks
-//         for(int i=0; i<num_blocks; i++){
-//           GG_BLOCK_thick[i]=(planes_per_block[i]*GG_CELL_pitch+GG_GRND_diam);
-//           GG_BLOCK_posZ[i] = distance + gaps_Z[i] + GG_BLOCK_thick[i]/2.;
-//           distance = GG_BLOCK_posZ[i] + GG_BLOCK_thick[i]/2.;
-//         }
-//         m.message("CAT::clusterizer::GenerateWires: DEVEL: **** STEP 1",mybhep::NORMAL);
-
-//         int sign[2];
-//         sign[0] = 1;
-//         sign[1] = -1;
-
-//         for(size_t isign=0; isign<2; isign++)
-//           for (int iblock=0; iblock<num_blocks;iblock++){
-
-//             double block_pos[3];
-//             block_pos[2] = GG_BLOCK_posZ[iblock];
-
-//             // loop over planes in block
-
-//             double plane_pos_z0 = block_pos[2]-GG_BLOCK_thick[iblock]/2;
-
-//             for(int iplane=0; iplane<planes_per_block[iblock];iplane++){
-
-//               double plane_pos_Z;
-//               plane_pos_Z=GG_GRND_diam/2.+GG_CELL_pitch/2.+iplane*GG_CELL_pitch;
-//               plane_pos_Z = plane_pos_Z + plane_pos_z0;
-//               plane_pos_Z *= sign[isign];
-
-//               for(int iwire=0; iwire<num_cells_per_plane; iwire++)
-//                 {
-//                   double increment = GG_CELL_pitch*((double)iwire);
-//                   double xpos = -(CHAMBER_X-GG_GRND_diam)/2.+6.+increment+GG_CELL_pitch/2.;
-
-//                   POINT point;
-//                   point.x = xpos;
-//                   point.z = plane_pos_Z;
-//                   DriftWires.push_back( point );
-//                 }
-
-
-//             }//end of loop over planes
-
-//           }//end of loop over blocks
-//       }
-//     else
-//       {
-
-//         size_t NOfWires[18];
-//         double FirstWireX[18];
-//         double FirstWireZ[18];
-//         double FirstWirePhi[18];
-//         double LayerRadius[18];
-
-//         NOfWires[0] = 320;
-//         NOfWires[1] = 320;
-//         NOfWires[2] = 320;
-//         NOfWires[3] = 320;
-//         NOfWires[4] = 280;
-//         NOfWires[5] = 280;
-//         NOfWires[6] = 240;
-//         NOfWires[7] = 240;
-//         NOfWires[8] = 240;
-//         NOfWires[9] = 360;
-//         NOfWires[10] = 360;
-//         NOfWires[11] = 360;
-//         NOfWires[12] = 360;
-//         NOfWires[13] = 400;
-//         NOfWires[14] = 400;
-//         NOfWires[15] = 460;
-//         NOfWires[16] = 460;
-//         NOfWires[17] = 460;
-
-//         FirstWireX[0] = 1521.;
-//         FirstWireX[1] = 1493.;
-//         FirstWireX[2] = 1465.;
-//         FirstWireX[3] = 1437.;
-//         FirstWireX[4] = 1271.;
-//         FirstWireX[5] = 1243.;
-//         FirstWireX[6] = 1077.;
-//         FirstWireX[7] = 1049.;
-//         FirstWireX[8] = 1021.;
-//         FirstWireX[9] = 1579.;
-//         FirstWireX[10] = 1607.;
-//         FirstWireX[11] = 1635.;
-//         FirstWireX[12] = 1663.;
-//         FirstWireX[13] = 1829.;
-//         FirstWireX[14] = 1857.;
-//         FirstWireX[15] = 2023.;
-//         FirstWireX[16] = 2051.;
-//         FirstWireX[17] = 2079.;
-
-//         FirstWireZ[0] = 10.57;
-//         FirstWireZ[1] = 10.375;
-//         FirstWireZ[2] = 10.181;
-//         FirstWireZ[3] = 9.9871;
-//         FirstWireZ[4] = 10.167;
-//         FirstWireZ[5] = 9.943;
-//         FirstWireZ[6] = 10.180;
-//         FirstWireZ[7] = 9.915;
-//         FirstWireZ[8] = 9.651;
-//         FirstWireZ[9] = 9.811;
-//         FirstWireZ[10] = 9.985;
-//         FirstWireZ[11] = 10.158;
-//         FirstWireZ[12] = 10.333;
-//         FirstWireZ[13] = 10.129;
-//         FirstWireZ[14] = 10.284;
-//         FirstWireZ[15] = 9.804;
-//         FirstWireZ[16] = 9.939;
-//         FirstWireZ[17] = 10.075;
-
-
-//         for(size_t i=0; i<18; i++)
-//           {
-//             LayerRadius[i] = sqrt(FirstWireX[i]*FirstWireX[i] + FirstWireZ[i]*FirstWireZ[i]);
-//             FirstWirePhi[i] = acos(FirstWireX[i]/LayerRadius[i]);
-
-//             for(size_t j=0; j<NOfWires[i]; j++)
-//               {
-//                 double layerphi = 2.*M_PI/NOfWires[i];
-//                 double ph = FirstWirePhi[i] + j*layerphi;
-
-//                 POINT point;
-//                 point.x = LayerRadius[i]*cos(ph);
-//                 point.z = LayerRadius[i]*sin(ph);
-
-//                 DriftWires.push_back( point );
-//               }
-//           }
-//       }
-
-
-//     //clock.stop(" clusterizer: generate wires ");
-//     m.message("CAT::clusterizer::GenerateWires: Done.",mybhep::NORMAL);
-
-//     return;
-
-//   }
-
-
-//   //*******************************************************************
-//   size_t clusterizer::get_true_hit_index(mybhep::hit& hit, bool print){
-//     //*******************************************************************
-
-//     topology::node tn(hit, 0, SuperNemo, level, probmin);
-
-//     for(std::vector<topology::cell>::iterator ic=cells_.begin(); ic!=cells_.end(); ++ic){
-//       if( ic->same_cell(tn.c()) )
-//         return ic->id();
-//     }
-
-//     if( print )
-//       m.message("CAT::clusterizer::get_true_hit_index: warning: can't find corresponding reco hit for true hit (", tn.c().ep().x().value(), ", ", tn.c().ep().y().value(), ", ", tn.c().ep().z().value(), ") layer", tn.c().layer(), mybhep::VVERBOSE);
-
-//     return 0;
-
-//   }
-
-//   //*******************************************************************
-//   size_t clusterizer::get_nemo_hit_index(mybhep::hit& hit, bool print){
-//     //*******************************************************************
-
-//     topology::node tn(hit, 0, SuperNemo, level, probmin);
-
-//     for(std::vector<topology::cell>::iterator ic=cells_.begin(); ic!=cells_.end(); ++ic){
-//       if( ic->same_cell(tn.c()) )
-//         return ic->id();
-//     }
-
-//     if( print )
-//       m.message("CAT::clusterizer::get_nemo_hit_index: warning: can't find corresponding reco hit for nemo hit (", tn.c().ep().x().value(), ", ", tn.c().ep().y().value(), ", ", tn.c().ep().z().value(), ") layer", tn.c().layer(), mybhep::VVERBOSE);
-
-//     return 0;
-
-//   }
 
 //   //*******************************************************************
 //   size_t clusterizer::get_calo_hit_index(const topology::calorimeter_hit & c){
@@ -604,288 +548,6 @@ namespace CAT {
 
 //   }
 
-
-//   //*******************************************************************
-//   bool clusterizer::read_event(mybhep::event& event_ref, topology::tracked_data & tracked_data_){
-//     //*******************************************************************
-
-//     clock.start(" clusterizer: read event ","cumulative");
-
-//     m.message("CAT::clusterizer::read_event: local_tracking: reading event", mybhep::VERBOSE);
-
-//     cells_.clear();
-//     parts.clear();
-//     clusters_.clear();
-//     calorimeter_hits_.clear();
-//     true_sequences_.clear();
-//     nemo_sequences_.clear();
-
-//     bool bhep_input = true;
-
-//     if( bhep_input ){
-
-//       // read digi particles
-//       std::vector<mybhep::particle*> digi_parts;
-
-//       if( !SuperNemo && first_event)
-//         {
-//           first_event=false;
-
-//           N3_MC = true;
-//           if( event_ref.find_property("DATA") )
-//             if( mybhep::int_from_string(event_ref.fetch_property("DATA")) == 1 )
-//               N3_MC = false;  // data
-
-//           if( N3_MC )
-//             m.message("CAT::clusterizer::read_event: Nemo3 MC ", mybhep::NORMAL);
-//           else
-//             m.message("CAT::clusterizer::read_event: Nemo3 data ", mybhep::NORMAL);
-//         }
-
-//       FillYPositions(event_ref);
-
-//       if( SuperNemo ){
-//         FillTrueVertexes(event_ref);
-//       }
-
-//       fill_fast_information(event_ref);
-
-//       event_ref.filter(mybhep::DIGI,"SUNAMI","1",digi_parts); // scans all event.digi_particles(),
-//       // and copies to "digi_parts" those ones having property "SUNAMI" = 1
-
-//       if ( digi_parts.empty() )
-//         {
-//           m.message("CAT::clusterizer::read_event: Problem: there are no gg hits in this event.\n",mybhep::MUTE);
-
-//           return false;
-//         }
-
-//       if (digi_parts[0]->find_property("mID"))               // BAR design??
-//         {
-//           for (size_t pnr=0; pnr < digi_parts.size(); pnr++)
-//             if (digi_parts[pnr]->fetch_property("mID") == _moduleNR )
-//               parts.push_back(digi_parts[pnr]);
-//         }
-//       else                                               //NOT BAR DESIGN and OLD data
-//         {
-//           //    for (size_t pnr=0; pnr < digi_parts.size(); pnr++)
-//           //      parts.push_back(digi_parts[pnr]);
-//           parts.push_back(digi_parts[0]);
-//         }
-
-//       if( parts.size() != 1 )
-//         return false;
-
-//       const std::vector<mybhep::hit*>& hits = parts[0]->hits("trk");
-
-//       for (size_t ihit=0; ihit<hits.size();ihit++){
-//         topology::cell c(*hits[ihit],ihit, SuperNemo, level, probmin);
-//         c.set_small_radius(SmallRadius);
-//         cells_.push_back(c);
-//       }
-
-//       clock.start(" clusterizer: make calo hit ","cumulative");
-//       const std::vector<mybhep::hit*>& chits = parts[0]->hits("cal");
-//       for (size_t ihit=0; ihit<chits.size();ihit++){
-//         topology::calorimeter_hit ch = make_calo_hit(*chits[ihit], ihit);
-//         calorimeter_hits_.push_back(ch);
-//       }
-//       clock.stop(" clusterizer: make calo hit ");
-
-//       if( level >= mybhep::VVERBOSE )
-//         print_calos();
-
-
-
-//       read_true_sequences(event_ref);
-
-//       if( !SuperNemo )
-//         read_nemo_sequences(event_ref);
-
-//     }
-
-
-//     order_cells();
-
-//     setup_cells();
-
-//     tracked_data_.set_cells(cells_);
-
-//     tracked_data_.set_calos(calorimeter_hits_);
-
-//     tracked_data_.set_true_sequences(true_sequences_);
-
-//     tracked_data_.set_nemo_sequences(nemo_sequences_);
-
-//     clock.stop(" clusterizer: read event ");
-
-
-//     return true;
-
-
-//   }
-
-
-//   //*******************************************************************
-//   bool clusterizer::prepare_event(topology::tracked_data & tracked_data_){
-//     //*******************************************************************
-
-//     clock.start(" clusterizer: prepare event ","cumulative");
-
-//     event_number ++;
-//     m.message("CAT::clusterizer::prepare_event: local_tracking: preparing event", event_number, mybhep::VERBOSE);
-
-//     if( event_number < first_event_number ){
-//       m.message("CAT::clusterizer::prepare_event: local_tracking: skip event", event_number, " first event is ", first_event_number,  mybhep::VERBOSE);
-//       return false;
-//     }
-
-//     parts.clear();
-//     clusters_.clear();
-
-//     order_cells();
-//     setup_cells();
-
-//     tracked_data_.set_cells(cells_);
-//     tracked_data_.set_calos(calorimeter_hits_);
-
-//     clock.stop(" clusterizer: prepare event ");
-
-
-//     return true;
-
-
-//   }
-
-
-//   //*******************************************************************
-//   void clusterizer::read_true_sequences(mybhep::event& event_ref){
-//     //*******************************************************************
-//     const std::vector<mybhep::particle*>& truep = event_ref.true_particles();
-//     m.message("CAT::clusterizer::read_true_sequences: number of true particles is", truep.size(), mybhep::VVERBOSE);
-//     if (truep.size()!=0){
-
-//       for( size_t ipart=0; ipart<truep.size(); ipart++)
-//         {
-
-//           mybhep::particle& tp = *truep[ipart];
-//           const std::vector<mybhep::hit*>& thits = tp.hits("trk");
-//           topology::sequence trueseq;
-//           std::vector<topology::node> truenodes;
-//           for(size_t i=0; i<thits.size(); i++)
-//             {
-//               size_t index = get_true_hit_index(*thits[i], tp.primary());
-//               topology::node tn(*thits[i], index, SuperNemo, level, probmin);
-//               truenodes.push_back(tn);
-//             }
-//           trueseq.set_nodes(truenodes);
-//           if( tp.find_property("charge"))
-//             trueseq.set_charge(topology::experimental_double(tp.charge(),0.));//particle charge
-//           else if( tp.name() == "e+")
-//             trueseq.set_charge(topology::experimental_double(1.,0.));
-//           else if( tp.name() == "e-")
-//             trueseq.set_charge(topology::experimental_double(-1.,0.));
-//           else
-//             trueseq.set_charge(topology::experimental_double(-1.,0.));
-
-//           if( tp.find_property("length"))
-//             trueseq.set_helix_length(topology::experimental_double(mybhep::double_from_string(tp.fetch_property("length")), 0.));
-
-//           trueseq.set_helix_vertex( topology::experimental_point( tp.vertex().x(), tp.vertex().y(), tp.vertex().z(), 0., 0., 0.),"true");
-
-//           size_t cindex = 0;
-//           const std::vector<mybhep::hit*>& chits = tp.hits("cal");
-//           if( !chits.empty() ){
-//             topology::calorimeter_hit ch = make_calo_hit(*chits[0], 0);
-//             cindex = get_calo_hit_index(ch);
-//             trueseq.set_decay_helix_vertex( topology::experimental_point( tp.decay_vertex().x(), tp.decay_vertex().y(), tp.decay_vertex().z(), 0., 0., 0.),"calo", cindex);
-//           }
-
-//           trueseq.set_name( tp.name() );
-
-//           trueseq.set_momentum( topology::experimental_vector(tp.p3().x(), tp.p3().y(), tp.p3().z(), 0., 0., 0.));
-
-//           trueseq.set_primary( tp.primary());
-
-//           true_sequences_.push_back(trueseq);
-
-
-
-//         }
-
-//       if( level >= mybhep::VVERBOSE ){
-//         print_true_sequences();
-//       }
-
-//     }
-
-//     return;
-
-//   }
-
-//   //*******************************************************************
-//   void clusterizer::read_nemo_sequences(mybhep::event& event_ref){
-//     //*******************************************************************
-
-//     std::vector<mybhep::particle*> nemo_parts;
-
-//     event_ref.filter(mybhep::DIGI,"NEMO","1",nemo_parts);
-
-//     if (! nemo_parts.empty()){
-//       m.message("CAT::clusterizer::read_nemo_sequences: number of nemo particles is", nemo_parts.size(), mybhep::VVERBOSE);
-
-//       for( size_t ipart=0; ipart<nemo_parts.size(); ipart++)
-//         {
-
-//           mybhep::particle& tp = *nemo_parts[ipart];
-//           const std::vector<mybhep::hit*>& thits = tp.hits("trk");
-//           topology::sequence nemoseq;
-//           std::vector<topology::node> nemonodes;
-//           for(size_t i=0; i<thits.size(); i++)
-//             {
-//               size_t index = get_nemo_hit_index(*thits[i], tp.primary());
-//               topology::node tn(*thits[i], index, SuperNemo, level, probmin);
-//               nemonodes.push_back(tn);
-//             }
-//           nemoseq.set_nodes(nemonodes);
-//           if( tp.find_property("charge"))
-//             nemoseq.set_charge(topology::experimental_double(tp.charge(),0.));//particle charge
-
-//           if( tp.find_property("length"))
-//             nemoseq.set_helix_length(topology::experimental_double(mybhep::double_from_string(tp.fetch_property("length")), 0.));
-
-//           nemoseq.set_helix_vertex( topology::experimental_point( tp.vertex().x(), tp.vertex().y(), tp.vertex().z(), 0., 0., 0.),"nemo");
-
-
-//           size_t cindex = 0;
-//           const std::vector<mybhep::hit*>& chits = tp.hits("cal");
-//           if( !chits.empty() ){
-//             topology::calorimeter_hit ch = make_calo_hit(*chits[0], 0);
-//             cindex = get_calo_hit_index(ch);
-//             nemoseq.set_decay_helix_vertex( topology::experimental_point( tp.decay_vertex().x(), tp.decay_vertex().y(), tp.decay_vertex().z(), 0., 0., 0.),"calo", cindex);
-//           }
-
-//           nemoseq.set_name( tp.name() );
-
-//           nemoseq.set_momentum( topology::experimental_vector(tp.p3().x(), tp.p3().y(), tp.p3().z(), 0., 0., 0.));
-
-//           nemoseq.set_primary( tp.primary());
-
-//           nemo_sequences_.push_back(nemoseq);
-
-
-
-//         }
-
-//       if( level >= mybhep::VVERBOSE ){
-//         print_nemo_sequences();
-//       }
-
-//     }
-
-//     return;
-
-//   }
 
 //   //*******************************************************************
 //   void clusterizer::print_cells(void)const{
@@ -946,124 +608,6 @@ namespace CAT {
 //     return;
 //   }
 
-
-
-//   //*******************************************************************
-//   void clusterizer::clusterize(topology::tracked_data & tracked_data_){
-//     //*******************************************************************
-
-//     if( cells_.empty() ) return;
-
-//     if( !select_true_tracks(tracked_data_) ){
-//       m.message("CAT::clusterizer::clusterize: event is not selected at true level ", mybhep::NORMAL);
-//       tracked_data_.set_selected(false);
-//       return;
-//     }
-
-//     float side[2]; // loop on two sides of the foil
-//     side[0] =  1.;
-//     side[1] = -1.;
-
-//     bool fast[2]; // loop on fast and slow hits
-//     fast[0] = true;
-//     fast[1] = false;
-
-//     std::map<int,unsigned int > flags;
-
-  //  Plus nécessaire car le travail est fait par le preclustering
-//     for(size_t ip=0; ip<2; ip++)  // loop on two sides of the foil
-//       {
-//         for(size_t iq=0; iq<2; iq++) // loop on fast and slow hits
-//           {
-//             for(size_t i=0; i<cells_.size(); i++)
-//               {
-//                 flags[cells_[i].id()] = 0;
-//               }
-
-//             for(std::vector<topology::cell>::const_iterator icell=cells_.begin(); icell!=cells_.end(); ++icell){
-//               // pick a cell c that was never added
-//               const topology::cell & c = *icell;
-//               if( (cell_side(c) * side[ip]) < 0) continue;
-//               if( c.fast() != fast[iq] ) continue;
-//               if( flags[c.id()] == 1 ) continue;
-//               flags[c.id()] = 1;
-
-//               // cell c will form a new cluster, i.e. a new list of nodes
-//               topology::cluster cluster_connected_to_c;
-//               std::vector<topology::node> nodes_connected_to_c;
-//               m.message("CAT::clusterizer::clusterize: begin new cluster with cell ", c.id(), mybhep::VERBOSE);
-
-//               // let's get the list of all the cells that can be reached from c
-//               // without jumps
-//               std::vector<topology::cell> cells_connected_to_c;
-//               cells_connected_to_c.push_back(c);
-
-//               for( size_t i=0; i<cells_connected_to_c.size(); i++){ // loop on connected cells
-//                 // take a connected cell (the first one is just c)
-//                 topology::cell cconn = cells_connected_to_c[i];
-
-//                 // the connected cell composes a new node
-//                 topology::node newnode(cconn, level, probmin);
-//                 std::vector<topology::cell_couplet> cc;
-
-//                 // get the list of cells near the connected cell
-//                 std::vector<topology::cell> cells_near_iconn = get_near_cells(cconn);
-
-//                 m.message("CAT::clusterizer::clusterize: cluster ", clusters_.size(), " starts with ", c.id(), " try to add cell ", cconn.id(), " with n of neighbours = ", cells_near_iconn.size(), mybhep::VERBOSE);
-//                 for(std::vector<topology::cell>::const_iterator icnc=cells_near_iconn.begin(); icnc!=cells_near_iconn.end(); ++icnc){
-
-//                   topology::cell cnc = *icnc;
-
-//                   if( !is_good_couplet(& cconn, cnc, cells_near_iconn) ) continue;
-
-//                   topology::cell_couplet ccnc(cconn,cnc,level,probmin);
-//                   cc.push_back(ccnc);
-
-//                   m.message("CAT::clusterizer::clusterize: ... creating couplet ", cconn.id(), " -> ", cnc.id(), mybhep::VERBOSE);
-
-//                   if( flags[cnc.id()] != 1 )
-//                     {
-//                       flags[cnc.id()] = 1 ;
-//                       cells_connected_to_c.push_back(cnc);
-//                     }
-//                 }
-//                 newnode.set_cc(cc);
-//                 newnode.calculate_triplets(Ratio, QuadrantAngle, TangentPhi, TangentTheta);
-//                 nodes_connected_to_c.push_back(newnode);
-
-//                 m.message("CAT::clusterizer::clusterize: cluster started with ", c.id(), " has been given cell ", cconn.id(), " with ", cc.size(), " couplets ", mybhep::VERBOSE);
-
-//               }
-
-//               cluster_connected_to_c.set_nodes(nodes_connected_to_c);
-
-//               clusters_.push_back(cluster_connected_to_c);
-//             }
-
-//           }
-//       }
-
-
-//     setup_clusters();
-
-//     m.message("CAT::clusterizer::clusterize: there are ", clusters_.size(), " clusters of cells ", mybhep::VVERBOSE);
-
-//     if( PrintMode )
-//       make_plots(tracked_data_);
-
-//     if( level >= mybhep::VVERBOSE ){
-//       print_clusters();
-//     }
-
-//     tracked_data_.set_cells(cells_);
-//     tracked_data_.set_clusters(clusters_);
-
-//     clock.stop(" clusterizer: clusterize ");
-
-
-//     return;
-
-//   }
 
 //   //*******************************************************************
 //   void clusterizer::clusterize_after_sultan(topology::tracked_data & tracked_data_){
@@ -1427,20 +971,6 @@ namespace CAT {
 //   }
 
 
-//   //*************************************************************
-//   void clusterizer::setup_cells(){
-//     //*************************************************************
-
-//     for(std::vector<topology::cell>::iterator icell=cells_.begin(); icell!=cells_.end(); ++icell){
-//       icell->set_print_level(level);
-//       icell->set_probmin(probmin);
-//     }
-
-//     return;
-
-//   }
-
-
 
 //   //*************************************************************
 //   void clusterizer::setup_clusters(){
@@ -1653,29 +1183,6 @@ namespace CAT {
 //     topology::calorimeter_hit ch(pl, e, t, _id, layer, level, probmin);
 
 //     return ch;
-//   }
-
-//   //*************************************************************
-//   void clusterizer::order_cells(){
-//     //*************************************************************
-
-//     clock.start(" clusterizer: order cells ","cumulative");
-
-//     if( cells_.size() ){
-//       if( level >= mybhep::VVERBOSE ){
-//         std::clog << "CAT::clusterizer::order_cells: printing cells " << cells_.size() << std::endl;
-//         print_cells();
-//         std::clog << "CAT::clusterizer::order_cells: sorting cells " << std::endl;
-//       }
-
-//       //  std::sort( cells_.begin(), cells_.end(), topology::cell::compare );
-//       std::sort( cells_.begin(), cells_.end());
-//     }
-
-//     clock.stop(" clusterizer: order cells ");
-
-//     return;
-
 //   }
 
 //   //*************************************************************

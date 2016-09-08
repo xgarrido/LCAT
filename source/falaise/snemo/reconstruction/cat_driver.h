@@ -92,7 +92,7 @@ namespace snemo {
 
       CAT::setup_data   _CAT_setup_;         /// Configuration data
       CAT::input_data   _CAT_input_;         /// Input data
-      // CAT::output_data  _CAT_output_;        /// Output data
+      CAT::output_data  _CAT_output_;        /// Output data
       CAT::clusterizer  _CAT_clusterizer_;   /// CAT clusterizer
       // CAT::sequentiator _CAT_sequentiator_;  /// CAT sequentiator
       double            _sigma_z_factor_;    /// Factor for longitudinal error

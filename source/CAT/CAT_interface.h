@@ -13,6 +13,7 @@
 // #include <CATAlgorithm/experimental_point.h>
 #include <CAT/cell_base.h>
 #include <CAT/calorimeter_hit.h>
+#include <CAT/tracked_data_base.h>
 // #include <CATAlgorithm/clusterizer.h>
 // #include <CATAlgorithm/sequentiator.h>
 
@@ -126,14 +127,14 @@ namespace CAT {
     std::vector<CAT::calorimeter_hit> calo_cells;
   };
 
-  // /// Output data model
-  // struct output_data
-  // {
-  // public:
-  //   output_data ();
-  // public:
-  //   topology::tracked_data tracked_data;
-  // };
+  /// Output data model
+  struct output_data
+  {
+  public:
+    output_data ();
+  public:
+    CAT::tracked_data tracked_data;
+  };
 
 }
 
