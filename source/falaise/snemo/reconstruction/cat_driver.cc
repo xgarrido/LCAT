@@ -8,6 +8,8 @@
 #include <stdexcept>
 
 // Third party:
+// - Boost :
+#include <boost/foreach.hpp>
 // - Bayeux/datatools :
 #include <datatools/properties.h>
 #include <datatools/exception.h>
@@ -28,14 +30,22 @@ namespace snemo {
 
   namespace reconstruction {
 
-    const std::string & cat_driver::get_id()
+    const std::string cat_driver::CAT_ID = "CAT";
+
+    void cat_driver::set_magfield(double value_)
     {
-      static const std::string _id("CAT");
-      return _id;
+      DT_THROW_IF(is_initialized(), std::logic_error, "CAT driver is already initialized!");
+      _magfield_ = value_;
+      return;
+    }
+
+    double cat_driver::get_magfield() const
+    {
+      return _magfield_;
     }
 
     cat_driver::cat_driver() :
-      ::snemo::processing::base_tracker_clusterizer(cat_driver::get_id())
+      ::snemo::processing::base_tracker_clusterizer(cat_driver::CAT_ID)
     {
       _set_defaults();
       return;
@@ -57,6 +67,21 @@ namespace snemo {
 
       _CAT_setup_.SuperNemo = true;
       _CAT_setup_.FoilRadius = 0.0;
+
+      double default_magfield_unit = CLHEP::tesla;
+      // Forcing magnetic field (a temporary trick)
+      if (! datatools::is_valid(_magfield_)) {
+        if (setup_.has_key("CAT.magnetic_field")) {
+          double magfield = setup_.fetch_real("CAT.magnetic_field");
+          if (! setup_.has_explicit_unit("CAT.magnetic_field")) {
+            magfield *= default_magfield_unit;
+          }
+          set_magfield(magfield);
+        }
+      }
+      if (!datatools::is_valid(_magfield_)) {
+        set_magfield(0.0025 * CLHEP::tesla);
+      }
 
       // Verbosity level
       if (setup_.has_key("CAT.level")) {
@@ -117,6 +142,11 @@ namespace snemo {
                      "Invalid Sigma Z factor(" << _sigma_z_factor_ << ") !");
       }
 
+      // Store results within data properties
+      if (setup_.has_key("CAT.store_result_as_properties")) {
+        _store_result_as_properties_ = setup_.fetch_boolean("CAT.store_result_as_properties");
+      }
+
       // Get the calorimeter locators from a geometry plugin :
       const geomtools::manager & geo_mgr = get_geometry_manager();
       std::string locator_plugin_name;
@@ -166,29 +196,35 @@ namespace snemo {
       _CAT_setup_.cell_size              = get_gg_locator().get_cell_diameter();
 
       // Hard-coded values of bfield and chamber size
-      _CAT_setup_.bfield = 0.0025 * CLHEP::tesla / CLHEP::tesla;
+      _CAT_setup_.bfield = _magfield_ / CLHEP::tesla;
       _CAT_setup_.xsize  = 2500. * CLHEP::mm; // this is y in SnWare coordinates
       _CAT_setup_.ysize  = 1350. * CLHEP::mm; // this is z in SnWare coordinates
       _CAT_setup_.zsize  =  450. * CLHEP::mm; // this is x in SnWare coordinates
 
       // Check the validity of the CAT setup data :
       DT_THROW_IF(! _CAT_setup_.check(), std::logic_error,
-                  "Setup data for the CAT machine is not checked !");
+                  "Setup data for the CAT machine is not checked : "
+                  << _CAT_setup_.get_error_message() << " !");
 
       // Configure and initialize the CAT machine :
       CAT::clusterizer_configure(_CAT_clusterizer_, _CAT_setup_);
-      // CAT::sequentiator_configure(_CAT_sequentiator_, _CAT_setup_);
+      CAT::sequentiator_configure(_CAT_sequentiator_, _CAT_setup_);
 
-      _CAT_clusterizer_.initialize();
-      // _CAT_sequentiator_.initialize();
+      _CAT_clusterizer_.initialize ();
+      _CAT_sequentiator_.initialize();
 
       _set_initialized(true);
+
       return;
     }
 
     void cat_driver::_set_defaults()
     {
       _CAT_setup_.reset();
+      _sigma_z_factor_ = 1.0;
+      datatools::invalidate(_magfield_);
+      _process_calo_hits_ = true;
+      _store_result_as_properties_ = true;
       _calo_locator_  = 0;
       _xcalo_locator_ = 0;
       _gveto_locator_ = 0;
@@ -202,9 +238,9 @@ namespace snemo {
       DT_THROW_IF(! is_initialized(), std::logic_error,
                   "CAT driver is not initialized !");
       _set_initialized(false);
-      // _CAT_clusterizer_.finalize();
-      // _CAT_sequentiator_.finalize();
-      // _CAT_setup_.reset();
+      _CAT_clusterizer_.finalize();
+      _CAT_sequentiator_.finalize();
+      _CAT_setup_.reset();
       _set_defaults();
       this->base_tracker_clusterizer::_reset();
       return;
@@ -214,9 +250,9 @@ namespace snemo {
     /// Main clustering method
     int cat_driver::_process_algo(const base_tracker_clusterizer::hit_collection_type & gg_hits_,
                                   const base_tracker_clusterizer::calo_hit_collection_type & calo_hits_,
-                                  snemo::datamodel::tracker_clustering_data & /*clustering_*/)
+                                  snemo::datamodel::tracker_clustering_data & clustering_ )
     {
-      // namespace ct = CAT::topology;
+      namespace ct = CAT::topology;
       namespace sdm = snemo::datamodel;
 
       // CAT input data model :
@@ -231,19 +267,20 @@ namespace snemo {
       std::map<int, int> hits_status;
 
       // GG hit loop :
-      for (auto gg_handle : gg_hits_) {
+      BOOST_FOREACH(const sdm::calibrated_data::tracker_hit_handle_type & gg_handle,
+                    gg_hits_) {
         // Skip NULL handle :
         if (! gg_handle) continue;
 
         // Get a const reference on the calibrated Geiger hit :
-        const sdm::calibrated_tracker_hit & a_gg_hit = gg_handle.get();
+        const sdm::calibrated_tracker_hit & snemo_gg_hit = gg_handle.get();
 
         // Check the geometry ID as a Geiger cell :
-        const geomtools::geom_id & gg_hit_gid = a_gg_hit.get_geom_id();
-        const snemo::geometry::gg_locator & gg_locator = get_gg_locator();
-        DT_THROW_IF(! gg_locator.is_drift_cell_volume(gg_hit_gid),
-                    std::logic_error,
-                    "Calibrated tracker hit can not be located inside detector !");
+        const snemo::geometry::gg_locator & gg_locator = get_gg_locator ();
+        const geomtools::geom_id & gg_hit_gid = snemo_gg_hit.get_geom_id ();
+        DT_THROW_IF (! gg_locator.is_drift_cell_volume (gg_hit_gid),
+                     std::logic_error,
+                     "Calibrated tracker hit can not be located inside detector !");
 
         if (!gg_locator.is_drift_cell_volume_in_current_module (gg_hit_gid)) {
           DT_LOG_DEBUG (get_logging_priority (), "Current Geiger cell is not in the module!");
@@ -267,37 +304,37 @@ namespace snemo {
         const int cell_id  = row - (_CAT_setup_.num_cells_per_plane / 2);
 
         // X-Y position of the anode wire of the hit cell :
-        CAT::experimental_double z; // == X in sngeometry SN module frame
-        CAT::experimental_double x; // == Y in sngeometry SN module frame
+        CAT::topology::experimental_double z; // == X in sngeometry SN module frame
+        CAT::topology::experimental_double x; // == Y in sngeometry SN module frame
 
         // Center of the cell set in CAT's own reference frame:
-        z.set_value(a_gg_hit.get_x());
+        z.set_value(snemo_gg_hit.get_x());
         z.set_error(0.0);
-        x.set_value(a_gg_hit.get_y());
+        x.set_value(snemo_gg_hit.get_y());
         x.set_error(0.0);
 
         // Transverse Geiger drift distance :
-        CAT::experimental_double y;
+        CAT::topology::experimental_double y;
         // Plasma longitudinal origin along the anode wire :
-        y.set_value(a_gg_hit.get_z());
-        y.set_error(_sigma_z_factor_ * a_gg_hit.get_sigma_z());
+        y.set_value(snemo_gg_hit.get_z());
+        y.set_error(_sigma_z_factor_ * snemo_gg_hit.get_sigma_z());
 
         // Prompt/delayed trait of the hit :
-        const bool fast = a_gg_hit.is_prompt();
+        const bool fast = snemo_gg_hit.is_prompt();
 
         // Transverse Geiger drift distance :
-        const double rdrift     = a_gg_hit.get_r();
-        const double rdrift_err = a_gg_hit.get_sigma_r();
+        const double rdrift     = snemo_gg_hit.get_r();
+        const double rdrift_err = snemo_gg_hit.get_sigma_r();
 
         // Build the Geiger hit position :
-        CAT::experimental_point gg_hit_position(x,y,z);
+        CAT::topology::experimental_point gg_hit_position(x,y,z);
 
         // Add a new hit cell in the CAT input data model :
-        CAT::cell & c = _CAT_input_.add_cell();
+        CAT::topology::cell & c = _CAT_input_.add_cell();
         c.set_type("SN");
         c.set_id(ihit++);
         c.set_probmin(_CAT_setup_.probmin);
-        c.set_position(gg_hit_position);
+        c.set_p(gg_hit_position);
         c.set_r(fast ? rdrift : 0.25 * gg_locator.get_cell_diameter());
         c.set_er(fast ? rdrift_err : 0.25 * gg_locator.get_cell_diameter());
         c.set_layer(layer_id);
@@ -311,7 +348,7 @@ namespace snemo {
         hits_status[c.id()] = 0;
 
         DT_LOG_DEBUG (get_logging_priority (),
-                      "Geiger cell #" << a_gg_hit.get_id() << " has been added "
+                      "Geiger cell #" << snemo_gg_hit.get_id() << " has been added "
                       << "to CAT input data with id number #" << c.id());
       } // BOOST_FOREACH(gg_hits_)
 
@@ -323,6 +360,7 @@ namespace snemo {
         if (_CAT_input_.calo_cells.capacity() < calo_hits_.size()) {
           _CAT_input_.calo_cells.reserve(calo_hits_.size());
         }
+        _CAT_output_.tracked_data.reset();
         size_t jhit = 0;
 
         // CALO hit loop :
@@ -338,64 +376,64 @@ namespace snemo {
           const geomtools::geom_id & a_calo_hit_gid = sncore_calo_hit.get_geom_id();
           // Extract the numbering scheme of the calo_cell from its geom ID :
           int column = -1;
-          // int side = -1;
-          // double width = datatools::invalid_real();
-          // double height = datatools::invalid_real();
-          // double thickness = datatools::invalid_real();
-          // CAT::experimental_vector norm(0., 0., 0., 0., 0., 0.);
-          // geomtools::vector_3d block_position;
+          int side = -1;
+          double width = datatools::invalid_real();
+          double height = datatools::invalid_real();
+          double thickness = datatools::invalid_real();
+          ct::experimental_vector norm(0., 0., 0., 0., 0., 0.);
+          geomtools::vector_3d block_position;
           // Extract the numbering scheme of the scin block from its geom ID :
           if (_calo_locator_->is_calo_block_in_current_module(a_calo_hit_gid)) {
-          //   _calo_locator_->get_block_position(a_calo_hit_gid, block_position);
-          //   width     = _calo_locator_->get_block_width();
-          //   height    = _calo_locator_->get_block_height();
-          //   thickness = _calo_locator_->get_block_thickness();
+            _calo_locator_->get_block_position(a_calo_hit_gid, block_position);
+            width     = _calo_locator_->get_block_width();
+            height    = _calo_locator_->get_block_height();
+            thickness = _calo_locator_->get_block_thickness();
             column    = _calo_locator_->extract_column(a_calo_hit_gid);
-          //   side      = _calo_locator_->extract_side(a_calo_hit_gid);
-          //   const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
-          //   norm.set_x(CAT::experimental_double((double) side_number, 0.));
+            side      = _calo_locator_->extract_side(a_calo_hit_gid);
+            const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
+            norm.set_x(ct::experimental_double((double) side_number, 0.));
           } else if (_xcalo_locator_->is_calo_block_in_current_module(a_calo_hit_gid)) {
-          //   _xcalo_locator_->get_block_position(a_calo_hit_gid, block_position);
-          //   width     = _xcalo_locator_->get_block_width();
-          //   height    = _xcalo_locator_->get_block_height();
-          //   thickness = _xcalo_locator_->get_block_thickness();
+            _xcalo_locator_->get_block_position(a_calo_hit_gid, block_position);
+            width     = _xcalo_locator_->get_block_width();
+            height    = _xcalo_locator_->get_block_height();
+            thickness = _xcalo_locator_->get_block_thickness();
             column    = _xcalo_locator_->extract_column(a_calo_hit_gid);
-          //   side      = _xcalo_locator_->extract_side(a_calo_hit_gid);
-          //   const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
-          //   norm.set_y(CAT::experimental_double((double) side_number, 0.));
+            side      = _xcalo_locator_->extract_side(a_calo_hit_gid);
+            const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
+            norm.set_y(ct::experimental_double((double) side_number, 0.));
           } else if (_gveto_locator_->is_calo_block_in_current_module(a_calo_hit_gid)) {
-          //   _gveto_locator_->get_block_position(a_calo_hit_gid, block_position);
-          //   width     = _gveto_locator_->get_block_width();
-          //   height    = _gveto_locator_->get_block_height();
-          //   thickness = _gveto_locator_->get_block_thickness();
+            _gveto_locator_->get_block_position(a_calo_hit_gid, block_position);
+            width     = _gveto_locator_->get_block_width();
+            height    = _gveto_locator_->get_block_height();
+            thickness = _gveto_locator_->get_block_thickness();
             column    = _gveto_locator_->extract_column(a_calo_hit_gid);
-          //   side      = _xcalo_locator_->extract_side(a_calo_hit_gid);
-          //   const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
-          //   norm.set_z(CAT::experimental_double((double) side_number, 0.));
+            side      = _xcalo_locator_->extract_side(a_calo_hit_gid);
+            const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
+            norm.set_z(ct::experimental_double((double) side_number, 0.));
           }
 
-          CAT::experimental_double energy(sncore_calo_hit.get_energy(),
+          ct::experimental_double energy(sncore_calo_hit.get_energy(),
                                          sncore_calo_hit.get_sigma_energy());
-          CAT::experimental_double time(sncore_calo_hit.get_time(),
+          ct::experimental_double time(sncore_calo_hit.get_time(),
                                        sncore_calo_hit.get_sigma_time());
           // size_t id = sncore_calo_hit.get_hit_id();
-          // CAT::experimental_point center(block_position.x(),
-          //                               block_position.y(),
-          //                               block_position.z(),
-          //                               0., 0., 0.);
-          // CAT::experimental_vector sizes(width, height, thickness,
-          //                               0., 0., 0.);
-          // CAT::plane pl(center, sizes, norm);
-          // pl.set_probmin(_CAT_setup_.probmin);
-          // pl.set_type("SuperNEMO");
+          ct::experimental_point center(block_position.x(),
+                                        block_position.y(),
+                                        block_position.z(),
+                                        0., 0., 0.);
+          ct::experimental_vector sizes(width, height, thickness,
+                                        0., 0., 0.);
+          ct::plane pl(center, sizes, norm);
+          pl.set_probmin(_CAT_setup_.probmin);
+          pl.set_type("SuperNEMO");
 
           // Build the Calo hit position :
           // Add a new hit calo_cell in the CAT input data model :
-          CAT::calorimeter_hit & c = _CAT_input_.add_calo_cell();
-          // c.set_pl(pl);
+          ct::calorimeter_hit & c = _CAT_input_.add_calo_cell();
+          c.set_pl(pl);
           c.set_e(energy);
           c.set_t(time);
-          // c.set_probmin(_CAT_setup_.probmin);
+          c.set_probmin(_CAT_setup_.probmin);
           c.set_layer(column);
           c.set_id(jhit++);
 
@@ -414,14 +452,11 @@ namespace snemo {
         return 1;
       }
 
-      // Reset output data
-      _CAT_output_.tracked_data.reset();
-
       // Install the input data model within the algorithm object :
       _CAT_clusterizer_.set_cells(_CAT_input_.cells);
 
-      // // Install the input data model within the algorithm object :
-      // _CAT_clusterizer_.set_calorimeter_hits(_CAT_input_.calo_cells);
+      // Install the input data model within the algorithm object :
+      _CAT_clusterizer_.set_calorimeter_hits(_CAT_input_.calo_cells);
 
       // Prepare the output data model :
       _CAT_clusterizer_.prepare_event(_CAT_output_.tracked_data);
@@ -429,104 +464,268 @@ namespace snemo {
       // Run the clusterizer algorithm :
       _CAT_clusterizer_.clusterize(_CAT_output_.tracked_data);
 
-      // // Run the sequentiator algorithm :
-      // _CAT_sequentiator_.sequentiate(_CAT_output_.tracked_data);
+      // Run the sequentiator algorithm :
+      _CAT_sequentiator_.sequentiate(_CAT_output_.tracked_data);
 
-      // // Analyse the sequentiator output i.e. 'scenarios' made of 'sequences' of geiger cells:
-      // const std::vector<CAT::topology::scenario> & tss = _CAT_output_.tracked_data.get_scenarios();
+      // Analyse the sequentiator output i.e. 'scenarios' made of 'sequences' of geiger cells:
+      const std::vector<CAT::topology::scenario> & tss = _CAT_output_.tracked_data.get_scenarios();
 
-      // for (std::vector<CAT::topology::scenario>::const_iterator iscenario = tss.begin();
-      //      iscenario != tss.end();
-      //      ++iscenario) {
-      //   for (std::map<int,int>::iterator ihs = hits_status.begin();
-      //        ihs != hits_status.end();
-      //        ihs++) {
-      //     ihs->second = 0;
-      //   }
-      //   DT_LOG_DEBUG(get_logging_priority(), "Number of scenarios = " << tss.size());
+      for (std::vector<CAT::topology::scenario>::const_iterator iscenario = tss.begin();
+           iscenario != tss.end();
+           ++iscenario) {
+        for (std::map<int,int>::iterator ihs = hits_status.begin();
+             ihs != hits_status.end();
+             ihs++) {
+          ihs->second = 0;
+        }
+        DT_LOG_DEBUG(get_logging_priority(), "Number of scenarios = " << tss.size());
 
-      //   sdm::tracker_clustering_solution::handle_type htcs(new sdm::tracker_clustering_solution);
-      //   clustering_.add_solution(htcs, true);
-      //   clustering_.grab_default_solution().set_solution_id(clustering_.get_number_of_solutions() - 1);
-      //   sdm::tracker_clustering_solution & clustering_solution = clustering_.grab_default_solution();
-      //   clustering_solution.grab_auxiliaries().update_string(sdm::tracker_clustering_data::clusterizer_id_key(), CAT_ID);
+        sdm::tracker_clustering_solution::handle_type htcs(new sdm::tracker_clustering_solution);
+        clustering_.add_solution(htcs, true);
+        clustering_.grab_default_solution().set_solution_id(clustering_.get_number_of_solutions() - 1);
+        sdm::tracker_clustering_solution & clustering_solution = clustering_.grab_default_solution();
+        clustering_solution.grab_auxiliaries().update_string(sdm::tracker_clustering_data::clusterizer_id_key(), CAT_ID);
 
-      //   // Analyse the sequentiator output :
-      //   const std::vector<CAT::topology::sequence> & the_sequences = iscenario->sequences();
-      //   DT_LOG_DEBUG(get_logging_priority(), "Number of sequences = " << the_sequences.size());
+        // Analyse the sequentiator output :
+        const std::vector<CAT::topology::sequence> & the_sequences = iscenario->sequences();
+        DT_LOG_DEBUG(get_logging_priority(), "Number of sequences = " << the_sequences.size());
 
-      //   for (std::vector<CAT::topology::sequence>::const_iterator isequence = the_sequences.begin();
-      //        isequence != the_sequences.end();
-      //        ++isequence) {
-      //     const CAT::topology::sequence & a_sequence = *isequence;
-      //     const size_t seqsz = a_sequence.nodes().size();
-      //     if (seqsz == 1) {
-      //       // A CAT cluster with only one hit/cell(node) is ignored:
-      //       //int hit_id = a_sequence.nodes()[0].c().id();
-      //       // hits_status[hit_id] = 1;
-      //       // clustering_solution.grab_unclustered_hits().push_back(hits_mapping[hit_id]);
-      //     } else {
-      //       // A CAT cluster with more than one hit/cell(node) :
-      //       {
-      //         // Append a new cluster :
-      //         sdm::tracker_cluster::handle_type tch(new sdm::tracker_cluster);
-      //         clustering_solution.grab_clusters().push_back(tch);
-      //       }
-      //       sdm::tracker_cluster::handle_type & cluster_handle
-      //         = clustering_solution.grab_clusters().back();
-      //       cluster_handle.grab().set_cluster_id(clustering_solution.get_clusters().size() - 1);
+        for (std::vector<CAT::topology::sequence>::const_iterator isequence = the_sequences.begin();
+             isequence != the_sequences.end();
+             ++isequence) {
+          const CAT::topology::sequence & a_sequence = *isequence;
+          const size_t seqsz = a_sequence.nodes().size();
+          if (seqsz == 1) {
+            // A CAT cluster with only one hit/cell(node) is ignored:
+            //int hit_id = a_sequence.nodes()[0].c().id();
+            // hits_status[hit_id] = 1;
+            // clustering_solution.grab_unclustered_hits().push_back(hits_mapping[hit_id]);
+          } else {
+            // A CAT cluster with more than one hit/cell(node) :
+            {
+              // Append a new cluster :
+              sdm::tracker_cluster::handle_type tch(new sdm::tracker_cluster);
+              clustering_solution.grab_clusters().push_back(tch);
+            }
+            sdm::tracker_cluster::handle_type & cluster_handle
+              = clustering_solution.grab_clusters().back();
+            cluster_handle.grab().set_cluster_id(clustering_solution.get_clusters().size() - 1);
+            if (_store_result_as_properties_) {
 
-        //     CAT::topology::experimental_double phi(0.,0.);
-        //     double phi_ref = 0.;
+              // 2012/06/28 XG : Adding
+              // - tangency points
+              // - helix points
+              // - track tangency vertex
+              // - track helix vertex
+              // from CAT algorithm. Since it is a none generic information, this
+              // info will be added to calibrated data cells as properties.
+              // Be careful of the system coordinate :
+              // xcat -> y_snemo
+              // ycat -> z_snemo
+              // zcat -> x_snemo
+              const CAT::topology::experimental_point & helix_decay_vertex = a_sequence.decay_helix_vertex();
+              const CAT::topology::experimental_point & helix_vertex       = a_sequence.helix_vertex();
 
-        //     // Loop on all hits within the sequence(nodes) :
-        //     for (int i = 0; i < (int) seqsz; i++) {
-        //       const CAT::topology::node & a_node = a_sequence.nodes()[i];
-        //       const int hit_id = a_node.c().id();
-        //       cluster_handle.grab().grab_hits().push_back(hits_mapping[hit_id]);
-        //       hits_status[hit_id] = 1;
-        //       DT_LOG_DEBUG(get_logging_priority(), "Add tracker hit with id #" << hit_id);
+              const CAT::topology::experimental_point & tangent_decay_vertex = a_sequence.decay_tangent_vertex();
+              const CAT::topology::experimental_point & tangent_vertex       = a_sequence.tangent_vertex();
 
-        //       if (_store_result_as_properties_) {
-        //         const double xt    = a_node.ep().x().value();
-        //         const double yt    = a_node.ep().y().value();
-        //         const double zt    = a_node.ep().z().value();
-        //         const double xterr = a_node.ep().x().error();
-        //         const double yterr = a_node.ep().y().error();
-        //         const double zterr = a_node.ep().z().error();
+              const bool                      has_momentum = a_sequence.has_momentum();
+              const CAT::topology::experimental_vector & CAT_momentum = a_sequence.momentum();
 
-        //         const CAT::topology::helix & seq_helix = isequence->get_helix();
-        //         phi_ref = phi.value();
-        //         phi     = seq_helix.phi_of_point(a_node.c().ep(), phi_ref);
-        //         CAT::topology::experimental_vector hpos = seq_helix.position(phi);
-        //         const double hx    = hpos.x().value();
-        //         const double hy    = hpos.y().value();
-        //         const double hz    = hpos.z().value();
-        //         const double hxerr = hpos.x().error();
-        //         const double hyerr = hpos.y().error();
-        //         const double hzerr = hpos.z().error();
+              const bool   has_charge = a_sequence.has_charge();
+              const double charge     = a_sequence.charge().value();
 
-        //         // Be careful of the system coordinate :
-        //         // xcat -> y_snemo
-        //         // ycat -> z_snemo
-        //         // zcat -> x_snemo
-        //         sdm::calibrated_tracker_hit & the_last_cell = hits_mapping[hit_id].grab();
-        //         the_last_cell.grab_auxiliaries().update("CAT_tangency_x",       zt);
-        //         the_last_cell.grab_auxiliaries().update("CAT_tangency_y",       xt);
-        //         the_last_cell.grab_auxiliaries().update("CAT_tangency_z",       yt);
-        //         the_last_cell.grab_auxiliaries().update("CAT_tangency_x_error", zterr);
-        //         the_last_cell.grab_auxiliaries().update("CAT_tangency_y_error", xterr);
-        //         the_last_cell.grab_auxiliaries().update("CAT_tangency_z_error", yterr);
-        //         the_last_cell.grab_auxiliaries().update("CAT_helix_x",          hz);
-        //         the_last_cell.grab_auxiliaries().update("CAT_helix_y",          hx);
-        //         the_last_cell.grab_auxiliaries().update("CAT_helix_z",          hy);
-        //         the_last_cell.grab_auxiliaries().update("CAT_helix_x_error",    hzerr);
-        //         the_last_cell.grab_auxiliaries().update("CAT_helix_y_error",    hxerr);
-        //         the_last_cell.grab_auxiliaries().update("CAT_helix_z_error",    hyerr);
-        //       }
-        //     }
-        //   }
-        // } /* for sequence */
+              const bool   has_helix_charge = a_sequence.has_helix_charge();
+              const double helix_charge     = a_sequence.helix_charge().value();
+
+              const bool   has_detailed_charge = a_sequence.has_detailed_charge();
+              const double detailed_charge     = a_sequence.detailed_charge().value();
+
+              const bool   has_tangent_length   = a_sequence.has_tangent_length();
+              const double tangent_length       = a_sequence.tangent_length().value();
+              const double tangent_length_error = a_sequence.tangent_length().error();
+
+              const bool   has_helix_length   = a_sequence.has_helix_length();
+              const double helix_length       = a_sequence.helix_length().value();
+              const double helix_length_error = a_sequence.helix_length().error();
+
+              const double xhv    = helix_vertex.z().value();
+              const double yhv    = helix_vertex.x().value();
+              const double zhv    = helix_vertex.y().value();
+              const double xhverr = helix_vertex.z().error();
+              const double yhverr = helix_vertex.x().error();
+              const double zhverr = helix_vertex.y().error();
+              const bool   hashv  = a_sequence.has_helix_vertex();
+
+              const double xhdv    = helix_decay_vertex.z().value();
+              const double yhdv    = helix_decay_vertex.x().value();
+              const double zhdv    = helix_decay_vertex.y().value();
+              const double xhdverr = helix_decay_vertex.z().error();
+              const double yhdverr = helix_decay_vertex.x().error();
+              const double zhdverr = helix_decay_vertex.y().error();
+              const bool   hashdv  = a_sequence.has_decay_helix_vertex();
+
+              const double xtv    = tangent_vertex.z().value();
+              const double ytv    = tangent_vertex.x().value();
+              const double ztv    = tangent_vertex.y().value();
+              const double xtverr = tangent_vertex.z().error();
+              const double ytverr = tangent_vertex.x().error();
+              const double ztverr = tangent_vertex.y().error();
+              const bool   hastv  = a_sequence.has_tangent_vertex();
+
+              const double xtdv    = tangent_decay_vertex.z().value();
+              const double ytdv    = tangent_decay_vertex.x().value();
+              const double ztdv    = tangent_decay_vertex.y().value();
+              const double xtdverr = tangent_decay_vertex.z().error();
+              const double ytdverr = tangent_decay_vertex.x().error();
+              const double ztdverr = tangent_decay_vertex.y().error();
+              const bool   hastdv  = a_sequence.has_decay_tangent_vertex();
+
+              const std::vector<double> & chi2s_all   = a_sequence.chi2s_all();
+              const std::vector<double> & probs_all   = a_sequence.probs_all();
+              std::vector<double> chi2s;
+              a_sequence.make_chi2s(chi2s);
+              std::vector<double> probs;
+              a_sequence.make_probs(probs);
+              const std::vector<double> & helix_chi2s = a_sequence.helix_chi2s();
+
+              cluster_handle.grab().grab_auxiliaries().update("CAT_has_momentum", has_momentum);
+              if ( has_momentum ){
+                cluster_handle.grab().grab_auxiliaries().update("CAT_momentum_x", CAT_momentum.z().value());
+                cluster_handle.grab().grab_auxiliaries().update("CAT_momentum_y", CAT_momentum.x().value());
+                cluster_handle.grab().grab_auxiliaries().update("CAT_momentum_z", CAT_momentum.y().value());
+              }
+
+              cluster_handle.grab().grab_auxiliaries().update("CAT_has_charge", has_charge);
+              if ( has_charge ){
+                cluster_handle.grab().grab_auxiliaries().update("CAT_charge", charge);
+              }
+
+              cluster_handle.grab().grab_auxiliaries().update("CAT_has_helix_charge", has_helix_charge);
+              if ( has_helix_charge ){
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_charge", helix_charge);
+              }
+
+              cluster_handle.grab().grab_auxiliaries().update("CAT_has_detailed_charge", has_detailed_charge);
+              if ( has_detailed_charge ){
+                cluster_handle.grab().grab_auxiliaries().update("CAT_detailed_charge", detailed_charge);
+              }
+
+              cluster_handle.grab().grab_auxiliaries().update("CAT_has_tangent_length", has_tangent_length);
+              if ( has_tangent_length ){
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_length", tangent_length);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_length_error", tangent_length_error);
+              }
+
+              cluster_handle.grab().grab_auxiliaries().update("CAT_has_helix_length", has_helix_length);
+              if ( has_helix_length ){
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_length", helix_length);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_length_error", helix_length_error);
+              }
+
+              cluster_handle.grab().grab_auxiliaries().update("CAT_has_helix_vertex", hashv);
+              if ( hashv ){
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_vertex_type", a_sequence.helix_vertex_type());
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_vertex_x", xhv);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_vertex_y", yhv);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_vertex_z", zhv);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_vertex_x_error", xhverr);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_vertex_y_error", yhverr);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_vertex_z_error", zhverr);
+              }
+
+              cluster_handle.grab().grab_auxiliaries().update("CAT_has_helix_decay_vertex", hashdv);
+              if ( hashdv ){
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_decay_vertex_type", a_sequence.decay_helix_vertex_type());
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_decay_vertex_x", xhdv);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_decay_vertex_y", yhdv);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_decay_vertex_z", zhdv);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_decay_vertex_x_error", xhdverr);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_decay_vertex_y_error", yhdverr);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_helix_decay_vertex_z_error", zhdverr);
+              }
+
+
+              cluster_handle.grab().grab_auxiliaries().update("CAT_has_tangent_vertex", hastv);
+              if ( hastv ){
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_vertex_type", a_sequence.tangent_vertex_type());
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_vertex_x", xtv);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_vertex_y", ytv);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_vertex_z", ztv);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_vertex_x_error", xtverr);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_vertex_y_error", ytverr);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_vertex_z_error", ztverr);
+              }
+
+              cluster_handle.grab().grab_auxiliaries().update("CAT_has_tangent_decay_vertex", hastdv);
+              if ( hastdv ){
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_decay_vertex_type", a_sequence.decay_tangent_vertex_type());
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_decay_vertex_x", xtdv);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_decay_vertex_y", ytdv);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_decay_vertex_z", ztdv);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_decay_vertex_x_error", xtdverr);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_decay_vertex_y_error", ytdverr);
+                cluster_handle.grab().grab_auxiliaries().update("CAT_tangent_decay_vertex_z_error", ztdverr);
+              }
+
+              cluster_handle.grab().grab_auxiliaries().update("CAT_chi2s_all", chi2s_all);
+              cluster_handle.grab().grab_auxiliaries().update("CAT_probs_all", probs_all);
+              cluster_handle.grab().grab_auxiliaries().update("CAT_chi2s", chi2s);
+              cluster_handle.grab().grab_auxiliaries().update("CAT_probs", probs);
+              cluster_handle.grab().grab_auxiliaries().update("CAT_helix_chi2s", helix_chi2s);
+            }
+
+            CAT::topology::experimental_double phi(0.,0.);
+            double phi_ref = 0.;
+
+            // Loop on all hits within the sequence(nodes) :
+            for (int i = 0; i < (int) seqsz; i++) {
+              const CAT::topology::node & a_node = a_sequence.nodes()[i];
+              const int hit_id = a_node.c().id();
+              cluster_handle.grab().grab_hits().push_back(hits_mapping[hit_id]);
+              hits_status[hit_id] = 1;
+              DT_LOG_DEBUG(get_logging_priority(), "Add tracker hit with id #" << hit_id);
+
+              if (_store_result_as_properties_) {
+                const double xt    = a_node.ep().x().value();
+                const double yt    = a_node.ep().y().value();
+                const double zt    = a_node.ep().z().value();
+                const double xterr = a_node.ep().x().error();
+                const double yterr = a_node.ep().y().error();
+                const double zterr = a_node.ep().z().error();
+
+                const CAT::topology::helix & seq_helix = isequence->get_helix();
+                phi_ref = phi.value();
+                phi     = seq_helix.phi_of_point(a_node.c().ep(), phi_ref);
+                CAT::topology::experimental_vector hpos = seq_helix.position(phi);
+                const double hx    = hpos.x().value();
+                const double hy    = hpos.y().value();
+                const double hz    = hpos.z().value();
+                const double hxerr = hpos.x().error();
+                const double hyerr = hpos.y().error();
+                const double hzerr = hpos.z().error();
+
+                // Be careful of the system coordinate :
+                // xcat -> y_snemo
+                // ycat -> z_snemo
+                // zcat -> x_snemo
+                sdm::calibrated_tracker_hit & the_last_cell = hits_mapping[hit_id].grab();
+                the_last_cell.grab_auxiliaries().update("CAT_tangency_x",       zt);
+                the_last_cell.grab_auxiliaries().update("CAT_tangency_y",       xt);
+                the_last_cell.grab_auxiliaries().update("CAT_tangency_z",       yt);
+                the_last_cell.grab_auxiliaries().update("CAT_tangency_x_error", zterr);
+                the_last_cell.grab_auxiliaries().update("CAT_tangency_y_error", xterr);
+                the_last_cell.grab_auxiliaries().update("CAT_tangency_z_error", yterr);
+                the_last_cell.grab_auxiliaries().update("CAT_helix_x",          hz);
+                the_last_cell.grab_auxiliaries().update("CAT_helix_y",          hx);
+                the_last_cell.grab_auxiliaries().update("CAT_helix_z",          hy);
+                the_last_cell.grab_auxiliaries().update("CAT_helix_x_error",    hzerr);
+                the_last_cell.grab_auxiliaries().update("CAT_helix_y_error",    hxerr);
+                the_last_cell.grab_auxiliaries().update("CAT_helix_z_error",    hyerr);
+              }
+            }
+          }
+        } /* for sequence */
 
         // // Search for remaining unclustered hits :
         // DT_LOG_NOTICE(get_logging_priority(), "Search for remaining unclustered hits: ");
@@ -544,7 +743,7 @@ namespace snemo {
         // }
         // // std::cerr << "DEVEL: " << "Number of unclustered hits : " << clustering_solution.grab_unclustered_hits().size() << std::endl;
         // // std::cerr << "DEVEL: " << "Number of clusters         : " <<clustering_solution.grab_clusters().size() << std::endl;
-      // } // finish loop on scenario
+      } // finish loop on scenario
 
       // clustering_.tree_dump(std::cerr, "Output clustering data : ", "DEVEL: ");
       return 0;
@@ -556,6 +755,26 @@ namespace snemo {
 
       // Invoke OCD support from parent class :
       ::snemo::processing::base_tracker_clusterizer::ocd_support(ocd_);
+
+      {
+        // Description of the 'CAT.magnetic_field' configuration property :
+        datatools::configuration_property_description & cpd
+          = ocd_.add_property_info();
+        cpd.set_name_pattern("CAT.magnetic_field")
+          .set_from("snemo::reconstruction::cat_driver")
+          .set_terse_description("Force the magnetic field value (vertical)")
+          .set_traits(datatools::TYPE_REAL)
+          .set_mandatory(false)
+          // .set_long_description("Default value: 25 gauss")
+          .set_default_value_real(25 * CLHEP::gauss, "gauss")
+          .add_example("Use no magnetic field::               \n"
+                       "                                      \n"
+                       "  CAT.magnetic_field : real = 0 gauss \n"
+                       "                                      \n"
+                       )
+          ;
+      }
+
 
       {
         // Description of the 'CAT.level' configuration property :
@@ -682,6 +901,25 @@ namespace snemo {
                        "                                 \n"
                        "  CAT.ratio : real = 10000.0     \n"
                        "                                 \n"
+                       )
+          ;
+      }
+
+
+      {
+        // Description of the 'CAT.driver.sigma_z_factor' configuration property :
+        datatools::configuration_property_description & cpd
+          = ocd_.add_property_info();
+        cpd.set_name_pattern("CAT.sigma_z_factor")
+          .set_from("snemo::reconstruction::cat_driver")
+          .set_terse_description("Sigma Z factor")
+          .set_traits(datatools::TYPE_REAL)
+          .set_mandatory(false)
+          .set_long_description("Default value: 1.0")
+          .add_example("Use the default value::                  \n"
+                       "                                         \n"
+                       "  CAT.sigma_z_factor : real = 1.0        \n"
+                       "                                         \n"
                        )
           ;
       }

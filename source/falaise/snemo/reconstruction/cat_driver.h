@@ -22,7 +22,7 @@
  *
  * Description:
  *
- *   A driver class that wraps the CellularAutomatonTracker tracker clustering algorithm.
+ *   A driver class that wraps the Channel/CellularAutomatonTracker tracker clustering algorithm.
  *
  * History:
  *
@@ -36,9 +36,7 @@
 
 // This project
 #include <falaise/snemo/processing/base_tracker_clusterizer.h>
-// CAT:
-#include <CAT/CAT_interface.h>
-#include <CAT/clusterizer.h>
+#include <CATAlgorithm/CAT_interface.h>
 
 // Forward declaration :
 namespace datatools {
@@ -55,13 +53,18 @@ namespace snemo {
 
   namespace reconstruction {
 
-    /// Driver for the CellularAutomatonTracker (CAT) clustering algorithms
+    /// Driver for the Channel/CellularAutomatonTracker (CAT) clustering algorithms
     class cat_driver : public ::snemo::processing::base_tracker_clusterizer
     {
     public:
 
-      /// The CAT string identifier
-      static const std::string & get_id();
+      static const std::string CAT_ID; /// The CAT string identifier
+
+      /// Set the mag field
+      void set_magfield(double);
+
+      /// Return the mag field
+      double get_magfield() const;
 
       /// Default constructor
       cat_driver();
@@ -94,11 +97,11 @@ namespace snemo {
       CAT::input_data   _CAT_input_;         /// Input data
       CAT::output_data  _CAT_output_;        /// Output data
       CAT::clusterizer  _CAT_clusterizer_;   /// CAT clusterizer
-      // CAT::sequentiator _CAT_sequentiator_;  /// CAT sequentiator
+      CAT::sequentiator _CAT_sequentiator_;  /// CAT sequentiator
       double            _sigma_z_factor_;    /// Factor for longitudinal error
-      // double            _magfield_;          /// Enforced magnetic field
+      double            _magfield_;          /// Enforced magnetic field
       bool              _process_calo_hits_; /// Flag to process associated calorimeter hits
-      // bool     _store_result_as_properties_; /// Flag to store CAT result as data properties
+      bool     _store_result_as_properties_; /// Flag to store CAT result as data properties
 
       /// Calorimeter locators
       const snemo::geometry::calo_locator  * _calo_locator_;

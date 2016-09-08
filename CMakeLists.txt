@@ -10,88 +10,170 @@ project(FalaiseLCATPlugin VERSION "2.1.0")
 # Ensure our code can see the Falaise headers
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source/CAT)
 
 ############################################################################################
 # - LCAT library:
 
 list(APPEND LCAT_HEADERS
-  # source/CAT/broken_line.h
-  # source/CAT/calorimeter_hit.h
-  # source/CAT/CAT_interface.h
-  # source/CAT/cell_base.h
-  # source/CAT/cell_couplet.h
-  # source/CAT/Cell.h
-  # source/CAT/cell_triplet.h
-  # source/CAT/circle_base.h
-  # source/CAT/Circle.h
-  # source/CAT/CircleRegression.h
-  # source/CAT/clockable.h
-  # source/CAT/Clock.h
-  # source/CAT/cluster.h
-  # source/CAT/clusterizer.h
-  # source/CAT/cylinder.h
-  # source/CAT/Detector.h
-  # source/CAT/experimental_double.h
-  # source/CAT/experimental_point.h
-  # source/CAT/experimental_vector.h
-  # source/CAT/handle.h
-  # source/CAT/helix.h
-  # source/CAT/i_predicate.h
-  # source/CAT/joint.h
-  # source/CAT/Legendre_function.h
-  # source/CAT/LinearRegression.h
-  # source/CAT/line.h
-  # source/CAT/logic_cell.h
-  # source/CAT/logic_scenario.h
-  # source/CAT/logic_sequence.h
-  # source/CAT/lt_utils.h
-  # source/CAT/node.h
-  # source/CAT/plane.h
-  source/CAT/printable.h
-  # source/CAT/scenario.h
-  # source/CAT/sequence_base.h
-  # source/CAT/Sequence.h
-  # source/CAT/sequentiator.h
-  # source/CAT/Sultan.h
-  # source/CAT/SULTAN_interface.h
-  # source/CAT/tracked_data_base.h
-  # source/CAT/Tracked_data.h
-  source/CAT/tracking_object.h
+  source/CAT/CATAlgorithm/broken_line.h
+  source/CAT/CATAlgorithm/calorimeter_hit.h
+  source/CAT/CATAlgorithm/CAT_interface.h
+  source/CAT/CATAlgorithm/cell_base.h
+  source/CAT/CATAlgorithm/cell_couplet.h
+  source/CAT/CATAlgorithm/Cell.h
+  source/CAT/CATAlgorithm/cell_triplet.h
+  source/CAT/CATAlgorithm/circle_base.h
+  source/CAT/CATAlgorithm/Circle.h
+  source/CAT/CATAlgorithm/CircleRegression.h
+  source/CAT/CATAlgorithm/clockable.h
+  source/CAT/CATAlgorithm/Clock.h
+  source/CAT/CATAlgorithm/cluster.h
+  source/CAT/CATAlgorithm/clusterizer.h
+  source/CAT/CATAlgorithm/cylinder.h
+  source/CAT/CATAlgorithm/Detector.h
+  source/CAT/CATAlgorithm/experimental_double.h
+  source/CAT/CATAlgorithm/experimental_point.h
+  source/CAT/CATAlgorithm/experimental_vector.h
+  source/CAT/CATAlgorithm/handle.h
+  source/CAT/CATAlgorithm/helix.h
+  source/CAT/CATAlgorithm/i_predicate.h
+  source/CAT/CATAlgorithm/joint.h
+  source/CAT/CATAlgorithm/Legendre_function.h
+  source/CAT/CATAlgorithm/LinearRegression.h
+  source/CAT/CATAlgorithm/line.h
+  source/CAT/CATAlgorithm/logic_cell.h
+  source/CAT/CATAlgorithm/logic_scenario.h
+  source/CAT/CATAlgorithm/logic_sequence.h
+  source/CAT/CATAlgorithm/lt_utils.h
+  source/CAT/CATAlgorithm/node.h
+  source/CAT/CATAlgorithm/plane.h
+  source/CAT/CATAlgorithm/printable.h
+  source/CAT/CATAlgorithm/scenario.h
+  source/CAT/CATAlgorithm/sequence_base.h
+  source/CAT/CATAlgorithm/Sequence.h
+  source/CAT/CATAlgorithm/sequentiator.h
+  source/CAT/CATAlgorithm/tracked_data_base.h
+  source/CAT/CATAlgorithm/Tracked_data.h
+  source/CAT/CATAlgorithm/tracking_object.h
+  source/CAT/mybhep/axis.h
+  source/CAT/mybhep/base_reader.h
+  source/CAT/mybhep/bprint.h
+  source/CAT/mybhep/bproperties.h
+  source/CAT/mybhep/brw.h
+  source/CAT/mybhep/clhep.h
+  source/CAT/mybhep/container_algorithm.h
+  source/CAT/mybhep/control_panel.h
+  source/CAT/mybhep/converter_svc.h
+  source/CAT/mybhep/dvector.h
+  source/CAT/mybhep/engine.h
+  source/CAT/mybhep/error.h
+  source/CAT/mybhep/event_cvt.h
+  source/CAT/mybhep/event.h
+  source/CAT/mybhep/EventManager2.h
+  source/CAT/mybhep/EventManager.h
+  source/CAT/mybhep/event_svc.h
+  source/CAT/mybhep/gstore.h
+  source/CAT/mybhep/histogram.h
+  source/CAT/mybhep/hit_cvt.h
+  source/CAT/mybhep/hit.h
+  source/CAT/mybhep/ibconverter.h
+  source/CAT/mybhep/iconverter.h
+  source/CAT/mybhep/material.h
+  source/CAT/mybhep/messenger.h
+  source/CAT/mybhep/mparticle_cvt.h
+  source/CAT/mybhep/mparticle.h
+  source/CAT/mybhep/mybhep_svc.h
+  source/CAT/mybhep/particle_cvt.h
+  source/CAT/mybhep/particle_definition.h
+  source/CAT/mybhep/particle.h
+  source/CAT/mybhep/point.h
+  source/CAT/mybhep/random_reader.h
+  source/CAT/mybhep/random_writer.h
+  source/CAT/mybhep/ray.h
+  source/CAT/mybhep/reader_gz.h
+  source/CAT/mybhep/reader_hdf5.h
+  source/CAT/mybhep/reader_txt.h
+  source/CAT/mybhep/sequential_reader.h
+  source/CAT/mybhep/sequential_writer.h
+  source/CAT/mybhep/sparticle_cvt.h
+  source/CAT/mybhep/sparticle.h
+  source/CAT/mybhep/sreader.h
+  source/CAT/mybhep/store.h
+  source/CAT/mybhep/system_of_units.h
+  source/CAT/mybhep/track_cvt.h
+  source/CAT/mybhep/track.h
+  source/CAT/mybhep/tstore.h
+  source/CAT/mybhep/utilities.h
+  source/CAT/mybhep/writer_gz.h
+  source/CAT/mybhep/writer_hdf5.h
+  source/CAT/mybhep/writer_txt.h
   )
 
 list(APPEND LCAT_SOURCES
-  # source/CAT/broken_line.cpp
-  # source/CAT/calorimeter_hit.cpp
-  # source/CAT/CAT_interface.cpp
-  # source/CAT/cell_base.cpp
-  # source/CAT/cell_couplet.cpp
-  # source/CAT/Cell.cpp
-  # source/CAT/cell_triplet.cpp
-  # source/CAT/circle_base.cpp
-  # source/CAT/Circle.cpp
-  # source/CAT/CircleRegression.cpp
-  # source/CAT/clockable.cpp
-  # source/CAT/Clock.cpp
-  # source/CAT/cluster.cpp
-  # source/CAT/clusterizer.cpp
-  # source/CAT/Detector.cpp
-  # source/CAT/experimental_double.cpp
-  # source/CAT/experimental_point.cpp
-  # source/CAT/experimental_vector.cpp
-  # source/CAT/joint.cpp
-  # source/CAT/Legendre_function.cpp
-  # source/CAT/LinearRegression.cpp
-  # source/CAT/line.cpp
-  # source/CAT/mparticle.cpp
-  # source/CAT/node.cpp
-  # source/CAT/plane.cpp
-  source/CAT/printable.cpp
-  # source/CAT/scenario.cpp
-  # source/CAT/sequence_base.cpp
-  # source/CAT/sequentiator.cpp
-  # source/CAT/Sultan.cpp
-  # source/CAT/SULTAN_interface.cpp
-  source/CAT/tracking_object.cpp
+  source/CAT/CATAlgorithm/broken_line.cpp
+  source/CAT/CATAlgorithm/calorimeter_hit.cpp
+  source/CAT/CATAlgorithm/CAT_interface.cpp
+  source/CAT/CATAlgorithm/cell_base.cpp
+  source/CAT/CATAlgorithm/cell_couplet.cpp
+  source/CAT/CATAlgorithm/Cell.cpp
+  source/CAT/CATAlgorithm/cell_triplet.cpp
+  source/CAT/CATAlgorithm/circle_base.cpp
+  source/CAT/CATAlgorithm/Circle.cpp
+  source/CAT/CATAlgorithm/CircleRegression.cpp
+  source/CAT/CATAlgorithm/clockable.cpp
+  source/CAT/CATAlgorithm/Clock.cpp
+  source/CAT/CATAlgorithm/cluster.cpp
+  source/CAT/CATAlgorithm/clusterizer.cpp
+  source/CAT/CATAlgorithm/Detector.cpp
+  source/CAT/CATAlgorithm/experimental_double.cpp
+  source/CAT/CATAlgorithm/experimental_point.cpp
+  source/CAT/CATAlgorithm/experimental_vector.cpp
+  source/CAT/CATAlgorithm/joint.cpp
+  source/CAT/CATAlgorithm/Legendre_function.cpp
+  source/CAT/CATAlgorithm/LinearRegression.cpp
+  source/CAT/CATAlgorithm/line.cpp
+  source/CAT/CATAlgorithm/mparticle.cpp
+  source/CAT/CATAlgorithm/node.cpp
+  source/CAT/CATAlgorithm/plane.cpp
+  source/CAT/CATAlgorithm/printable.cpp
+  source/CAT/CATAlgorithm/scenario.cpp
+  source/CAT/CATAlgorithm/sequence_base.cpp
+  source/CAT/CATAlgorithm/sequentiator.cpp
+  source/CAT/CATAlgorithm/tracking_object.cpp
+  source/CAT/mybhep/axis.cpp
+  source/CAT/mybhep/base_reader.cpp
+  source/CAT/mybhep/brw.cpp
+  source/CAT/mybhep/converter_svc.cpp
+  source/CAT/mybhep/event.cpp
+  source/CAT/mybhep/event_cvt.cpp
+  source/CAT/mybhep/EventManager2.cpp
+  source/CAT/mybhep/EventManager.cpp
+  source/CAT/mybhep/event_svc.cpp
+  source/CAT/mybhep/histogram.cpp
+  source/CAT/mybhep/hit.cpp
+  source/CAT/mybhep/hit_cvt.cpp
+  source/CAT/mybhep/material.cpp
+  source/CAT/mybhep/mparticle_cvt.cpp
+  source/CAT/mybhep/mybhep_svc.cpp
+  source/CAT/mybhep/particle.cpp
+  source/CAT/mybhep/particle_cvt.cpp
+  source/CAT/mybhep/particle_definition.cpp
+  source/CAT/mybhep/random_reader.cpp
+  source/CAT/mybhep/random_writer.cpp
+  source/CAT/mybhep/ray.cpp
+  source/CAT/mybhep/reader_gz.cpp
+  source/CAT/mybhep/reader_hdf5.cpp
+  source/CAT/mybhep/reader_txt.cpp
+  source/CAT/mybhep/sequential_reader.cpp
+  source/CAT/mybhep/sequential_writer.cpp
+  source/CAT/mybhep/sparticle.cpp
+  source/CAT/mybhep/sparticle_cvt.cpp
+  source/CAT/mybhep/track.cpp
+  source/CAT/mybhep/track_cvt.cpp
+  source/CAT/mybhep/writer_gz.cpp
+  source/CAT/mybhep/writer_hdf5.cpp
+  source/CAT/mybhep/writer_txt.cpp
   )
 
 # Build a dynamic library from our sources
@@ -111,47 +193,47 @@ endif()
 install(TARGETS LCAT DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FALAISE_PLUGINLIBDIR})
 
 
-# ############################################################################################
-# # - LCAT modules:
-# include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source/falaise)
+############################################################################################
+# - LCAT modules:
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source/falaise)
 
-# # - Headers:
-# list(APPEND FalaiseLCATPlugin_HEADERS
-#   source/falaise/snemo/reconstruction/cat_driver.h
-#   source/falaise/snemo/reconstruction/cat_tracker_clustering_module.h
-#   )
+# - Headers:
+list(APPEND FalaiseLCATPlugin_HEADERS
+  source/falaise/snemo/reconstruction/cat_driver.h
+  source/falaise/snemo/reconstruction/cat_tracker_clustering_module.h
+  )
 
-# # - Sources:
-# list(APPEND FalaiseLCATPlugin_SOURCES
-#   source/falaise/snemo/reconstruction/cat_driver.cc
-#   source/falaise/snemo/reconstruction/cat_tracker_clustering_module.cc
-#   )
+# - Sources:
+list(APPEND FalaiseLCATPlugin_SOURCES
+  source/falaise/snemo/reconstruction/cat_driver.cc
+  source/falaise/snemo/reconstruction/cat_tracker_clustering_module.cc
+  )
 
-# ############################################################################################
+############################################################################################
 
-# # Build a dynamic library from our sources
-# add_library(Falaise_LCAT SHARED
-#   ${FalaiseLCATPlugin_HEADERS}
-#   ${FalaiseLCATPlugin_SOURCES})
+# Build a dynamic library from our sources
+add_library(Falaise_LCAT SHARED
+  ${FalaiseLCATPlugin_HEADERS}
+  ${FalaiseLCATPlugin_SOURCES})
 
-# target_link_libraries(Falaise_LCAT LCAT Falaise)
+target_link_libraries(Falaise_LCAT LCAT Falaise)
 
-# # Apple linker requires dynamic lookup of symbols, so we
-# # add link flags on this platform
-# if(APPLE)
-#   set_target_properties(Falaise_LCAT
-#     PROPERTIES
-#     LINK_FLAGS "-undefined dynamic_lookup"
-#     INSTALL_RPATH "@loader_path"
-#     )
-# endif()
+# Apple linker requires dynamic lookup of symbols, so we
+# add link flags on this platform
+if(APPLE)
+  set_target_properties(Falaise_LCAT
+    PROPERTIES
+    LINK_FLAGS "-undefined dynamic_lookup"
+    INSTALL_RPATH "@loader_path"
+    )
+endif()
 
-# # Install it:
-# install(TARGETS Falaise_LCAT DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FALAISE_PLUGINLIBDIR})
+# Install it:
+install(TARGETS Falaise_LCAT DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FALAISE_PLUGINLIBDIR})
 
-# # Test support:
-# option(FalaiseLCATPlugin_ENABLE_TESTING "Build unit testing system for FalaiseLCATPlugin" ON)
-# if(FalaiseLCATPlugin_ENABLE_TESTING)
-#   enable_testing()
-#   add_subdirectory(testing)
-# endif()
+# Test support:
+option(FalaiseLCATPlugin_ENABLE_TESTING "Build unit testing system for FalaiseLCATPlugin" ON)
+if(FalaiseLCATPlugin_ENABLE_TESTING)
+  enable_testing()
+  add_subdirectory(testing)
+endif()

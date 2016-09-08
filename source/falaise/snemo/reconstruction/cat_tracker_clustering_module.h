@@ -37,6 +37,9 @@
 // - Bayeux/dpp:
 #include <bayeux/dpp/base_module.h>
 
+// This project:
+#include <falaise/snemo/datamodels/calibrated_data.h>
+
 namespace geomtools {
   class manager;
 }
@@ -44,7 +47,6 @@ namespace geomtools {
 namespace snemo {
 
   namespace datamodel {
-    class calibrated_data;
     class tracker_clustering_data;
   }
 
@@ -99,6 +101,7 @@ namespace snemo {
 
       /// Main process function
       void _process(const snemo::datamodel::calibrated_data & calib_data_,
+                    // const snemo::datamodel::calibrated_data::tracker_hit_collection_type & calibrated_tracker_hits_,
                     snemo::datamodel::tracker_clustering_data & clustering_data_);
 
       /// Give default values to specific class members
