@@ -1,32 +1,31 @@
 /* -*- mode: c++ -*- */
-// CAT_interface.h
+// SULTAN_interface.h
 
-#ifndef _CAT_interface_h_
-#define _CAT_interface_h_ 1
+#ifndef _CAT_SULTAN_interface_h_
+#define _CAT_SULTAN_interface_h_ 1
 
 #include <vector>
 #include <iostream>
 #include <string>
 
-#include <CAT/CAT_config.h>
+#include <CAT/SULTAN_config.h>
+#include <CAT/Cell.h>
 #include <CAT/tracked_data_base.h>
 #include <CAT/experimental_point.h>
-#include <CAT/cell_base.h>
-#include <CAT/clusterizer.h>
-#include <CAT/sequentiator.h>
+#include <CAT/Sultan.h>
 
 namespace CAT {
 
-  /// Setup data of the CAT algorithms
+  /// Setup data of the SULTAN algorithms
   /// This class contains the minimal set of parameters
-  /// needed to run the CAT algorithm
-  struct setup_data
+  /// needed to run the SULTAN algorithm
+  struct setup_data_sultan
   {
   public:
 
-    setup_data ();
-    bool check () const;
-    void reset ();
+    setup_data_sultan ();
+    bool check() const;
+    void reset();
     const std::string & get_error_message () const;
 
   protected:
@@ -52,10 +51,7 @@ namespace CAT {
     /// Maximum computing time in ms
     double MaxTime;
 
-    /// Ratio of 2nd best to best probability which is acceptable as 2nd solution
-    double Ratio;
-
-    /// minimum p-value to be a straight line
+    /// minimum p-value
     double probmin;
 
     /// Number of cells which can be skipped (because the cell did not
@@ -69,16 +65,8 @@ namespace CAT {
     /// 0. for SuperNEMO, 1.5 m for NEMO3
     double FoilRadius;
 
-    // Obsolete parameters, just there for backwards compatibility,
-    double SmallRadius; // [length] -> mm
-    double TangentPhi;
-    double TangentTheta;
-    double SmallNumber; // [length] - mm
-    double QuadrantAngle;
-    double CompatibilityDistance;
-    double MaxChi2;
     double vel;  // plasma velocity in cell, not needed anymore because vertical position
-                 // is reconstructed outside of CAT
+                 // is reconstructed outside of SULTAN
     double len;  // length of each drift wire, should be read from geometry instead of free parameter
     double rad;  // radius of each cell, should be read from geometry instead of free parameter
     double CellDistance;  // same as above
@@ -86,10 +74,6 @@ namespace CAT {
     double bfield; // value of magnetic field
     double xsize, ysize, zsize; // chamber size
 
-    // SuperNEMO geometry :
-    int num_blocks;
-    std::vector<double> planes_per_block;
-    std::vector<double> gaps_Z;
     int    num_cells_per_plane;
     double cell_size;
 
@@ -101,39 +85,32 @@ namespace CAT {
 
   };
 
-  /// Configure the clusterizer from a setup data object
-  void clusterizer_configure (clusterizer & czer_, const setup_data & setup_);
-
-  /// Configure the sequentiator from a setup data object
-  void sequentiator_configure (sequentiator & stor_, const setup_data & setup_);
+  /// Configure the sultan from a setup data object
+  void sultan_configure (Sultan & sultan_, const setup_data_sultan & setup_);
 
   /// Input data model
-  struct input_data
+  struct input_data_sultan
   {
   public:
-    topology::cell & add_cell ();
-    topology::calorimeter_hit & add_calo_cell ();
-    input_data ();
+    topology::Cell & add_cell ();
+    input_data_sultan ();
     bool check () const;
-    bool gg_check () const;
-    bool calo_check () const;
 
   public:
-    std::vector<topology::cell> cells;
-    std::vector<topology::calorimeter_hit> calo_cells;
+    std::vector<topology::Cell> cells;
   };
 
   /// Output data model
-  struct output_data
+  struct output_data_sultan
   {
   public:
-    output_data ();
+    output_data_sultan ();
   public:
-    topology::tracked_data tracked_data;
+    topology::Tracked_data tracked_data;
   };
 
 }
 
-#endif // _CAT_interface_h_
+#endif // _CAT_SULTAN_interface_h_
 
-// end of CAT_interface.h
+// end of SULTAN_interface.h

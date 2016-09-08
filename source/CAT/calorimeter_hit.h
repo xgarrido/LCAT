@@ -4,106 +4,108 @@
 
 #include <iostream>
 #include <cmath>
-// #include <mybhep/error.h>
-// #include <mybhep/utilities.h>
-// #include <mybhep/point.h>
-// #include <CATAlgorithm/experimental_point.h>
-// #include <CATAlgorithm/experimental_vector.h>
-// #include <CATAlgorithm/plane.h>
-// #include <mybhep/hit.h>
-// #include <mybhep/system_of_units.h>
+#include <mybhep/error.h>
+#include <mybhep/utilities.h>
+#include <mybhep/point.h>
+#include <CAT/experimental_point.h>
+#include <CAT/experimental_vector.h>
+#include <CAT/plane.h>
+#include <mybhep/hit.h>
+#include <mybhep/system_of_units.h>
 
-#include <CAT/experimental_double.h>
 
 namespace CAT {
+  namespace topology {
 
-  class calorimeter_hit {
 
-    // a calorimeter_hit is identified by one plane
-    // energy and time
+    class calorimeter_hit : public tracking_object {
 
-  private:
+      // a calorimeter_hit is identified by one plane
+      // energy and time
 
-    std::string appname_;
+    private:
 
-    // energy
-    experimental_double e_;
+      std::string appname_;
 
-    // time
-    experimental_double t_;
+      // energy
+      experimental_double e_;
 
-    size_t id_;
-    int user_id_; // use this value to store user id, never inside tracking
+      // time
+      experimental_double t_;
 
-  public:
+      size_t id_;
+      int user_id_; // use this value to store user id, never inside tracking
 
-    // // plane
-    // plane pl_;
+    public:
 
-    double layer_;
+      // plane
+      plane pl_;
 
-    // //!Default constructor
-    // calorimeter_hit(mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
+      double layer_;
 
-    //!Default destructor
-    virtual ~calorimeter_hit();
+      //!Default constructor
+      calorimeter_hit(mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
 
-    // //! constructor
-    // calorimeter_hit(const plane & pl,
-    //                 const experimental_double & e,
-    //                 const experimental_double & t,
-    //                 size_t id,
-    //                 double layer,
-    //                 mybhep::prlevel level=mybhep::NORMAL,
-    //                 double probmin=1.e-200);
+      //!Default destructor
+      virtual ~calorimeter_hit();
 
-    /*** dump ***/
-    void dump (std::ostream & a_out         = std::clog,
-               const std::string & a_title  = "",
-               const std::string & a_indent = "",
-               bool a_inherit               = false) const;
-    // //! set
-    // void set(const plane & pl, const experimental_double & e, const experimental_double & t, size_t id);
+      //! constructor
+      calorimeter_hit(const plane & pl,
+                      const experimental_double & e,
+                      const experimental_double & t,
+                      size_t id,
+                      double layer,
+                      mybhep::prlevel level=mybhep::NORMAL,
+                      double probmin=1.e-200);
 
-    //! set id
-    void set_id(size_t id);
-    void set_user_id(int id)
-    {
-      user_id_ = id;
-    }
+      /*** dump ***/
+      void dump (std::ostream & a_out         = std::clog,
+                 const std::string & a_title  = "",
+                 const std::string & a_indent = "",
+                 bool a_inherit               = false) const;
+      //! set
+      void set(const plane & pl, const experimental_double & e, const experimental_double & t, size_t id);
 
-    // //! set plane
-    // void set_pl(const plane & pl);
+      //! set id
+      void set_id(size_t id);
+      void set_user_id(int id)
+      {
+        user_id_ = id;
+      }
 
-    //! set energy
-    void set_e(const experimental_double & e);
+      //! set plane
+      void set_pl(const plane & pl);
 
-    //! set time
-    void set_t(const experimental_double & t);
+      //! set energy
+      void set_e(const experimental_double & e);
 
-    //! set layer
-    void set_layer(double layer);
+      //! set time
+      void set_t(const experimental_double & t);
 
-    // //! get plane
-    // const plane & pl() const;
+      //! set layer
+      void set_layer(double layer);
 
-    //! get energy
-    const experimental_double& e()const;
+      //! get plane
+      const plane & pl() const;
 
-    //! get time
-    const experimental_double& t()const;
+      //! get energy
+      const experimental_double& e()const;
 
-    //! get id
-    size_t id()const;
-    int user_id()const;
+      //! get time
+      const experimental_double& t()const;
 
-    //!get layer
-    double layer() const;
+      //! get id
+      size_t id()const;
+      int user_id()const;
 
-    bool same_calo(const calorimeter_hit & c) const;
+      //!get layer
+      double layer() const;
 
-  };
+      bool same_calo(const calorimeter_hit & c) const;
 
+    };
+
+  }
 }
 
 #endif // __CATAlgorithm__calorimeter_hit_h
