@@ -70,8 +70,6 @@ list(APPEND LCAT_HEADERS
   source/CAT/mybhep/error.h
   source/CAT/mybhep/event_cvt.h
   source/CAT/mybhep/event.h
-  source/CAT/mybhep/EventManager2.h
-  source/CAT/mybhep/EventManager.h
   source/CAT/mybhep/event_svc.h
   source/CAT/mybhep/gstore.h
   source/CAT/mybhep/histogram.h
@@ -147,8 +145,6 @@ list(APPEND LCAT_SOURCES
   source/CAT/mybhep/converter_svc.cpp
   source/CAT/mybhep/event.cpp
   source/CAT/mybhep/event_cvt.cpp
-  source/CAT/mybhep/EventManager2.cpp
-  source/CAT/mybhep/EventManager.cpp
   source/CAT/mybhep/event_svc.cpp
   source/CAT/mybhep/histogram.cpp
   source/CAT/mybhep/hit.cpp
@@ -201,12 +197,14 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source/falaise)
 list(APPEND FalaiseLCATPlugin_HEADERS
   source/falaise/snemo/reconstruction/cat_driver.h
   source/falaise/snemo/reconstruction/cat_tracker_clustering_module.h
+  source/falaise/snemo/reconstruction/clustering_comparison_module.h
   )
 
 # - Sources:
 list(APPEND FalaiseLCATPlugin_SOURCES
   source/falaise/snemo/reconstruction/cat_driver.cc
   source/falaise/snemo/reconstruction/cat_tracker_clustering_module.cc
+  source/falaise/snemo/reconstruction/clustering_comparison_module.cc
   )
 
 ############################################################################################
