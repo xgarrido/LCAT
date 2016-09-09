@@ -1,4 +1,4 @@
-/** \file snemo/reconstruction/cat_tracker_clustering_module.h
+/** \file snemo/reconstruction/lcat_tracker_clustering_module.h
  * Author(s) :    Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date: 2012-04-09
  * Last modified: 2014-02-22
@@ -37,9 +37,7 @@
 // - Bayeux/dpp:
 #include <bayeux/dpp/base_module.h>
 
-// This project:
-#include <falaise/snemo/datamodels/calibrated_data.h>
-
+// Forward declaration
 namespace geomtools {
   class manager;
 }
@@ -47,6 +45,7 @@ namespace geomtools {
 namespace snemo {
 
   namespace datamodel {
+    class calibrated_data;
     class tracker_clustering_data;
   }
 
@@ -57,7 +56,7 @@ namespace snemo {
   namespace reconstruction {
 
     /// \brief Tracker clustering module using the CAT algorithm
-    class cat_tracker_clustering_module : public dpp::base_module
+    class lcat_tracker_clustering_module : public dpp::base_module
     {
 
     public:
@@ -81,10 +80,10 @@ namespace snemo {
       const geomtools::manager & get_geometry_manager() const;
 
       /// Constructor
-      cat_tracker_clustering_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
+      lcat_tracker_clustering_module(datatools::logger::priority = datatools::logger::PRIO_FATAL);
 
       /// Destructor
-      virtual ~cat_tracker_clustering_module();
+      virtual ~lcat_tracker_clustering_module();
 
       /// Initialization
       virtual void initialize(const datatools::properties  & setup_,
@@ -115,7 +114,7 @@ namespace snemo {
       boost::scoped_ptr< ::snemo::processing::base_tracker_clusterizer> _driver_; //!< Handle to the embedded clustering algorithm with dynamic memory auto-deletion
 
       // Macro to automate the registration of the module :
-      DPP_MODULE_REGISTRATION_INTERFACE(cat_tracker_clustering_module)
+      DPP_MODULE_REGISTRATION_INTERFACE(lcat_tracker_clustering_module)
 
     };
 
@@ -126,7 +125,7 @@ namespace snemo {
 #include <datatools/ocd_macros.h>
 
 // Declare the OCD interface of the module
-DOCD_CLASS_DECLARATION(snemo::reconstruction::cat_tracker_clustering_module)
+DOCD_CLASS_DECLARATION(snemo::reconstruction::lcat_tracker_clustering_module)
 
 #endif // FALAISE_CAT_PLUGIN_SNEMO_RECONSTRUCTION_CAT_TRACKER_CLUSTERING_MODULE_H
 /*

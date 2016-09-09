@@ -28,10 +28,10 @@ namespace snemo {
   namespace reconstruction {
 
     // Registration instantiation macro :
-    DPP_MODULE_REGISTRATION_IMPLEMENT(cat_tracker_clustering_module,
-                                      "snemo::reconstruction::cat_tracker_clustering_module")
+    DPP_MODULE_REGISTRATION_IMPLEMENT(lcat_tracker_clustering_module,
+                                      "snemo::reconstruction::lcat_tracker_clustering_module")
 
-    void cat_tracker_clustering_module::set_cd_label(const std::string & cdl_)
+    void lcat_tracker_clustering_module::set_cd_label(const std::string & cdl_)
     {
       DT_THROW_IF (is_initialized(), std::logic_error,
                    "Module '" << get_name() << "' is already initialized ! ");
@@ -39,12 +39,12 @@ namespace snemo {
       return;
     }
 
-    const std::string & cat_tracker_clustering_module::get_cd_label() const
+    const std::string & lcat_tracker_clustering_module::get_cd_label() const
     {
       return _CD_label_;
     }
 
-    void cat_tracker_clustering_module::set_tcd_label(const std::string & tcdl_)
+    void lcat_tracker_clustering_module::set_tcd_label(const std::string & tcdl_)
     {
       DT_THROW_IF (is_initialized(), std::logic_error,
                    "Module '" << get_name() << "' is already initialized ! ");
@@ -52,17 +52,17 @@ namespace snemo {
       return;
     }
 
-    const std::string & cat_tracker_clustering_module::get_tcd_label() const
+    const std::string & lcat_tracker_clustering_module::get_tcd_label() const
     {
       return _TCD_label_;
     }
 
-    const geomtools::manager & cat_tracker_clustering_module::get_geometry_manager() const
+    const geomtools::manager & lcat_tracker_clustering_module::get_geometry_manager() const
     {
       return *_geometry_manager_;
     }
 
-    void cat_tracker_clustering_module::set_geometry_manager(const geomtools::manager & gmgr_)
+    void lcat_tracker_clustering_module::set_geometry_manager(const geomtools::manager & gmgr_)
     {
       DT_THROW_IF (is_initialized(), std::logic_error,
                    "Module '" << get_name() << "' is already initialized ! ");
@@ -76,7 +76,7 @@ namespace snemo {
       return;
     }
 
-    void cat_tracker_clustering_module::_set_defaults()
+    void lcat_tracker_clustering_module::_set_defaults()
     {
       _geometry_manager_ = 0;
       _CD_label_.clear();
@@ -85,7 +85,7 @@ namespace snemo {
       return;
     }
 
-    void cat_tracker_clustering_module::initialize(const datatools::properties  & setup_,
+    void lcat_tracker_clustering_module::initialize(const datatools::properties  & setup_,
                                                    datatools::service_manager   & service_manager_,
                                                    dpp::module_handle_dict_type & /* module_dict_ */)
     {
@@ -149,7 +149,7 @@ namespace snemo {
       return;
     }
 
-    void cat_tracker_clustering_module::reset()
+    void lcat_tracker_clustering_module::reset()
     {
       DT_THROW_IF (! is_initialized(),
                    std::logic_error,
@@ -167,7 +167,7 @@ namespace snemo {
     }
 
     // Constructor :
-    cat_tracker_clustering_module::cat_tracker_clustering_module(datatools::logger::priority logging_priority_)
+    lcat_tracker_clustering_module::lcat_tracker_clustering_module(datatools::logger::priority logging_priority_)
       : dpp::base_module(logging_priority_)
     {
       _set_defaults();
@@ -175,14 +175,14 @@ namespace snemo {
     }
 
     // Destructor :
-    cat_tracker_clustering_module::~cat_tracker_clustering_module()
+    lcat_tracker_clustering_module::~lcat_tracker_clustering_module()
     {
-      if (is_initialized()) cat_tracker_clustering_module::reset();
+      if (is_initialized()) lcat_tracker_clustering_module::reset();
       return;
     }
 
     // Processing :
-    dpp::base_module::process_status cat_tracker_clustering_module::process(datatools::things & data_record_)
+    dpp::base_module::process_status lcat_tracker_clustering_module::process(datatools::things & data_record_)
     {
       DT_THROW_IF (! is_initialized(), std::logic_error,
                    "Module '" << get_name() << "' is not initialized !");
@@ -220,8 +220,8 @@ namespace snemo {
       }
       snemo::datamodel::tracker_clustering_data & the_clustering_data = *ptr_cluster_data;
       if (the_clustering_data.has_solutions())  {
-        DT_THROW_IF (abort_at_former_output, std::logic_error,
-                     "Already has processed tracker clustering data !");
+        DT_THROW_IF(abort_at_former_output, std::logic_error,
+                    "Already has processed tracker clustering data !");
         if (! preserve_former_output) {
           the_clustering_data.reset();
         }
@@ -237,7 +237,7 @@ namespace snemo {
       return dpp::base_module::PROCESS_SUCCESS;
     }
 
-    void cat_tracker_clustering_module::_process(const snemo::datamodel::calibrated_data & calib_data_,
+    void lcat_tracker_clustering_module::_process(const snemo::datamodel::calibrated_data & calib_data_,
                                                  snemo::datamodel::tracker_clustering_data & clustering_data_)
     {
       DT_LOG_TRACE(get_logging_priority(), "Entering...");
@@ -257,9 +257,9 @@ namespace snemo {
 
 /* OCD support */
 #include <datatools/object_configuration_description.h>
-DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::reconstruction::cat_tracker_clustering_module, ocd_)
+DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::reconstruction::lcat_tracker_clustering_module, ocd_)
 {
-  ocd_.set_class_name("snemo::reconstruction::cat_tracker_clustering_module");
+  ocd_.set_class_name("snemo::reconstruction::lcat_tracker_clustering_module");
   ocd_.set_class_description("A module that performs the CAT clusterization of tracker hits");
   ocd_.set_class_library("Falaise_CAT");
   ocd_.set_class_documentation("This module uses the CAT clustering algorithm.");
@@ -359,5 +359,5 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::reconstruction::cat_tracker_clustering_mo
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
-DOCD_CLASS_SYSTEM_REGISTRATION(snemo::reconstruction::cat_tracker_clustering_module,
-                               "snemo::reconstruction::cat_tracker_clustering_module")
+DOCD_CLASS_SYSTEM_REGISTRATION(snemo::reconstruction::lcat_tracker_clustering_module,
+                               "snemo::reconstruction::lcat_tracker_clustering_module")
