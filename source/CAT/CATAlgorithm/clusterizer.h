@@ -14,7 +14,6 @@
 #include <iostream>
 #include <vector>
 
-#include <mybhep/EventManager2.h>
 //#include <CATUtils/NHistoManager2.h>
 #include <CATAlgorithm/line.h>
 #include <CATAlgorithm/cell_couplet.h>
@@ -53,7 +52,6 @@ namespace CAT{
 
   public:
     bool initialize( void );
-    bool initialize( const mybhep::sstore &store, const mybhep::gstore & gs, mybhep::EventManager2 *eman=0);
     void initializeHistos( void );
     bool execute(mybhep::event& evt, int ievent);
     bool finalize();
@@ -77,7 +75,6 @@ namespace CAT{
     void print_clusters(void) const;
     void print_true_sequences(void)const;
     void print_nemo_sequences(void)const;
-    void readDstProper(const mybhep::sstore &global, mybhep::EventManager2 *eman);
     void readDstProper();
     void GenerateWires( void );
     double long_resolution(double Z, double d[3])const;
@@ -189,8 +186,6 @@ namespace CAT{
 
     bool doDriftWires;
     std::vector<POINT> DriftWires;
-
-    mybhep::EventManager2* eman;
 
     int num_blocks;
     mybhep::dvector<double> planes_per_block ;

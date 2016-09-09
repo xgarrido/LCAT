@@ -32,7 +32,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include <mybhep/EventManager2.h>
 //#include <CATUtils/NHistoManager2.h>
 #include <CATAlgorithm/cell_base.h>
 #include <CATAlgorithm/line.h>
@@ -61,13 +60,11 @@ namespace CAT {
 
     virtual ~sequentiator();
 
-    bool initialize( const mybhep::sstore & store, const mybhep::gstore &gs, mybhep::EventManager2 *eman=0);
     bool initialize( );
     void initializeHistos( void );
     void PrintInitialObjects(void);
     bool finalize();
     void finalizeHistos( void );
-    void readDstProper(const mybhep::sstore &store, mybhep::EventManager2 *eman=0);
     void readDstProper( void );
 
     bool sequentiate(topology::tracked_data & tracked_data);
@@ -453,8 +450,6 @@ namespace CAT {
                             *  Use the GG_CELL_pitch as the main geoemtry parameter
                             *  of a GG cell, do not use 'rad' or 'CellDistance'
                             */
-
-    mybhep::EventManager2* eman;
 
     int num_blocks;
     mybhep::dvector<double> planes_per_block ;
