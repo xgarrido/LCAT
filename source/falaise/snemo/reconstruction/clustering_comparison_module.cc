@@ -74,13 +74,6 @@ namespace snemo {
       DT_THROW_IF(! is_initialized(), std::logic_error,
                   "Module '" << get_name() << "' is not initialized !");
 
-      auto exit_message = [] (auto & bank1, auto & bank2)
-        {
-          DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
-                         "'" << bank1 << "' and '" << bank2 << "' banks are different !");
-          return dpp::base_module::PROCESS_STOP;
-        };
-
       for (auto i = _TCD_labels_.begin(); i != _TCD_labels_.end(); ++i) {
         if (! data_record_.has(*i)) {
           DT_LOG_WARNING(get_logging_priority(), "No data bank with label '" << *i << "' found !");
@@ -96,21 +89,17 @@ namespace snemo {
 
           const auto & tcd1 = data_record_.get<snemo::datamodel::tracker_clustering_data>(*i);
           const auto & tcd2 = data_record_.get<snemo::datamodel::tracker_clustering_data>(*j);
-          if (tcd1.get_number_of_solutions() != tcd2.get_number_of_solutions()) {
-            exit_message(*i, *j);
-          }
 
-          for (size_t isol = 0; isol < tcd1.get_number_of_solutions(); isol++) {
-            const auto & sol1 = tcd1.get_solution(isol);
-            const auto & sol2 = tcd2.get_solution(isol);
-            const auto & clusters1 = sol1.get_clusters();
-            const auto & clusters2 = sol2.get_clusters();
-            if (clusters1.size() != clusters2.size()) {
-              exit_message(*i, *j);
-            }
-            // for (const auto & cluster1 : clusters1) {
+          std::ostringstream oss1, oss2;
+          tcd1.tree_dump(oss1);
+          tcd2.tree_dump(oss2);
+          DT_LOG_TRACE(get_logging_priority(), oss1.str());
+          DT_LOG_TRACE(get_logging_priority(), oss2.str());
 
-            // }
+          if (oss1.str() != oss2.str()) {
+            DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
+                           "'" << *i << "' and '" << *j << "' banks are different !");
+            return dpp::base_module::PROCESS_STOP;
           }
 
 
