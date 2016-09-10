@@ -5,7 +5,6 @@
 //#include <CATAlgorithm/CAT_config.h>
 
 #include <stdexcept>
-#include <mybhep/gstore.h>
 #include <mybhep/messenger.h>
 #include <mybhep/event.h>
 #include <CLHEP/Units/SystemOfUnits.h>
@@ -41,8 +40,6 @@ namespace CAT{
   public:
 
     clusterizer(void);
-
-    clusterizer(const mybhep::gstore&);
 
     virtual ~clusterizer();
 

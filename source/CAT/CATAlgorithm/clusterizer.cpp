@@ -5,24 +5,7 @@
 #include <cmath>
 #include <map>
 
-#if CAT_WITH_DEVEL_ROOT == 1
-#include <TApplication.h>
-#include <TROOT.h>
-#include <TChain.h>
-#include <TH2.h>
-#include <TH1.h>
-#include <TGraph.h>
-#include <TStyle.h>
-#include <TCanvas.h>
-#include <TFile.h>
-#include <TMath.h>
-#include <TBox.h>
-#include <TMarker.h>
-#endif // CAT_WITH_DEVEL_ROOT == 1
-
 namespace CAT {
-  using namespace mybhep;
-  using namespace std;
 
   //! get cells
   const std::vector<topology::cell>& clusterizer::get_cells()const
@@ -122,46 +105,6 @@ namespace CAT {
     return;
   }
 
-
-  //************************************************************
-  clusterizer::clusterizer(const mybhep::gstore &st){
-    //*************************************************************
-
-    _set_defaults ();
-    set_level (st.fetch_sstore("VERBOSITY"));
-
-
-    //-- read param --//
-
-    pmax = st.fetch_dstore("pmax")*mybhep::MeV;
-    MaxTime = st.fetch_dstore("MaxTime");
-    PrintMode = st.fetch_istore("PrintMode");
-
-    SmallRadius=st.fetch_dstore("SmallRadius")*mybhep::mm;
-    TangentPhi=st.fetch_dstore("TangentPhi");
-    TangentTheta=st.fetch_dstore("TangentTheta");
-    SmallNumber=st.fetch_dstore("SmallNumber")*mybhep::mm;
-    QuadrantAngle=st.fetch_dstore("QuadrantAngle");
-    Ratio=st.fetch_dstore("Ratio");
-    CompatibilityDistance=st.fetch_dstore("CompatibilityDistance");
-    MaxChi2=st.fetch_dstore("MaxChi2");
-
-    if (st.find_sstore("histo_file"))
-      hfile=st.fetch_sstore("histo_file");
-    else
-      hfile="CatsHistogram.root";
-
-    if (st.find_dstore("probmin"))
-      probmin=st.fetch_dstore("probmin");
-    else
-      probmin=1.e-200;
-
-    /*
-      if( PrintMode )
-      hman =  NHistoManager2(st);
-    */
-
-  }
 
   //************************************************************
   // Default constructor :
