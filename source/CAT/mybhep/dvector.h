@@ -85,23 +85,23 @@ namespace mybhep
         file << (*this)[i] << "\t";
     }
 
-    virtual void info(std::ostream& s = std::clog) const{
+    virtual void info(std::ostream& os = std::clog) const{
       typename std::vector<T>::const_iterator vi;
 
       if (this->size() == 0)
         {
-          s <<  "(  )";
+          os <<  "(  )";
         }
       else
         {
-          s <<  "(";
+          os <<  "(";
 
           for (vi = this->begin(); vi< this->end()-1; vi++)
             {
-              s << *vi <<",";
+              os << *vi <<",";
             }
 
-          s << *vi << ")" ;
+          os << *vi << ")" ;
         }
 
     }
@@ -128,7 +128,3 @@ namespace mybhep
 }
 
 #endif
-
-
-
-

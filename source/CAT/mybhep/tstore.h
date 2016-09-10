@@ -206,7 +206,7 @@ namespace mybhep{
       return vitems;
     }
     //! print interface
-    virtual void info(std::ostream& s = std::clog) const{
+    virtual void info(std::ostream& os = std::clog) const{
       if (level_ > MUTE){
         std::ostringstream ostr;
 
@@ -217,7 +217,7 @@ namespace mybhep{
             ostr << pi->first<< " = " << pi->second << std::endl;
           }
 
-        s << std::endl
+        os << std::endl
           << ostr.str() << "\n"
           << std::endl;
       }
@@ -228,4 +228,3 @@ namespace mybhep{
   };
 }
 #endif
-

@@ -264,17 +264,17 @@ namespace mybhep{
 
   };
 
-  inline std::ostream& operator << (std::ostream& s, const point& ip) {
-      s << std::endl;
+  inline std::ostream& operator << (std::ostream& os, const point& ip) {
+      os << std::endl;
 
-      s << "view =" << ip.view() << std::endl;
+      os << "view =" << ip.view() << std::endl;
       if(ip.view() == "XZ")
-      s << "(" << ip.x() << ","<<ip.z() <<")";
+      os << "(" << ip.x() << ","<<ip.z() <<")";
       else if(ip.view() == "YZ")
-      s << "(" <<ip.y() <<","<<ip.z() <<")";
+      os << "(" <<ip.y() <<","<<ip.z() <<")";
       else if(ip.view() == "XYZ")
-      s << "(" << ip.x() << "," <<ip.y() <<","<<ip.z() <<")";
-      return s;
+      os << "(" << ip.x() << "," <<ip.y() <<","<<ip.z() <<")";
+      return os;
     }
 
 

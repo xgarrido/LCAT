@@ -82,8 +82,8 @@ namespace mybhep{
     /** Takes an std::string that will be passed to std::cerr is the exception
      * is raised
      */
-    internal_logic(const std::string &s = "exception: internal logic"):
-      std::logic_error (s) {}
+    internal_logic(const std::string &str = "exception: internal logic"):
+      std::logic_error (str) {}
     //! throws this exception or abort (if exceptions disabled)
     virtual void raise () {
       throw *this;
@@ -99,8 +99,8 @@ namespace mybhep{
 /** Takes an std::string that will be passed to std::cerr is the exception
  * is raised
  */
-	bad_argument (const std::string &s = "exception: bad argument"):
-	    std::invalid_argument (s) {}
+	bad_argument (const std::string &str = "exception: bad argument"):
+	    std::invalid_argument (str) {}
 //! throws this exception or abort (if exceptions disabled)
 	virtual void raise () {
 	    throw *this;
@@ -116,8 +116,8 @@ namespace mybhep{
 /** Takes an std::string that will be passed to std::cerr is the exception
  * is raised
  */
-	bad_size (const std::string &s = "exception: bad size"):
-	    std::domain_error (s) {}
+	bad_size (const std::string &str = "exception: bad size"):
+	    std::domain_error (str) {}
 //! throws this exception or abort (if exceptions disabled)
 	virtual void raise () {
 
@@ -134,8 +134,8 @@ namespace mybhep{
 /** Takes an std::string that will be passed to std::cerr is the exception
  * is raised
  */
-	bad_index (const std::string &s = "exception: bad index"):
-	    std::out_of_range (s) {}
+	bad_index (const std::string &str = "exception: bad index"):
+	    std::out_of_range (str) {}
 //! throws this exception or abort (if exceptions disabled)
 	virtual void raise () {
 
@@ -148,8 +148,8 @@ namespace mybhep{
 /** Takes an std::string that will be passed to std::cerr is the exception
  * is raised
  */
-	bad_key (const std::string &s = "exception: bad key"):
-	    std::out_of_range (s) {}
+	bad_key (const std::string &str = "exception: bad key"):
+	    std::out_of_range (str) {}
 //! throws this exception or abort (if exceptions disabled)
 	virtual void raise () {
 
@@ -166,8 +166,8 @@ namespace mybhep{
     /** Takes an std::string that will be passed to std::cerr is the exception
      * is raised
      */
-    divide_by_zero(const std::string &s = "exception: divide by zero"):
-      std::runtime_error (s) {}
+    divide_by_zero(const std::string &str = "exception: divide by zero"):
+      std::runtime_error (str) {}
     /// throws this exception or abort (if exceptions disabled)
     virtual void raise () {
 	    throw *this;
@@ -179,10 +179,3 @@ namespace mybhep{
 }
 
 #endif
-
-
-
-
-
-
-

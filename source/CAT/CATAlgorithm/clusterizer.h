@@ -6,8 +6,6 @@
 
 #include <stdexcept>
 #include <mybhep/messenger.h>
-#include <mybhep/event.h>
-#include <CLHEP/Units/SystemOfUnits.h>
 #include <mybhep/system_of_units.h>
 
 #include <iostream>
@@ -50,19 +48,9 @@ namespace CAT{
   public:
     bool initialize( void );
     void initializeHistos( void );
-    bool execute(mybhep::event& evt, int ievent);
     bool finalize();
     void finalizeHistos( void );
-    void FillYPositions( mybhep::event& evt );
-    void FillYPositions( mybhep::particle* p );
-    void FillYPosition( mybhep::hit* h );
-    void FillTrueVertexes( mybhep::event& evt );
-    void FillTrueVertexes( mybhep::particle* p );
-    void FillHistos(mybhep::event& evt );
-    bool read_event(mybhep::event& evt, topology::tracked_data & tracked_data_);
     bool prepare_event(topology::tracked_data & tracked_data_);
-    void read_true_sequences(mybhep::event& evt);
-    void read_nemo_sequences(mybhep::event& evt);
     void read_true_sequences();
     void read_nemo_sequences();
     void print_cells(void)const;
@@ -100,9 +88,6 @@ namespace CAT{
   protected:
 
     void fill_fast_information( );
-    void fill_fast_information( mybhep::event& evt );
-    void fill_fast_information( mybhep::particle* p );
-    void fill_fast_information( mybhep::hit* h );
     int cell_side( const topology::cell & c);
     size_t near_level( const topology::cell & c1, const topology::cell & c2 );
     std::vector<topology::cell> get_near_cells(const topology::cell & c);
