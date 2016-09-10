@@ -124,10 +124,6 @@ namespace CAT {
   bool clusterizer::_initialize(){
     //*************************************************************
 
-    if( PrintMode )
-      {
-        initializeHistos();
-      }
     /*
       if( !SuperNemo )
       {
@@ -154,30 +150,11 @@ namespace CAT {
 
     m.message("CAT::clusterizer::initialize: Beginning algorithm clusterizer \n",mybhep::VERBOSE);
 
-    //----------- read dst param -------------//
-
-    readDstProper();
-
-    //------- end of read pram -----------//
-
     _initialize();
 
     m.message("CAT::clusterizer::initialize: Done.",mybhep::NORMAL);
 
     return true;
-  }
-
-  //*************************************************************
-  void clusterizer::initializeHistos( void ) {
-    //*************************************************************
-
-    //  hman.h1("chi2_triplet", "chi2 for each cell triplet", 100, -0.05, 20.05);
-    //  hman.h1("prob_triplet", "probability that chi2 is larger than observed for a good triplet", 100, -0.05, 1.05);
-    //  hman.h1("largest_true_kink", "largest kink in a true particle", 100, 0., 180.);
-    //  hman.h2("largest_true_kink_position", "position of largest kink in a true particle", 100, -rad/1.9, rad/1.9, 100, -rad/1.9, rad/1.9);
-
-    return;
-
   }
 
 
@@ -192,10 +169,6 @@ namespace CAT {
     m.message("CAT::clusterizer::finalize: Initial events: ", InitialEvents, mybhep::NORMAL);
     m.message("CAT::clusterizer::finalize: Skipped events: ", SkippedEvents, "(", 100.*SkippedEvents/InitialEvents, "%)", mybhep::NORMAL);
 
-    if( PrintMode )
-      {
-        finalizeHistos();
-      }
     clock.stop(" clusterizer: finalize ");
 
     if( level >= mybhep::NORMAL ){
@@ -204,101 +177,6 @@ namespace CAT {
 
     _set_defaults ();
     return true;
-  }
-
-  //*************************************************************
-  void clusterizer::finalizeHistos( void ) {
-    //*************************************************************
-
-    //  if( PrintMode )
-    //    hman.save();
-
-    m.message("CAT::clusterizer::finalizeHistos: Writing histograms in ", hfile, mybhep::NORMAL);
-
-    return;
-  }
-
-  //*************************************************************
-  void clusterizer::readDstProper() {
-    //*************************************************************
-    m.message("CAT::clusterizer::readDstProper: Entering...",mybhep::NORMAL);
-
-    //clock.start(" clusterizer: read dst properties ");
-
-    if (_MaxBlockSize <= 0)
-      {
-        _MaxBlockSize = 1;
-        m.message("CAT::clusterizer::readDstProper: no bar design, MODULES Nr set to = ",_MaxBlockSize,"\n",mybhep::NORMAL);
-      }
-
-    if(SuperNemo)
-      {
-        m.message("CAT::clusterizer::readDstProper: SuperNemo kind of data",mybhep::NORMAL);
-        if (num_blocks <= 0)
-          {
-            // Default :
-            set_num_blocks (1);
-            planes_per_block.at (0) = 9;
-          }
-      }
-    else
-      {
-        m.message("CAT::clusterizer::readDstProper: Nemo-3 kind of data",mybhep::NORMAL);
-        if (num_blocks <= 0)
-          {
-            // Default :
-            set_num_blocks (3);
-            planes_per_block.at (0) = 4;
-            planes_per_block.at (1) = 2;
-            planes_per_block.at (2) = 3;
-          }
-      }
-
-    compute_lastlayer();
-    /*
-      lastlayer = 0;
-      for(size_t i=0; i<planes_per_block.size(); i++)
-      lastlayer += (int)planes_per_block[i];
-    */
-
-    m.message("CAT::clusterizer::readDstProper: small radius",SmallRadius,"mm",mybhep::NORMAL);
-    m.message("CAT::clusterizer::readDstProper: tangent phi",TangentPhi,mybhep::NORMAL);
-    m.message("CAT::clusterizer::readDstProper: tangent theta",TangentTheta,mybhep::NORMAL);
-    m.message("CAT::clusterizer::readDstProper: small number",SmallNumber,"mm",mybhep::NORMAL);
-    m.message("CAT::clusterizer::readDstProper: quadrant angle",QuadrantAngle,mybhep::NORMAL);
-    m.message("CAT::clusterizer::readDstProper: ratio",Ratio,mybhep::NORMAL);
-    m.message("CAT::clusterizer::readDstProper: compatibility distance", CompatibilityDistance,mybhep::NORMAL);
-    m.message("CAT::clusterizer::readDstProper: maximum chi2", MaxChi2, mybhep::NORMAL);
-    m.message("CAT::clusterizer::readDstProper: probmin", probmin, mybhep::NORMAL);
-    m.message("CAT::clusterizer::readDstProper: first event number", first_event_number, mybhep::NORMAL);
-
-    if (SuperNemo && SuperNemoChannel)
-      {
-        m.message("CAT::clusterizer::readDstProper: cell pitch: ",GG_CELL_pitch,"mm",mybhep::NORMAL);
-      }
-    else
-      {
-        m.message("CAT::clusterizer::readDstProper: pmax",pmax,"MeV",mybhep::NORMAL);
-        m.message("CAT::clusterizer::readDstProper: xsize is",xsize,"mm",mybhep::NORMAL);
-        m.message("CAT::clusterizer::readDstProper: ysize is",ysize,"mm",mybhep::NORMAL);
-        m.message("CAT::clusterizer::readDstProper: zsize is",zsize,"mm",mybhep::NORMAL);
-        m.message("CAT::clusterizer::readDstProper: plasma speed is: ",vel,"mm/ns",mybhep::NORMAL);
-        m.message("CAT::clusterizer::readDstProper: wire length is: ",len,"mm",mybhep::NORMAL);
-        m.message("CAT::clusterizer::readDstProper: cell diameter is: ",rad,"mm",mybhep::NORMAL);
-        m.message("CAT::clusterizer::readDstProper: distance from wire to wire is: ",CellDistance,"mm",mybhep::NORMAL);
-      }
-    if( !SuperNemo )
-      {
-        m.message("CAT::clusterizer::readDstProper: foil radius: ",FoilRadius,"mm",mybhep::NORMAL);
-      }
-    m.message("CAT::clusterizer::readDstProper: verbosity print level:", level, mybhep::NORMAL);
-
-    //parameters for error parametrization
-
-    //clock.stop(" clusterizer: read dst properties ");
-    m.message("CAT::clusterizer::readDstProper: Done.",mybhep::NORMAL);
-
-    return;
   }
 
 
@@ -623,66 +501,6 @@ namespace CAT {
 
   }
 
-  //*******************************************************************
-  void clusterizer::print_cells(void)const{
-    //*******************************************************************
-
-    for(std::vector<topology::cell>::const_iterator icell=cells_.begin(); icell!=cells_.end();++icell){
-      icell->dump();
-    }
-
-    return;
-  }
-
-
-  //*******************************************************************
-  void clusterizer::print_calos(void)const{
-    //*******************************************************************
-
-    for(std::vector<topology::calorimeter_hit>::const_iterator icalo=calorimeter_hits_.begin(); icalo!=calorimeter_hits_.end();++icalo){
-      icalo->dump();
-    }
-
-    return;
-  }
-
-  //*******************************************************************
-  void clusterizer::print_true_sequences(void)const{
-    //*******************************************************************
-
-    for(std::vector<topology::sequence>::const_iterator iseq=true_sequences_.begin(); iseq != true_sequences_.end(); ++iseq){
-      iseq->dump();
-    }
-
-    return;
-  }
-
-
-  //*******************************************************************
-  void clusterizer::print_nemo_sequences(void)const{
-    //*******************************************************************
-
-    for(std::vector<topology::sequence>::const_iterator iseq=nemo_sequences_.begin(); iseq != nemo_sequences_.end(); ++iseq){
-      iseq->dump();
-    }
-
-    return;
-  }
-
-
-
-  //*******************************************************************
-  void clusterizer::print_clusters(void)const{
-    //*******************************************************************
-
-    for(std::vector<topology::cluster>::const_iterator icluster=clusters_.begin(); icluster != clusters_.end(); ++icluster){
-      icluster->dump();
-    }
-
-    return;
-  }
-
-
 
   //*******************************************************************
   void clusterizer::clusterize(topology::tracked_data & tracked_data_){
@@ -789,13 +607,6 @@ namespace CAT {
 
     m.message("CAT::clusterizer::clusterize: there are ", clusters_.size(), " clusters of cells ", mybhep::VVERBOSE);
 
-    if( PrintMode )
-      make_plots(tracked_data_);
-
-    if( level >= mybhep::VVERBOSE ){
-      print_clusters();
-    }
-
     tracked_data_.set_cells(cells_);
     tracked_data_.set_clusters(clusters_);
 
@@ -873,64 +684,11 @@ namespace CAT {
 
     setup_clusters();
 
-    if( PrintMode )
-      make_plots(tracked_data_);
-
-    if( level >= mybhep::VVERBOSE ){
-      print_clusters();
-    }
 
     clock.stop(" clusterizer: clusterize_after_sultan ");
 
 
     return;
-
-  }
-
-  //*************************************************************
-  void clusterizer::make_plots(topology::tracked_data & /* tracked_data_ */){
-    //*************************************************************
-    /*
-      if( PrintMode ){
-      for(std::vector<topology::cluster>::iterator icluster = clusters_.begin(); icluster!=clusters_.end(); ++icluster){
-      for(std::vector<topology::node>::iterator inode = (*icluster).nodes_.begin(); inode != (*icluster).nodes_.end(); ++inode){
-      for(std::vector<topology::cell_triplet>::iterator iccc = (*inode).ccc_.begin(); iccc != (*inode).ccc_.end(); ++iccc){
-      topology::cell_triplet ccc = *iccc;
-      for(std::vector<double>::const_iterator ichi = ccc.chi2s().begin(); ichi != ccc.chi2s().end(); ++ichi){
-      hman.fill("chi2_triplet", *ichi);
-      }
-      for(std::vector<double>::const_iterator iprob = ccc.probs().begin(); iprob != ccc.probs().end(); ++iprob){
-      hman.fill("prob_triplet", *iprob);
-      }
-      }
-      }
-
-      }
-
-      std::vector<topology::sequence> true_sequences = tracked_data_.get_true_sequences();
-      for(std::vector<topology::sequence>::iterator iseq=true_sequences.begin(); iseq != true_sequences.end(); ++iseq){
-      topology::node n;
-      double phi;
-      if( iseq->largest_kink_node(n, phi)){
-      phi *= 180./M_PI;
-      std::clog << " largest kink on true sequence " << iseq - true_sequences.begin() << " is " << phi << " on cell " << n.c().id() << std::endl;
-      hman.fill("largest_true_kink", phi);
-      if( phi > 20.){
-      topology::experimental_vector dist(n.c().ep(), n.ep());
-      hman.fill("largest_true_kink_position", dist.z().value(), dist.x().value());
-      }
-      }
-
-      }
-
-
-
-
-      }
-
-    */
-    return;
-
 
   }
 
@@ -1353,16 +1111,8 @@ namespace CAT {
 
     clock.start(" clusterizer: order cells ","cumulative");
 
-    if( cells_.size() ){
-      if( level >= mybhep::VVERBOSE ){
-        std::clog << "CAT::clusterizer::order_cells: printing cells " << cells_.size() << std::endl;
-        print_cells();
-        std::clog << "CAT::clusterizer::order_cells: sorting cells " << std::endl;
-      }
-
-      //  std::sort( cells_.begin(), cells_.end(), topology::cell::compare );
-      std::sort( cells_.begin(), cells_.end());
-    }
+    //  std::sort( cells_.begin(), cells_.end(), topology::cell::compare );
+    std::sort( cells_.begin(), cells_.end());
 
     clock.stop(" clusterizer: order cells ");
 

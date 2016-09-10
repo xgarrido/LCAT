@@ -47,20 +47,10 @@ namespace CAT{
 
   public:
     bool initialize( void );
-    void initializeHistos( void );
     bool finalize();
-    void finalizeHistos( void );
     bool prepare_event(topology::tracked_data & tracked_data_);
-    void read_true_sequences();
-    void read_nemo_sequences();
-    void print_cells(void)const;
-    void print_calos(void)const;
     void clusterize(topology::tracked_data & tracked_data_);
     void clusterize_after_sultan(topology::tracked_data & tracked_data_);
-    void print_clusters(void) const;
-    void print_true_sequences(void)const;
-    void print_nemo_sequences(void)const;
-    void readDstProper();
     void GenerateWires( void );
     double long_resolution(double Z, double d[3])const;
     double long_resolution_1cthd(double Zdist)const;
@@ -96,7 +86,6 @@ namespace CAT{
     topology::calorimeter_hit make_calo_hit(const mybhep::hit & ahit, size_t id);
     int get_effective_layer(const mybhep::hit & hit);
     bool select_true_tracks(topology::tracked_data & __tracked_data);
-    void make_plots(topology::tracked_data & __tracked_data);
 
   protected:
 
