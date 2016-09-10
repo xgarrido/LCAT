@@ -93,9 +93,8 @@ namespace snemo {
           std::ostringstream oss1, oss2;
           tcd1.tree_dump(oss1);
           tcd2.tree_dump(oss2);
-          DT_LOG_TRACE(get_logging_priority(), oss1.str());
-          DT_LOG_TRACE(get_logging_priority(), oss2.str());
-
+          // DT_LOG_TRACE(get_logging_priority(), oss1.str());
+          // DT_LOG_TRACE(get_logging_priority(), oss2.str());
           if (oss1.str() != oss2.str()) {
             DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
                            "'" << *i << "' and '" << *j << "' banks are different !");
