@@ -164,8 +164,6 @@ namespace CAT{
     std::string  _moduleNR;
     int     _MaxBlockSize;
 
-    //histogram file
-    std::string hfile;
     bool is_good_couplet(topology::cell* mainc,
                          const topology::cell &candidatec,
                          const std::vector<topology::cell> &nearmain);
@@ -208,8 +206,6 @@ namespace CAT{
     void set_CompatibilityDistance(double v);
 
     void set_MaxChi2(double v);
-
-    void set_hfile(std::string v);
 
     void set_probmin(double v);
 

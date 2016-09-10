@@ -93,7 +93,6 @@ namespace CAT {
     _moduleNR.clear ();
     _MaxBlockSize = -1;
     event_number=0;
-    hfile.clear ();
 
     nevent = 0;
     InitialEvents = 0;
@@ -619,11 +618,6 @@ namespace CAT {
 
   void clusterizer::set_MaxChi2(double v){
     MaxChi2 = v;
-    return;
-  }
-
-  void clusterizer::set_hfile(std::string v){
-    hfile = v;
     return;
   }
 
