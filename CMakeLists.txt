@@ -64,48 +64,28 @@ list(APPEND LCAT_HEADERS
   source/CAT/mybhep/clhep.h
   source/CAT/mybhep/container_algorithm.h
   source/CAT/mybhep/control_panel.h
-  source/CAT/mybhep/converter_svc.h
   source/CAT/mybhep/dvector.h
   source/CAT/mybhep/engine.h
   source/CAT/mybhep/error.h
-  source/CAT/mybhep/event_cvt.h
   source/CAT/mybhep/event.h
-  source/CAT/mybhep/event_svc.h
   source/CAT/mybhep/gstore.h
   source/CAT/mybhep/histogram.h
-  source/CAT/mybhep/hit_cvt.h
   source/CAT/mybhep/hit.h
   source/CAT/mybhep/ibconverter.h
   source/CAT/mybhep/iconverter.h
   source/CAT/mybhep/material.h
   source/CAT/mybhep/messenger.h
-  source/CAT/mybhep/mparticle_cvt.h
   source/CAT/mybhep/mparticle.h
-  source/CAT/mybhep/mybhep_svc.h
-  source/CAT/mybhep/particle_cvt.h
   source/CAT/mybhep/particle_definition.h
   source/CAT/mybhep/particle.h
   source/CAT/mybhep/point.h
-  source/CAT/mybhep/random_reader.h
-  source/CAT/mybhep/random_writer.h
   source/CAT/mybhep/ray.h
-  source/CAT/mybhep/reader_gz.h
-  source/CAT/mybhep/reader_hdf5.h
-  source/CAT/mybhep/reader_txt.h
-  source/CAT/mybhep/sequential_reader.h
-  source/CAT/mybhep/sequential_writer.h
-  source/CAT/mybhep/sparticle_cvt.h
   source/CAT/mybhep/sparticle.h
-  source/CAT/mybhep/sreader.h
   source/CAT/mybhep/store.h
   source/CAT/mybhep/system_of_units.h
-  source/CAT/mybhep/track_cvt.h
   source/CAT/mybhep/track.h
   source/CAT/mybhep/tstore.h
   source/CAT/mybhep/utilities.h
-  source/CAT/mybhep/writer_gz.h
-  source/CAT/mybhep/writer_hdf5.h
-  source/CAT/mybhep/writer_txt.h
   )
 
 list(APPEND LCAT_SOURCES
@@ -140,36 +120,16 @@ list(APPEND LCAT_SOURCES
   source/CAT/CATAlgorithm/sequentiator.cpp
   source/CAT/CATAlgorithm/tracking_object.cpp
   source/CAT/mybhep/axis.cpp
-  source/CAT/mybhep/base_reader.cpp
   source/CAT/mybhep/brw.cpp
-  source/CAT/mybhep/converter_svc.cpp
   source/CAT/mybhep/event.cpp
-  source/CAT/mybhep/event_cvt.cpp
-  source/CAT/mybhep/event_svc.cpp
   source/CAT/mybhep/histogram.cpp
   source/CAT/mybhep/hit.cpp
-  source/CAT/mybhep/hit_cvt.cpp
   source/CAT/mybhep/material.cpp
-  source/CAT/mybhep/mparticle_cvt.cpp
-  source/CAT/mybhep/mybhep_svc.cpp
   source/CAT/mybhep/particle.cpp
-  source/CAT/mybhep/particle_cvt.cpp
   source/CAT/mybhep/particle_definition.cpp
-  source/CAT/mybhep/random_reader.cpp
-  source/CAT/mybhep/random_writer.cpp
   source/CAT/mybhep/ray.cpp
-  source/CAT/mybhep/reader_gz.cpp
-  source/CAT/mybhep/reader_hdf5.cpp
-  source/CAT/mybhep/reader_txt.cpp
-  source/CAT/mybhep/sequential_reader.cpp
-  source/CAT/mybhep/sequential_writer.cpp
   source/CAT/mybhep/sparticle.cpp
-  source/CAT/mybhep/sparticle_cvt.cpp
   source/CAT/mybhep/track.cpp
-  source/CAT/mybhep/track_cvt.cpp
-  source/CAT/mybhep/writer_gz.cpp
-  source/CAT/mybhep/writer_hdf5.cpp
-  source/CAT/mybhep/writer_txt.cpp
   )
 
 # Build a dynamic library from our sources
