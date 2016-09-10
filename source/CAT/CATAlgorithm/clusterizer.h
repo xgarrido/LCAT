@@ -50,11 +50,6 @@ namespace CAT{
     bool finalize();
     bool prepare_event(topology::tracked_data & tracked_data_);
     void clusterize(topology::tracked_data & tracked_data_);
-    void clusterize_after_sultan(topology::tracked_data & tracked_data_);
-    void GenerateWires( void );
-    double long_resolution(double Z, double d[3])const;
-    double long_resolution_1cthd(double Zdist)const;
-    double GetYError( double y, float tup, float tdown, double direction[3]);
     void order_cells();
 
     //! get cells
@@ -77,15 +72,11 @@ namespace CAT{
 
   protected:
 
-    void fill_fast_information( );
     int cell_side( const topology::cell & c);
     size_t near_level( const topology::cell & c1, const topology::cell & c2 );
     std::vector<topology::cell> get_near_cells(const topology::cell & c);
     void setup_cells();
     void setup_clusters();
-    topology::calorimeter_hit make_calo_hit(const mybhep::hit & ahit, size_t id);
-    int get_effective_layer(const mybhep::hit & hit);
-    bool select_true_tracks(topology::tracked_data & __tracked_data);
 
   protected:
 
@@ -176,23 +167,18 @@ namespace CAT{
   private:
     std::string  _moduleNR;
     int     _MaxBlockSize;
-    std::vector<mybhep::particle*> parts;
 
     //histogram file
     std::string hfile;
     bool is_good_couplet(topology::cell* mainc,
                          const topology::cell &candidatec,
                          const std::vector<topology::cell> &nearmain);
-    size_t get_true_hit_index(mybhep::hit& hit, bool print);
-    size_t get_nemo_hit_index(mybhep::hit& hit, bool print);
     size_t get_calo_hit_index(const topology::calorimeter_hit &c);
 
   protected:
     void _set_defaults ();
 
   public:
-
-    void setDoDriftWires(bool ddw);
 
     void compute_lastlayer();
 
@@ -209,14 +195,6 @@ namespace CAT{
     void set_num_cells_per_plane(int ncpp);
 
     void set_SOURCE_thick(double st);
-
-    // What is it ?
-    void set_module_nr(const std::string &mID);
-
-    // What is it ?
-    int get_module_nr(void);
-
-    void set_MaxBlockSize(int mbs);
 
     void set_pmax(double v);
 
@@ -263,10 +241,6 @@ namespace CAT{
     void set_SuperNemo(bool v);
 
     void set_SuperNemoChannel(bool v);
-
-    void set_NemoraOutput(bool no);
-
-    void set_N3_MC(bool v);
 
     void set_FoilRadius(double v);
 
