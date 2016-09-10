@@ -41,13 +41,9 @@ namespace CAT{
 
     virtual ~clusterizer();
 
-  protected:
-
-    bool _initialize( void );
-
   public:
-    bool initialize( void );
-    bool finalize();
+    void initialize();
+    void finalize();
     bool prepare_event(topology::tracked_data & tracked_data_);
     void clusterize(topology::tracked_data & tracked_data_);
     void order_cells();
@@ -173,14 +169,11 @@ namespace CAT{
     bool is_good_couplet(topology::cell* mainc,
                          const topology::cell &candidatec,
                          const std::vector<topology::cell> &nearmain);
-    size_t get_calo_hit_index(const topology::calorimeter_hit &c);
 
   protected:
     void _set_defaults ();
 
   public:
-
-    void compute_lastlayer();
 
     void set_GG_GRND_diam (double ggd);
 
@@ -193,8 +186,6 @@ namespace CAT{
     void set_planes_per_block(int block, int nplanes);
 
     void set_num_cells_per_plane(int ncpp);
-
-    void set_SOURCE_thick(double st);
 
     void set_pmax(double v);
 
@@ -254,12 +245,6 @@ namespace CAT{
 
     //----------------------------------------
 
-    // variables of NEMO3 standard analysis
-
-    std::vector<int> run_list;
-    double run_time;
-    bool first_event;
-
 
   private:
 
@@ -267,7 +252,6 @@ namespace CAT{
     std::vector<topology::cluster> clusters_;
     std::vector<topology::calorimeter_hit> calorimeter_hits_;
     std::vector<topology::sequence> true_sequences_;
-    std::vector<topology::sequence> nemo_sequences_;
 
   };
 

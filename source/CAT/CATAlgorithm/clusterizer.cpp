@@ -98,9 +98,6 @@ namespace CAT {
     nevent = 0;
     InitialEvents = 0;
     SkippedEvents = 0;
-    run_list.clear ();
-    run_time = std::numeric_limits<double>::quiet_NaN ();
-    first_event=true;
 
     return;
   }
@@ -121,40 +118,22 @@ namespace CAT {
   }
 
   //*************************************************************
-  bool clusterizer::_initialize(){
-    //*************************************************************
-
-    /*
-      if( !SuperNemo )
-      {
-
-      run_time = 0.;
-      run_list.clear();
-
-      }
-    */
-
-    return true;
-  }
-
-  //*************************************************************
-  bool clusterizer::initialize( ) {
+  void clusterizer::initialize( ) {
     //*************************************************************
 
     m.message("CAT::clusterizer::initialize: Entering...",mybhep::NORMAL);
 
     m.message("CAT::clusterizer::initialize: Beginning algorithm clusterizer \n",mybhep::VERBOSE);
 
-    _initialize();
 
     m.message("CAT::clusterizer::initialize: Done.",mybhep::NORMAL);
 
-    return true;
+    return;
   }
 
 
   //*************************************************************
-  bool clusterizer::finalize() {
+  void clusterizer::finalize() {
     //*************************************************************
 
     clock.start(" clusterizer: finalize ");
@@ -171,23 +150,7 @@ namespace CAT {
     }
 
     _set_defaults ();
-    return true;
-  }
-
-
-  //*******************************************************************
-  size_t clusterizer::get_calo_hit_index(const topology::calorimeter_hit & c){
-    //*******************************************************************
-
-    for(std::vector<topology::calorimeter_hit>::iterator ic=calorimeter_hits_.begin(); ic!=calorimeter_hits_.end(); ++ic){
-      if( ic->same_calo(c) )
-        return ic->id();
-    }
-
-    m.message("CAT::clusterizer::get_calo_hit_index: warning: can't find corresponding calo hit for nemo calo hit (", c.pl().center().x().value(), ", ", c.pl().center().y().value(), ", ", c.pl().center().z().value(), ") layer", c.layer(), mybhep::VVERBOSE);
-
-    return 0;
-
+    return;
   }
 
   //*******************************************************************
@@ -381,16 +344,7 @@ namespace CAT {
   int clusterizer::cell_side( const topology::cell & c){
     //*************************************************************
 
-    if( SuperNemo )
-      {
-        if( c.ep().z().value() > 0. )
-          return 1;
-
-        return -1;
-      }
-
-
-    if( c.ep().radius().value() > FoilRadius )
+    if( c.ep().z().value() > 0. )
       return 1;
 
     return -1;
@@ -412,68 +366,34 @@ namespace CAT {
 
     topology::experimental_double distance = topology::experimental_vector(c1.ep(),c2.ep()).hor().length();
 
-    if( SuperNemo ){  // use side, layer and row
+    // Use geiger locator for such research Warning: use integer
+    // because uint32_t has strange behavior with absolute value
+    // cmath::abs
+    const int hit1_side  = c1.block();  // -1, 1
+    const int hit1_layer = abs(c1.layer()); // 0, 1, ..., 8
+    const int hit1_row   = c1.iid();  // -56, -55, ..., 55, 56
 
-      // Use geiger locator for such research Warning: use integer
-      // because uint32_t has strange behavior with absolute value
-      // cmath::abs
-      const int hit1_side  = c1.block();  // -1, 1
-      const int hit1_layer = abs(c1.layer()); // 0, 1, ..., 8
-      const int hit1_row   = c1.iid();  // -56, -55, ..., 55, 56
+    const int hit2_side  = c2.block();
+    const int hit2_layer = abs(c2.layer());
+    const int hit2_row   = c2.iid();
 
-      const int hit2_side  = c2.block();
-      const int hit2_layer = abs(c2.layer());
-      const int hit2_row   = c2.iid();
+    // Do not cross the foil
+    if (hit1_side != hit2_side) return 0;
 
-      // Do not cross the foil
-      if (hit1_side != hit2_side) return 0;
+    // Check neighboring
+    const unsigned int layer_distance = abs (hit1_layer - hit2_layer); // 1 --> side-by-side
+    const unsigned int row_distance = abs (hit1_row - hit2_row);
 
-      // Check neighboring
-      const unsigned int layer_distance = abs (hit1_layer - hit2_layer); // 1 --> side-by-side
-      const unsigned int row_distance = abs (hit1_row - hit2_row);
-
-      if (layer_distance == 0 && row_distance == 0){
-        if( level >= mybhep::NORMAL ){
-          std::clog << "CAT::clusterizer::near_level: problem: cat asking near level of cells with identical posiion (" << hit1_side << ", " << hit1_layer << ", " << hit1_row << ") (" << hit2_side << ", " << hit2_layer << ", " << hit2_row << ")" << std::endl;
-        }
-        return 3;
+    if (layer_distance == 0 && row_distance == 0){
+      if( level >= mybhep::NORMAL ){
+        std::clog << "CAT::clusterizer::near_level: problem: cat asking near level of cells with identical posiion (" << hit1_side << ", " << hit1_layer << ", " << hit1_row << ") (" << hit2_side << ", " << hit2_layer << ", " << hit2_row << ")" << std::endl;
       }
-      else if (layer_distance == 1 && row_distance == 0) return 2;
-      else if (layer_distance == 0 && row_distance == 1) return 2;
-      else if (layer_distance == 1 && row_distance == 1) return 1;
-      return 0;
-
-    }else{ // use physical distance
-
-      double limit_side;
-      double limit_diagonal;
-      if (SuperNemo && SuperNemoChannel)
-	{
-	  limit_side = GG_CELL_pitch;
-	  limit_diagonal = sqrt(2.)*GG_CELL_pitch;
-	}
-      else
-	{
-	  double factor = cos(M_PI/8.); // 0.923879532511287 // octogonal factor = 0.92
-	  limit_side = factor*CellDistance;
-	  limit_diagonal = sqrt(2.)*factor*CellDistance; // new factor = 1.31
-	}
-      double precision = 0.15*limit_side;
-
-      if( level >= mybhep::VVERBOSE )
-	std::clog << "CAT::clusterizer::near_level: (c " << c2.id() << " d " << distance.value() << " )"
-		  << std::endl;
-
-      if( std::abs(distance.value() - limit_side) < precision )
-	return 2;
-
-      if( std::abs(distance.value() - limit_diagonal) < precision )
-	return 1;
-
-      return 0;
+      return 3;
     }
-
-
+    else if (layer_distance == 1 && row_distance == 0) return 2;
+    else if (layer_distance == 0 && row_distance == 1) return 2;
+    else if (layer_distance == 1 && row_distance == 1) return 1;
+    return 0;
   }
 
 
@@ -581,14 +501,6 @@ namespace CAT {
 
   }
 
-  void clusterizer::compute_lastlayer(){
-    lastlayer = 0;
-    for(size_t i=0; i<planes_per_block.size(); i++){
-      lastlayer += (int)planes_per_block[i];
-    }
-    return;
-  }
-
   void clusterizer::set_GG_GRND_diam (double ggd){
     GG_GRND_diam = ggd;
     return;
@@ -644,18 +556,6 @@ namespace CAT {
     else
       {
         num_cells_per_plane = ncpp;
-      }
-    return;
-  }
-
-  void clusterizer::set_SOURCE_thick(double st){
-    if (st <= 0.0)
-      {
-        SOURCE_thick = std::numeric_limits<double>::quiet_NaN ();
-      }
-    else
-      {
-        SOURCE_thick = st;
       }
     return;
   }
