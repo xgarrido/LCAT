@@ -57,7 +57,6 @@ list(APPEND LCAT_HEADERS
   source/CAT/CATAlgorithm/Tracked_data.h
   source/CAT/CATAlgorithm/tracking_object.h
   source/CAT/mybhep/axis.h
-  source/CAT/mybhep/base_reader.h
   source/CAT/mybhep/bprint.h
   source/CAT/mybhep/bproperties.h
   source/CAT/mybhep/brw.h
@@ -69,10 +68,7 @@ list(APPEND LCAT_HEADERS
   source/CAT/mybhep/error.h
   source/CAT/mybhep/event.h
   source/CAT/mybhep/gstore.h
-  source/CAT/mybhep/histogram.h
   source/CAT/mybhep/hit.h
-  source/CAT/mybhep/ibconverter.h
-  source/CAT/mybhep/iconverter.h
   source/CAT/mybhep/material.h
   source/CAT/mybhep/messenger.h
   source/CAT/mybhep/mparticle.h
@@ -122,7 +118,6 @@ list(APPEND LCAT_SOURCES
   source/CAT/mybhep/axis.cpp
   source/CAT/mybhep/brw.cpp
   source/CAT/mybhep/event.cpp
-  source/CAT/mybhep/histogram.cpp
   source/CAT/mybhep/hit.cpp
   source/CAT/mybhep/material.cpp
   source/CAT/mybhep/particle.cpp
