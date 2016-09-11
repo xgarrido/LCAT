@@ -109,25 +109,6 @@ namespace CAT{
     size_t nofflayers;
     int first_event_number;
 
-    //error parametrization
-    double sigma0;
-    double k0;
-    double k1;
-    double k2;
-    double k3;
-
-    double th0;
-    double th1;
-    double th2;
-    double th3;
-
-    double pnob;
-    double pnot;
-    double pnobt;
-
-    double l0;
-    double l1;
-
     // Support numbers
     double execution_time;
     bool PrintMode;
