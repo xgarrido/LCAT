@@ -48,8 +48,12 @@ namespace snemo {
       void _set_defaults();
 
     private:
+      typedef std::pair<std::string, std::string> pair_label_type;
+      typedef std::vector<pair_label_type> pair_label_collection_type;
 
-      std::vector<std::string> _TCD_labels_; //!< A list of TCD labels
+      pair_label_collection_type _TCD_labels_; //!< A list of TCD labels
+
+      std::map<pair_label_type,size_t> _nbr_event_different_; //!< Number of different event
 
       // Macro to automate the registration of the module :
       DPP_MODULE_REGISTRATION_INTERFACE(clustering_comparison_module)

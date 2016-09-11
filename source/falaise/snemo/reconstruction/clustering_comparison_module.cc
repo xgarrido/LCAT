@@ -34,9 +34,14 @@ namespace snemo {
 
       dpp::base_module::_common_initialize(setup_);
 
-      if (_TCD_labels_.empty()) {
-        if (setup_.has_key("TCD_labels")) {
-          setup_.fetch("TCD_labels", _TCD_labels_);
+      if (setup_.has_key("TCD_labels")) {
+        std::vector<std::string> TCD_labels;
+        setup_.fetch("TCD_labels", TCD_labels);
+        // Build list of pairs of data bank label to be compared
+        for (auto i = TCD_labels.begin(); i != TCD_labels.end(); ++i) {
+          for (auto j = std::next(i); j != TCD_labels.end(); ++j) {
+            _TCD_labels_.push_back(std::make_pair(*i, *j));
+          }
         }
       }
       _set_initialized(true);
@@ -47,6 +52,15 @@ namespace snemo {
     {
       DT_THROW_IF(! is_initialized(), std::logic_error,
                   "Module '" << get_name() << "' is not initialized !");
+
+      DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "Entering...");
+
+      for (const auto & i : _nbr_event_different_) {
+        const auto & a_pair = i.first;
+        DT_LOG_NOTICE(get_logging_priority(), i.second << " events different between '"
+                      << a_pair.first << "' and '" << a_pair.second << "' data banks.");
+      }
+
       _set_initialized(false);
       _set_defaults();
       return;
@@ -74,38 +88,36 @@ namespace snemo {
       DT_THROW_IF(! is_initialized(), std::logic_error,
                   "Module '" << get_name() << "' is not initialized !");
 
-      for (auto i = _TCD_labels_.begin(); i != _TCD_labels_.end(); ++i) {
-        if (! data_record_.has(*i)) {
-          DT_LOG_WARNING(get_logging_priority(), "No data bank with label '" << *i << "' found !");
+      for (const auto & i : _TCD_labels_) {
+        const auto & ilabel = i.first;
+        const auto & jlabel = i.second;
+        if (! data_record_.has(ilabel)) {
+          DT_LOG_WARNING(get_logging_priority(), "No data bank with label '" << ilabel << "' found !");
           continue;
         }
-        for (auto j = std::next(i); j != _TCD_labels_.end(); ++j) {
-          if (! data_record_.has(*j)) {
-            DT_LOG_WARNING(get_logging_priority(), "No data bank with label '" << *j << "' found !");
-            continue;
-          }
-
-          DT_LOG_DEBUG(get_logging_priority(), "Comparing '" << *i << "' bank with '" << *j << "' bank");
-
-          const auto & tcd1 = data_record_.get<snemo::datamodel::tracker_clustering_data>(*i);
-          const auto & tcd2 = data_record_.get<snemo::datamodel::tracker_clustering_data>(*j);
-
-          std::ostringstream oss1, oss2;
-          tcd1.tree_dump(oss1);
-          tcd2.tree_dump(oss2);
-          // DT_LOG_TRACE(get_logging_priority(), oss1.str());
-          // DT_LOG_TRACE(get_logging_priority(), oss2.str());
-          if (oss1.str() != oss2.str()) {
-            DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
-                           "'" << *i << "' and '" << *j << "' banks are different !");
-            return dpp::base_module::PROCESS_STOP;
-          }
-
-
-
-
-          DT_LOG_DEBUG(get_logging_priority(), "Banks '" << *i << "' and '" << *j << "' have similar content");
+        if (! data_record_.has(jlabel)) {
+          DT_LOG_WARNING(get_logging_priority(), "No data bank with label '" << jlabel << "' found !");
+          continue;
         }
+
+        DT_LOG_DEBUG(get_logging_priority(), "Comparing '" << ilabel << "' bank with '" << jlabel << "' bank");
+
+        const auto & tcd1 = data_record_.get<snemo::datamodel::tracker_clustering_data>(ilabel);
+        const auto & tcd2 = data_record_.get<snemo::datamodel::tracker_clustering_data>(jlabel);
+
+        std::ostringstream oss1, oss2;
+        tcd1.tree_dump(oss1);
+        tcd2.tree_dump(oss2);
+        if (oss1.str() != oss2.str()) {
+          DT_LOG_WARNING(datatools::logger::PRIO_ALWAYS,
+                         "'" << ilabel << "' and '" << jlabel << "' banks are different !");
+          DT_LOG_TRACE(get_logging_priority(), oss1.str());
+          DT_LOG_TRACE(get_logging_priority(), oss2.str());
+          _nbr_event_different_[std::make_pair(ilabel, jlabel)]++;
+          return dpp::base_module::PROCESS_CONTINUE;
+        }
+
+        DT_LOG_DEBUG(get_logging_priority(), "Banks '" << ilabel << "' and '" << jlabel << "' have similar content");
       }
       DT_LOG_TRACE(get_logging_priority(), "Exiting.");
       return dpp::base_module::PROCESS_SUCCESS;
