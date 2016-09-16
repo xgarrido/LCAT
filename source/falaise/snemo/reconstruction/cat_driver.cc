@@ -948,4 +948,4 @@ DOCD_CLASS_IMPLEMENT_LOAD_BEGIN(snemo::reconstruction::cat_driver,ocd_)
   return;
 }
 DOCD_CLASS_IMPLEMENT_LOAD_END() // Closing macro for implementation
-DOCD_CLASS_SYSTEM_REGISTRATION(snemo::reconstruction::cat_driver, "snemo::reconstruction::cat_driver")
+// DOCD_CLASS_SYSTEM_REGISTRATION(snemo::reconstruction::cat_driver, "snemo::reconstruction::cat_driver")
