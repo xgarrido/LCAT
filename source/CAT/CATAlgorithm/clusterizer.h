@@ -79,47 +79,13 @@ namespace CAT{
 
   protected:
 
-    int nevent;
-
-    //geom param
-    double calo_X, calo_Y, calo_Z;
-    double pmax;
-    double bfield;
-
     //limits
-    double SmallRadius;
     double TangentPhi;
     double TangentTheta;
-    double SmallNumber;
     double QuadrantAngle;
     double Ratio;
-    double CompatibilityDistance;
-    double MaxChi2;
-    double probmin;
-    size_t nofflayers;
 
-    // Support numbers
-    bool SuperNemo;
-    bool SuperNemoChannel; /** New initialization modeof the algorithm
-                            *  for SuperNEMO and usage from Channel by
-                            *  Falaise and Hereward.
-                            *  Use the GG_CELL_pitch as the main geoemtry parameter
-                            *  of a GG cell, do not use 'rad' or 'CellDistance'
-                            */
-    bool NemoraOutput;
-    bool N3_MC;
-
-    int num_blocks;
-    mybhep::dvector<double> planes_per_block ;
-    mybhep::dvector<double> gaps_Z;
-    int num_cells_per_plane;
-
-    //  size_t dp_mode;
-
-    //----Modification for bar-module---
   private:
-    std::string  _moduleNR;
-    int     _MaxBlockSize;
 
     bool _is_good_couplet_(const topology::cell & main_cell_,
                            const topology::cell & candidate_cell_,
@@ -131,45 +97,18 @@ namespace CAT{
     void _set_initialized(bool);
 
     /// Set default attribute values
-    void _set_defaults ();
+    void _set_defaults();
 
   public:
-
-    void set_lastlayer(int ll_);
-
-    void set_num_blocks(int nb);
-
-    void set_planes_per_block(int block, int nplanes);
-
-    void set_num_cells_per_plane(int ncpp);
-
-    void set_pmax(double v);
-
-    void set_SmallRadius(double v);
 
     void set_TangentPhi(double v);
 
     void set_TangentTheta(double v);
 
-    void set_SmallNumber(double v);
-
     void set_QuadrantAngle(double v);
 
     void set_Ratio(double v);
 
-    void set_CompatibilityDistance(double v);
-
-    void set_MaxChi2(double v);
-
-    void set_probmin(double v);
-
-    void set_nofflayers(size_t v);
-
-    void set_SuperNemo(bool v);
-
-    void set_SuperNemoChannel(bool v);
-
-    void set_bfield(double v);
 
     //----------------------------------------
 

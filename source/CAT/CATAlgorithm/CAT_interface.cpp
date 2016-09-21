@@ -199,38 +199,10 @@ namespace CAT {
     czer_.set_logging_priority(setup_.level);
 
     // Algorithm parameters :
-    czer_.set_SmallRadius (setup_.SmallRadius / CLHEP::mm);
     czer_.set_TangentPhi (setup_.TangentPhi / CLHEP::degree);
     czer_.set_TangentTheta (setup_.TangentTheta / CLHEP::degree);
-    czer_.set_SmallNumber (setup_.SmallNumber / CLHEP::mm);
     czer_.set_QuadrantAngle (setup_.QuadrantAngle / CLHEP::degree);
     czer_.set_Ratio (setup_.Ratio);
-    czer_.set_CompatibilityDistance (setup_.CompatibilityDistance);
-    czer_.set_MaxChi2 (setup_.MaxChi2);
-    czer_.set_probmin (setup_.probmin);
-    czer_.set_nofflayers (setup_.nofflayers);
-
-    czer_.set_bfield (setup_.bfield);
-
-    // Geometry description :
-    if (setup_.SuperNemo)
-      {
-        /// Activate the special new mode :
-        czer_.set_SuperNemoChannel(true);
-
-        // Layout of the tracking chamber :
-        czer_.set_num_blocks (setup_.num_blocks);
-        for (int i = 0; i < setup_.num_blocks; i++)
-          {
-            czer_.set_planes_per_block (i, (int)(setup_.planes_per_block.at (i)+0.5));
-          }
-        czer_.set_num_cells_per_plane (setup_.num_cells_per_plane);
-      }
-    else
-      {
-        throw std::logic_error ("CAT::clusterizer_configure: Only SuperNEMO setup is supported !");
-      }
-
     return;
   }
 

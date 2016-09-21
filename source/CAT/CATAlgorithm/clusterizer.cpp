@@ -66,31 +66,12 @@ namespace CAT {
   void clusterizer::_set_defaults()
   {
     _logging_ = datatools::logger::PRIO_WARNING;
-    num_blocks = -1;
-    planes_per_block.clear ();
-    gaps_Z.clear ();
-    num_cells_per_plane = -1;
-    calo_X = calo_Y = calo_Z = std::numeric_limits<double>::quiet_NaN ();
-    pmax = std::numeric_limits<double>::quiet_NaN ();
 
-    SmallRadius = std::numeric_limits<double>::quiet_NaN ();
     TangentPhi = std::numeric_limits<double>::quiet_NaN ();
     TangentTheta = std::numeric_limits<double>::quiet_NaN ();
-    SmallNumber = std::numeric_limits<double>::quiet_NaN ();
     QuadrantAngle = std::numeric_limits<double>::quiet_NaN ();
     Ratio = std::numeric_limits<double>::quiet_NaN ();
-    CompatibilityDistance = std::numeric_limits<double>::quiet_NaN ();
-    MaxChi2 = std::numeric_limits<double>::quiet_NaN ();
-    probmin = std::numeric_limits<double>::quiet_NaN ();
-    nofflayers = 0;
-    SuperNemo = true;
-    SuperNemoChannel = false;
-    NemoraOutput = false;
-    N3_MC = false;
-    _moduleNR.clear ();
-    _MaxBlockSize = -1;
 
-    nevent = 0;
     return;
   }
 
@@ -259,7 +240,6 @@ namespace CAT {
                    "... check if near node " << b.id() << " has triplet " << a.id() << " <-> " << c.id());
 
       topology::cell_triplet ccc(a,b,c);
-      // ccc.set_probmin(probmin);
       ccc.calculate_joints(Ratio, QuadrantAngle, TangentPhi, TangentTheta);
       if (ccc.joints().size() > 0) {
         DT_LOG_DEBUG(get_logging_priority(),
@@ -372,67 +352,6 @@ namespace CAT {
 
   }
 
-  void clusterizer::set_num_blocks(int nb){
-    if (nb > 0)
-      {
-        num_blocks = nb;
-        planes_per_block.assign (num_blocks, 1);
-      }
-    else
-      {
-        std::cerr << "WARNING: CAT::clusterizer::set_num_blocks: "
-                  << "Invalid number of GG layer blocks !" << std::endl;
-        planes_per_block.clear ();
-        num_blocks = -1; // invalid value
-      }
-    return;
-  }
-
-  void clusterizer::set_planes_per_block(int block, int nplanes){
-    if (block< 0 || block>= (int)planes_per_block.size())
-      {
-        throw std::range_error ("CAT::clusterizer::set_planes_per_block: Invalid GG layer block index !");
-      }
-    if (nplanes > 0)
-      {
-        planes_per_block.at (block) = nplanes;
-      }
-    else
-      {
-        throw std::range_error ("CAT::clusterizer::set_planes_per_block: Invalid number of GG layers in block !");
-      }
-    return;
-  }
-
-  void clusterizer::set_num_cells_per_plane(int ncpp){
-    if (ncpp <= 0)
-      {
-        num_cells_per_plane = -1; // invalid value
-      }
-    else
-      {
-        num_cells_per_plane = ncpp;
-      }
-    return;
-  }
-
-  void clusterizer::set_pmax(double v){
-    if ( v <= 0.0)
-      {
-        pmax = std::numeric_limits<double>::quiet_NaN ();
-      }
-    else
-      {
-        pmax = v;
-      }
-    return;
-  }
-
-  void clusterizer::set_SmallRadius(double v){
-    SmallRadius = v;
-    return;
-  }
-
   void clusterizer::set_TangentPhi(double v){
     TangentPhi = v;
     return;
@@ -443,11 +362,6 @@ namespace CAT {
     return;
   }
 
-  void clusterizer::set_SmallNumber(double v){
-    SmallNumber = v;
-    return;
-  }
-
   void clusterizer::set_QuadrantAngle(double v){
     QuadrantAngle = v;
     return;
@@ -455,49 +369,6 @@ namespace CAT {
 
   void clusterizer::set_Ratio(double v){
     Ratio = v;
-    return;
-  }
-
-  void clusterizer::set_CompatibilityDistance(double v){
-    CompatibilityDistance = v;
-    return;
-  }
-
-  void clusterizer::set_MaxChi2(double v){
-    MaxChi2 = v;
-    return;
-  }
-
-  void clusterizer::set_probmin(double v){
-    probmin = v;
-    return;
-  }
-
-  void clusterizer::set_nofflayers(size_t v){
-    nofflayers = v;
-    return;
-  }
-
-  void clusterizer::set_SuperNemo(bool v){
-    SuperNemo = v;
-    return;
-  }
-
-  void clusterizer::set_SuperNemoChannel(bool v){
-    if (v)
-      {
-        set_SuperNemo (true);
-        SuperNemoChannel = true;
-      }
-    else
-      {
-        SuperNemoChannel = false;
-      }
-    return;
-  }
-
-  void clusterizer::set_bfield(double v){
-    bfield = v;
     return;
   }
 
