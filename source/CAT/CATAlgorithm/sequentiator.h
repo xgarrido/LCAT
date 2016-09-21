@@ -69,7 +69,6 @@ namespace CAT {
 
     bool sequentiate(topology::tracked_data & tracked_data);
     void sequentiate_cluster(topology::cluster & cluster);
-    bool sequentiate_after_sultan(topology::tracked_data & tracked_data, bool conserve_clustering_from_removal_of_cells);
     void sequentiate_cluster_after_sultan();
     void make_new_sequence(topology::node & first_node);
     void make_copy_sequence(topology::node & first_node);
@@ -79,8 +78,6 @@ namespace CAT {
     bool evolve(topology::sequence & sequence);
     void fill_links(topology::sequence *sequence);
     bool good_first_node(topology::node & node_);
-    void make_plots(topology::tracked_data __tracked_data);
-    void plot_hard_scattering(topology::tracked_data __tracked_data);
     bool good_first_to_be_matched(topology::sequence& seq);
     bool match_gaps(std::vector<topology::calorimeter_hit> & calos);
     void match_to_calorimeter(std::vector<topology::calorimeter_hit> & calos, topology::sequence *sequence);

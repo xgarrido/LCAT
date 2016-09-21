@@ -419,188 +419,6 @@ namespace CAT {
 
 
   //*************************************************************
-  bool sequentiator::sequentiate_after_sultan(topology::tracked_data & tracked_data_, bool conserve_clustering_from_removal_of_cells) {
-    //*************************************************************
-    // for sultan, conserve_clustering_from_removal_of_cells should be false (N3), true (SN)
-    // for nemor, conserve_clustering_from_removal_of_cells should be true
-
-    event_number ++;
-    m.message("CAT::sequentiator::sequentiate_after_sultan: local_tracking: preparing event", event_number, mybhep::VERBOSE);
-
-    if( event_number < first_event_number ){
-      m.message("CAT::sequentiator::sequentiate_after_sultan:  local_tracking: skip event", event_number, " first event is "
-                , first_event_number,  mybhep::VERBOSE);
-      return true;
-    }
-
-    clock.start(" sequentiator: sequentiate_after_sultan ","cumulative");
-    clock.start(" sequentiator: sequentiation ","restart");
-
-    // set_clusters(tracked_data_.get_clusters());
-    vector<topology::cluster> & the_clusters = tracked_data_.get_clusters ();
-
-    m.message("CAT::sequentiator::sequentiate_after_sultan: sequentiate ", the_clusters.size(), " clusters ", mybhep::VVERBOSE); fflush(stdout);
-
-    NFAMILY = 0;
-    NCOPY = 0;
-
-    if (the_clusters.empty ()) return true;
-
-    sequences_.clear();
-    scenarios_.clear();
-
-    tracked_data_.scenarios_.clear();
-
-    for (vector<topology::cluster>::iterator
-          icluster = the_clusters.begin();
-        icluster != the_clusters.end(); ++icluster)
-      {
-        local_cluster_ = &(*icluster);
-
-        sequentiate_cluster_after_sultan();
-
-	NFAMILY ++;
-      }
-
-    if (late())
-      {
-        tracked_data_.set_skipped(true);
-        SkippedEvents ++;
-        return false;
-      }
-
-    clean_up_sequences();
-    direct_out_of_foil();
-
-    interpret_physics_after_sultan(tracked_data_.get_calos(), conserve_clustering_from_removal_of_cells);
-    make_families();
-
-    refine_sequences_near_walls(tracked_data_.get_calos());
-
-    if (late())
-      {
-        tracked_data_.set_skipped(true);
-        SkippedEvents ++;
-        return false;
-      }
-
-
-    make_scenarios(tracked_data_,true);
-
-
-    if (late())
-      {
-        tracked_data_.set_skipped(true);
-        SkippedEvents ++;
-        return false;
-      }
-
-    // make_plots(tracked_data_);
-
-    clock.stop(" sequentiator: sequentiate_after_sultan ");
-
-    return true;
-  }
-
-
-
-  //*************************************************************
-  void sequentiator::plot_hard_scattering(topology::tracked_data /*__tracked_data*/){
-    //*************************************************************
-
-    /*
-      if( PrintMode ){
-      if( !__tracked_data.scenarios_.empty() ){
-      for(std::vector<topology::sequence>::iterator isequence = __tracked_data.scenarios_[0].sequences_.begin(); isequence != __tracked_data.scenarios_[0].sequences_.end(); ++isequence){
-
-      for(std::vector<topology::node>::iterator in = isequence->nodes_.begin(); in != isequence->nodes_.end(); ++in){
-      topology::experimental_vector dist(in->c().ep(), in->ep());
-      hman.fill("all_point_map", dist.z().value(), dist.x().value());
-      }
-
-      if( !isequence->has_decay_vertex() ){
-      // if the last cell is not on a gap
-      if( gap_number(isequence->last_node().c()) < 0 ){
-      m.message(" sequence ", isequence->name(), "has last cell ", isequence->last_node().c().id(), " disconnected", mybhep::NORMAL);
-
-      for(std::vector<topology::sequence>::iterator jsequence = __tracked_data.scenarios_[0].sequences_.begin(); jsequence != __tracked_data.scenarios_[0].sequences_.end(); ++jsequence){
-      if( isequence == jsequence ) continue;
-      if( jsequence->nodes_[0].c().id() != isequence->last_node().c().id() &&
-      jsequence->last_node().c().id() != isequence->last_node().c().id()) continue;
-
-      m.message(" .. and in common with sequence ", jsequence->name(), mybhep::NORMAL);
-
-      if( isequence->family() == jsequence->family() ) continue;
-
-      m.message(" .... will plot ", mybhep::NORMAL);
-
-      topology::experimental_vector dist(isequence->last_node().c().ep(), isequence->last_node().ep());
-      hman.fill("end_point_map", dist.z().value(), dist.x().value());
-      }
-
-      }
-      }
-
-      }
-      }
-      }
-
-
-    */
-    return;
-  }
-
-
-
-
-  //*************************************************************
-  void sequentiator::make_plots(topology::tracked_data /*__tracked_data*/){
-    //*************************************************************
-
-    /*
-      if( PrintMode ){
-
-      clock.start(" sequentiator: reconstruct efficiency ","cumulative");
-      rec_efficiency(__tracked_data.get_true_sequences());
-      clock.stop(" sequentiator: reconstruct efficiency ");
-
-      plot_hard_scattering(__tracked_data);
-
-      for(std::vector<topology::sequence>::iterator isequence = sequences_.begin(); isequence != sequences_.end(); ++isequence){
-
-      std::vector<double> chi2s = isequence->chi2s_all();
-      for(size_t ichi=0; ichi<chi2s.size(); ichi ++){
-      hman.fill("chi2_connections", chi2s[ichi]);
-      }
-      std::vector<double> probs = isequence->probs_all();
-      for(size_t iprob=0; iprob<probs.size(); iprob ++){
-      hman.fill("prob_connections", probs[iprob]);
-      }
-
-      hman.fill("chi2_sequence", isequence->chi2());
-      hman.fill("prob_sequence", isequence->Prob());
-
-      std::vector<double> hchi2s = isequence->helix_chi2s_all();
-      for(size_t ichi=0; ichi<hchi2s.size(); ichi ++){
-      hman.fill("helix_chi2_points", hchi2s[ichi]);
-      }
-
-      hman.fill("helix_chi2", isequence->helix_chi2());
-      hman.fill("helix_prob", isequence->helix_Prob());
-
-
-      }
-
-
-      }
-
-    */
-
-    return;
-
-  }
-
-  //*************************************************************
   void sequentiator::sequentiate_cluster(topology::cluster & cluster_) {
     //*************************************************************
 
@@ -1721,14 +1539,12 @@ namespace CAT {
     if( level >= mybhep::VERBOSE)
       print_families();
 
-    size_t jmin, nfree, noverlaps;
-    double Chi2;
-    int ndof;
     for(std::vector<topology::sequence>::iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq){
       if( late() ){
         td.set_skipped(true);
         return false;
       }
+
 
       m.message("CAT::sequentiator::make_scenarios: begin scenario with sequence ", iseq->name(), mybhep::VVERBOSE);
       if( level >= mybhep::VVERBOSE)
@@ -1742,6 +1558,9 @@ namespace CAT {
       sc.calculate_n_overlaps(td.get_cells(), td.get_calos());
       sc.calculate_chi2();
 
+      size_t jmin = 0, nfree = 0, noverlaps = 0;
+      double Chi2 = 0.0;
+      int ndof = 0;
       while( can_add_family(sc, &jmin, &nfree, &Chi2, &noverlaps, &ndof, td,after_sultan) )
         {
           m.message("CAT::sequentiator::make_scenarios: best sequence to add is ", jmin, mybhep::VVERBOSE);
