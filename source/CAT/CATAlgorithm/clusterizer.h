@@ -76,8 +76,6 @@ namespace CAT{
     int cell_side( const topology::cell & c);
     size_t near_level( const topology::cell & c1, const topology::cell & c2 );
     std::vector<topology::cell> get_near_cells(const topology::cell & c);
-    void setup_cells();
-    void setup_clusters();
 
   protected:
 

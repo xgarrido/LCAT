@@ -154,7 +154,6 @@ namespace CAT {
     clusters_.clear();
 
     order_cells();
-    setup_cells();
 
     tracked_data_.set_cells(cells_);
     tracked_data_.set_calos(calorimeter_hits_);
@@ -170,97 +169,77 @@ namespace CAT {
 
     DT_LOG_DEBUG(get_logging_priority(), "Fill clusters");
 
-    if( cells_.empty() ) return;
-
-    float side[2]; // loop on two sides of the foil
-    side[0] =  1.;
-    side[1] = -1.;
-
-    bool fast[2]; // loop on fast and slow hits
-    fast[0] = true;
-    fast[1] = false;
+    if (cells_.empty()) return;
 
     std::map<int,bool> flags;
-
-    for(size_t ip=0; ip<2; ip++)  // loop on two sides of the foil
+    for(size_t i=0; i<cells_.size(); i++)
       {
-        for(size_t iq=0; iq<2; iq++) // loop on fast and slow hits
-          {
-            for(size_t i=0; i<cells_.size(); i++)
-              {
-                flags[cells_[i].id()] = false;
-              }
-
-            for(std::vector<topology::cell>::const_iterator icell=cells_.begin(); icell!=cells_.end(); ++icell){
-              // pick a cell c that was never added
-              const topology::cell & c = *icell;
-              if( (cell_side(c) * side[ip]) < 0) continue;
-              if( c.fast() != fast[iq] ) continue;
-              if( flags[c.id()]) continue;
-              flags[c.id()] = true;
-
-              // cell c will form a new cluster, i.e. a new list of nodes
-              topology::cluster cluster_connected_to_c;
-              std::vector<topology::node> nodes_connected_to_c;
-              DT_LOG_DEBUG(get_logging_priority(), "Begin new cluster with cell " << c.id());
-
-              // let's get the list of all the cells that can be reached from c
-              // without jumps
-              std::vector<topology::cell> cells_connected_to_c;
-              cells_connected_to_c.push_back(c);
-
-              for( size_t i=0; i<cells_connected_to_c.size(); i++){ // loop on connected cells
-                // take a connected cell (the first one is just c)
-                topology::cell cconn = cells_connected_to_c[i];
-
-                // the connected cell composes a new node
-                topology::node newnode(cconn);
-                newnode.set_probmin(probmin);
-                std::vector<topology::cell_couplet> cc;
-
-                // get the list of cells near the connected cell
-                std::vector<topology::cell> cells_near_iconn = get_near_cells(cconn);
-
-                DT_LOG_DEBUG(get_logging_priority(), "Cluster " << clusters_.size()
-                             << " starts with " << c.id() << " try to add cell " << cconn.id()
-                             << " with n of neighbours = " << cells_near_iconn.size());
-                for(std::vector<topology::cell>::const_iterator icnc=cells_near_iconn.begin(); icnc!=cells_near_iconn.end(); ++icnc){
-
-                  topology::cell cnc = *icnc;
-
-                  if( !_is_good_couplet_(cconn, cnc, cells_near_iconn) ) continue;
-
-                  topology::cell_couplet ccnc(cconn,cnc);
-                  ccnc.set_probmin(probmin);
-                  cc.push_back(ccnc);
-
-                  DT_LOG_DEBUG(get_logging_priority(), "Creating couplet " << cconn.id() << " -> " << cnc.id());
-
-                  if(! flags[cnc.id()])
-                    {
-                      flags[cnc.id()] = true ;
-                      cells_connected_to_c.push_back(cnc);
-                    }
-                }
-                newnode.set_cc(cc);
-                newnode.calculate_triplets(Ratio, QuadrantAngle, TangentPhi, TangentTheta);
-                nodes_connected_to_c.push_back(newnode);
-
-                DT_LOG_DEBUG(get_logging_priority(), "Cluster started with " << c.id()
-                             << " has been given cell " << cconn.id() << " with " << cc.size() << " couplets ");
-
-              }
-
-              cluster_connected_to_c.set_nodes(nodes_connected_to_c);
-
-              clusters_.push_back(cluster_connected_to_c);
-            }
-
-          }
+        flags[cells_[i].id()] = false;
       }
 
+    for(std::vector<topology::cell>::const_iterator icell=cells_.begin(); icell!=cells_.end(); ++icell){
+      // pick a cell c that was never added
+      const topology::cell & c = *icell;
+      if( flags[c.id()]) continue;
+      flags[c.id()] = true;
 
-    setup_clusters();
+      // cell c will form a new cluster, i.e. a new list of nodes
+      topology::cluster cluster_connected_to_c;
+      std::vector<topology::node> nodes_connected_to_c;
+      DT_LOG_DEBUG(get_logging_priority(), "Begin new cluster with cell " << c.id());
+
+      // let's get the list of all the cells that can be reached from c
+      // without jumps
+      std::vector<topology::cell> cells_connected_to_c;
+      cells_connected_to_c.push_back(c);
+
+      for( size_t i=0; i<cells_connected_to_c.size(); i++){ // loop on connected cells
+        // take a connected cell (the first one is just c)
+        topology::cell cconn = cells_connected_to_c[i];
+
+        // the connected cell composes a new node
+        topology::node newnode(cconn);
+        // newnode.set_probmin(probmin);
+        std::vector<topology::cell_couplet> cc;
+
+        // get the list of cells near the connected cell
+        std::vector<topology::cell> cells_near_iconn = get_near_cells(cconn);
+
+        DT_LOG_DEBUG(get_logging_priority(), "Cluster " << clusters_.size()
+                     << " starts with " << c.id() << " try to add cell " << cconn.id()
+                     << " with n of neighbours = " << cells_near_iconn.size());
+        for(std::vector<topology::cell>::const_iterator icnc=cells_near_iconn.begin(); icnc!=cells_near_iconn.end(); ++icnc){
+
+          topology::cell cnc = *icnc;
+
+          if( !_is_good_couplet_(cconn, cnc, cells_near_iconn) ) continue;
+
+          topology::cell_couplet ccnc(cconn,cnc);
+          // ccnc.set_probmin(probmin);
+          cc.push_back(ccnc);
+
+          DT_LOG_DEBUG(get_logging_priority(), "Creating couplet " << cconn.id() << " -> " << cnc.id());
+
+          if(! flags[cnc.id()])
+            {
+              flags[cnc.id()] = true ;
+              cells_connected_to_c.push_back(cnc);
+            }
+        }
+        newnode.set_cc(cc);
+        newnode.calculate_triplets(Ratio, QuadrantAngle, TangentPhi, TangentTheta);
+        nodes_connected_to_c.push_back(newnode);
+
+        DT_LOG_DEBUG(get_logging_priority(), "Cluster started with " << c.id()
+                     << " has been given cell " << cconn.id() << " with " << cc.size() << " couplets ");
+
+      }
+
+      cluster_connected_to_c.set_nodes(nodes_connected_to_c);
+
+      clusters_.push_back(cluster_connected_to_c);
+    }
+
 
     DT_LOG_DEBUG(get_logging_priority(), "There are " << clusters_.size() << " clusters of cells");
 
@@ -298,7 +277,7 @@ namespace CAT {
                    "... check if near node " << b.id() << " has triplet " << a.id() << " <-> " << c.id());
 
       topology::cell_triplet ccc(a,b,c);
-      ccc.set_probmin(probmin);
+      // ccc.set_probmin(probmin);
       ccc.calculate_joints(Ratio, QuadrantAngle, TangentPhi, TangentTheta);
       if (ccc.joints().size() > 0) {
         DT_LOG_DEBUG(get_logging_priority(),
@@ -395,50 +374,6 @@ namespace CAT {
 
     return cells;
 
-  }
-
-
-  //*************************************************************
-  void clusterizer::setup_cells(){
-    //*************************************************************
-
-    for(std::vector<topology::cell>::iterator icell=cells_.begin(); icell!=cells_.end(); ++icell){
-      icell->set_probmin(probmin);
-    }
-
-    return;
-
-  }
-
-
-
-  //*************************************************************
-  void clusterizer::setup_clusters(){
-    //*************************************************************
-
-
-    // loop on clusters
-    for(std::vector<topology::cluster>::iterator icl=clusters_.begin(); icl != clusters_.end(); ++icl){
-      icl->set_probmin(probmin);
-
-      // loop on nodes
-      for(std::vector<topology::node>::iterator inode=(*icl).nodes_.begin(); inode != (*icl).nodes_.end(); ++inode){
-        inode->set_probmin(probmin);
-
-        for(std::vector<topology::cell_couplet>::iterator icc=(*inode).cc_.begin(); icc != (*inode).cc_.end(); ++icc){
-          icc->set_probmin(probmin);
-        }
-
-        for(std::vector<topology::cell_triplet>::iterator iccc=(*inode).ccc_.begin(); iccc != (*inode).ccc_.end(); ++iccc){
-          iccc->set_probmin(probmin);
-        }
-
-      }
-
-    }
-
-
-    return;
   }
 
 
