@@ -1,8 +1,8 @@
+// Ourselves
 #include <CATAlgorithm/clusterizer.h>
-#include <sys/time.h>
-#include <limits>
-#include <cmath>
-#include <map>
+
+// Standard library
+#include <set>
 
 // Third party
 // - Bayeux/datatools:
@@ -126,18 +126,15 @@ namespace CAT {
     if (cells_.empty()) return;
     std::sort(cells_.begin(), cells_.end());
 
-    std::map<int,bool> flags;
-    for(size_t i=0; i<cells_.size(); i++)
-      {
-        flags[cells_[i].id()] = false;
-      }
+    // List of cells already used
+    std::set<int> flagged;
 
     for (std::vector<topology::cell>::const_iterator icell = cells_.begin();
          icell != cells_.end(); ++icell) {
       // pick a cell c that was never added
       const topology::cell & a_cell = *icell;
-      if (flags[a_cell.id()]) continue;
-      flags[a_cell.id()] = true;
+      if (flagged.count(a_cell.id())) continue;
+      flagged.insert(a_cell.id());
 
       // cell c will form a new cluster, i.e. a new list of nodes
       topology::cluster cluster_connected_to_c;
@@ -175,8 +172,8 @@ namespace CAT {
 
           DT_LOG_DEBUG(get_logging_priority(), "Creating couplet " << cconn.id() << " -> " << cnc.id());
 
-          if(! flags[cnc.id()]) {
-            flags[cnc.id()] = true;
+          if(! flagged.count(cnc.id())) {
+            flagged.insert(cnc.id());
             cells_connected_to_c.push_back(cnc);
           }
         }

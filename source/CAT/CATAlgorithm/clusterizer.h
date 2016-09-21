@@ -120,7 +120,6 @@ namespace CAT{
     std::vector<topology::cell> cells_;
     std::vector<topology::cluster> clusters_;
     std::vector<topology::calorimeter_hit> calorimeter_hits_;
-    std::vector<topology::sequence> true_sequences_;
 
   };
 
