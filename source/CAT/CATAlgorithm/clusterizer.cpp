@@ -4,6 +4,10 @@
 #include <cmath>
 #include <map>
 
+// Third party
+// - Bayeux/datatools:
+#include <bayeux/datatools/exception.h>
+
 namespace CAT {
 
   void clusterizer::set_logging_priority(datatools::logger::priority a_priority)
@@ -53,6 +57,12 @@ namespace CAT {
     calorimeter_hits_ = calorimeter_hits;
   }
 
+  void clusterizer::_set_initialized(bool i_)
+  {
+    _initialized_ = i_;
+    return;
+  }
+
   void clusterizer::_set_defaults()
   {
     _logging_ = datatools::logger::PRIO_WARNING;
@@ -96,45 +106,45 @@ namespace CAT {
     event_number=0;
 
     nevent = 0;
-    InitialEvents = 0;
-    SkippedEvents = 0;
-
     return;
   }
 
+  bool clusterizer::is_initialized() const
+  {
+    return _initialized_;
+  }
 
   // Default constructor :
   clusterizer::clusterizer()
   {
+    _set_initialized(false);
     _set_defaults();
     return;
   }
 
   clusterizer::~clusterizer()
   {
+    if (is_initialized()) {
+      reset();
+    }
     return;
   }
 
   void clusterizer::initialize()
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
+    DT_THROW_IF(is_initialized(), std::logic_error, "Already initialized !");
+    _set_initialized(true);
     DT_LOG_TRACE(get_logging_priority(), "Entering.");
     return;
   }
 
 
-  void clusterizer::finalize()
+  void clusterizer::reset()
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
-
-    DT_LOG_NOTICE(get_logging_priority(), "Initial events: " << InitialEvents);
-    DT_LOG_NOTICE(get_logging_priority(), "Skipped events: " << SkippedEvents << "(" << 100.*SkippedEvents/InitialEvents << "%)");
-
-
-    if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
-    }
-
     _set_defaults();
+    _set_initialized(false);
     DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }

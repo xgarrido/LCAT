@@ -240,7 +240,7 @@ namespace snemo {
       DT_THROW_IF(! is_initialized(), std::logic_error,
                   "CAT driver is not initialized !");
       _set_initialized(false);
-      _CAT_clusterizer_.finalize();
+      _CAT_clusterizer_.reset();
       _CAT_sequentiator_.finalize();
       _CAT_setup_.reset();
       _set_defaults();

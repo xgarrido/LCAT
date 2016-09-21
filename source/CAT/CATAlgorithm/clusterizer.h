@@ -1,21 +1,16 @@
 /* -*- mode: c++ -*- */
-#ifndef __CATAlgorithm___pattern_rec2___
-#define __CATAlgorithm___pattern_rec2___
-
-//#include <CATAlgorithm/CAT_config.h>
+#ifndef CAT_CLUSTERIZER_H
+#define CAT_CLUSTERIZER_H 1
 
 #include <stdexcept>
-
 #include <iostream>
 #include <vector>
 
-//#include <CATUtils/NHistoManager2.h>
 #include <CATAlgorithm/line.h>
 #include <CATAlgorithm/cell_couplet.h>
 #include <CATAlgorithm/cell_triplet.h>
 #include <CATAlgorithm/experimental_double.h>
 
-#include <CATAlgorithm/Clock.h>
 #include <CATAlgorithm/cell_base.h>
 #include <CATAlgorithm/cluster.h>
 #include <CATAlgorithm/calorimeter_hit.h>
@@ -39,6 +34,9 @@ namespace CAT{
     /// Returns logging priority
     datatools::logger::priority get_logging_priority() const;
 
+    /// Check if the clusterizer is initialized
+    bool is_initialized() const;
+
     /// Constructor
     clusterizer();
 
@@ -46,7 +44,7 @@ namespace CAT{
     ~clusterizer();
 
     void initialize();
-    void finalize();
+    void reset();
     void prepare_event(topology::tracked_data & tracked_data_);
     void clusterize(topology::tracked_data & tracked_data_);
     void order_cells();
@@ -81,8 +79,6 @@ namespace CAT{
 
     int nevent;
     int event_number;
-    int InitialEvents;
-    int SkippedEvents;
 
     //geom param
     double vel, rad, len, CellDistance;
@@ -141,6 +137,11 @@ namespace CAT{
                          const std::vector<topology::cell> &nearmain);
 
   protected:
+
+    /// Set the initialization flag
+    void _set_initialized(bool);
+
+    /// Set default attribute values
     void _set_defaults ();
 
   public:
@@ -210,7 +211,8 @@ namespace CAT{
 
   private:
 
-    datatools::logger::priority _logging_;
+    bool _initialized_;           //!< Initialization status
+    datatools::logger::priority _logging_;//!< Logging priority
 
     std::vector<topology::cell> cells_;
     std::vector<topology::cluster> clusters_;
