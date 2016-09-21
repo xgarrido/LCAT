@@ -228,7 +228,7 @@ namespace CAT {
 
                   topology::cell cnc = *icnc;
 
-                  if( !is_good_couplet(cconn, cnc, cells_near_iconn) ) continue;
+                  if( !_is_good_couplet_(cconn, cnc, cells_near_iconn) ) continue;
 
                   topology::cell_couplet ccnc(cconn,cnc);
                   ccnc.set_probmin(probmin);
@@ -273,9 +273,9 @@ namespace CAT {
 
   }
 
-  bool clusterizer::is_good_couplet(const topology::cell & main_cell_,
-                                    const topology::cell & candidate_cell_,
-                                    const std::vector<topology::cell> & cells_near_main_)
+  bool clusterizer::_is_good_couplet_(const topology::cell & main_cell_,
+                                      const topology::cell & candidate_cell_,
+                                      const std::vector<topology::cell> & cells_near_main_)
   {
     // the couplet mainc -> candidatec is good only if
     // there is no other cell that is near to both and can form a triplet between them
@@ -293,9 +293,6 @@ namespace CAT {
       if (near_level(b, c) < near_level(a, c) ||
           near_level(b, a) < near_level(a, c))
         continue;  // cannot match a->b or b->c if a->c is nearer
-
-      //    if( icell->intersect(candidatec) || icell->intersect(mainc) ) continue;
-      // don't reject candidate based on a cell that intersects it
 
       DT_LOG_DEBUG(get_logging_priority(),
                    "... check if near node " << b.id() << " has triplet " << a.id() << " <-> " << c.id());
