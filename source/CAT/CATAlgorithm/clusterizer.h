@@ -43,8 +43,12 @@ namespace CAT{
     /// Destructor
     ~clusterizer();
 
+    /// Initialize the clusterizer through configuration properties (not yet)
     void initialize();
+
+    /// Reset the clusterizer
     void reset();
+
     void prepare_event(topology::tracked_data & tracked_data_);
     void clusterize(topology::tracked_data & tracked_data_);
     void order_cells();
@@ -78,7 +82,6 @@ namespace CAT{
   protected:
 
     int nevent;
-    int event_number;
 
     //geom param
     double vel, rad, len, CellDistance;
@@ -99,7 +102,6 @@ namespace CAT{
     double MaxChi2;
     double probmin;
     size_t nofflayers;
-    int first_event_number;
 
     // Support numbers
     double execution_time;
@@ -179,8 +181,6 @@ namespace CAT{
     void set_probmin(double v);
 
     void set_nofflayers(size_t v);
-
-    void set_first_event(int v);
 
     void set_len(double v);
 

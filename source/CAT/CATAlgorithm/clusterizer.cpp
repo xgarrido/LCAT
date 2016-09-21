@@ -96,14 +96,12 @@ namespace CAT {
     MaxChi2 = std::numeric_limits<double>::quiet_NaN ();
     probmin = std::numeric_limits<double>::quiet_NaN ();
     nofflayers = 0;
-    first_event_number = 0;
     SuperNemo = true;
     SuperNemoChannel = false;
     NemoraOutput = false;
     N3_MC = false;
     _moduleNR.clear ();
     _MaxBlockSize = -1;
-    event_number=0;
 
     nevent = 0;
     return;
@@ -153,9 +151,6 @@ namespace CAT {
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
-
-    event_number++;
-
     clusters_.clear();
 
     order_cells();
@@ -172,9 +167,6 @@ namespace CAT {
   void clusterizer::clusterize(topology::tracked_data & tracked_data_)
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
-
-    if( event_number < first_event_number ) return;
-
 
     DT_LOG_DEBUG(get_logging_priority(), "Fill clusters");
 
@@ -589,11 +581,6 @@ namespace CAT {
 
   void clusterizer::set_nofflayers(size_t v){
     nofflayers = v;
-    return;
-  }
-
-  void clusterizer::set_first_event(int v){
-    first_event_number = v;
     return;
   }
 

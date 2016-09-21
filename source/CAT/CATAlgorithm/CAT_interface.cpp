@@ -61,7 +61,6 @@ namespace CAT {
     MaxChi2               = 3.;
     probmin                = 0.;
     nofflayers            = 1;
-    first_event            = -1;
     len                   = 2503. * CLHEP::mm;
     rad                   = 30.   * CLHEP::mm;
     vel                   = 0.06  * CLHEP::mm;
@@ -210,7 +209,6 @@ namespace CAT {
     czer_.set_MaxChi2 (setup_.MaxChi2);
     czer_.set_probmin (setup_.probmin);
     czer_.set_nofflayers (setup_.nofflayers);
-    czer_.set_first_event (setup_.first_event);
     czer_.set_len (setup_.len);
     czer_.set_rad (setup_.rad);
     czer_.set_vel (setup_.vel);
@@ -275,7 +273,6 @@ namespace CAT {
     stor_.set_MaxChi2 (setup_.MaxChi2);
     stor_.set_probmin (setup_.probmin);
     stor_.set_nofflayers (setup_.nofflayers);
-    stor_.set_first_event (setup_.first_event);
     stor_.set_len (setup_.len);
     stor_.set_rad (setup_.rad);
     stor_.set_vel (setup_.vel);
