@@ -14,6 +14,10 @@
 #include <CATAlgorithm/clusterizer.h>
 #include <CATAlgorithm/sequentiator.h>
 
+// Third party:
+// Bayeux/datatools:
+#include <bayeux/datatools/logger.h>
+
 namespace CAT {
 
   /// Setup data of the CAT algorithms
@@ -42,8 +46,8 @@ namespace CAT {
 
     /// Let all attributes be public :
 
-    /// Verbosity level: "mute", "normal", "verbose", "vverbose"
-    std::string level;
+    /// Logging priority
+    datatools::logger::priority level;
 
     /// Used to flag SuperNEMO of NEMO3 experiment
     bool   SuperNemo;

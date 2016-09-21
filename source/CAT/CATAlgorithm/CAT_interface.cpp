@@ -11,6 +11,8 @@
 // Third party:
 // - Boost:
 #include <boost/algorithm/string.hpp>
+// - Bayeux/datatools:
+#include <bayeux/datatools/exception.h>
 
 // This project:
 #include <CATAlgorithm/CAT_interface.h>
@@ -46,7 +48,7 @@ namespace CAT {
   void setup_data::_set_defaults ()
   {
     _error_message.clear ();
-    level                 = "normal";
+    level                 = datatools::logger::PRIO_WARNING;
     SuperNemo             = true;
     MaxTime               = 5000.0 * CLHEP::ms;
     SmallRadius           =    2.0 * CLHEP::mm;
@@ -191,21 +193,11 @@ namespace CAT {
   void clusterizer_configure (clusterizer & czer_,
                               const setup_data & setup_)
   {
-    if (! setup_.check ())
-      {
-        std::ostringstream emess;
-        emess << "ERROR: CAT::clusterizer_configure: Invalid setup data :"
-             << setup_.get_error_message ();
-        throw std::logic_error(emess.str());
-      }
+    DT_THROW_IF(! setup_.check(), std::logic_error,
+                "Invalid setup data :" << setup_.get_error_message());
 
     // General parameters :
-    czer_.set_PrintMode (false);
-    czer_.set_MaxTime (setup_.MaxTime / CLHEP::ms);
-    std::string leveltmp = setup_.level;
-    boost::to_upper(leveltmp);
-
-    czer_.set_level (leveltmp); //mybhep::get_info_level (leveltmp));
+    czer_.set_logging_priority(setup_.level);
 
     // Algorithm parameters :
     czer_.set_SmallRadius (setup_.SmallRadius / CLHEP::mm);
@@ -267,10 +259,10 @@ namespace CAT {
     // General parameters :
     stor_.set_PrintMode (false);
     stor_.set_MaxTime (setup_.MaxTime / CLHEP::ms);
-    std::string leveltmp = setup_.level;
-    boost::to_upper(leveltmp);
+    // std::string leveltmp = setup_.level;
+    // boost::to_upper(leveltmp);
 
-    stor_.set_level (leveltmp); //mybhep::get_info_level (leveltmp));
+    // stor_.set_level (leveltmp); //mybhep::get_info_level (leveltmp));
 
     // Algorithm parameters :
     stor_.set_SmallRadius (setup_.SmallRadius / CLHEP::mm);

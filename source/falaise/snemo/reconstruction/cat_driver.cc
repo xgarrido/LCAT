@@ -84,8 +84,10 @@ namespace snemo {
       }
 
       // Verbosity level
-      if (setup_.has_key("CAT.level")) {
-        _CAT_setup_.level = setup_.fetch_string("CAT.level");
+      if (setup_.has_key("CAT.logging_priority")) {
+        _CAT_setup_.level = datatools::logger::get_priority(setup_.fetch_string("CAT.level"));
+        DT_THROW_IF(_CAT_setup_.level == datatools::logger::PRIO_UNDEFINED,
+                    std::logic_error, "Invalid logging priority label '" << _CAT_setup_.level << "' !");
       }
 
       // Process calorimeter hits
