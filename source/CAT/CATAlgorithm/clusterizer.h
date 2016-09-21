@@ -5,8 +5,6 @@
 //#include <CATAlgorithm/CAT_config.h>
 
 #include <stdexcept>
-#include <mybhep/messenger.h>
-#include <mybhep/system_of_units.h>
 
 #include <iostream>
 #include <vector>
@@ -24,27 +22,32 @@
 #include <CATAlgorithm/sequence_base.h>
 #include <CATAlgorithm/tracked_data_base.h>
 
+// Third party
+// - Bayeux/datatools:
+#include <bayeux/datatools/logger.h>
 
 namespace CAT{
-
-  typedef struct{
-    float x;
-    float z;
-  } POINT;
 
   /// The clusterizer algorithm
   class clusterizer{
 
   public:
 
-    clusterizer(void);
+    /// Set logging priority
+    void set_logging_priority(datatools::logger::priority p);
 
-    virtual ~clusterizer();
+    /// Returns logging priority
+    datatools::logger::priority get_logging_priority() const;
 
-  public:
+    /// Constructor
+    clusterizer();
+
+    /// Destructor
+    ~clusterizer();
+
     void initialize();
     void finalize();
-    bool prepare_event(topology::tracked_data & tracked_data_);
+    void prepare_event(topology::tracked_data & tracked_data_);
     void clusterize(topology::tracked_data & tracked_data_);
     void order_cells();
 
@@ -76,13 +79,6 @@ namespace CAT{
 
   protected:
 
-    //  NHistoManager2 hman;
-
-    Clock clock;
-
-    mybhep::prlevel level;
-
-    mybhep::messenger m;
     int nevent;
     int event_number;
     int InitialEvents;
@@ -111,7 +107,6 @@ namespace CAT{
 
     // Support numbers
     double execution_time;
-    bool PrintMode;
     bool SuperNemo;
     bool SuperNemoChannel; /** New initialization modeof the algorithm
                             *  for SuperNEMO and usage from Channel by
@@ -121,10 +116,6 @@ namespace CAT{
                             */
     bool NemoraOutput;
     bool N3_MC;
-    double MaxTime;
-
-    bool doDriftWires;
-    std::vector<POINT> DriftWires;
 
     int num_blocks;
     mybhep::dvector<double> planes_per_block ;
@@ -168,10 +159,6 @@ namespace CAT{
 
     void set_pmax(double v);
 
-    void set_MaxTime(double v);
-
-    void set_PrintMode(bool v);
-
     void set_SmallRadius(double v);
 
     void set_TangentPhi(double v);
@@ -193,8 +180,6 @@ namespace CAT{
     void set_nofflayers(size_t v);
 
     void set_first_event(int v);
-
-    void set_level(std::string v);
 
     void set_len(double v);
 
@@ -224,6 +209,8 @@ namespace CAT{
 
 
   private:
+
+    datatools::logger::priority _logging_;
 
     std::vector<topology::cell> cells_;
     std::vector<topology::cluster> clusters_;

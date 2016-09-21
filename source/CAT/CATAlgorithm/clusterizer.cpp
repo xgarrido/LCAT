@@ -1,11 +1,21 @@
 #include <CATAlgorithm/clusterizer.h>
-#include <mybhep/system_of_units.h>
 #include <sys/time.h>
 #include <limits>
 #include <cmath>
 #include <map>
 
 namespace CAT {
+
+  void clusterizer::set_logging_priority(datatools::logger::priority a_priority)
+  {
+    _logging_ = a_priority;
+    return;
+  }
+
+  datatools::logger::priority clusterizer::get_logging_priority() const
+  {
+    return _logging_;
+  }
 
   //! get cells
   const std::vector<topology::cell>& clusterizer::get_cells()const
@@ -16,7 +26,6 @@ namespace CAT {
   //! set cells
   void clusterizer::set_cells(const std::vector<topology::cell> & cells)
   {
-    //cells_.clear();
     cells_ = cells;
   }
 
@@ -29,7 +38,6 @@ namespace CAT {
   //! set clusters
   void clusterizer::set_clusters(const std::vector<topology::cluster> & clusters)
   {
-    //clusters_.clear();
     clusters_ = clusters;
   }
 
@@ -42,15 +50,12 @@ namespace CAT {
   //! set calorimeter_hits
   void clusterizer::set_calorimeter_hits(const std::vector<topology::calorimeter_hit> & calorimeter_hits)
   {
-    calorimeter_hits_.clear();
     calorimeter_hits_ = calorimeter_hits;
   }
 
-  void clusterizer::_set_defaults ()
+  void clusterizer::_set_defaults()
   {
-
-    level = mybhep::NORMAL;
-    m = mybhep::messenger(level);
+    _logging_ = datatools::logger::PRIO_WARNING;
     num_blocks = -1;
     planes_per_block.clear ();
     gaps_Z.clear ();
@@ -82,14 +87,10 @@ namespace CAT {
     probmin = std::numeric_limits<double>::quiet_NaN ();
     nofflayers = 0;
     first_event_number = 0;
-    PrintMode = false;
     SuperNemo = true;
     SuperNemoChannel = false;
     NemoraOutput = false;
     N3_MC = false;
-    MaxTime = std::numeric_limits<double>::quiet_NaN ();
-    doDriftWires = true;
-    DriftWires.clear ();
     _moduleNR.clear ();
     _MaxBlockSize = -1;
     event_number=0;
@@ -102,69 +103,48 @@ namespace CAT {
   }
 
 
-  //************************************************************
   // Default constructor :
-  clusterizer::clusterizer(void){
-    //*************************************************************
-    _set_defaults ();
+  clusterizer::clusterizer()
+  {
+    _set_defaults();
     return;
   }
 
-  //*************************************************************
-  clusterizer::~clusterizer() {
-    //*************************************************************
-    //std::clog << "DEVEL: CAT::clusterizer::~clusterizer: Done." << std::endl;
+  clusterizer::~clusterizer()
+  {
+    return;
   }
 
-  //*************************************************************
-  void clusterizer::initialize( ) {
-    //*************************************************************
-
-    m.message("CAT::clusterizer::initialize: Entering...",mybhep::NORMAL);
-
-    m.message("CAT::clusterizer::initialize: Beginning algorithm clusterizer \n",mybhep::VERBOSE);
-
-
-    m.message("CAT::clusterizer::initialize: Done.",mybhep::NORMAL);
-
+  void clusterizer::initialize()
+  {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
+    DT_LOG_TRACE(get_logging_priority(), "Entering.");
     return;
   }
 
 
-  //*************************************************************
-  void clusterizer::finalize() {
-    //*************************************************************
+  void clusterizer::finalize()
+  {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
-    clock.start(" clusterizer: finalize ");
+    DT_LOG_NOTICE(get_logging_priority(), "Initial events: " << InitialEvents);
+    DT_LOG_NOTICE(get_logging_priority(), "Skipped events: " << SkippedEvents << "(" << 100.*SkippedEvents/InitialEvents << "%)");
 
-    m.message("CAT::clusterizer::finalize: Ending algorithm clusterizer...",mybhep::NORMAL);
 
-    m.message("CAT::clusterizer::finalize: Initial events: ", InitialEvents, mybhep::NORMAL);
-    m.message("CAT::clusterizer::finalize: Skipped events: ", SkippedEvents, "(", 100.*SkippedEvents/InitialEvents, "%)", mybhep::NORMAL);
-
-    clock.stop(" clusterizer: finalize ");
-
-    if( level >= mybhep::NORMAL ){
-      clock.dump();
+    if (get_logging_priority() >= datatools::logger::PRIO_DEBUG) {
     }
 
-    _set_defaults ();
+    _set_defaults();
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return;
   }
 
-  //*******************************************************************
-  bool clusterizer::prepare_event(topology::tracked_data & tracked_data_){
-    //*******************************************************************
+  void clusterizer::prepare_event(topology::tracked_data & tracked_data_)
+  {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
-    clock.start(" clusterizer: prepare event ","cumulative");
 
-    event_number ++;
-    m.message("CAT::clusterizer::prepare_event: local_tracking: preparing event", event_number, mybhep::VERBOSE);
-
-    if( event_number < first_event_number ){
-      m.message("CAT::clusterizer::prepare_event: local_tracking: skip event", event_number, " first event is ", first_event_number,  mybhep::VERBOSE);
-      return false;
-    }
+    event_number++;
 
     clusters_.clear();
 
@@ -174,24 +154,19 @@ namespace CAT {
     tracked_data_.set_cells(cells_);
     tracked_data_.set_calos(calorimeter_hits_);
 
-    clock.stop(" clusterizer: prepare event ");
 
-
-    return true;
-
-
+    return;
   }
 
 
-  //*******************************************************************
-  void clusterizer::clusterize(topology::tracked_data & tracked_data_){
-    //*******************************************************************
+  void clusterizer::clusterize(topology::tracked_data & tracked_data_)
+  {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
     if( event_number < first_event_number ) return;
 
-    clock.start(" clusterizer: clusterize ","cumulative");
 
-    m.message("CAT::clusterizer::clusterize: local_tracking: fill clusters ", mybhep::VERBOSE);
+    DT_LOG_DEBUG(get_logging_priority(), "Fill clusters");
 
     if( cells_.empty() ) return;
 
@@ -225,7 +200,7 @@ namespace CAT {
               // cell c will form a new cluster, i.e. a new list of nodes
               topology::cluster cluster_connected_to_c;
               std::vector<topology::node> nodes_connected_to_c;
-              m.message("CAT::clusterizer::clusterize: begin new cluster with cell ", c.id(), mybhep::VERBOSE);
+              DT_LOG_DEBUG(get_logging_priority(), "Begin new cluster with cell " << c.id());
 
               // let's get the list of all the cells that can be reached from c
               // without jumps
@@ -237,23 +212,27 @@ namespace CAT {
                 topology::cell cconn = cells_connected_to_c[i];
 
                 // the connected cell composes a new node
-                topology::node newnode(cconn, level, probmin);
+                topology::node newnode(cconn);
+                newnode.set_probmin(probmin);
                 std::vector<topology::cell_couplet> cc;
 
                 // get the list of cells near the connected cell
                 std::vector<topology::cell> cells_near_iconn = get_near_cells(cconn);
 
-                m.message("CAT::clusterizer::clusterize: cluster ", clusters_.size(), " starts with ", c.id(), " try to add cell ", cconn.id(), " with n of neighbours = ", cells_near_iconn.size(), mybhep::VERBOSE);
+                DT_LOG_DEBUG(get_logging_priority(), "Cluster " << clusters_.size()
+                             << " starts with " << c.id() << " try to add cell " << cconn.id()
+                             << " with n of neighbours = " << cells_near_iconn.size());
                 for(std::vector<topology::cell>::const_iterator icnc=cells_near_iconn.begin(); icnc!=cells_near_iconn.end(); ++icnc){
 
                   topology::cell cnc = *icnc;
 
                   if( !is_good_couplet(& cconn, cnc, cells_near_iconn) ) continue;
 
-                  topology::cell_couplet ccnc(cconn,cnc,level,probmin);
+                  topology::cell_couplet ccnc(cconn,cnc);
+                  ccnc.set_probmin(probmin);
                   cc.push_back(ccnc);
 
-                  m.message("CAT::clusterizer::clusterize: ... creating couplet ", cconn.id(), " -> ", cnc.id(), mybhep::VERBOSE);
+                  DT_LOG_DEBUG(get_logging_priority(), "Creating couplet " << cconn.id() << " -> " << cnc.id());
 
                   if( flags[cnc.id()] != 1 )
                     {
@@ -265,7 +244,8 @@ namespace CAT {
                 newnode.calculate_triplets(Ratio, QuadrantAngle, TangentPhi, TangentTheta);
                 nodes_connected_to_c.push_back(newnode);
 
-                m.message("CAT::clusterizer::clusterize: cluster started with ", c.id(), " has been given cell ", cconn.id(), " with ", cc.size(), " couplets ", mybhep::VERBOSE);
+                DT_LOG_DEBUG(get_logging_priority(), "Cluster started with " << c.id()
+                             << " has been given cell " << cconn.id() << " with " << cc.size() << " couplets ");
 
               }
 
@@ -280,28 +260,24 @@ namespace CAT {
 
     setup_clusters();
 
-    m.message("CAT::clusterizer::clusterize: there are ", clusters_.size(), " clusters of cells ", mybhep::VVERBOSE);
+    DT_LOG_DEBUG(get_logging_priority(), "There are " << clusters_.size() << " clusters of cells");
 
     tracked_data_.set_cells(cells_);
     tracked_data_.set_clusters(clusters_);
 
-    clock.stop(" clusterizer: clusterize ");
 
 
     return;
 
   }
 
-  //*************************************************************
   bool clusterizer::is_good_couplet(topology::cell * mainc,
                                     const topology::cell &candidatec,
-                                    const std::vector<topology::cell> & nearmain){
-    //*************************************************************
-
+                                    const std::vector<topology::cell> & nearmain)
+  {
     // the couplet mainc -> candidatec is good only if
     // there is no other cell that is near to both and can form a triplet between them
 
-    clock.start(" clusterizer: is good couplet ","cumulative");
 
     topology::cell a=*mainc;
 
@@ -320,20 +296,21 @@ namespace CAT {
       //    if( icell->intersect(candidatec) || icell->intersect(mainc) ) continue;
       // don't reject candidate based on a cell that intersects it
 
-      m.message("CAT::clusterizer::is_good_couplet: ... ... check if near node ", b.id(), " has triplet ", a.id(), " <-> ", candidatec.id(), mybhep::VERBOSE);
+      DT_LOG_DEBUG(get_logging_priority(),
+                   "... check if near node " << b.id() << " has triplet " << a.id() << " <-> " << candidatec.id());
 
-      topology::cell_triplet ccc(a,b,candidatec, level, probmin);
+      topology::cell_triplet ccc(a,b,candidatec);
+      ccc.set_probmin(probmin);
       ccc.calculate_joints(Ratio, QuadrantAngle, TangentPhi, TangentTheta);
       if(ccc.joints().size() > 0 ){
-        m.message("CAT::clusterizer::is_good_couplet: ... ... yes it does: so couplet ", a.id(), " and ", candidatec.id(), " is not good",  mybhep::VERBOSE);
-        clock.stop(" clusterizer: is good couplet ");
+        DT_LOG_DEBUG(get_logging_priority(),
+                     "... yes it does: so couplet " << a.id() << " and " << candidatec.id() << " is not good");
         return false;
       }
 
     }
 
 
-    clock.stop(" clusterizer: is good couplet ");
     return true;
 
   }
@@ -384,9 +361,9 @@ namespace CAT {
     const unsigned int row_distance = abs (hit1_row - hit2_row);
 
     if (layer_distance == 0 && row_distance == 0){
-      if( level >= mybhep::NORMAL ){
-        std::clog << "CAT::clusterizer::near_level: problem: cat asking near level of cells with identical posiion (" << hit1_side << ", " << hit1_layer << ", " << hit1_row << ") (" << hit2_side << ", " << hit2_layer << ", " << hit2_row << ")" << std::endl;
-      }
+      DT_LOG_DEBUG(get_logging_priority(), "CAT asking near level of cells with identical position ("
+                   << hit1_side << ", " << hit1_layer << ", " << hit1_row << ") ("
+                   << hit2_side << ", " << hit2_layer << ", " << hit2_row << ")");
       return 3;
     }
     else if (layer_distance == 1 && row_distance == 0) return 2;
@@ -398,9 +375,9 @@ namespace CAT {
 
   std::vector<topology::cell> clusterizer::get_near_cells(const topology::cell & c){
 
-    clock.start(" clusterizer: get near cells ","cumulative");
 
-    m.message("CAT::clusterizer::get_near_cells: filling list of cells near cell ", c.id(), " fast ", c.fast(), " side ", cell_side(c), mybhep::VVERBOSE);
+    DT_LOG_DEBUG(get_logging_priority(),
+                 "Filling list of cells near cell " << c.id() << " fast " << c.fast() << " side " << cell_side(c));
 
     std::vector<topology::cell> cells;
 
@@ -415,19 +392,12 @@ namespace CAT {
 
       if( nl > 0 )
         {
-          if( level >= mybhep::VVERBOSE ){
-            std::clog << "*";
-          }
 
           topology::cell ck = *kcell;
           cells.push_back(ck);
         }
     }
 
-    if( level >= mybhep::VVERBOSE )
-      std::clog << " " << std::endl;
-
-    clock.stop(" clusterizer: get near cells ");
 
     return cells;
 
@@ -439,7 +409,6 @@ namespace CAT {
     //*************************************************************
 
     for(std::vector<topology::cell>::iterator icell=cells_.begin(); icell!=cells_.end(); ++icell){
-      icell->set_print_level(level);
       icell->set_probmin(probmin);
     }
 
@@ -453,25 +422,20 @@ namespace CAT {
   void clusterizer::setup_clusters(){
     //*************************************************************
 
-    clock.start(" clusterizer: setup_clusters ","cumulative");
 
     // loop on clusters
     for(std::vector<topology::cluster>::iterator icl=clusters_.begin(); icl != clusters_.end(); ++icl){
-      icl->set_print_level(level);
       icl->set_probmin(probmin);
 
       // loop on nodes
       for(std::vector<topology::node>::iterator inode=(*icl).nodes_.begin(); inode != (*icl).nodes_.end(); ++inode){
-        inode->set_print_level(level);
         inode->set_probmin(probmin);
 
         for(std::vector<topology::cell_couplet>::iterator icc=(*inode).cc_.begin(); icc != (*inode).cc_.end(); ++icc){
-          icc->set_print_level(level);
           icc->set_probmin(probmin);
         }
 
         for(std::vector<topology::cell_triplet>::iterator iccc=(*inode).ccc_.begin(); iccc != (*inode).ccc_.end(); ++iccc){
-          iccc->set_print_level(level);
           iccc->set_probmin(probmin);
         }
 
@@ -479,7 +443,6 @@ namespace CAT {
 
     }
 
-    clock.stop(" clusterizer: setup_clusters ");
 
     return;
   }
@@ -489,12 +452,10 @@ namespace CAT {
   void clusterizer::order_cells(){
     //*************************************************************
 
-    clock.start(" clusterizer: order cells ","cumulative");
 
     //  std::sort( cells_.begin(), cells_.end(), topology::cell::compare );
     std::sort( cells_.begin(), cells_.end());
 
-    clock.stop(" clusterizer: order cells ");
 
     return;
 
@@ -571,16 +532,6 @@ namespace CAT {
     return;
   }
 
-  void clusterizer::set_MaxTime(double v){
-    MaxTime = v;
-    return;
-  }
-
-  void clusterizer::set_PrintMode(bool v){
-    PrintMode = v;
-    return;
-  }
-
   void clusterizer::set_SmallRadius(double v){
     SmallRadius = v;
     return;
@@ -633,12 +584,6 @@ namespace CAT {
 
   void clusterizer::set_first_event(int v){
     first_event_number = v;
-    return;
-  }
-
-  void clusterizer::set_level(std::string v){
-    level = mybhep::get_info_level(v);
-    m = mybhep::messenger(level);
     return;
   }
 
