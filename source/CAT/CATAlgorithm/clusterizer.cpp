@@ -69,21 +69,8 @@ namespace CAT {
     num_blocks = -1;
     planes_per_block.clear ();
     gaps_Z.clear ();
-    GG_CELL_pitch = std::numeric_limits<double>::quiet_NaN ();
-    GG_GRND_diam = std::numeric_limits<double>::quiet_NaN ();
-    GG_CELL_diam = std::numeric_limits<double>::quiet_NaN ();
-    CHAMBER_X = std::numeric_limits<double>::quiet_NaN ();
-    GG_BLOCK_X = std::numeric_limits<double>::quiet_NaN ();
     num_cells_per_plane = -1;
-    SOURCE_thick = std::numeric_limits<double>::quiet_NaN ();
-    lastlayer = 0;
-    vel  = std::numeric_limits<double>::quiet_NaN ();
-    rad  = std::numeric_limits<double>::quiet_NaN ();
-    len  = std::numeric_limits<double>::quiet_NaN ();
-    CellDistance  = std::numeric_limits<double>::quiet_NaN ();
-    xsize = ysize = zsize = std::numeric_limits<double>::quiet_NaN ();
     calo_X = calo_Y = calo_Z = std::numeric_limits<double>::quiet_NaN ();
-    InnerRadius = OuterRadius= FoilRadius = std::numeric_limits<double>::quiet_NaN ();
     pmax = std::numeric_limits<double>::quiet_NaN ();
 
     SmallRadius = std::numeric_limits<double>::quiet_NaN ();
@@ -385,21 +372,6 @@ namespace CAT {
 
   }
 
-  void clusterizer::set_GG_GRND_diam (double ggd){
-    GG_GRND_diam = ggd;
-    return;
-  }
-
-  void clusterizer::set_GG_CELL_diam (double ggcd){
-    GG_CELL_diam = ggcd;
-    return;
-  }
-
-  void clusterizer::set_lastlayer(int ll_){
-    lastlayer = ll_;
-    return;
-  }
-
   void clusterizer::set_num_blocks(int nb){
     if (nb > 0)
       {
@@ -506,34 +478,6 @@ namespace CAT {
     return;
   }
 
-  void clusterizer::set_len(double v){
-    len = v;
-    return;
-  }
-
-  void clusterizer::set_vel(double v){
-    vel = v;
-    return;
-  }
-
-  void clusterizer::set_rad(double v){
-    rad = v;
-    return;
-  }
-
-  void clusterizer::set_GG_CELL_pitch (double p){
-    GG_CELL_pitch = p;
-    set_rad (GG_CELL_pitch / cos(M_PI/8.));
-    set_GG_CELL_diam (rad);
-    set_CellDistance (rad);
-    return;
-  }
-
-  void clusterizer::set_CellDistance(double v){
-    CellDistance = v;
-    return;
-  }
-
   void clusterizer::set_SuperNemo(bool v){
     SuperNemo = v;
     return;
@@ -549,26 +493,6 @@ namespace CAT {
       {
         SuperNemoChannel = false;
       }
-    return;
-  }
-
-  void clusterizer::set_FoilRadius(double v){
-    FoilRadius = v;
-    return;
-  }
-
-  void clusterizer::set_xsize(double v){
-    xsize = v;
-    return;
-  }
-
-  void clusterizer::set_ysize(double v){
-    ysize = v;
-    return;
-  }
-
-  void clusterizer::set_zsize(double v){
-    zsize = v;
     return;
   }
 

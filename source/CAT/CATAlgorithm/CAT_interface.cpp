@@ -209,16 +209,8 @@ namespace CAT {
     czer_.set_MaxChi2 (setup_.MaxChi2);
     czer_.set_probmin (setup_.probmin);
     czer_.set_nofflayers (setup_.nofflayers);
-    czer_.set_len (setup_.len);
-    czer_.set_rad (setup_.rad);
-    czer_.set_vel (setup_.vel);
-    czer_.set_CellDistance (setup_.CellDistance);
-    czer_.set_FoilRadius (setup_.FoilRadius);
 
     czer_.set_bfield (setup_.bfield);
-    czer_.set_xsize (setup_.xsize);
-    czer_.set_ysize (setup_.ysize);
-    czer_.set_zsize (setup_.zsize);
 
     // Geometry description :
     if (setup_.SuperNemo)
@@ -233,7 +225,6 @@ namespace CAT {
             czer_.set_planes_per_block (i, (int)(setup_.planes_per_block.at (i)+0.5));
           }
         czer_.set_num_cells_per_plane (setup_.num_cells_per_plane);
-        czer_.set_GG_CELL_pitch (setup_.cell_size / CLHEP::mm);
       }
     else
       {

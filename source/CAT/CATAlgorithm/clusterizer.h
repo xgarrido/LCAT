@@ -82,10 +82,7 @@ namespace CAT{
     int nevent;
 
     //geom param
-    double vel, rad, len, CellDistance;
-    double xsize,ysize,zsize; //only for plotting
     double calo_X, calo_Y, calo_Z;
-    double InnerRadius, OuterRadius, FoilRadius; //only for plotting
     double pmax;
     double bfield;
 
@@ -102,7 +99,6 @@ namespace CAT{
     size_t nofflayers;
 
     // Support numbers
-    double execution_time;
     bool SuperNemo;
     bool SuperNemoChannel; /** New initialization modeof the algorithm
                             *  for SuperNEMO and usage from Channel by
@@ -116,14 +112,7 @@ namespace CAT{
     int num_blocks;
     mybhep::dvector<double> planes_per_block ;
     mybhep::dvector<double> gaps_Z;
-    double GG_CELL_pitch;
-    double GG_GRND_diam;
-    double GG_CELL_diam;
-    double CHAMBER_X;
-    double GG_BLOCK_X;
     int num_cells_per_plane;
-    double SOURCE_thick;
-    size_t lastlayer;
 
     //  size_t dp_mode;
 
@@ -145,10 +134,6 @@ namespace CAT{
     void _set_defaults ();
 
   public:
-
-    void set_GG_GRND_diam (double ggd);
-
-    void set_GG_CELL_diam (double ggcd);
 
     void set_lastlayer(int ll_);
 
@@ -180,27 +165,9 @@ namespace CAT{
 
     void set_nofflayers(size_t v);
 
-    void set_len(double v);
-
-    void set_vel(double v);
-
-    void set_rad(double v);
-
-    void set_GG_CELL_pitch (double p);
-
-    void set_CellDistance(double v);
-
     void set_SuperNemo(bool v);
 
     void set_SuperNemoChannel(bool v);
-
-    void set_FoilRadius(double v);
-
-    void set_xsize(double v);
-
-    void set_ysize(double v);
-
-    void set_zsize(double v);
 
     void set_bfield(double v);
 
