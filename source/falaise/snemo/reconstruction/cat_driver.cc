@@ -449,18 +449,13 @@ namespace snemo {
       // Install the input data model within the algorithm object :
       _CAT_clusterizer_.set_calorimeter_hits(_CAT_input_.calo_cells);
 
-      // Prepare the output data model :
-      _CAT_clusterizer_.prepare_event(_CAT_output_.tracked_data);
-
       // Run the clusterizer algorithm :
       _CAT_clusterizer_.clusterize(_CAT_output_.tracked_data);
 
-      // // Run the sequentiator algorithm :
-      // _CAT_sequentiator_.sequentiate(_CAT_output_.tracked_data);
+      // Run the sequentiator algorithm :
+      _CAT_sequentiator_.sequentiate(_CAT_output_.tracked_data);
 
       _CAT_output_.tracked_data.dump();
-
-      return 0;
 
       // Analyse the sequentiator output i.e. 'scenarios' made of 'sequences' of geiger cells:
       const std::vector<CAT::topology::scenario> & tss = _CAT_output_.tracked_data.get_scenarios();

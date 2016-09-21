@@ -49,9 +49,8 @@ namespace CAT{
     /// Reset the clusterizer
     void reset();
 
-    void prepare_event(topology::tracked_data & tracked_data_);
+    /// Main algorithm
     void clusterize(topology::tracked_data & tracked_data_);
-    void order_cells();
 
     //! get cells
     const std::vector<topology::cell>& get_cells()const;

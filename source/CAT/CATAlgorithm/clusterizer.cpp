@@ -115,29 +115,16 @@ namespace CAT {
     return;
   }
 
-  void clusterizer::prepare_event(topology::tracked_data & tracked_data_)
-  {
-    DT_LOG_TRACE(get_logging_priority(), "Entering...");
-
-    clusters_.clear();
-
-    order_cells();
-
-    tracked_data_.set_cells(cells_);
-    tracked_data_.set_calos(calorimeter_hits_);
-
-
-    return;
-  }
-
-
   void clusterizer::clusterize(topology::tracked_data & tracked_data_)
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
     DT_LOG_DEBUG(get_logging_priority(), "Fill clusters");
+    clusters_.clear();
 
+    DT_LOG_DEBUG(get_logging_priority(), "Order cells");
     if (cells_.empty()) return;
+    std::sort(cells_.begin(), cells_.end());
 
     std::map<int,bool> flags;
     for(size_t i=0; i<cells_.size(); i++)
@@ -210,6 +197,7 @@ namespace CAT {
     DT_LOG_DEBUG(get_logging_priority(), "There are " << clusters_.size() << " clusters of cells");
 
     tracked_data_.set_cells(cells_);
+    tracked_data_.set_calos(calorimeter_hits_);
     tracked_data_.set_clusters(clusters_);
 
     return;
@@ -335,20 +323,6 @@ namespace CAT {
 
 
     return cells;
-
-  }
-
-
-  //*************************************************************
-  void clusterizer::order_cells(){
-    //*************************************************************
-
-
-    //  std::sort( cells_.begin(), cells_.end(), topology::cell::compare );
-    std::sort( cells_.begin(), cells_.end());
-
-
-    return;
 
   }
 
