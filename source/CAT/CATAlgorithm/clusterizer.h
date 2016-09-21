@@ -134,7 +134,7 @@ namespace CAT{
     std::string  _moduleNR;
     int     _MaxBlockSize;
 
-    bool is_good_couplet(topology::cell* mainc,
+    bool is_good_couplet(const topology::cell &mainc,
                          const topology::cell &candidatec,
                          const std::vector<topology::cell> &nearmain);
 

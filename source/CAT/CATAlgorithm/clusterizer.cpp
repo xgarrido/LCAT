@@ -180,7 +180,7 @@ namespace CAT {
     fast[0] = true;
     fast[1] = false;
 
-    std::map<int,unsigned int > flags;
+    std::map<int,bool> flags;
 
     for(size_t ip=0; ip<2; ip++)  // loop on two sides of the foil
       {
@@ -188,7 +188,7 @@ namespace CAT {
           {
             for(size_t i=0; i<cells_.size(); i++)
               {
-                flags[cells_[i].id()] = 0;
+                flags[cells_[i].id()] = false;
               }
 
             for(std::vector<topology::cell>::const_iterator icell=cells_.begin(); icell!=cells_.end(); ++icell){
@@ -196,8 +196,8 @@ namespace CAT {
               const topology::cell & c = *icell;
               if( (cell_side(c) * side[ip]) < 0) continue;
               if( c.fast() != fast[iq] ) continue;
-              if( flags[c.id()] == 1 ) continue;
-              flags[c.id()] = 1;
+              if( flags[c.id()]) continue;
+              flags[c.id()] = true;
 
               // cell c will form a new cluster, i.e. a new list of nodes
               topology::cluster cluster_connected_to_c;
@@ -228,7 +228,7 @@ namespace CAT {
 
                   topology::cell cnc = *icnc;
 
-                  if( !is_good_couplet(& cconn, cnc, cells_near_iconn) ) continue;
+                  if( !is_good_couplet(cconn, cnc, cells_near_iconn) ) continue;
 
                   topology::cell_couplet ccnc(cconn,cnc);
                   ccnc.set_probmin(probmin);
@@ -236,9 +236,9 @@ namespace CAT {
 
                   DT_LOG_DEBUG(get_logging_priority(), "Creating couplet " << cconn.id() << " -> " << cnc.id());
 
-                  if( flags[cnc.id()] != 1 )
+                  if(! flags[cnc.id()])
                     {
-                      flags[cnc.id()] = 1 ;
+                      flags[cnc.id()] = true ;
                       cells_connected_to_c.push_back(cnc);
                     }
                 }
@@ -273,48 +273,43 @@ namespace CAT {
 
   }
 
-  bool clusterizer::is_good_couplet(topology::cell * mainc,
-                                    const topology::cell &candidatec,
-                                    const std::vector<topology::cell> & nearmain)
+  bool clusterizer::is_good_couplet(const topology::cell & main_cell_,
+                                    const topology::cell & candidate_cell_,
+                                    const std::vector<topology::cell> & cells_near_main_)
   {
     // the couplet mainc -> candidatec is good only if
     // there is no other cell that is near to both and can form a triplet between them
 
+    const topology::cell & a = main_cell_;
+    const topology::cell & c = candidate_cell_;
 
-    topology::cell a=*mainc;
+    for (std::vector<topology::cell>::const_iterator icell = cells_near_main_.begin();
+         icell != cells_near_main_.end(); ++icell) {
+      const topology::cell & b = *icell;
 
+      if (b.id() == c.id()) continue;
+      if (near_level(b, c) == 0) continue;
 
-    for(std::vector<topology::cell>::const_iterator icell=nearmain.begin(); icell != nearmain.end(); ++icell){
-
-      topology::cell b=*icell;
-      if( b.id() == candidatec.id()) continue;
-
-      if(near_level(b, candidatec) == 0 ) continue;
-
-      if(near_level(b, candidatec) < near_level(a, candidatec) ||
-         near_level(b, a) < near_level(a, candidatec) )
+      if (near_level(b, c) < near_level(a, c) ||
+          near_level(b, a) < near_level(a, c))
         continue;  // cannot match a->b or b->c if a->c is nearer
 
       //    if( icell->intersect(candidatec) || icell->intersect(mainc) ) continue;
       // don't reject candidate based on a cell that intersects it
 
       DT_LOG_DEBUG(get_logging_priority(),
-                   "... check if near node " << b.id() << " has triplet " << a.id() << " <-> " << candidatec.id());
+                   "... check if near node " << b.id() << " has triplet " << a.id() << " <-> " << c.id());
 
-      topology::cell_triplet ccc(a,b,candidatec);
+      topology::cell_triplet ccc(a,b,c);
       ccc.set_probmin(probmin);
       ccc.calculate_joints(Ratio, QuadrantAngle, TangentPhi, TangentTheta);
-      if(ccc.joints().size() > 0 ){
+      if (ccc.joints().size() > 0) {
         DT_LOG_DEBUG(get_logging_priority(),
-                     "... yes it does: so couplet " << a.id() << " and " << candidatec.id() << " is not good");
+                     "... yes it does: so couplet " << a.id() << " and " << c.id() << " is not good");
         return false;
       }
-
     }
-
-
     return true;
-
   }
 
 
