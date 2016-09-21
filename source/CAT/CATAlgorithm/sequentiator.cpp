@@ -12,7 +12,7 @@ namespace CAT {
   void sequentiator::_set_defaults ()
   {
     bfield = std::numeric_limits<double>::quiet_NaN ();
-    level = mybhep::NORMAL;
+    level = mybhep::MUTE;
     m = mybhep::messenger(level);
     num_blocks = -1;
     planes_per_block.clear ();
