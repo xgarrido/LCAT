@@ -80,9 +80,9 @@ namespace CAT{
 
   protected:
 
-    int cell_side( const topology::cell & c);
-    size_t near_level( const topology::cell & c1, const topology::cell & c2 );
-    void get_near_cells(const topology::cell & c_, std::vector<topology::cell> & cells_);
+    int cell_side(const topology::cell & c_) const;
+    size_t near_level(const topology::cell & c1_, const topology::cell & c2_) const;
+    void get_near_cells(const topology::cell & c_, std::vector<topology::cell> & cells_) const;
 
     /// Set the initialization flag
     void _set_initialized(bool);
@@ -94,7 +94,7 @@ namespace CAT{
 
     bool _is_good_couplet_(const topology::cell & main_cell_,
                            const topology::cell & candidate_cell_,
-                           const std::vector<topology::cell> & cells_near_main_);
+                           const std::vector<topology::cell> & cells_near_main_) const;
 
 
   private:

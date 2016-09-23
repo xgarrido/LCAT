@@ -196,7 +196,7 @@ namespace CAT {
 
   bool clusterizer::_is_good_couplet_(const topology::cell & main_cell_,
                                       const topology::cell & candidate_cell_,
-                                      const std::vector<topology::cell> & cells_near_main_)
+                                      const std::vector<topology::cell> & cells_near_main_) const
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
     // the couplet mainc -> candidatec is good only if
@@ -232,20 +232,17 @@ namespace CAT {
   }
 
 
-  //*************************************************************
-  int clusterizer::cell_side( const topology::cell & c){
-    //*************************************************************
-
-    if( c.ep().z().value() > 0. )
+  int clusterizer::cell_side(const topology::cell & c_) const
+  {
+    if (c_.ep().z().value() > 0.)
       return 1;
 
     return -1;
-
   }
 
 
-  size_t clusterizer::near_level( const topology::cell & c1, const topology::cell & c2 ){
-
+  size_t clusterizer::near_level(const topology::cell & c1_, const topology::cell & c2_) const
+  {
     // returns 0 for far-away cell
     // 1 for diagonal cells
     // 2 for side-by-side cells
@@ -256,25 +253,23 @@ namespace CAT {
     // skip 1 connection, tilt: distance = sqrt(5) = 2.24
     // skip 1 connection, diag: distance = 2 sqrt(2) = 2.83
 
-    topology::experimental_double distance = topology::experimental_vector(c1.ep(),c2.ep()).hor().length();
+    const topology::experimental_double distance = topology::experimental_vector(c1_.ep(), c2_.ep()).hor().length();
 
-    // Use geiger locator for such research Warning: use integer
-    // because uint32_t has strange behavior with absolute value
-    // cmath::abs
-    const int hit1_side  = c1.block();  // -1, 1
-    const int hit1_layer = abs(c1.layer()); // 0, 1, ..., 8
-    const int hit1_row   = c1.iid();  // -56, -55, ..., 55, 56
+    // Use geiger locator for such research
+    const int hit1_side  = c1_.block();  // -1, 1
+    const int hit1_layer = std::abs(c1_.layer()); // 0, 1, ..., 8
+    const int hit1_row   = c1_.iid();  // -56, -55, ..., 55, 56
 
-    const int hit2_side  = c2.block();
-    const int hit2_layer = abs(c2.layer());
-    const int hit2_row   = c2.iid();
+    const int hit2_side  = c2_.block();
+    const int hit2_layer = std::abs(c2_.layer());
+    const int hit2_row   = c2_.iid();
 
     // Do not cross the foil
     if (hit1_side != hit2_side) return 0;
 
     // Check neighboring
-    const unsigned int layer_distance = abs (hit1_layer - hit2_layer); // 1 --> side-by-side
-    const unsigned int row_distance = abs (hit1_row - hit2_row);
+    const unsigned int layer_distance = std::abs(hit1_layer - hit2_layer); // 1 --> side-by-side
+    const unsigned int row_distance = std::abs(hit1_row - hit2_row);
 
     if (layer_distance == 0 && row_distance == 0){
       DT_LOG_DEBUG(get_logging_priority(), "CAT asking near level of cells with identical position ("
@@ -289,7 +284,7 @@ namespace CAT {
   }
 
 
-  void clusterizer::get_near_cells(const topology::cell & c_, std::vector<topology::cell> & cells_)
+  void clusterizer::get_near_cells(const topology::cell & c_, std::vector<topology::cell> & cells_) const
   {
     DT_LOG_DEBUG(get_logging_priority(),
                  "Filling list of cells near cell " << c_.id());
