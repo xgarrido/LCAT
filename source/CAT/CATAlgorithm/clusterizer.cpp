@@ -247,14 +247,6 @@ namespace CAT {
     // 1 for diagonal cells
     // 2 for side-by-side cells
 
-    // side-by-side connection: distance = 1
-    // diagonal connection: distance = sqrt(2) = 1.41
-    // skip 1 connection, side: distance = 2
-    // skip 1 connection, tilt: distance = sqrt(5) = 2.24
-    // skip 1 connection, diag: distance = 2 sqrt(2) = 2.83
-
-    const topology::experimental_double distance = topology::experimental_vector(c1_.ep(), c2_.ep()).hor().length();
-
     // Use geiger locator for such research
     const int hit1_side  = c1_.block();  // -1, 1
     const int hit1_layer = std::abs(c1_.layer()); // 0, 1, ..., 8
@@ -286,8 +278,7 @@ namespace CAT {
 
   void clusterizer::get_near_cells(const topology::cell & c_, std::vector<topology::cell> & cells_) const
   {
-    DT_LOG_DEBUG(get_logging_priority(),
-                 "Filling list of cells near cell " << c_.id());
+    DT_LOG_DEBUG(get_logging_priority(), "Filling list of cells near cell " << c_.id());
 
     for (const auto & icell : _cells_) {
       if (icell.id() == c_.id()) continue;
