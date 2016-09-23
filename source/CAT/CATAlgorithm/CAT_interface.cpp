@@ -218,7 +218,6 @@ namespace CAT {
       }
 
     // General parameters :
-    stor_.set_PrintMode (false);
     stor_.set_MaxTime (setup_.MaxTime / CLHEP::ms);
     // std::string leveltmp = setup_.level;
     // boost::to_upper(leveltmp);

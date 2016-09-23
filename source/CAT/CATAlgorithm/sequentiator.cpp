@@ -45,7 +45,6 @@ namespace CAT {
     probmin = std::numeric_limits<double>::quiet_NaN ();
     NOffLayers = 0;
     first_event_number = 0;
-    PrintMode = false;
     SuperNemo = true;
     SuperNemoChannel = false;
     NemoraOutput = false;
@@ -67,78 +66,20 @@ namespace CAT {
     return;
   }
 
-
-
-
-
-  //************************************************************
-  sequentiator::sequentiator(mybhep::gstore st){
-    //*************************************************************
-
-    level = mybhep::get_info_level(st.fetch_sstore("VERBOSITY"));
-
-    m = mybhep::messenger(level);
-
-    //-- read param --//
-
-    pmax = st.fetch_dstore("pmax")*mybhep::MeV;
-    MaxTime = st.fetch_dstore("MaxTime");
-    PrintMode = st.fetch_istore("PrintMode");
-
-    SmallRadius=st.fetch_dstore("SmallRadius")*mybhep::mm;
-    TangentPhi=st.fetch_dstore("TangentPhi");
-    TangentTheta=st.fetch_dstore("TangentTheta");
-    SmallNumber=st.fetch_dstore("SmallNumber")*mybhep::mm;
-    QuadrantAngle=st.fetch_dstore("QuadrantAngle");
-    Ratio=st.fetch_dstore("Ratio");
-    CompatibilityDistance=st.fetch_dstore("CompatibilityDistance");
-    MaxChi2=st.fetch_dstore("MaxChi2");
-
-    if (st.find_istore("nofflayers"))
-      NOffLayers = st.fetch_istore("nofflayers");
-    else
-      NOffLayers = 1;
-
-    if (st.find_istore("first_event"))
-      first_event_number = st.fetch_istore("first_event");
-    else
-      first_event_number = -1;
-
-    if (st.find_sstore("histo_file"))
-      hfile=st.fetch_sstore("histo_file");
-    else
-      hfile="CatsHistogram.root";
-
-    if (st.find_dstore("probmin"))
-      probmin=st.fetch_dstore("probmin");
-    else
-      probmin=1.e-200;
-
-    /*
-      if( PrintMode )
-      hman =  NHistoManager2(st);
-    */
-
-  }
-
-  //************************************************************
   // Default constructor :
-  sequentiator::sequentiator(void){
-    //*************************************************************
-    _set_defaults ();
+  sequentiator::sequentiator()
+  {
+    _set_defaults();
     return;
   }
 
-
-  //*************************************************************
-  sequentiator::~sequentiator() {
-    //*************************************************************
-
+  sequentiator::~sequentiator()
+  {
+    return;
   }
 
-  //*************************************************************
-  bool sequentiator::initialize( void ){
-    //*************************************************************
+  bool sequentiator::initialize()
+  {
 
     m.message("CAT::sequentiator::initialize: Beginning algorithm sequentiator",mybhep::VERBOSE); fflush(stdout);
 
@@ -149,9 +90,6 @@ namespace CAT {
     readDstProper();
 
     //------- end of read pram -----------//
-
-    if( PrintMode )
-      initializeHistos();
 
     nevent = 0;
     InitialEvents = 0;
@@ -175,71 +113,6 @@ namespace CAT {
   }
 
   //*************************************************************
-  void sequentiator::initializeHistos( void ) {
-    //*************************************************************
-
-    /*
-      if( PrintMode ){
-      hman.h1("chi2_connections", "chi2 for each connection of triplets", 100, -0.05, 20.05);
-      hman.h1("prob_connections", "probability that chi2 is larger than observed for a good connection of triplets", 100, -0.05, 1.05);
-      hman.h1("chi2_sequence", "chi2 for each sequence", 100, -0.05, 20.05);
-      hman.h1("prob_sequence", "probability that chi2 is larger than observed for a sequence", 100, -0.05, 1.05);
-      hman.h1("helix_chi2_points", "chi2 for each sequence point to be on a helix", 100, -0.05, 20.05);
-      hman.h1("helix_chi2", "chi2 for each sequence to be a helix", 100, -0.05, 20.05);
-      hman.h1("helix_prob", "probability that chi2 is larger than observed for a sequence to be a helix", 100, -0.05, 1.05);
-
-      hman.h1("HTTPurity", "track purity ", 21, -0.05, 1.05);
-      hman.h1("HTTEfficiency", "track efficiency ", 21, -0.05, 1.05);
-      hman.h2("PurityVsTheta", "track purity vs true cos theta", 21, -1., 1., 21, -0.05, 1.05);
-      hman.h2("EfficiencyVsTheta", "track efficiency vs true cos theta", 21, -1., 1., 21, -0.05, 1.05);
-      hman.h2("QResVsTheta", "charge error vs true cos theta", 21, -1., 1., 5, -2.5, 2.5);
-      hman.h1("GGresx", "GG residual in x direction ", 100, -30., 30.);
-      hman.h1("GGresy", "GG residual in y direction ", 500, -150., 150.);
-      hman.h1("GGresz", "GG residual in z direction ", 100, -30., 30.);
-      hman.h1("GGHelixresx", "GG residual in x direction ", 100, -30., 30.);
-      hman.h1("GGHelixresy", "GG residual in y direction ", 500, -150., 150.);
-      hman.h1("GGHelixresz", "GG residual in z direction ", 100, -30., 30.);
-      hman.h1("GGpullx", "GG pull in x direction ", 100, -30., 30.);
-      hman.h1("GGpully", "GG pull in y direction ", 100, -30., 30.);
-      hman.h1("GGpullz", "GG pull in z direction ", 100, -30., 30.);
-      hman.h1("VertexResx", "extrapolation to foil residual in x direction ", 100, -50., 50.);
-      hman.h1("VertexResy", "extrapolation to foil residual in y direction ", 100, -50., 50.);
-      hman.h1("VertexResz", "extrapolation to foil residual in z direction ", 100, -50., 50.);
-      hman.h2("VertexResxVsTheta", "extrapolation to foil residual in x direction vs true cos theta ", 21, -1., 1.,  100, -100., 100.);
-      hman.h2("VertexResyVsTheta", "extrapolation to foil residual in y direction vs true cos theta ", 21, -1., 1., 100, -500., 500.);
-      hman.h2("VertexReszVsTheta", "extrapolation to foil residual in z direction vs true cos theta ", 21, -1., 1., 100, -100., 100.);
-      hman.h1("DVertexResx", "extrapolation to calorimeter residual in x direction ", 100, -70., 70.);
-      hman.h1("DVertexResy", "extrapolation to calorimeter residual in y direction ", 100, -70., 70.);
-      hman.h1("DVertexResz", "extrapolation to calorimeter residual in z direction ", 100, -70., 70.);
-      hman.h2("DVertexResxVsTheta", "extrapolation to calorimeter residual in x direction vs true cos theta ", 21, -1., 1., 100, -500., 500.);
-      hman.h2("DVertexResyVsTheta", "extrapolation to calorimeter residual in y direction vs true cos theta ", 21, -1., 1., 100, -2000., 2000.);
-      hman.h2("DVertexReszVsTheta", "extrapolation to calorimeter residual in z direction vs true cos theta ", 21, -1., 1., 100, -100., 100.);
-      hman.h1("VertexPullx", "extrapolation to foil pull in x direction ", 100, -100., 100.);
-      hman.h1("VertexPully", "extrapolation to foil pull in y direction ", 100, -500., 500.);
-      hman.h1("VertexPullz", "extrapolation to foil pull in z direction ", 100, -100., 100.);
-      hman.h1("DVertexPullx", "extrapolation to calorimeter pull in x direction ", 100, -500., 500.);
-      hman.h1("DVertexPully", "extrapolation to calorimeter pull in y direction ", 100, -2000., 2000.);
-      hman.h1("DVertexPullz", "extrapolation to calorimeter pull in z direction ", 100, -100., 100.);
-      hman.h1("PResx", "momentum residual in x direction ", 20, -5., 5.);
-      hman.h1("PResy", "momentum residual in y direction ", 20, -5., 5.);
-      hman.h1("PResz", "momentum residual in z direction ", 20, -5., 5.);
-      hman.h1("PRes", "momentum residual ", 20, -5., 5.);
-      hman.h1("QRes", "charge residual", 5, -2.5, 2.5);
-      hman.h1("TrueConnections", "number of true connections", 1, 0., 1.);
-      hman.h1("RecoConnections", "number of true connections that were reconstructed", 1, 0., 1.);
-      hman.h2("all_point_map", "map of position wrt cell center", 100, -rad/1.9, rad/1.9, 100, -rad/1.9, rad/1.9);
-      hman.h2("end_point_map", "map of end-point position wrt cell center", 100, -rad/1.9, rad/1.9, 100, -rad/1.9, rad/1.9);
-      }
-
-    */
-    return;
-
-  }
-
-
-
-
-  //*************************************************************
   bool sequentiator::finalize() {
     //*************************************************************
 
@@ -250,39 +123,9 @@ namespace CAT {
 
     clock.start(" sequentiator: finalize ");
 
-    if( PrintMode )
-      finalizeHistos();
-
     clock.stop(" sequentiator: finalize ");
 
-    if( level >= mybhep::NORMAL ){
-      print_clocks();
-    }
-
     return true;
-  }
-
-  //*************************************************************
-  void sequentiator::print_clocks() {
-    //*************************************************************
-
-    clock.dump();
-
-    return;
-  }
-
-  //*************************************************************
-  void sequentiator::finalizeHistos( void ) {
-    //*************************************************************
-
-    /*
-          if( PrintMode )
-          hman.save();
-    */
-
-    m.message("CAT::sequentiator::finalizeHistos: Writing histograms in ", hfile, mybhep::NORMAL);
-
-    return;
   }
 
   //*************************************************************
@@ -447,19 +290,6 @@ namespace CAT {
 
 
   //*************************************************************
-  void sequentiator::sequentiate_cluster_after_sultan(){
-    //*************************************************************
-
-    make_new_sequence_after_sultan();
-
-    if (late()) return;
-
-    return;
-  }
-
-
-
-  //*************************************************************
   void sequentiator::make_new_sequence(topology::node & first_node){
     //*************************************************************
 
@@ -532,106 +362,6 @@ namespace CAT {
     return jbest;
 
   }
-
-  //*************************************************************
-  void sequentiator::make_new_sequence_after_sultan(){
-    //*************************************************************
-
-    if (late()) return;
-
-    clock.start(" sequentiator: make new sequence after sultan ","cumulative");
-
-    size_t s = local_cluster_->nodes().size();
-    NCOPY = 0;
-
-    if (level >= mybhep::VERBOSE){
-      std::clog << " CAT::sequentiator::make_new_sequence_after_sultan: cluster size is " <<  s ;
-      for(std::vector<topology::node>::const_iterator in=local_cluster_->nodes_.begin(); in!=local_cluster_->nodes_.end(); ++in)
-	std::clog << " [" << in->c().id() << "]";
-      std::clog << " " << std::endl;
-    }
-
-    if( s == 0 ){
-      m.message(" problem: CAT::sequentiator::make_new_sequence_after_sultan: cluster size is ", s, mybhep::NORMAL);
-      return;
-    }
-
-    if( s == 1 ){
-      topology::node n = local_cluster_->nodes()[0];
-      n.set_ep(n.c().ep());
-      topology::sequence newsequence(n, level, probmin);
-      make_name(newsequence);
-      sequences_.push_back(newsequence);
-
-      if (level >= mybhep::VERBOSE)
-	{
-	  clog << "CAT::sequentiator::make_new_sequence_after_sultan: made sequence " << endl;
-	  print_a_sequence(newsequence,true);
-	}
-
-      clean_up_sequences();
-      NCOPY ++;
-      return;
-    }
-
-    if( s == 2 ){
-      topology::sequence newsequence(local_cluster_->nodes(), level, probmin);
-      add_pair(newsequence);
-
-      clean_up_sequences();
-      return;
-    }
-
-    if( s == 3 ){
-      std::vector<topology::joint> joints = local_cluster_->nodes()[1].ccc()[0].joints();
-      m.message(" CAT::sequentiator::make_new_sequence_after_sultan: make sequence with size ", s, " and ", joints.size(), " joints ", mybhep::VERBOSE);
-      for(std::vector<topology::joint>::const_iterator ij=joints.begin(); ij!=joints.end(); ++ij){
-	topology::sequence newsequence(local_cluster_->nodes(), level, probmin);
-	newsequence.nodes_[0].set_ep(ij->epa());
-	newsequence.nodes_[1].set_ep(ij->epb());
-	newsequence.nodes_[2].set_ep(ij->epc());
-	make_name(newsequence);
-	sequences_.push_back(newsequence);
-	if (level >= mybhep::VERBOSE)
-	  {
-	    clog << "CAT::sequentiator::make_new_sequence_after_sultan: made sequence " << endl;
-	    print_a_sequence(newsequence,true);
-	  }
-	NCOPY ++;
-      }
-
-      clean_up_sequences();
-      return;
-    }
-
-
-    std::vector< std::vector<topology::broken_line> > sets_of_bl_alternatives;
-
-    local_cluster_->solve_ambiguities(&sets_of_bl_alternatives);
-
-    std::vector<topology::sequence> seqs;
-
-    if( build_sequences_from_ambiguous_alternatives(sets_of_bl_alternatives, &seqs) ){
-      for( std::vector<topology::sequence>::iterator iseq = seqs.begin(); iseq!=seqs.end(); ++iseq){
-	make_name(*iseq);
-	sequences_.push_back(*iseq);
-	if (level >= mybhep::VERBOSE)
-	  {
-	    clog << "CAT::sequentiator::make_new_sequence_after_sultan: made sequence " << endl;
-	    print_a_sequence(*iseq,true);
-	  }
-	NCOPY ++;
-      }
-    }
-
-    clean_up_sequences();
-
-
-    clock.stop(" sequentiator: make new sequence after sultan ");
-
-    return;
-  }
-
 
 
   //*************************************************************
@@ -998,220 +728,6 @@ namespace CAT {
     NCOPY = 0;
 
     clock.stop(" sequentiator: make copy sequence ");
-
-    return;
-  }
-
-  //*************************************************************
-  void sequentiator::make_copy_sequence_after_sultan(){
-    //*************************************************************
-
-    const bool local_devel = false;
-    topology::node first_node = local_cluster_->nodes()[0];
-    if (local_devel)
-      {
-        level = mybhep::VVERBOSE;
-        clog << "DEVEL: " << "CAT::sequentiator::make_copy_sequence_after_sultan: "
-             << "Entering..." << endl;
-      }
-
-    clock.start(" sequentiator: make copy sequence after sultan ","cumulative");
-
-    size_t isequence;
-    while (there_is_free_sequence_beginning_with(first_node.c(), &isequence))
-      {
-        if (late()) return;
-
-        clock.start(" sequentiator: make copy sequence after sultan: part A ","cumulative");
-        clock.start(" sequentiator: make copy sequence after sultan: part A: alpha ","cumulative");
-
-        m.message("CAT::sequentiator::make_copy_sequence_after_sultan: begin, with cell", first_node.c().id(), ", parallel track ", sequences_.size(), " to track ", isequence, mybhep::VERBOSE); fflush(stdout);
-
-        if (level >= mybhep::VVERBOSE)
-          {
-            std::clog << "CAT::sequentiator::make_copy_sequence_after_sultan: original sequence before copying: " << std::endl;
-            print_a_sequence(sequences_[isequence]);
-          }
-
-        clock.stop(" sequentiator: make copy sequence after sultan: part A: alpha ");
-        clock.start(" sequentiator: copy to lfn ","cumulative");
-        size_t ilink, ilfn;
-        topology::sequence newcopy = sequences_[isequence].copy_to_last_free_node(&ilfn, &ilink);
-        clock.stop(" sequentiator: copy to lfn ");
-
-        clock.start(" sequentiator: make copy sequence after sultan: part A: beta ","cumulative");
-        m.message("CAT::sequentiator::make_copy_sequence_after_sultan: copied from sequence  ", isequence, mybhep::VVERBOSE); fflush(stdout);
-
-        if (level >= mybhep::VVERBOSE)
-          {
-            m.message("CAT::sequentiator::make_copy_sequence_after_sultan: original sequence after copy ", mybhep::VVERBOSE); fflush(stdout);
-            print_a_sequence(sequences_[isequence]);
-            m.message("CAT::sequentiator::make_copy_sequence_after_sultan: new copy ", mybhep::VVERBOSE); fflush(stdout);
-            print_a_sequence(newcopy);
-          }
-
-        clock.stop(" sequentiator: make copy sequence after sultan: part A: beta ");
-        clock.start(" sequentiator: make copy sequence after sultan: evolve ","cumulative");
-
-        bool updated = true;
-        while (updated)
-          updated = evolve(newcopy);
-        clock.stop(" sequentiator: make copy sequence after sultan: evolve ");
-
-        if (late()) return;
-
-        if(level >= mybhep::VVERBOSE)
-          print_a_sequence(newcopy);
-
-        clock.stop(" sequentiator: make copy sequence after sultan: part A ");
-        clock.start(" sequentiator: manage copy sequence after sultan ","cumulative");
-
-        if (local_devel)
-          {
-            clog << "DEVEL: " << "CAT::sequentiator::make_copy_sequence_after_sultan: "
-                 << "Checking study case for sequence #" << isequence << " "
-                 << "and node #" << first_node.c ().id () << endl;
-          }
-
-        // not adding: case 1: new sequence did not evolve
-        if (newcopy.nodes().size() == ilfn + 1)
-          {
-            m.message("CAT::sequentiator::make_copy_sequence_after_sultan: not adding new sequence, since it couldn't evolve past lfn ", mybhep::VERBOSE); fflush(stdout);
-            clean_up_sequences();
-          }
-        else
-          {
-            // if copy has evolved past level ilfn, the link from node ilfn it used
-            // is set to used in the original
-            if( newcopy.nodes().size() > ilfn + 1 ){
-              if( !sequences_[isequence].nodes().empty() ){
-                clock.start(" sequentiator: get link index ","cumulative");
-                size_t it1 = newcopy.get_link_index_of_cell(ilfn, newcopy.nodes()[ilfn + 1].c());
-                clock.stop(" sequentiator: get link index ");
-                m.message("CAT::sequentiator::make_copy_sequence_after_sultan: setting as used original node ", ilfn, "  cc ", it1, mybhep::VVERBOSE);
-                if( ilfn == 0 )
-                  sequences_[isequence].nodes_[ilfn].cc_[it1].set_all_used();
-                else
-                  sequences_[isequence].nodes_[ilfn].ccc_[it1].set_all_used();
-              }
-              /*
-                if( sequences_[isequence].nodes().size() > 1 && ilfn > 0){
-                clock.start(" sequentiator: get link index ","cumulative");
-                size_t it2 = newcopy.get_link_index_of_cell(1, newcopy.nodes()[2].c());
-                clock.stop(" sequentiator: get link index ");
-                m.message(" setting as used original node 1  ccc ", it2, mybhep::VVERBOSE);
-                sequences_[isequence].nodes_[1].ccc_[it2].set_all_used();
-                }
-              */
-              clock.start(" sequentiator: set free level ","cumulative");
-              sequences_[isequence].set_free_level();
-              clock.stop(" sequentiator: set free level ");
-            }
-
-          // not adding: case 2: new sequence contained
-          if (newcopy.contained(sequences_[isequence]) && !newcopy.Free())  // new copy is contained in original
-            {
-              m.message("CAT::sequentiator::make_copy_sequence_after_sultan: not adding new sequence, contained in ", isequence, "from which it was copied", mybhep::VERBOSE); fflush(stdout);
-              clean_up_sequences();
-            }
-          else
-            { // adding: case 3
-              if (sequences_[isequence].contained(newcopy))
-                { // original is contained in new copy
-                  for (size_t k=0; k<ilfn; k++)
-                    {
-                      newcopy.nodes_[k].set_free( sequences_[isequence].nodes()[k].free());
-
-                      for (vector<topology::cell_couplet>::iterator icc = sequences_[isequence].nodes_[k].cc_.begin();
-                          icc != sequences_[isequence].nodes_[k].cc_.end(); ++icc)
-                        {
-                          newcopy.nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].set_free( icc->free());
-                          newcopy.nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].set_begun( icc->begun());
-
-                          for(vector<topology::line>::iterator itang = sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.begin(); itang != sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.end(); ++itang)
-                            newcopy.nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_[itang - sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.begin()].set_used(itang->used() );
-
-                        }
-
-                      for (vector<topology::cell_triplet>::iterator iccc = sequences_[isequence].nodes_[k].ccc_.begin();
-                           iccc != sequences_[isequence].nodes_[k].ccc_.end(); ++iccc)
-                        {
-                          newcopy.nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].set_free( iccc->free());
-                          newcopy.nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].set_begun( iccc->begun());
-
-                          for (vector<topology::joint>::iterator ijoint = sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.begin(); ijoint != sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.end(); ++ijoint)
-                            newcopy.nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_[ijoint - sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.begin()].set_used(ijoint->used() );
-
-                        }
-                    }
-
-                  if (ilfn < 2)
-                    {
-                      for (vector<topology::cell_couplet>::iterator icc = sequences_[isequence].nodes_[ilfn].cc_.begin();
-                           icc != sequences_[isequence].nodes_[ilfn].cc_.end(); ++icc)
-                        if ((size_t)(icc - sequences_[isequence].nodes_[ilfn].cc_.begin()) != ilink)
-                          {
-                            newcopy.nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].set_free( icc->free());
-                            newcopy.nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].set_begun( icc->begun());
-
-                            for (vector<topology::line>::iterator itang = sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.begin(); itang !=sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.end(); ++itang)
-                              newcopy.nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_[itang - sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.begin()].set_used(itang->used() );
-                          }
-                    }
-                  else
-                    {
-                      for (vector<topology::cell_triplet>::iterator iccc = sequences_[isequence].nodes_[ilfn].ccc_.begin();
-                          iccc != sequences_[isequence].nodes_[ilfn].ccc_.end(); ++iccc)
-                        if ((size_t)(iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()) != ilink )
-                          {
-                            newcopy.nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].set_free( iccc->free());
-                            newcopy.nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].set_begun( iccc->begun());
-
-                            for (vector<topology::joint>::iterator ijoint = sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.begin(); ijoint !=sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.end(); ++ijoint)
-                              newcopy.nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_[ijoint - sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.begin()].set_used(ijoint->used() );
-                          }
-                    }
-
-                  clock.start(" sequentiator: set free level ","cumulative");
-                  newcopy.set_free_level();
-                  clock.stop(" sequentiator: set free level ");
-
-                  sequences_.erase(sequences_.begin()+isequence);
-                  m.message("CAT::sequentiator::make_copy_sequence_after_sultan: erased original sequence ", isequence, "contained in sequence", sequences_.size()+1, "which was copied from it", mybhep::VERBOSE); fflush(stdout);
-                  clean_up_sequences();
-
-                }
-
-              NCOPY++;
-              if (newcopy.nodes().size() != 2)
-                {
-                  make_name(newcopy);
-                  sequences_.push_back( newcopy );
-                  m.message("CAT::sequentiator::make_copy_sequence_after_sultan: finished track [", sequences_.size()-1, "] ", mybhep::VERBOSE); fflush(stdout);
-                  clean_up_sequences();
-                }
-              else
-                {
-                  add_pair(newcopy);
-                }
-            }// end of case 3
-          }
-
-        clock.stop(" sequentiator: manage copy sequence after sultan ");
-      }
-
-    NCOPY = 0;
-
-    clock.stop(" sequentiator: make copy sequence after sultan ");
-
-    return;
-  }
-
-  //*************************************************************
-  void sequentiator::make_copy_sequence_after_nemor(){
-    //*************************************************************
-
-    make_copy_sequence_after_sultan();
 
     return;
   }
@@ -2448,109 +1964,6 @@ namespace CAT {
 
   }
 
-  //*************************************************************
-  void sequentiator::interpret_physics_after_sultan(std::vector<topology::calorimeter_hit> & calos, bool conserve_clustering_from_removal_of_cells){
-    //*************************************************************
-
-    // for sultan, conserve_clustering_from_removal_of_cells should be false (N3), true (SN)
-    // for nemor, conserve_clustering_from_removal_of_cells should be true
-    clock.start(" sequentiator: interpret physics after sultan ", "cumulative");
-
-    m.message("CAT::sequentiator::interpret_physics_after_sultan: interpreting physics of ", sequences_.size(), " sequences with ", calos.size(), " calorimeter hits ", mybhep::VVERBOSE); fflush(stdout);
-
-    // after_sultan, conserve_clustering_from_removal  = true, conserve_clustering_from_reordering = false, conserve_clustering_from_removal_of_cells = false (N3), true (SN)
-    // after_nemor, conserve_clustering_from_removal  = true, conserve_clustering_from_reordering = false, conserve_clustering_from_removal_of_cells = true
-    bool conserve_clustering_from_removal_of_whole_cluster = true;
-    bool conserve_clustering_from_reordering = false;
-
-    std::vector<topology::sequence>::iterator iseq = sequences_.begin();
-    while( iseq != sequences_.end() )
-      {
-        m.message("CAT::sequentiator::interpret_physics_after_sultan: ... interpreting physics of sequence ", iseq->name(), mybhep::VVERBOSE); fflush(stdout);
-
-        if( iseq->nodes().size() <= 2 ){
-          ++iseq;
-          continue;
-        }
-
-        if( level >= mybhep::VVERBOSE)
-          print_a_sequence(*iseq,true);
-
-	if( !iseq->calculate_helix(Ratio,conserve_clustering_from_removal_of_whole_cluster,conserve_clustering_from_reordering) && !iseq->has_kink() ){
-          size_t index = iseq - sequences_.begin();
-          m.message("CAT::sequentiator::interpret_physics_after_sultan: erased sequence ", index, "not a good helix", mybhep::VERBOSE); fflush(stdout);
-          sequences_.erase(iseq);
-          iseq = sequences_.begin() + index;
-          if( index + 1 >= sequences_.size() )
-            break;
-          continue;
-        }
-	if( !conserve_clustering_from_removal_of_cells )
-	  // don't to this if you don't want cells to be removed from sequence
-	  reassign_cells_based_on_helix(&(*iseq));
-        iseq->calculate_charge();
-
-        // match to calorimeter
-	match_to_calorimeter(calos, &(*iseq));
-
-        // match to foil
-	match_to_foil(&(*iseq));
-
-	if( SuperNemo )
-	  iseq->calculate_momentum(bfield, SuperNemo, get_foil_plane().center().z().value());
-	else
-	  iseq->calculate_momentum(bfield, SuperNemo, FoilRadius);
-
-        iseq->calculate_length();
-
-        if( level >= mybhep::VVERBOSE ){
-          std::clog << "CAT::sequentiator::interpret_physics_after_sultan: sequence " << iseq - sequences_.begin() << " has: " << std::endl; fflush(stdout);
-          std::clog << "CAT::sequentiator::interpret_physics_after_sultan: center "; iseq->center().dump(); fflush(stdout);
-          std::clog << "CAT::sequentiator::interpret_physics_after_sultan: radius "; iseq->radius().dump(); std::clog << " " << std::endl; fflush(stdout);
-          std::clog << "CAT::sequentiator::interpret_physics_after_sultan: pitch "; iseq->pitch().dump(); std::clog << " " << std::endl; fflush(stdout);
-          std::clog << "CAT::sequentiator::interpret_physics_after_sultan: momentum "; iseq->momentum().length().dump(); std::clog << " " << std::endl; fflush(stdout);
-          std::clog << "CAT::sequentiator::interpret_physics_after_sultan: charge "; iseq->charge().dump(); std::clog << " " << std::endl; fflush(stdout);
-          if( iseq->has_helix_vertex() ){
-            std::clog << "CAT::sequentiator::interpret_physics_after_sultan: helix_vertex " << iseq->helix_vertex_type() << " "; iseq->helix_vertex().dump();
-            if( iseq->helix_vertex_type() == "calo" ) std::clog << " icalo " << iseq->helix_vertex_id();
-            std::clog << " " << std::endl; fflush(stdout);
-          }
-          if( iseq->has_decay_helix_vertex() ){
-            std::clog << "CAT::sequentiator::interpret_physics_after_sultan: decay helix_vertex " << iseq->decay_helix_vertex_type() << " "; iseq->decay_helix_vertex().dump();
-            if( iseq->decay_helix_vertex_type() == "calo" ) std::clog << " icalo " << iseq->calo_helix_id();
-            std::clog << " " << std::endl; fflush(stdout);
-          }
-          if( iseq->has_tangent_vertex() ){
-            std::clog << "CAT::sequentiator::interpret_physics_after_sultan: tangent_vertex " << iseq->tangent_vertex_type() << " "; iseq->tangent_vertex().dump();
-            if( iseq->tangent_vertex_type() == "calo" ) std::clog << " icalo " << iseq->tangent_vertex_id();
-            std::clog << " " << std::endl; fflush(stdout);
-          }
-          if( iseq->has_decay_tangent_vertex() ){
-            std::clog << "CAT::sequentiator::interpret_physics_after_sultan: decay tangent_vertex " << iseq->decay_tangent_vertex_type() << " "; iseq->decay_tangent_vertex().dump();
-            if( iseq->decay_tangent_vertex_type() == "calo" ) std::clog << " icalo " << iseq->calo_tangent_id();
-            std::clog << " " << std::endl; fflush(stdout);
-          }
-          if( iseq->has_tangent_length() ){
-            std::clog << "CAT::sequentiator::interpret_physics_after_sultan: tangent length "; iseq->tangent_length().dump(); std::clog << " " << std::endl; fflush(stdout);
-          }
-          if( iseq->has_helix_length() ){
-            std::clog << "CAT::sequentiator::interpret_physics_after_sultan: helix length "; iseq->helix_length().dump(); std::clog << " " << std::endl; fflush(stdout);
-          }
-
-        }
-        ++iseq;
-        continue;
-
-      }
-
-
-    clock.stop(" sequentiator: interpret physics after sultan ");
-
-    return;
-
-  }
-
-
 
 
 
@@ -3252,8 +2665,6 @@ namespace CAT {
 
       topology::sequence reco = sequences_[ireco];
 
-      FillGGResiduals(*itrueseq, reco);
-
       int nhits = reco.nodes().size();
       if( nhits > 0 ){
 
@@ -3264,18 +2675,6 @@ namespace CAT {
         double efficiency = (double)ncommon/(double)(itrueseq->nodes().size());
 
         m.message("CAT::sequentiator::rec_efficiency:  ... n reco hits ", nhits, " n true hits ", itrueseq->nodes().size(), " n common hits ", ncommon, " TTPurity ", purity, " TTEfficiency ", efficiency, mybhep::VVERBOSE);
-
-        /*
-                if( PrintMode ){
-                double ctheta  = itrueseq->initial_dir().z().value();
-
-                hman.fill("HTTPurity", purity );
-                hman.fill("HTTEfficiency", efficiency );
-
-                hman.fill("PurityVsTheta", ctheta, purity );
-                hman.fill("EfficiencyVsTheta", ctheta, efficiency );
-                }
-        */
 
       }
     }
@@ -3304,141 +2703,6 @@ namespace CAT {
     return counter;
 
   }
-
-  //*******************************************************************
-  void sequentiator::FillGGResiduals(topology::sequence & /*tp*/, topology::sequence &/*dp*/){
-    //*******************************************************************
-
-    /*
-      if( PrintMode ){
-
-      topology::helix he = dp.get_helix();
-
-      for(std::vector<topology::node>::iterator dn = dp.nodes_.begin(); dn != dp.nodes_.end(); ++dn){
-
-      topology::node jnode = *dn;
-
-      for(std::vector<topology::node>::iterator tn = tp.nodes_.begin(); tn != tp.nodes_.end(); ++tn){
-
-      topology::node inode = *tn;
-
-
-      if( tn->c_.same_cell(dn->c_) ){
-
-      topology::experimental_double residualx = jnode.ep().x() - inode.ep().x();
-      topology::experimental_double residualy = jnode.ep().y() - inode.ep().y();
-      topology::experimental_double residualz = jnode.ep().z() - inode.ep().z();
-
-      hman.fill("GGresx",residualx.value());
-      hman.fill("GGresy",residualy.value());
-      hman.fill("GGresz",residualz.value());
-
-      topology::experimental_point hp = he.position(jnode.ep());
-      topology::experimental_double Hresidualx = hp.x() - inode.ep().x();
-      topology::experimental_double Hresidualy = hp.y() - inode.ep().y();
-      topology::experimental_double Hresidualz = hp.z() - inode.ep().z();
-
-      hman.fill("GGHelixresx",Hresidualx.value());
-      hman.fill("GGHelixresy",Hresidualy.value());
-      hman.fill("GGHelixresz",Hresidualz.value());
-
-      hman.fill("GGpullx",residualx.value()/residualx.error());
-      hman.fill("GGpully",residualy.value()/residualy.error());
-      hman.fill("GGpullz",residualz.value()/residualz.error());
-      break;
-      }
-      }
-      }
-
-      if( tp.nodes().size() > 1 && dp.nodes().size() > 1 ){
-      for(std::vector<topology::node>::iterator tn = tp.nodes_.begin(); tn != tp.nodes_.end(); ++tn){
-
-      if( tn - tp.nodes_.begin() == 0 ) advance(tn, 1);
-
-      topology::node inode = *tn;
-      std::vector<topology::node>::iterator tnold = tp.nodes_.begin();
-      advance(tnold, tn - tp.nodes_.begin() - 1);
-      topology::node inodeold = *tnold;
-
-      bool connected = false;
-
-      for(std::vector<topology::node>::iterator dn = dp.nodes_.begin(); dn != dp.nodes_.end(); ++dn){
-      if( dn - dp.nodes_.begin() == 0 ) advance(dn, 1);
-
-      topology::node jnode = *dn;
-      std::vector<topology::node>::iterator dnold = dp.nodes_.begin();
-      advance(tnold, dn - dp.nodes_.begin() - 1);
-      topology::node jnodeold = *dnold;
-
-
-
-      if( ( inode.c_.same_cell(jnode.c_) &&
-      inodeold.c_.same_cell(jnodeold.c_) ) ||
-      ( inode.c_.same_cell(jnodeold.c_) &&
-      inodeold.c_.same_cell(jnode.c_) )){
-      connected = true;
-      break;
-      }
-      }
-
-      hman.fill("TrueConnections",0.5);
-      if( connected )
-      hman.fill("RecoConnections",0.5);
-
-      }
-      }
-
-
-      topology::experimental_double vtx = dp.vertex().x() - tp.vertex().x();
-      topology::experimental_double vty = dp.vertex().y() - tp.vertex().y();
-      topology::experimental_double vtz = dp.vertex().z() - tp.vertex().z();
-      double ctheta  = tp.initial_dir().z().value();
-      hman.fill("VertexResx",vtx.value());
-      hman.fill("VertexResy",vty.value());
-      hman.fill("VertexResz",vtz.value());
-      hman.fill("VertexResxVsTheta",ctheta, vtx.value());
-      hman.fill("VertexResyVsTheta",ctheta, vty.value());
-      hman.fill("VertexReszVsTheta",ctheta, vtz.value());
-      hman.fill("VertexPullx",vtx.value()/vtx.error());
-      hman.fill("VertexPully",vty.value()/vty.error());
-      hman.fill("VertexPullz",vtz.value()/vtz.error());
-
-      topology::experimental_double dvtx = dp.decay_vertex().x() - tp.decay_vertex().x();
-      topology::experimental_double dvty = dp.decay_vertex().y() - tp.decay_vertex().y();
-      topology::experimental_double dvtz = dp.decay_vertex().z() - tp.decay_vertex().z();
-      hman.fill("DVertexResx",dvtx.value());
-      hman.fill("DVertexResy",dvty.value());
-      hman.fill("DVertexResz",dvtz.value());
-      hman.fill("DVertexResxVsTheta",ctheta, dvtx.value());
-      hman.fill("DVertexResyVsTheta",ctheta, dvty.value());
-      hman.fill("DVertexReszVsTheta",ctheta, dvtz.value());
-      hman.fill("DVertexPullx",dvtx.value()/dvtx.error());
-      hman.fill("DVertexPully",dvty.value()/dvty.error());
-      hman.fill("DVertexPullz",dvtz.value()/dvtz.error());
-
-
-      double Px = dp.momentum().x().value() - tp.momentum().x().value();
-      double Py = dp.momentum().y().value() - tp.momentum().y().value();
-      double Pz = dp.momentum().z().value() - tp.momentum().z().value();
-
-      double Pp = dp.momentum().value() - tp.momentum().value();
-
-      hman.fill("PResx",Px);
-      hman.fill("PResy",Py);
-      hman.fill("PResz",Pz);
-
-      hman.fill("PRes",Pp);
-
-      hman.fill("QRes",dp.charge().value() - tp.charge().value());
-      hman.fill("QResVsTheta",ctheta, dp.charge().value() - tp.charge().value());
-
-      }
-
-    */
-    return;
-
-  }
-
 
   //*************************************************************
   bool sequentiator::sequence_is_within_range(topology::node nodeA, topology::node nodeB, topology::sequence seq){

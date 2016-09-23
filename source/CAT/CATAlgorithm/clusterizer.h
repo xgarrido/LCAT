@@ -24,7 +24,7 @@
 namespace CAT{
 
   /// The clusterizer algorithm
-  class clusterizer{
+  class clusterizer {
 
   public:
 

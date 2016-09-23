@@ -1,30 +1,13 @@
 /* -*- mode: c++ -*- */
-#ifndef __CATAlgorithm___sequentiator___
-#define __CATAlgorithm___sequentiator___
+#ifndef CAT_SEQUENTIATOR_H
+#define CAT_SEQUENTIATOR_H 1
 
-//#include <CATAlgorithm/CAT_config.h>
-
-#include <mybhep/gstore.h>
 #include <mybhep/messenger.h>
 #include <mybhep/event.h>
 #include <mybhep/utilities.h>
 #include <CLHEP/Units/SystemOfUnits.h>
 #include <mybhep/system_of_units.h>
 #include <boost/cstdint.hpp>
-
-#if CAT_WITH_DEVEL_ROOT == 1
-#include "TApplication.h"
-#include <TROOT.h>
-#include <TChain.h>
-#include "TH2.h"
-#include "TH1.h"
-#include "TGraph.h"
-#include "TStyle.h"
-#include "TCanvas.h"
-#include "TFile.h"
-#include "TBox.h"
-#include "TMarker.h"
-#endif
 
 #include <iostream>
 #include <vector>
@@ -55,26 +38,30 @@ namespace CAT {
 
   public:
 
-    sequentiator(void);
-    sequentiator(mybhep::gstore);
+    // /// Set logging priority
+    // void set_logging_priority(datatools::logger::priority p);
 
-    virtual ~sequentiator();
+    // /// Returns logging priority
+    // datatools::logger::priority get_logging_priority() const;
+
+    // /// Check if the clusterizer is initialized
+    // bool is_initialized() const;
+
+    /// Constructor
+    sequentiator();
+
+    /// Destructor
+    ~sequentiator();
 
     bool initialize( );
-    void initializeHistos( void );
     void PrintInitialObjects(void);
     bool finalize();
-    void finalizeHistos( void );
     void readDstProper( void );
 
     bool sequentiate(topology::tracked_data & tracked_data);
     void sequentiate_cluster(topology::cluster & cluster);
-    void sequentiate_cluster_after_sultan();
     void make_new_sequence(topology::node & first_node);
     void make_copy_sequence(topology::node & first_node);
-    void make_new_sequence_after_sultan();
-    void make_copy_sequence_after_sultan();
-    void make_copy_sequence_after_nemor();
     bool evolve(topology::sequence & sequence);
     void fill_links(topology::sequence *sequence);
     bool good_first_node(topology::node & node_);
@@ -211,11 +198,6 @@ namespace CAT {
 
     void set_MaxTime(double v){
       MaxTime = v;
-      return;
-    }
-
-    void set_PrintMode(bool v){
-      PrintMode = v;
       return;
     }
 
@@ -436,7 +418,6 @@ namespace CAT {
 
     // Support numbers
     double execution_time;
-    bool PrintMode;
     bool SuperNemo;
     bool NemoraOutput;
     bool N3_MC;
@@ -489,7 +470,6 @@ namespace CAT {
 
     bool make_scenarios(topology::tracked_data &td, bool after_sultan = false);
     void interpret_physics(std::vector<topology::calorimeter_hit> & calos);
-    void interpret_physics_after_sultan(std::vector<topology::calorimeter_hit> & calos, bool conserve_clustering_from_removal_of_cells);
     void refine_sequences_near_walls(std::vector<topology::calorimeter_hit> & calos);
     bool belongs_to_other_family(topology::cell c, topology::sequence *iseq);
     topology::plane get_foil_plane();
@@ -499,12 +479,10 @@ namespace CAT {
     void add_pair(const topology::sequence & sequence);
     bool clean_up_sequences();
     bool there_is_free_sequence_beginning_with(const topology::cell &c, size_t *index);
-    void print_clocks();
     int gap_number(const topology::cell &c);
     void make_table_of_true_and_reco_sequences(std::vector<topology::sequence> &trueseqs);
     void rec_efficiency(std::vector<topology::sequence> &trueseqs);
     size_t getCommonHits(topology::sequence &tp, topology::sequence &dp);
-    void FillGGResiduals(topology::sequence &tp, topology::sequence &dp);
     void make_name(topology::sequence & seq);
     bool near(const topology::cell &c, topology::calorimeter_hit &ch);
     double distance_from_foil(const topology::experimental_point &ep);

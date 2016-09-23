@@ -257,8 +257,7 @@ namespace snemo {
       std::map<int, sdm::calibrated_data::tracker_hit_handle_type> hits_mapping;
 
       // GG hit loop :
-      BOOST_FOREACH(const sdm::calibrated_data::tracker_hit_handle_type & gg_handle,
-                    gg_hits_) {
+      for (const auto & gg_handle : gg_hits_) {
         // Skip NULL handle :
         if (! gg_handle) continue;
 
@@ -266,14 +265,14 @@ namespace snemo {
         const sdm::calibrated_tracker_hit & snemo_gg_hit = gg_handle.get();
 
         // Check the geometry ID as a Geiger cell :
-        const snemo::geometry::gg_locator & gg_locator = get_gg_locator ();
-        const geomtools::geom_id & gg_hit_gid = snemo_gg_hit.get_geom_id ();
-        DT_THROW_IF (! gg_locator.is_drift_cell_volume (gg_hit_gid),
-                     std::logic_error,
-                     "Calibrated tracker hit can not be located inside detector !");
+        const snemo::geometry::gg_locator & gg_locator = get_gg_locator();
+        const geomtools::geom_id & gg_hit_gid = snemo_gg_hit.get_geom_id();
+        DT_THROW_IF(! gg_locator.is_drift_cell_volume(gg_hit_gid),
+                    std::logic_error,
+                    "Calibrated tracker hit can not be located inside detector !");
 
-        if (!gg_locator.is_drift_cell_volume_in_current_module (gg_hit_gid)) {
-          DT_LOG_DEBUG (get_logging_priority (), "Current Geiger cell is not in the module!");
+        if (! gg_locator.is_drift_cell_volume_in_current_module(gg_hit_gid)) {
+          DT_LOG_DEBUG(get_logging_priority(), "Current Geiger cell is not in the module!");
           continue;
         }
 
