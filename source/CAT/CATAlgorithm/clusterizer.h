@@ -80,10 +80,6 @@ namespace CAT{
 
   protected:
 
-    int cell_side(const topology::cell & c_) const;
-    size_t near_level(const topology::cell & c1_, const topology::cell & c2_) const;
-    void get_near_cells(const topology::cell & c_, std::vector<topology::cell> & cells_) const;
-
     /// Set the initialization flag
     void _set_initialized(bool);
 
@@ -92,10 +88,16 @@ namespace CAT{
 
   private:
 
-    bool _is_good_couplet_(const topology::cell & main_cell_,
-                           const topology::cell & candidate_cell_,
-                           const std::vector<topology::cell> & cells_near_main_) const;
+    /// Return if cells are good couplet given the neighboring
+    bool _is_good_couplet_(const topology::cell & c1_,
+                           const topology::cell & c2_,
+                           const std::vector<topology::cell> & c1_neighbors_) const;
 
+    /// Get level of 'closeness' of cells
+    size_t _near_level_(const topology::cell & c1_, const topology::cell & c2_) const;
+
+    /// Get a list of neighbors given a cell
+    void _get_near_cells_(const topology::cell & c_, std::vector<topology::cell> & cells_) const;
 
   private:
 

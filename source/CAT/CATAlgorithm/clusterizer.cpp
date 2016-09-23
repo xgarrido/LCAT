@@ -157,7 +157,7 @@ namespace CAT {
 
         // Get the list of cells near the connected cell
         std::vector<topology::cell> cells_near_iconn;
-        get_near_cells(cconn, cells_near_iconn);
+        _get_near_cells_(cconn, cells_near_iconn);
         DT_LOG_DEBUG(get_logging_priority(), "Cluster " << _clusters_.size()
                      << " starts with " << icell.id() << " try to add cell " << cconn.id()
                      << " with n of neighbours = " << cells_near_iconn.size());
@@ -194,36 +194,32 @@ namespace CAT {
     return;
   }
 
-  bool clusterizer::_is_good_couplet_(const topology::cell & main_cell_,
-                                      const topology::cell & candidate_cell_,
-                                      const std::vector<topology::cell> & cells_near_main_) const
+  bool clusterizer::_is_good_couplet_(const topology::cell & c1_,
+                                      const topology::cell & c2_,
+                                      const std::vector<topology::cell> & c1_neighbors_) const
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
-    // the couplet mainc -> candidatec is good only if
-    // there is no other cell that is near to both and can form a triplet between them
+    // the couplet mainc -> candidatec is good only if there is no other cell
+    // that is near to both and can form a triplet between them
 
-    const topology::cell & a = main_cell_;
-    const topology::cell & c = candidate_cell_;
+    for (const auto & c3 : c1_neighbors_) {
+      if (c2_.id() == c3.id()) continue;
 
-    for (std::vector<topology::cell>::const_iterator icell = cells_near_main_.begin();
-         icell != cells_near_main_.end(); ++icell) {
-      const topology::cell & b = *icell;
+      const size_t level23 = _near_level_(c2_, c3);
+      if (level23 == 0) continue;
 
-      if (b.id() == c.id()) continue;
-      if (near_level(b, c) == 0) continue;
-
-      if (near_level(b, c) < near_level(a, c) ||
-          near_level(b, a) < near_level(a, c))
-        continue;  // cannot match a->b or b->c if a->c is nearer
+      const size_t level12 = _near_level_(c1_, c2_);
+      const size_t level13 = _near_level_(c1_, c3);
+      if (level23 < level12 || level13 < level12)
+        continue;  // cannot match c1->c3 or c3->c2 if c1->c2 is nearer
 
       DT_LOG_DEBUG(get_logging_priority(),
-                   "... check if near node " << b.id() << " has triplet " << a.id() << " <-> " << c.id());
-
-      topology::cell_triplet ccc(a,b,c);
+                   "... check if near node " << c3.id() << " has triplet " << c1_.id() << " <-> " << c2_.id());
+      topology::cell_triplet ccc(c1_, c3, c2_);
       ccc.calculate_joints(_ratio_, _quadrant_angle_, _tangent_phi_, _tangent_theta_);
       if (ccc.joints().size() > 0) {
         DT_LOG_DEBUG(get_logging_priority(),
-                     "... yes it does: so couplet " << a.id() << " and " << c.id() << " is not good");
+                     "... yes it does: so couplet " << c1_.id() << " and " << c2_.id() << " is not good");
         return false;
       }
     }
@@ -231,17 +227,7 @@ namespace CAT {
     return true;
   }
 
-
-  int clusterizer::cell_side(const topology::cell & c_) const
-  {
-    if (c_.ep().z().value() > 0.)
-      return 1;
-
-    return -1;
-  }
-
-
-  size_t clusterizer::near_level(const topology::cell & c1_, const topology::cell & c2_) const
+  size_t clusterizer::_near_level_(const topology::cell & c1_, const topology::cell & c2_) const
   {
     // returns 0 for far-away cell
     // 1 for diagonal cells
@@ -276,16 +262,14 @@ namespace CAT {
   }
 
 
-  void clusterizer::get_near_cells(const topology::cell & c_, std::vector<topology::cell> & cells_) const
+  void clusterizer::_get_near_cells_(const topology::cell & c_, std::vector<topology::cell> & cells_) const
   {
     DT_LOG_DEBUG(get_logging_priority(), "Filling list of cells near cell " << c_.id());
 
     for (const auto & icell : _cells_) {
       if (icell.id() == c_.id()) continue;
 
-      if (cell_side(icell) != cell_side(c_)) continue;
-
-      const size_t nl = near_level(c_, icell);
+      const size_t nl = _near_level_(c_, icell);
       if (nl > 0) {
         cells_.push_back(icell);
       }
