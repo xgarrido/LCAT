@@ -7,12 +7,13 @@
 // Third party
 // - Bayeux/datatools:
 #include <bayeux/datatools/exception.h>
+#include <bayeux/datatools/utils.h>
 
 namespace CAT {
 
-  void clusterizer::set_logging_priority(datatools::logger::priority a_priority)
+  void clusterizer::set_logging_priority(datatools::logger::priority priority_)
   {
-    _logging_ = a_priority;
+    _logging_ = priority_;
     return;
   }
 
@@ -24,37 +25,37 @@ namespace CAT {
   //! get cells
   const std::vector<topology::cell>& clusterizer::get_cells()const
   {
-    return cells_;
+    return _cells_;
   }
 
   //! set cells
-  void clusterizer::set_cells(const std::vector<topology::cell> & cells)
+  void clusterizer::set_cells(const std::vector<topology::cell> & cells_)
   {
-    cells_ = cells;
+    _cells_ = cells_;
   }
 
   //! get clusters
   const std::vector<topology::cluster>& clusterizer::get_clusters()const
   {
-    return clusters_;
+    return _clusters_;
   }
 
   //! set clusters
-  void clusterizer::set_clusters(const std::vector<topology::cluster> & clusters)
+  void clusterizer::set_clusters(const std::vector<topology::cluster> & clusters_)
   {
-    clusters_ = clusters;
+    _clusters_ = clusters_;
   }
 
   //! get calorimeter_hits
   const std::vector<topology::calorimeter_hit>& clusterizer::get_calorimeter_hits()const
   {
-    return calorimeter_hits_;
+    return _calorimeter_hits_;
   }
 
   //! set calorimeter_hits
-  void clusterizer::set_calorimeter_hits(const std::vector<topology::calorimeter_hit> & calorimeter_hits)
+  void clusterizer::set_calorimeter_hits(const std::vector<topology::calorimeter_hit> & calorimeter_hits_)
   {
-    calorimeter_hits_ = calorimeter_hits;
+    _calorimeter_hits_ = calorimeter_hits_;
   }
 
   void clusterizer::_set_initialized(bool i_)
@@ -67,10 +68,10 @@ namespace CAT {
   {
     _logging_ = datatools::logger::PRIO_WARNING;
 
-    TangentPhi = std::numeric_limits<double>::quiet_NaN ();
-    TangentTheta = std::numeric_limits<double>::quiet_NaN ();
-    QuadrantAngle = std::numeric_limits<double>::quiet_NaN ();
-    Ratio = std::numeric_limits<double>::quiet_NaN ();
+    datatools::invalidate(_tangent_phi_);
+    datatools::invalidate(_tangent_theta_);
+    datatools::invalidate(_quadrant_angle_);
+    datatools::invalidate(_ratio_);
 
     return;
   }
@@ -120,82 +121,75 @@ namespace CAT {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
     DT_LOG_DEBUG(get_logging_priority(), "Fill clusters");
-    clusters_.clear();
+    _clusters_.clear();
 
     DT_LOG_DEBUG(get_logging_priority(), "Order cells");
-    if (cells_.empty()) return;
-    std::sort(cells_.begin(), cells_.end());
+    if (_cells_.empty()) return;
+    std::sort(_cells_.begin(), _cells_.end());
 
     // List of cells already used
     std::set<int> flagged;
 
-    for (std::vector<topology::cell>::const_iterator icell = cells_.begin();
-         icell != cells_.end(); ++icell) {
-      // pick a cell c that was never added
-      const topology::cell & a_cell = *icell;
-      if (flagged.count(a_cell.id())) continue;
-      flagged.insert(a_cell.id());
+    for (const auto & icell : _cells_) {
+      // Pick a cell that was never added
+      if (flagged.count(icell.id())) continue;
+      flagged.insert(icell.id());
 
-      // cell c will form a new cluster, i.e. a new list of nodes
+      DT_LOG_DEBUG(get_logging_priority(), "Begin new cluster with cell " << icell.id());
+      // Current cell will form a new cluster, i.e. a new list of nodes
       topology::cluster cluster_connected_to_c;
       std::vector<topology::node> nodes_connected_to_c;
-      DT_LOG_DEBUG(get_logging_priority(), "Begin new cluster with cell " << a_cell.id());
 
-      // let's get the list of all the cells that can be reached from c without
-      // jumps
+      // Let's get the list of all the cells that can be reached from current
+      // cell without jumps
       std::vector<topology::cell> cells_connected_to_c;
-      cells_connected_to_c.push_back(a_cell);
+      cells_connected_to_c.push_back(icell);
 
-      for( size_t i=0; i<cells_connected_to_c.size(); i++){ // loop on connected cells
-        DT_LOG_WARNING(datatools::logger::PRIO_WARNING, "i=" << i);
-        // take a connected cell (the first one is just c)
-        topology::cell cconn = cells_connected_to_c[i];
+      // Loop on connected cells
+      for (size_t i = 0; i < cells_connected_to_c.size(); i++) {
+        // Take a connected cell by value since the array size will change and
+        // thus the allocation space too : reference will change during the loop!
+        const topology::cell cconn = cells_connected_to_c[i];
 
-        // the connected cell composes a new node
+        // The connected cell composes a new node
         topology::node newnode(cconn);
         std::vector<topology::cell_couplet> cc;
 
-        // get the list of cells near the connected cell
-        std::vector<topology::cell> cells_near_iconn = get_near_cells(cconn);
-
-        DT_LOG_DEBUG(get_logging_priority(), "Cluster " << clusters_.size()
-                     << " starts with " << a_cell.id() << " try to add cell " << cconn.id()
+        // Get the list of cells near the connected cell
+        std::vector<topology::cell> cells_near_iconn;
+        get_near_cells(cconn, cells_near_iconn);
+        DT_LOG_DEBUG(get_logging_priority(), "Cluster " << _clusters_.size()
+                     << " starts with " << icell.id() << " try to add cell " << cconn.id()
                      << " with n of neighbours = " << cells_near_iconn.size());
-        for(std::vector<topology::cell>::const_iterator icnc = cells_near_iconn.begin();
-            icnc != cells_near_iconn.end(); ++icnc) {
-          const topology::cell & cnc = *icnc;
-
+        for (const auto & cnc : cells_near_iconn) {
           if (!_is_good_couplet_(cconn, cnc, cells_near_iconn)) continue;
 
-          topology::cell_couplet ccnc(cconn,cnc);
+          DT_LOG_DEBUG(get_logging_priority(), "Creating couplet " << cconn.id() << " -> " << cnc.id());
+          topology::cell_couplet ccnc(cconn, cnc);
           cc.push_back(ccnc);
 
-          DT_LOG_DEBUG(get_logging_priority(), "Creating couplet " << cconn.id() << " -> " << cnc.id());
-
-          if(! flagged.count(cnc.id())) {
+          if (! flagged.count(cnc.id())) {
             flagged.insert(cnc.id());
             cells_connected_to_c.push_back(cnc);
           }
         }
         newnode.set_cc(cc);
-        newnode.calculate_triplets(Ratio, QuadrantAngle, TangentPhi, TangentTheta);
+        newnode.calculate_triplets(_ratio_, _quadrant_angle_, _tangent_phi_, _tangent_theta_);
         nodes_connected_to_c.push_back(newnode);
 
-        DT_LOG_DEBUG(get_logging_priority(), "Cluster started with " << a_cell.id()
+        DT_LOG_DEBUG(get_logging_priority(), "Cluster started with " << icell.id()
                      << " has been given cell " << cconn.id() << " with " << cc.size() << " couplets ");
-
       }
-
       cluster_connected_to_c.set_nodes(nodes_connected_to_c);
-      clusters_.push_back(cluster_connected_to_c);
+      _clusters_.push_back(cluster_connected_to_c);
     }
 
 
-    DT_LOG_DEBUG(get_logging_priority(), "There are " << clusters_.size() << " clusters of cells");
+    DT_LOG_DEBUG(get_logging_priority(), "There are " << _clusters_.size() << " clusters of cells");
 
-    tracked_data_.set_cells(cells_);
-    tracked_data_.set_calos(calorimeter_hits_);
-    tracked_data_.set_clusters(clusters_);
+    tracked_data_.set_cells(_cells_);
+    tracked_data_.set_calos(_calorimeter_hits_);
+    tracked_data_.set_clusters(_clusters_);
 
     return;
   }
@@ -204,6 +198,7 @@ namespace CAT {
                                       const topology::cell & candidate_cell_,
                                       const std::vector<topology::cell> & cells_near_main_)
   {
+    DT_LOG_TRACE(get_logging_priority(), "Entering...");
     // the couplet mainc -> candidatec is good only if
     // there is no other cell that is near to both and can form a triplet between them
 
@@ -225,13 +220,14 @@ namespace CAT {
                    "... check if near node " << b.id() << " has triplet " << a.id() << " <-> " << c.id());
 
       topology::cell_triplet ccc(a,b,c);
-      ccc.calculate_joints(Ratio, QuadrantAngle, TangentPhi, TangentTheta);
+      ccc.calculate_joints(_ratio_, _quadrant_angle_, _tangent_phi_, _tangent_theta_);
       if (ccc.joints().size() > 0) {
         DT_LOG_DEBUG(get_logging_priority(),
                      "... yes it does: so couplet " << a.id() << " and " << c.id() << " is not good");
         return false;
       }
     }
+    DT_LOG_TRACE(get_logging_priority(), "Exiting.");
     return true;
   }
 
@@ -293,53 +289,41 @@ namespace CAT {
   }
 
 
-  std::vector<topology::cell> clusterizer::get_near_cells(const topology::cell & c){
-
-
+  void clusterizer::get_near_cells(const topology::cell & c_, std::vector<topology::cell> & cells_)
+  {
     DT_LOG_DEBUG(get_logging_priority(),
-                 "Filling list of cells near cell " << c.id() << " fast " << c.fast() << " side " << cell_side(c));
+                 "Filling list of cells near cell " << c_.id());
 
-    std::vector<topology::cell> cells;
+    for (const auto & icell : _cells_) {
+      if (icell.id() == c_.id()) continue;
 
-    for(std::vector<topology::cell>::iterator kcell=cells_.begin(); kcell != cells_.end(); ++kcell){
-      if( kcell->id() == c.id() ) continue;
+      if (cell_side(icell) != cell_side(c_)) continue;
 
-      if( kcell->fast() != c.fast() ) continue;
-
-      if( cell_side(*kcell) != cell_side(c) ) continue;
-
-      size_t nl = near_level(c,*kcell);
-
-      if( nl > 0 )
-        {
-
-          topology::cell ck = *kcell;
-          cells.push_back(ck);
-        }
+      const size_t nl = near_level(c_, icell);
+      if (nl > 0) {
+        cells_.push_back(icell);
+      }
     }
-
-
-    return cells;
-
-  }
-
-  void clusterizer::set_TangentPhi(double v){
-    TangentPhi = v;
     return;
   }
 
-  void clusterizer::set_TangentTheta(double v){
-    TangentTheta = v;
+  void clusterizer::set_tangent_phi(double phi_){
+    _tangent_phi_ = phi_;
     return;
   }
 
-  void clusterizer::set_QuadrantAngle(double v){
-    QuadrantAngle = v;
+  void clusterizer::set_tangent_theta(double theta_){
+    _tangent_theta_ = theta_;
     return;
   }
 
-  void clusterizer::set_Ratio(double v){
-    Ratio = v;
+  void clusterizer::set_quadrant_angle(double angle_){
+    _quadrant_angle_ = angle_;
+    return;
+  }
+
+  void clusterizer::set_ratio(double ratio_){
+    _ratio_ = ratio_;
     return;
   }
 

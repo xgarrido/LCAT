@@ -70,27 +70,19 @@ namespace CAT{
     //! set calorimeter_hits
     void set_calorimeter_hits(const std::vector<topology::calorimeter_hit> & calorimeter_hits);
 
+    void set_tangent_phi(double phi_);
+
+    void set_tangent_theta(double theta_);
+
+    void set_quadrant_angle(double angle_);
+
+    void set_ratio(double ratio_);
+
   protected:
 
     int cell_side( const topology::cell & c);
     size_t near_level( const topology::cell & c1, const topology::cell & c2 );
-    std::vector<topology::cell> get_near_cells(const topology::cell & c);
-
-  protected:
-
-    //limits
-    double TangentPhi;
-    double TangentTheta;
-    double QuadrantAngle;
-    double Ratio;
-
-  private:
-
-    bool _is_good_couplet_(const topology::cell & main_cell_,
-                           const topology::cell & candidate_cell_,
-                           const std::vector<topology::cell> & cells_near_main_);
-
-  protected:
+    void get_near_cells(const topology::cell & c_, std::vector<topology::cell> & cells_);
 
     /// Set the initialization flag
     void _set_initialized(bool);
@@ -98,18 +90,11 @@ namespace CAT{
     /// Set default attribute values
     void _set_defaults();
 
-  public:
+  private:
 
-    void set_TangentPhi(double v);
-
-    void set_TangentTheta(double v);
-
-    void set_QuadrantAngle(double v);
-
-    void set_Ratio(double v);
-
-
-    //----------------------------------------
+    bool _is_good_couplet_(const topology::cell & main_cell_,
+                           const topology::cell & candidate_cell_,
+                           const std::vector<topology::cell> & cells_near_main_);
 
 
   private:
@@ -117,9 +102,15 @@ namespace CAT{
     bool _initialized_;           //!< Initialization status
     datatools::logger::priority _logging_;//!< Logging priority
 
-    std::vector<topology::cell> cells_;
-    std::vector<topology::cluster> clusters_;
-    std::vector<topology::calorimeter_hit> calorimeter_hits_;
+    //limits
+    double _tangent_phi_;
+    double _tangent_theta_;
+    double _quadrant_angle_;
+    double _ratio_;
+
+    std::vector<topology::cell> _cells_;
+    std::vector<topology::cluster> _clusters_;
+    std::vector<topology::calorimeter_hit> _calorimeter_hits_;
 
   };
 

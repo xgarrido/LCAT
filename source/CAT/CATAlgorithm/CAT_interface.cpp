@@ -199,10 +199,10 @@ namespace CAT {
     czer_.set_logging_priority(setup_.level);
 
     // Algorithm parameters :
-    czer_.set_TangentPhi (setup_.TangentPhi / CLHEP::degree);
-    czer_.set_TangentTheta (setup_.TangentTheta / CLHEP::degree);
-    czer_.set_QuadrantAngle (setup_.QuadrantAngle / CLHEP::degree);
-    czer_.set_Ratio (setup_.Ratio);
+    czer_.set_tangent_phi(setup_.TangentPhi / CLHEP::degree);
+    czer_.set_tangent_theta(setup_.TangentTheta / CLHEP::degree);
+    czer_.set_quadrant_angle(setup_.QuadrantAngle / CLHEP::degree);
+    czer_.set_ratio(setup_.Ratio);
     return;
   }
 
