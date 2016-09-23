@@ -255,7 +255,6 @@ namespace snemo {
 
       // Hit accounting :
       std::map<int, sdm::calibrated_data::tracker_hit_handle_type> hits_mapping;
-      std::map<int, int> hits_status;
 
       // GG hit loop :
       BOOST_FOREACH(const sdm::calibrated_data::tracker_hit_handle_type & gg_handle,
@@ -336,7 +335,6 @@ namespace snemo {
 
         // Store mapping info between both data models :
         hits_mapping[c.id()] = gg_handle;
-        hits_status[c.id()] = 0;
 
         DT_LOG_DEBUG (get_logging_priority (),
                       "Geiger cell #" << snemo_gg_hit.get_id() << " has been added "
@@ -463,11 +461,6 @@ namespace snemo {
       for (std::vector<CAT::topology::scenario>::const_iterator iscenario = tss.begin();
            iscenario != tss.end();
            ++iscenario) {
-        for (std::map<int,int>::iterator ihs = hits_status.begin();
-             ihs != hits_status.end();
-             ihs++) {
-          ihs->second = 0;
-        }
         DT_LOG_DEBUG(get_logging_priority(), "Number of scenarios = " << tss.size());
 
         sdm::tracker_clustering_solution::handle_type htcs(new sdm::tracker_clustering_solution);
@@ -485,12 +478,7 @@ namespace snemo {
              ++isequence) {
           const CAT::topology::sequence & a_sequence = *isequence;
           const size_t seqsz = a_sequence.nodes().size();
-          if (seqsz == 1) {
-            // A CAT cluster with only one hit/cell(node) is ignored:
-            //int hit_id = a_sequence.nodes()[0].c().id();
-            // hits_status[hit_id] = 1;
-            // clustering_solution.grab_unclustered_hits().push_back(hits_mapping[hit_id]);
-          } else {
+          if (seqsz > 1) {
             // A CAT cluster with more than one hit/cell(node) :
             {
               // Append a new cluster :
@@ -506,28 +494,10 @@ namespace snemo {
               const CAT::topology::node & a_node = a_sequence.nodes()[i];
               const int hit_id = a_node.c().id();
               cluster_handle.grab().grab_hits().push_back(hits_mapping[hit_id]);
-              hits_status[hit_id] = 1;
               DT_LOG_DEBUG(get_logging_priority(), "Add tracker hit with id #" << hit_id);
             }
           }
         } /* for sequence */
-
-        // // Search for remaining unclustered hits :
-        // DT_LOG_NOTICE(get_logging_priority(), "Search for remaining unclustered hits: ");
-        // std::cerr << "DEVEL: " << "Search for remaining unclustered hits: \n";
-        // for (std::map<int,int>::const_iterator ihs = hits_status.begin();
-        //      ihs != hits_status.end();
-        //      ihs++) {
-        //   int hit_id = ihs->first;
-        //   DT_LOG_NOTICE(get_logging_priority(), "  => hit_id = " << hit_id << "  status=" << ihs->second);
-        //   // std::cerr << "DEVEL: " << " => hit_id = " << hit_id << "  status=" << ihs->second << std::endl;
-        //   if (ihs->second == 0) {
-        //     std::cerr << "DEVEL: " << "   => make it an unclustered hit = " << hits_mapping[hit_id].get().get_geom_id() << std::endl;
-        //     clustering_solution.grab_unclustered_hits().push_back(hits_mapping[hit_id]);
-        //   }
-        // }
-        // // std::cerr << "DEVEL: " << "Number of unclustered hits : " << clustering_solution.grab_unclustered_hits().size() << std::endl;
-        // // std::cerr << "DEVEL: " << "Number of clusters         : " <<clustering_solution.grab_clusters().size() << std::endl;
       } // finish loop on scenario
 
       // clustering_.tree_dump(std::cerr, "Output clustering data : ", "DEVEL: ");
