@@ -54,21 +54,17 @@ namespace CAT {
     ~sequentiator();
 
     bool initialize( );
-    void PrintInitialObjects(void);
     bool finalize();
-    void readDstProper( void );
 
     bool sequentiate(topology::tracked_data & tracked_data);
     void sequentiate_cluster(topology::cluster & cluster);
     void make_new_sequence(topology::node & first_node);
     void make_copy_sequence(topology::node & first_node);
     bool evolve(topology::sequence & sequence);
-    void fill_links(topology::sequence *sequence);
     bool good_first_node(topology::node & node_);
     bool good_first_to_be_matched(topology::sequence& seq);
     bool match_gaps(std::vector<topology::calorimeter_hit> & calos);
-    void match_to_calorimeter(std::vector<topology::calorimeter_hit> & calos, topology::sequence *sequence);
-    void match_to_foil(topology::sequence *sequence);
+    // void match_to_calorimeter(std::vector<topology::calorimeter_hit> & calos, topology::sequence *sequence);
 
 
     //! get clusters
@@ -103,16 +99,6 @@ namespace CAT {
     void _set_defaults ();
 
   public:
-
-    void set_GG_GRND_diam (double ggd){
-      GG_GRND_diam = ggd;
-      return;
-    }
-
-    void set_GG_CELL_diam (double ggcd){
-      GG_CELL_diam = ggcd;
-      return;
-    }
 
     void set_num_blocks(int nb){
       if (nb > 0)
@@ -260,11 +246,6 @@ namespace CAT {
       return;
     }
 
-    void set_first_event(size_t v){
-      first_event_number = v;
-      return;
-    }
-
     void set_level(std::string v){
       level = mybhep::get_info_level(v);
       m = mybhep::messenger(level);
@@ -283,14 +264,6 @@ namespace CAT {
 
     void set_rad(double v){
       rad = v;
-      return;
-    }
-
-    void set_GG_CELL_pitch (double p){
-      GG_CELL_pitch = p;
-      set_rad (GG_CELL_pitch / cos(M_PI/8.));
-      set_GG_CELL_diam (rad);
-      set_CellDistance (rad);
       return;
     }
 
@@ -372,10 +345,6 @@ namespace CAT {
     mybhep::prlevel level;
 
     mybhep::messenger m;
-    int nevent;
-    int event_number;
-    int InitialEvents;
-    int SkippedEvents;
 
     //geom param
     double vel, rad, len, CellDistance;
@@ -394,7 +363,6 @@ namespace CAT {
     double MaxChi2;
     double probmin;
     int NOffLayers;
-    int first_event_number;
 
     //error parametrization
     double sigma0;
@@ -432,11 +400,6 @@ namespace CAT {
     int num_blocks;
     mybhep::dvector<double> planes_per_block ;
     mybhep::dvector<double> gaps_Z;
-    double GG_CELL_pitch;
-    double GG_GRND_diam;
-    double GG_CELL_diam;
-    double CHAMBER_X;
-    double GG_BLOCK_X;
     int num_cells_per_plane;
     double SOURCE_thick;
     double bfield;
@@ -468,14 +431,12 @@ namespace CAT {
     std::vector<topology::scenario> scenarios_;
 
 
-    bool make_scenarios(topology::tracked_data &td, bool after_sultan = false);
+    bool make_scenarios(topology::tracked_data &td);
     void interpret_physics(std::vector<topology::calorimeter_hit> & calos);
     void refine_sequences_near_walls(std::vector<topology::calorimeter_hit> & calos);
     bool belongs_to_other_family(topology::cell c, topology::sequence *iseq);
     topology::plane get_foil_plane();
     topology::circle get_foil_circle();
-    void print_sequences() const;
-    void print_a_sequence(const topology::sequence & sequence, bool after_sultan = false) const;
     void add_pair(const topology::sequence & sequence);
     bool clean_up_sequences();
     bool there_is_free_sequence_beginning_with(const topology::cell &c, size_t *index);
@@ -488,11 +449,8 @@ namespace CAT {
     double distance_from_foil(const topology::experimental_point &ep);
     bool direct_out_of_foil(void);
     bool direct_scenarios_out_of_foil(void);
-    void print_families( void );
     void make_families();
-    bool can_add_family(topology::scenario &sc, size_t* jmin, size_t* nfree, double* Chi2, size_t* noverlaps, int32_t* ndof, topology::tracked_data &td, bool after_sultan);
-    void print_scenarios(bool after_sultan = false) const;
-    void print_a_scenario(const topology::scenario & scenario, bool after_sultan = false) const;
+    bool can_add_family(topology::scenario &sc, size_t* jmin, size_t* nfree, double* Chi2, size_t* noverlaps, int32_t* ndof, topology::tracked_data &td);
     size_t pick_best_scenario();
     bool can_be_linked(topology::sequence& p, bool inverted);
     bool can_match(topology::sequence &s, size_t* jmin, bool& bestinvertA, bool& bestinvertB, int& with_kink, int &cells_to_delete, std::vector<topology::calorimeter_hit> & calos);
@@ -514,7 +472,6 @@ namespace CAT {
 
     std::vector<int> run_list;
     double run_time;
-    bool first_event;
 
 
   };

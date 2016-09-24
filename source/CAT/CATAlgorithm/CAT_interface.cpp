@@ -260,7 +260,6 @@ namespace CAT {
             stor_.set_planes_per_block (i, (int)(setup_.planes_per_block.at (i)+0.5));
           }
         stor_.set_num_cells_per_plane (setup_.num_cells_per_plane);
-        stor_.set_GG_CELL_pitch (setup_.cell_size / CLHEP::mm);
       }
     else
       {

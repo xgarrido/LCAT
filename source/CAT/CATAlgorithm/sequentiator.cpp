@@ -17,11 +17,6 @@ namespace CAT {
     num_blocks = -1;
     planes_per_block.clear ();
     gaps_Z.clear ();
-    GG_CELL_pitch = std::numeric_limits<double>::quiet_NaN ();
-    GG_GRND_diam = std::numeric_limits<double>::quiet_NaN ();
-    GG_CELL_diam = std::numeric_limits<double>::quiet_NaN ();
-    CHAMBER_X = std::numeric_limits<double>::quiet_NaN ();
-    GG_BLOCK_X = std::numeric_limits<double>::quiet_NaN ();
     num_cells_per_plane = -1;
     SOURCE_thick = std::numeric_limits<double>::quiet_NaN ();
     //    lastlayer = 0;
@@ -44,7 +39,6 @@ namespace CAT {
     MaxChi2 = std::numeric_limits<double>::quiet_NaN ();
     probmin = std::numeric_limits<double>::quiet_NaN ();
     NOffLayers = 0;
-    first_event_number = 0;
     SuperNemo = true;
     SuperNemoChannel = false;
     NemoraOutput = false;
@@ -54,15 +48,10 @@ namespace CAT {
     //    DriftWires.clear ();
     _moduleNR.clear ();
     _MaxBlockSize = -1;
-    event_number=0;
     hfile.clear ();
 
-    nevent = 0;
-    InitialEvents = 0;
-    SkippedEvents = 0;
     run_list.clear ();
     run_time = std::numeric_limits<double>::quiet_NaN ();
-    first_event=true;
     return;
   }
 
@@ -83,31 +72,6 @@ namespace CAT {
 
     m.message("CAT::sequentiator::initialize: Beginning algorithm sequentiator",mybhep::VERBOSE); fflush(stdout);
 
-    //    clock.start(" sequentiator: initialize ");
-
-    //----------- read dst param -------------//
-
-    readDstProper();
-
-    //------- end of read pram -----------//
-
-    nevent = 0;
-    InitialEvents = 0;
-    SkippedEvents = 0;
-
-    first_event=true;
-
-    /*
-      if( !SuperNemo )
-      {
-
-      run_time = 0.;
-      run_list.clear();
-
-      }
-    */
-
-    //    clock.stop(" sequentiator: initialize ");
 
     return true;
   }
@@ -118,9 +82,6 @@ namespace CAT {
 
     m.message("CAT::sequentiator::finalize: Ending algorithm sequentiator",mybhep::NORMAL); fflush(stdout);
 
-    m.message("CAT::sequentiator::finalize: Initial events: ", InitialEvents, mybhep::NORMAL);
-    m.message("CAT::sequentiator::finalize: Skipped events: ", SkippedEvents, "(", 100.*SkippedEvents/InitialEvents, "%)", mybhep::NORMAL);
-
     clock.start(" sequentiator: finalize ");
 
     clock.stop(" sequentiator: finalize ");
@@ -128,61 +89,12 @@ namespace CAT {
     return true;
   }
 
-  //*************************************************************
-  void sequentiator::readDstProper(void) {
-    //*************************************************************
-
-    //    clock.start(" sequentiator: read dst properties ");
-
-    if (_MaxBlockSize <= 0)
-      {
-        _MaxBlockSize = 1;
-        m.message("CAT::sequentiator::readDstProper: no bar design, MODULES Nr set to = ",_MaxBlockSize,"\n",mybhep::NORMAL);
-      }
-
-    if(SuperNemo)
-      {
-        m.message("CAT::sequentiator::readDstProper: SuperNemo kind of data",mybhep::NORMAL);
-        if (num_blocks <= 0)
-          {
-            // Default :
-            set_num_blocks (1);
-            planes_per_block.at (0) = 9;
-          }
-      }
-    else
-      {
-        m.message("CAT::sequentiator::readDstProper: Nemo-3 kind of data",mybhep::NORMAL);
-        bfield = 0.0025;
-        if (num_blocks <= 0)
-          {
-            // Default :
-            set_num_blocks (3);
-            planes_per_block.at (0) = 4;
-            planes_per_block.at (1) = 2;
-            planes_per_block.at (2) = 3;
-          }
-      }
-
-
-    //    clock.stop(" sequentiator: read dst properties ");
-
-    return;
-  }
-
 
   //*************************************************************
   bool sequentiator::sequentiate(topology::tracked_data & tracked_data_) {
     //*************************************************************
 
-    event_number ++;
-    m.message("CAT::sequentiator::sequentiate: local_tracking: preparing event", event_number, mybhep::VERBOSE);
-
-    if( event_number < first_event_number ){
-      m.message("CAT::sequentiator::sequentiate:  local_tracking: skip event", event_number, " first event is "
-                , first_event_number,  mybhep::VERBOSE);
-      return true;
-    }
+    m.message("CAT::sequentiator::sequentiate: local_tracking: preparing event", mybhep::VERBOSE);
 
     clock.start(" sequentiator: sequentiate ","cumulative");
     clock.start(" sequentiator: sequentiation ","restart");
@@ -216,7 +128,6 @@ namespace CAT {
     if (late())
       {
         tracked_data_.set_skipped(true);
-        SkippedEvents ++;
         return false;
       }
 
@@ -236,7 +147,6 @@ namespace CAT {
     if (late())
       {
         tracked_data_.set_skipped(true);
-        SkippedEvents ++;
         return false;
       }
 
@@ -247,7 +157,6 @@ namespace CAT {
     if (late())
       {
         tracked_data_.set_skipped(true);
-        SkippedEvents ++;
         return false;
       }
 
@@ -301,12 +210,6 @@ namespace CAT {
     //  requirement. The free level is set to true.
     topology::sequence newsequence(first_node, level, probmin);
 
-    if (level >= mybhep::VERBOSE)
-      {
-        clog << "CAT::sequentiator::make_new_sequence: begin track [" << sequences_.size() << "] with node " << first_node.c().id() << endl;
-        print_a_sequence(newsequence);
-      }
-
     bool updated = true;
 
     while (updated)
@@ -315,9 +218,6 @@ namespace CAT {
       }
 
     if (late()) return;
-
-    if (level >= mybhep::VERBOSE)
-      print_a_sequence(newsequence);
 
     NFAMILY++;
     NCOPY = 0;
@@ -552,12 +452,6 @@ namespace CAT {
 
         m.message("CAT::sequentiator::make_copy_sequence: begin, with cell", first_node.c().id(), ", parallel track ", sequences_.size(), " to track ", isequence, mybhep::VERBOSE); fflush(stdout);
 
-        if (level >= mybhep::VVERBOSE)
-          {
-            std::clog << "CAT::sequentiator::make_copy_sequence: original sequence before copying: " << std::endl;
-            print_a_sequence(sequences_[isequence]);
-          }
-
         clock.stop(" sequentiator: make copy sequence: part A: alpha ");
         clock.start(" sequentiator: copy to lfn ","cumulative");
         size_t ilink, ilfn;
@@ -566,14 +460,6 @@ namespace CAT {
 
         clock.start(" sequentiator: make copy sequence: part A: beta ","cumulative");
         m.message("CAT::sequentiator::make_copy_sequence: copied from sequence  ", isequence, mybhep::VVERBOSE); fflush(stdout);
-
-        if (level >= mybhep::VVERBOSE)
-          {
-            m.message("CAT::sequentiator::make_copy_sequence: original sequence after copy ", mybhep::VVERBOSE); fflush(stdout);
-            print_a_sequence(sequences_[isequence]);
-            m.message("CAT::sequentiator::make_copy_sequence: new copy ", mybhep::VVERBOSE); fflush(stdout);
-            print_a_sequence(newcopy);
-          }
 
         clock.stop(" sequentiator: make copy sequence: part A: beta ");
         clock.start(" sequentiator: make copy sequence: evolve ","cumulative");
@@ -584,9 +470,6 @@ namespace CAT {
         clock.stop(" sequentiator: make copy sequence: evolve ");
 
         if (late()) return;
-
-        if(level >= mybhep::VVERBOSE)
-          print_a_sequence(newcopy);
 
         clock.stop(" sequentiator: make copy sequence: part A ");
         clock.start(" sequentiator: manage copy sequence ","cumulative");
@@ -792,10 +675,6 @@ namespace CAT {
         clock.stop(" sequentiator: evolve ");
         return false;
       }
-
-
-    if( level >= mybhep::VVERBOSE )
-      print_a_sequence(sequence);
 
     if( sequence_size == 3 ){
       clock.start(" sequentiator: get link index ","cumulative");
@@ -1026,34 +905,10 @@ namespace CAT {
   }
 
   //*************************************************************
-  void sequentiator::print_families( void ) {
-    //*************************************************************
-
-    std::clog << "CAT::sequentiator::print_families: families: " << std::endl;
-
-    for(size_t i=0; i<families_.size(); i++)
-      {
-        std::clog << "[" << families_[i][0] << "] (";
-        for(size_t j=0; j<families_[i].size(); j++)
-          {
-            if( j == 0 ) continue;
-            std::clog << " " << families_[i][j];
-          }
-        std::clog << ")" << std::endl;
-      }
-
-    return;
-  }
-
-
-  //*************************************************************
-  bool sequentiator::make_scenarios(topology::tracked_data &td, bool after_sultan){
+  bool sequentiator::make_scenarios(topology::tracked_data &td){
     //*************************************************************
 
     clock.start(" sequentiator: make scenarios ", "cumulative");
-
-    if( level >= mybhep::VERBOSE)
-      print_families();
 
     for(std::vector<topology::sequence>::iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq){
       if( late() ){
@@ -1063,8 +918,6 @@ namespace CAT {
 
 
       m.message("CAT::sequentiator::make_scenarios: begin scenario with sequence ", iseq->name(), mybhep::VVERBOSE);
-      if( level >= mybhep::VVERBOSE)
-        print_a_sequence(*iseq,after_sultan);
 
       topology::scenario sc;
       sc.level_ = level;
@@ -1077,11 +930,9 @@ namespace CAT {
       size_t jmin = 0, nfree = 0, noverlaps = 0;
       double Chi2 = 0.0;
       int ndof = 0;
-      while( can_add_family(sc, &jmin, &nfree, &Chi2, &noverlaps, &ndof, td,after_sultan) )
+      while( can_add_family(sc, &jmin, &nfree, &Chi2, &noverlaps, &ndof, td) )
         {
           m.message("CAT::sequentiator::make_scenarios: best sequence to add is ", jmin, mybhep::VVERBOSE);
-          if( level >= mybhep::VVERBOSE)
-            print_a_sequence(sequences_[jmin],after_sultan);
           m.message("CAT::sequentiator::make_scenarios: nfree ", nfree, " noverls ", noverlaps, " Chi2 ", Chi2, mybhep::VVERBOSE);
           sc.sequences_.push_back(sequences_[jmin]);
           sc.set_n_free_families(nfree);
@@ -1103,16 +954,9 @@ namespace CAT {
 
     direct_scenarios_out_of_foil();
 
-    if( level >= mybhep::VERBOSE)
-      print_scenarios(after_sultan);
-
     if( scenarios_.size() > 0 ){
 
       size_t index_tmp = pick_best_scenario();
-
-      if( level > mybhep::NORMAL)
-        print_a_scenario(scenarios_[index_tmp],after_sultan);
-
 
       m.message("CAT::sequentiator::make_scenarios: made scenario ", mybhep::VERBOSE);
 
@@ -1157,7 +1001,7 @@ namespace CAT {
   }
 
   //*************************************************************
-  bool sequentiator::can_add_family(topology::scenario &sc, size_t* jmin, size_t* nfree, double* Chi2, size_t* noverlaps, int* ndof, topology::tracked_data &td, bool after_sultan) {
+  bool sequentiator::can_add_family(topology::scenario &sc, size_t* jmin, size_t* nfree, double* Chi2, size_t* noverlaps, int* ndof, topology::tracked_data &td) {
     //*************************************************************
 
     if( late() )
@@ -1217,8 +1061,6 @@ namespace CAT {
         clock.stop(" sequentiator: calculate scenario ");
 
         m.message("CAT::sequentiator::can_add_family: ...try to add sequence ", jseq->name(), mybhep::VVERBOSE);
-        if( level >= mybhep::VVERBOSE)
-          print_a_sequence(*jseq,after_sultan);
         m.message("CAT::sequentiator::can_add_family: ...nfree ", tmp.n_free_families(), " noverls ", tmp.n_overlaps(), " chi2 ", tmp.helix_chi2(), " prob ", tmp.helix_Prob(), mybhep::VVERBOSE);
 
         clock.start(" sequentiator: better scenario ", "cumulative");
@@ -1396,9 +1238,6 @@ namespace CAT {
           ++iseq;
           continue;
         }
-
-        if( level >= mybhep::VVERBOSE)
-          print_a_sequence(*iseq);
 
       // by default, conserve_clustering_from_removal_of_whole_cluster = false and conserve_clustering_from_reordering = true
         if( !iseq->calculate_helix(Ratio) && !iseq->has_kink() ){
@@ -1699,415 +1538,6 @@ namespace CAT {
     return;
 
   }
-
-
-
-  //*************************************************************
-  void sequentiator::match_to_calorimeter(std::vector<topology::calorimeter_hit> & calos, topology::sequence *iseq){
-  //*************************************************************
-
-    double helix_min_from_end = mybhep::default_min;
-    size_t ihelix_min_from_end = mybhep::default_integer;
-    double tangent_min_from_end = mybhep::default_min;
-    size_t itangent_min_from_end = mybhep::default_integer;
-
-    double helix_min_from_begin = mybhep::default_min;
-    size_t ihelix_min_from_begin = mybhep::default_integer;
-    double tangent_min_from_begin = mybhep::default_min;
-    size_t itangent_min_from_begin = mybhep::default_integer;
-
-    topology::experimental_point helix_extrapolation_from_end, helix_extrapolation_local_from_end;
-    bool helix_found_from_end = false;
-    topology::experimental_point helix_extrapolation_from_begin, helix_extrapolation_local_from_begin;
-    bool helix_found_from_begin = false;
-
-    topology::experimental_point tangent_extrapolation_from_end, tangent_extrapolation_local_from_end;
-    bool tangent_found_from_end = false;
-    topology::experimental_point tangent_extrapolation_from_begin, tangent_extrapolation_local_from_begin;
-    bool tangent_found_from_begin = false;
-
-
-    double dist_from_end, dist_from_begin;
-
-    // match to calorimeter
-    if (!calos.empty ())
-      {
-
-	m.message("CAT::sequentiator::match_to_calorimeter: extrapolate decay vertex with ", calos.size(), " calo hits " , mybhep::VVERBOSE);
-
-	for(std::vector<topology::calorimeter_hit>::iterator ic=calos.begin(); ic != calos.end(); ++ic){
-
-	  m.message( "CAT::sequentiator::match_to_calorimeter: trying to extrapolate to calo hit ", ic - calos.begin(), " id ", ic->id(), " on view ", ic->pl_.view(), " energy ", ic->e().value(), mybhep::VVERBOSE);
-
-	  if( !near(iseq->last_node().c(), *ic) ){
-	    m.message( "CAT::sequentiator::match_to_calorimeter: end is not near " , mybhep::VVERBOSE);
-	  }else{
-
-	    if( !iseq->intersect_plane_from_end(ic->pl(), &helix_extrapolation_local_from_end) ){
-	      m.message( "CAT::sequentiator::match_to_calorimeter: no helix intersection from end " , mybhep::VVERBOSE);
-	    }
-	    else{
-
-	      dist_from_end = helix_extrapolation_local_from_end.distance(ic->pl_.face()).value();
-	      if( dist_from_end < helix_min_from_end ){
-		helix_min_from_end = dist_from_end;
-		ihelix_min_from_end = ic->id();
-		helix_extrapolation_from_end = helix_extrapolation_local_from_end;
-		helix_found_from_end = true;
-		m.message( "CAT::sequentiator::match_to_calorimeter: new helix intersection from end with minimum distance " , dist_from_end , " position: " , helix_extrapolation_from_end.x().value() ,   helix_extrapolation_from_end.y().value(),  helix_extrapolation_from_end.z().value() , mybhep::VVERBOSE);
-	      }
-	    }
-
-
-	    if( !iseq->intersect_plane_with_tangent_from_end(ic->pl(), &tangent_extrapolation_local_from_end) ){
-	      m.message( "CAT::sequentiator::match_to_calorimeter: no tangent intersection from end " , mybhep::VVERBOSE);
-	    }
-	    else{
-
-	      dist_from_end = tangent_extrapolation_local_from_end.distance(ic->pl_.face()).value();
-	      if( dist_from_end < tangent_min_from_end ){
-		tangent_min_from_end = dist_from_end;
-		itangent_min_from_end = ic->id();
-		tangent_extrapolation_from_end = tangent_extrapolation_local_from_end;
-		tangent_found_from_end = true;
-		m.message( "CAT::sequentiator::match_to_calorimeter: new tangent intersection from end with minimum distance " , dist_from_end , " position: " , tangent_extrapolation_from_end.x().value() ,   tangent_extrapolation_from_end.y().value(),  tangent_extrapolation_from_end.z().value() , mybhep::VVERBOSE);
-	      }
-	    }
-	  }
-
-	  if( !near(iseq->nodes_[0].c(), *ic) ){
-	    m.message( "CAT::sequentiator::match_to_calorimeter: beginning is not near " , mybhep::VVERBOSE);
-	  }else if( ihelix_min_from_end == ic->id() || itangent_min_from_end == ic->id() ){
-	    m.message( "CAT::sequentiator::match_to_calorimeter: beginning is near, but end was already extrapolated to same calo " , mybhep::VVERBOSE);
-	  }else{
-	    if( !iseq->intersect_plane_from_begin(ic->pl(), &helix_extrapolation_local_from_begin) ){
-	      m.message( "CAT::sequentiator::match_to_calorimeter: no helix intersection from beginning " , mybhep::VVERBOSE);
-	    }
-	    else{
-
-	      dist_from_begin = helix_extrapolation_local_from_begin.distance(ic->pl_.face()).value();
-	      if( dist_from_begin < helix_min_from_begin ){
-		helix_min_from_begin = dist_from_begin;
-		ihelix_min_from_begin = ic->id();
-		helix_extrapolation_from_begin = helix_extrapolation_local_from_begin;
-		helix_found_from_begin = true;
-		m.message( "CAT::sequentiator::match_to_calorimeter: new helix intersection from beginning with minimum distance " , dist_from_begin , " position: " , helix_extrapolation_from_begin.x().value() ,   helix_extrapolation_from_begin.y().value(),  helix_extrapolation_from_begin.z().value() , mybhep::VVERBOSE);
-	      }
-	    }
-
-
-	    if( !iseq->intersect_plane_with_tangent_from_begin(ic->pl(), &tangent_extrapolation_local_from_begin) ){
-	      m.message( "CAT::sequentiator::match_to_calorimeter: no tangent intersection from beginning " , mybhep::VVERBOSE);
-	    }
-	    else{
-
-	      dist_from_begin = tangent_extrapolation_local_from_begin.distance(ic->pl_.face()).value();
-	      if( dist_from_begin < tangent_min_from_begin ){
-		tangent_min_from_begin = dist_from_begin;
-		itangent_min_from_begin = ic->id();
-		tangent_extrapolation_from_begin = tangent_extrapolation_local_from_begin;
-		tangent_found_from_begin = true;
-		m.message( "CAT::sequentiator::match_to_calorimeter: new tangent intersection from beginning with minimum distance " , dist_from_begin , " position: " , tangent_extrapolation_from_begin.x().value() ,   tangent_extrapolation_from_begin.y().value(),  tangent_extrapolation_from_begin.z().value() , mybhep::VVERBOSE);
-	      }
-	    }
-	  }
-
-
-	} // finish loop on calos
-
-	if( helix_found_from_begin ){
-	  if( ihelix_min_from_begin >= calos.size() ){
-	    m.message( "CAT::sequentiator::match_to_calorimeter: problem: calo hit of id " , ihelix_min_from_begin , " but n of calo hits is " , calos.size() , mybhep::NORMAL);
-	  }
-	  else{
-	    m.message( "CAT::sequentiator::match_to_calorimeter: track extrapolated by helix to calo " , ihelix_min_from_begin, mybhep::VVERBOSE);
-	    iseq->set_helix_vertex(helix_extrapolation_from_begin, "calo", ihelix_min_from_begin);
-	  }
-	}
-
-	if( tangent_found_from_begin ){
-	  if( itangent_min_from_begin >= calos.size() ){
-	    m.message( "CAT::sequentiator::match_to_calorimeter: problem: tangent calo hit of id " , itangent_min_from_begin , " but n of calo hits is " , calos.size() , mybhep::NORMAL);
-	  }
-	  else{
-	    m.message( "CAT::sequentiator::match_to_calorimeter: track extrapolated by tangent to calo " , itangent_min_from_begin, mybhep::VVERBOSE);
-	    iseq->set_tangent_vertex(tangent_extrapolation_from_begin, "calo", itangent_min_from_begin);
-	  }
-	}
-
-	if( helix_found_from_end ){
-	  if( ihelix_min_from_end >= calos.size() ){
-	    m.message( "CAT::sequentiator::match_to_calorimeter: problem: calo hit of id " , ihelix_min_from_end , " but n of calo hits is " , calos.size() , mybhep::NORMAL);
-	  }
-	  else{
-	    m.message( "CAT::sequentiator::match_to_calorimeter: track extrapolated by helix to calo " , ihelix_min_from_end, mybhep::VVERBOSE);
-	    iseq->set_decay_helix_vertex(helix_extrapolation_from_end, "calo", ihelix_min_from_end);
-	  }
-	}
-
-	if( tangent_found_from_end ){
-	  if( itangent_min_from_end >= calos.size() ){
-	    m.message( "CAT::sequentiator::match_to_calorimeter: problem: tangent calo hit of id " , itangent_min_from_end , " but n of calo hits is " , calos.size() , mybhep::NORMAL);
-	  }
-	  else{
-	    m.message( "CAT::sequentiator::match_to_calorimeter: track extrapolated by tangent to calo " , itangent_min_from_end, mybhep::VVERBOSE);
-	    iseq->set_decay_tangent_vertex(tangent_extrapolation_from_end, "calo", itangent_min_from_end);
-	  }
-	}
-
-      }
-
-    return;
-
-  }
-
-
-  //*************************************************************
-  void sequentiator::match_to_foil(topology::sequence *iseq){
-  //*************************************************************
-
-    topology::experimental_point helix_extrapolation_from_end;
-    topology::experimental_point helix_extrapolation_from_begin;
-
-    topology::experimental_point tangent_extrapolation_from_end;
-    topology::experimental_point tangent_extrapolation_from_begin;
-
-    if( !iseq->nodes_.empty() ){
-
-      m.message( "CAT::sequentiator::match_to_foil: extrapolate vertex on foil: supernemo " , SuperNemo, mybhep::VVERBOSE);
-
-      if( gap_number(iseq->last_node().c() ) != 0 ){
-	m.message( "CAT::sequentiator::match_to_foil: end not near ", mybhep::VVERBOSE); fflush(stdout);
-      }else{
-	if( SuperNemo ){
-
-	  if( !iseq->intersect_plane_from_end(get_foil_plane(), &helix_extrapolation_from_end) ){
-	    m.message("CAT::sequentiator::match_to_foil: no helix intersection from end ", mybhep::VVERBOSE); fflush(stdout);
-	  }
-	  else{
-	    iseq->set_decay_helix_vertex(helix_extrapolation_from_end, "foil");
-
-	  }
-
-	  if( !iseq->intersect_plane_with_tangent_from_end(get_foil_plane(), &tangent_extrapolation_from_end) ){
-	    m.message("CAT::sequentiator::match_to_foil: no tangent intersection from end ", mybhep::VVERBOSE); fflush(stdout);
-	  }
-	  else
-	    iseq->set_decay_tangent_vertex(tangent_extrapolation_from_end, "foil");
-
-	}else{  // nemo3
-
-
-	  if( !iseq->intersect_circle_from_end(get_foil_circle(), &helix_extrapolation_from_end) ){
-	    m.message("CAT::sequentiator::match_to_foil: no helix intersection from end ", mybhep::VVERBOSE); fflush(stdout);
-	  }
-	  else{
-	    m.message( "CAT::sequentiator::match_to_foil: track extrapolated by helix to foil from end ", mybhep::VVERBOSE);
-	    iseq->set_decay_helix_vertex(helix_extrapolation_from_end, "foil");
-	  }
-
-	  if( !iseq->intersect_circle_with_tangent_from_end(get_foil_circle(), &tangent_extrapolation_from_end) ){
-	    m.message("CAT::sequentiator::match_to_foil: no tangent intersection from end ", mybhep::VVERBOSE); fflush(stdout);
-	  }
-	  else{
-	    m.message( "CAT::sequentiator::match_to_foil: track extrapolated by tangent to foil from end", mybhep::VVERBOSE);
-	    iseq->set_decay_tangent_vertex(tangent_extrapolation_from_end, "foil");
-	  }
-
-	}
-      }
-
-      if( gap_number(iseq->nodes_[0].c() ) != 0 ){
-	m.message( "CAT::sequentiator::match_to_foil: beginning not near ", mybhep::VVERBOSE); fflush(stdout);
-      }else{
-	if( SuperNemo ){
-
-	  if( !iseq->intersect_plane_from_begin(get_foil_plane(), &helix_extrapolation_from_begin) ){
-	    m.message("CAT::sequentiator::match_to_foil: no helix intersection from beginning ", mybhep::VVERBOSE); fflush(stdout);
-	  }
-	  else{
-	    iseq->set_helix_vertex(helix_extrapolation_from_begin, "foil");
-
-	  }
-
-	  if( !iseq->intersect_plane_with_tangent_from_begin(get_foil_plane(), &tangent_extrapolation_from_begin) ){
-	    m.message("CAT::sequentiator::match_to_foil: no tangent intersection from beginning ", mybhep::VVERBOSE); fflush(stdout);
-	  }
-	  else
-	    iseq->set_tangent_vertex(tangent_extrapolation_from_begin, "foil");
-
-	}else{  // nemo3
-
-
-	  if( !iseq->intersect_circle_from_begin(get_foil_circle(), &helix_extrapolation_from_begin) ){
-	    m.message("CAT::sequentiator::match_to_foil: no helix intersection from beginning ", mybhep::VVERBOSE); fflush(stdout);
-	  }
-	  else{
-	    m.message( "CAT::sequentiator::match_to_foil: track extrapolated by helix to foil from beginning ", mybhep::VVERBOSE);
-	    iseq->set_helix_vertex(helix_extrapolation_from_begin, "foil");
-	  }
-
-	  if( !iseq->intersect_circle_with_tangent_from_begin(get_foil_circle(), &tangent_extrapolation_from_begin) ){
-	    m.message("CAT::sequentiator::match_to_foil: no tangent intersection from beginning ", mybhep::VVERBOSE); fflush(stdout);
-	  }
-	  else{
-	    m.message( "CAT::sequentiator::match_to_foil: track extrapolated by tangent to foil from begin", mybhep::VVERBOSE);
-	    iseq->set_tangent_vertex(tangent_extrapolation_from_begin, "foil");
-	  }
-
-	}
-
-
-
-      }
-    }
-
-  }
-
-
-
-
-  //*************************************************************
-  void sequentiator::print_sequences() const {
-    //*************************************************************
-
-    m.message("CAT::sequentiator::print_sequences: sequence matrix is", mybhep::NORMAL); fflush(stdout);
-    for(vector<topology::sequence>::const_iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq)
-      {
-        std::clog << " [" << iseq - sequences_.begin() << "]";
-        print_a_sequence(*iseq);
-      }
-
-    return;
-
-  }
-
-
-  //*************************************************************
-  void sequentiator::print_a_sequence(const topology::sequence & sequence, bool after_sultan ) const {
-    //*************************************************************
-
-    std::clog << sequence.name();
-
-    if( sequence.Free() )
-      {
-        std::clog << "*";
-        fflush(stdout);
-      }
-
-    int iccc;
-    for(vector<topology::node>::const_iterator inode = sequence.nodes_.begin();
-        inode != sequence.nodes_.end(); ++inode)
-      {
-        std::clog << " " << (int)inode->c().id();fflush(stdout);
-
-        if( inode->free() ) {
-          std::clog << "* ";fflush(stdout);
-        }
-
-        topology::experimental_vector v(inode->c().ep(),inode->ep());
-
-        if( level >= mybhep::VVERBOSE ){
-          std::clog << "[" << v.x().value() << ", " << v.z().value() << "]";fflush(stdout);
-
-	  if( !after_sultan ){
-	    std::clog << "(";fflush(stdout);
-
-	    for(vector<topology::cell>::const_iterator ilink=(*inode).links_.begin(); ilink != (*inode).links_.end(); ++ilink){
-	      iccc = sequence.get_link_index_of_cell(inode - sequence.nodes_.begin(), *ilink);
-
-	      if( iccc < 0 ) continue;  // connection through a gap
-
-	      if( inode - sequence.nodes_.begin() < 1 ){
-		std::clog << "->" << inode->cc()[iccc].cb().id();fflush(stdout);
-		if( ilink->free() ){
-		  std::clog << "[*]";fflush(stdout);
-		}
-		std::clog << "[" << inode->cc_[iccc].iteration() << " "
-			  << inode->cc()[iccc].tangents().size() << "]";fflush(stdout);
-		if( ! ilink->begun() ) {
-		  std::clog << "[n]";fflush(stdout);
-                }
-	      }else{
-		std::clog << inode->ccc()[iccc].ca().id() << "<->" << inode->ccc()[iccc].cc().id();fflush(stdout);
-		if( ilink->free() ){
-		  std::clog << "[*]";fflush(stdout);
-		}
-		std::clog << "[" << inode->ccc_[iccc].iteration() << " "
-			  << inode->ccc()[iccc].joints().size() << "]";fflush(stdout);
-		if( ! ilink->begun() ) {
-		  std::clog << "[n]";fflush(stdout);
-                }
-	      }
-	    }
-
-	    std::clog << " chi2 = " << inode->chi2();fflush(stdout);
-
-	    std::clog << " )";fflush(stdout);
-	  }
-        }
-      }
-
-    std::clog << " center (" << sequence.center().x().value() << ", " << sequence.center().y().value() << ", " << sequence.center().z().value() << ")  radius " << sequence.radius().value() <<  " pitch " << sequence.pitch().value() << " momentum " << sequence.momentum().length().value() << "  tangent charge " << sequence.charge().value() << " +- " << sequence.charge().error() << " helix charge " << sequence.helix_charge().value()  << " +- " << sequence.helix_charge().error() << " detailed charge " << sequence.detailed_charge().value()  << " +- " << sequence.detailed_charge().error() << " chi2 " << sequence.chi2() << " prob " << sequence.Prob() << " helix chi2 " << sequence.helix_chi2() << " helix prob " << sequence.helix_Prob(); fflush(stdout);
-    if( sequence.has_helix_vertex() ){
-      std::clog << " helix vertex on " << sequence.helix_vertex_type();fflush(stdout);
-      if( sequence.helix_vertex_type() == "calo" ) std::clog << " icalo " << sequence.helix_vertex_id();
-    }
-    if( sequence.has_decay_helix_vertex() ){
-      std::clog << " helix decay vertex on " << sequence.decay_helix_vertex_type(); fflush(stdout);
-      if( sequence.decay_helix_vertex_type() == "calo" ) std::clog << " icalo " << sequence.calo_helix_id();
-    }
-    if( sequence.has_tangent_vertex() ){
-      std::clog << " tangent vertex on " << sequence.tangent_vertex_type() << " ";fflush(stdout);
-      if( sequence.tangent_vertex_type() == "calo" ) std::clog << " icalo " << sequence.tangent_vertex_id();
-    }
-    if( sequence.has_decay_tangent_vertex() ){
-      std::clog << " tangent decay vertex on " << sequence.decay_tangent_vertex_type(); fflush(stdout);
-      if( sequence.decay_tangent_vertex_type() == "calo" ) std::clog << " icalo " << sequence.calo_tangent_id();
-    }
-    std::clog << " " << std::endl;fflush(stdout);
-
-    return;
-
-  }
-
-  //*************************************************************
-  void sequentiator::print_scenarios(bool after_sultan) const {
-    //*************************************************************
-
-    clog << "CAT::sequentiator::print_scenarios: Printing scenarios: " << scenarios_.size() << endl; fflush(stdout);
-
-    for(vector<topology::scenario>::const_iterator isc=scenarios_.begin(); isc!=scenarios_.end(); ++isc)
-      {
-        std::clog << " scenario " << isc - scenarios_.begin() << std::endl;
-        print_a_scenario(*isc, after_sultan);
-      }
-
-    return;
-
-  }
-
-
-  //*************************************************************
-  void sequentiator::print_a_scenario(const topology::scenario & scenario, bool after_sultan) const {
-    //*************************************************************
-
-    clog << "Print associated sequences: " << endl;
-    for (vector<topology::sequence>::const_iterator iseq = scenario.sequences_.begin();
-         iseq != scenario.sequences_.end(); ++iseq)
-      {
-        print_a_sequence(*iseq,after_sultan);
-      }
-
-    clog << "Print scenario parameters" << endl;
-    clog << " |-- nfree " << scenario.n_free_families() << endl;
-    clog << " |-- noverls " << scenario.n_overlaps() << endl;
-    clog << " |-- helix_chi2 " << scenario.helix_chi2() << endl;
-    clog << " `-- helix_prob " << scenario.helix_Prob() << endl;
-
-    return;
-  }
-
 
   //*************************************************************
   void sequentiator::add_pair(const topology::sequence & newsequence){
@@ -2843,11 +2273,6 @@ namespace CAT {
 
     clock.start(" sequentiator: match gaps ", "cumulative");
 
-    if( level >= mybhep::VERBOSE){
-      print_families();
-      print_sequences();
-    }
-
     std::vector<bool> matched;
     matched.assign (families_.size(), false);
 
@@ -2870,8 +2295,6 @@ namespace CAT {
       }
 
       m.message("CAT::sequentiator::match_gaps: begin matching with sequence ", iseq->name(), mybhep::VERBOSE);
-      if( level >= mybhep::VERBOSE)
-        print_a_sequence(*iseq);
 
       first = true;
       topology::sequence newseq = *iseq;
@@ -2880,8 +2303,6 @@ namespace CAT {
       while( can_match(newseq, &jmin, invertA, invertB, with_kink, cells_to_delete, calos) )
         {
           m.message("CAT::sequentiator::match_gaps:  best matching is ", sequences_[jmin].name(), " invertA ", invertA, " invertB ", invertB, " with kink ", with_kink, " delete cells ", cells_to_delete, mybhep::VERBOSE);
-          if( level >= mybhep::VVERBOSE)
-            print_a_sequence(sequences_[jmin]);
 
           bool ok;
           newseq = newseq.match(sequences_[jmin], invertA, invertB, &ok, with_kink,cells_to_delete, Ratio);
@@ -2890,9 +2311,6 @@ namespace CAT {
             m.message("CAT::sequentiator::match_gaps:  ... no good helix match ", mybhep::VERBOSE);
             continue;
           }
-
-          if( level >= mybhep::VERBOSE)
-            print_a_sequence(newseq);
 
           if( first ){
             //      matched[ifam] = true;
@@ -2922,10 +2340,6 @@ namespace CAT {
     make_families();
 
     //free(matched);
-
-    if( level >= mybhep::VERBOSE){
-      print_sequences();
-    }
 
     return true;
 
@@ -2962,10 +2376,6 @@ namespace CAT {
         with_kink=0;
 
         m.message("CAT::sequentiator::can_match:  try to match sequence", s.name(), " to ", jseq->name(), mybhep::VVERBOSE);
-        if( level >= mybhep::VVERBOSE){
-          print_a_sequence(s);
-          print_a_sequence(*jseq);
-        }
 
         // check that jseq's family is not the same as s
         if( s.same_families(*jseq) ){
@@ -3171,8 +2581,6 @@ std::clog << "CAT::sequentiator::can_match:  sequence " << s.name() << " can be 
 
     topology::experimental_double distance = topology::experimental_vector(c1.ep(),c2.ep()).hor().length();
 
-    if( SuperNemo ){  // use side, layer and row
-
       // Use geiger locator for such research Warning: use integer
       // because uint32_t has strange behavior with absolute value
       // cmath::abs
@@ -3201,38 +2609,6 @@ std::clog << "CAT::sequentiator::can_match:  sequence " << s.name() << " can be 
       else if (layer_distance == 0 && row_distance == 1) return 2;
       else if (layer_distance == 1 && row_distance == 1) return 1;
       return 0;
-
-    }else{ // use physical distance
-
-      double limit_side;
-      double limit_diagonal;
-      if (SuperNemo && SuperNemoChannel)
-	{
-	  limit_side = GG_CELL_pitch;
-	  limit_diagonal = sqrt(2.)*GG_CELL_pitch;
-	}
-      else
-	{
-	  double factor = cos(M_PI/8.); // 0.923879532511287 // octogonal factor = 0.92
-	  limit_side = factor*CellDistance;
-	  limit_diagonal = sqrt(2.)*factor*CellDistance; // new factor = 1.31
-	}
-      double precision = 0.15*limit_side;
-
-      if( level >= mybhep::VVERBOSE )
-	std::clog << "CAT::sequentiator::near_level: (c " << c2.id() << " d " << distance.value() << " )"
-		  << std::endl;
-
-      if( std::abs(distance.value() - limit_side) < precision )
-	return 2;
-
-      if( std::abs(distance.value() - limit_diagonal) < precision )
-	return 1;
-
-      return 0;
-    }
-
-
   }
 
   void sequentiator::reassign_cells_based_on_helix( topology::sequence * seq ){
