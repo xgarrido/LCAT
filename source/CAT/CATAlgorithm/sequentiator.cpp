@@ -10,9 +10,6 @@
 
 namespace CAT {
 
-  using namespace std;
-  using namespace mybhep;
-
   void sequentiator::set_logging_priority(datatools::logger::priority priority_)
   {
     _logging_ = priority_;
@@ -118,7 +115,7 @@ namespace CAT {
     clock.start(" sequentiator: sequentiation ","restart");
 
     // set_clusters(tracked_data_.get_clusters());
-    vector<topology::cluster> & the_clusters = tracked_data_.get_clusters ();
+    std::vector<topology::cluster> & the_clusters = tracked_data_.get_clusters();
 
     NFAMILY = -1;
     NCOPY = 0;
@@ -130,7 +127,7 @@ namespace CAT {
 
     tracked_data_.scenarios_.clear();
 
-    for (vector<topology::cluster>::iterator
+    for (std::vector<topology::cluster>::iterator
           icluster = the_clusters.begin();
         icluster != the_clusters.end(); ++icluster)
       {
@@ -186,7 +183,7 @@ namespace CAT {
   void sequentiator::sequentiate_cluster(topology::cluster & cluster_) {
     //*************************************************************
 
-    for (vector<topology::node>::iterator
+    for (std::vector<topology::node>::iterator
           inode = cluster_.nodes_.begin();
         inode != cluster_.nodes_.end(); ++inode)
       {
@@ -349,24 +346,24 @@ namespace CAT {
                     {
                       newcopy.nodes_[k].set_free( sequences_[isequence].nodes()[k].free());
 
-                      for (vector<topology::cell_couplet>::iterator icc = sequences_[isequence].nodes_[k].cc_.begin();
+                      for (std::vector<topology::cell_couplet>::iterator icc = sequences_[isequence].nodes_[k].cc_.begin();
                           icc != sequences_[isequence].nodes_[k].cc_.end(); ++icc)
                         {
                           newcopy.nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].set_free( icc->free());
                           newcopy.nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].set_begun( icc->begun());
 
-                          for(vector<topology::line>::iterator itang = sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.begin(); itang != sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.end(); ++itang)
+                          for(std::vector<topology::line>::iterator itang = sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.begin(); itang != sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.end(); ++itang)
                             newcopy.nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_[itang - sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.begin()].set_used(itang->used() );
 
                         }
 
-                      for (vector<topology::cell_triplet>::iterator iccc = sequences_[isequence].nodes_[k].ccc_.begin();
+                      for (std::vector<topology::cell_triplet>::iterator iccc = sequences_[isequence].nodes_[k].ccc_.begin();
                            iccc != sequences_[isequence].nodes_[k].ccc_.end(); ++iccc)
                         {
                           newcopy.nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].set_free( iccc->free());
                           newcopy.nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].set_begun( iccc->begun());
 
-                          for (vector<topology::joint>::iterator ijoint = sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.begin(); ijoint != sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.end(); ++ijoint)
+                          for (std::vector<topology::joint>::iterator ijoint = sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.begin(); ijoint != sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.end(); ++ijoint)
                             newcopy.nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_[ijoint - sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.begin()].set_used(ijoint->used() );
 
                         }
@@ -374,27 +371,27 @@ namespace CAT {
 
                   if (ilfn < 2)
                     {
-                      for (vector<topology::cell_couplet>::iterator icc = sequences_[isequence].nodes_[ilfn].cc_.begin();
+                      for (std::vector<topology::cell_couplet>::iterator icc = sequences_[isequence].nodes_[ilfn].cc_.begin();
                            icc != sequences_[isequence].nodes_[ilfn].cc_.end(); ++icc)
                         if ((size_t)(icc - sequences_[isequence].nodes_[ilfn].cc_.begin()) != ilink)
                           {
                             newcopy.nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].set_free( icc->free());
                             newcopy.nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].set_begun( icc->begun());
 
-                            for (vector<topology::line>::iterator itang = sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.begin(); itang !=sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.end(); ++itang)
+                            for (std::vector<topology::line>::iterator itang = sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.begin(); itang !=sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.end(); ++itang)
                               newcopy.nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_[itang - sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.begin()].set_used(itang->used() );
                           }
                     }
                   else
                     {
-                      for (vector<topology::cell_triplet>::iterator iccc = sequences_[isequence].nodes_[ilfn].ccc_.begin();
+                      for (std::vector<topology::cell_triplet>::iterator iccc = sequences_[isequence].nodes_[ilfn].ccc_.begin();
                           iccc != sequences_[isequence].nodes_[ilfn].ccc_.end(); ++iccc)
                         if ((size_t)(iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()) != ilink )
                           {
                             newcopy.nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].set_free( iccc->free());
                             newcopy.nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].set_begun( iccc->begun());
 
-                            for (vector<topology::joint>::iterator ijoint = sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.begin(); ijoint !=sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.end(); ++ijoint)
+                            for (std::vector<topology::joint>::iterator ijoint = sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.begin(); ijoint !=sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.end(); ++ijoint)
                               newcopy.nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_[ijoint - sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.begin()].set_used(ijoint->used() );
                           }
                     }
@@ -579,7 +576,7 @@ namespace CAT {
 
     clock.start(" sequentiator: good first node ", "cumulative");
 
-    const string type = node_.topological_type();
+    const std::string type = node_.topological_type();
 
     // check that node is not in the middle of a cell_triplet
     if( type != "VERTEX" &&
@@ -591,11 +588,11 @@ namespace CAT {
     }
 
 
-    vector<size_t> done_connections;
+    std::vector<size_t> done_connections;
     size_t connection_node;
-    vector<size_t>::iterator fid;
+    std::vector<size_t>::iterator fid;
     // check that node has never been added to a sequence
-    for(vector<topology::sequence>::const_iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq)
+    for(std::vector<topology::sequence>::const_iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq)
       {
         if( iseq->has_cell(node_.c()) ){
           if( type == "VERTEX" ){
@@ -838,7 +835,7 @@ namespace CAT {
     topology::scenario tmp = sc;
 #endif
 
-    std::map<string,int> scnames;
+    std::map<std::string,int> scnames;
     for(std::vector<topology::sequence>::iterator iseq=sc.sequences_.begin(); iseq!=sc.sequences_.end(); ++iseq)
       scnames[iseq->name()]=iseq-sc.sequences_.begin();
 
@@ -1756,8 +1753,8 @@ namespace CAT {
          gnA != gnB )){
       // matching is within a single block and not through a gap
       // so helix should be contained in the layers of the two cells
-      rmin = min(cA.ep().radius().value(),cB.ep().radius().value()) - CellDistance;
-      rmax = max(cA.ep().radius().value(),cB.ep().radius().value()) + CellDistance;
+      rmin = std::min(cA.ep().radius().value(),cB.ep().radius().value()) - CellDistance;
+      rmax = std::max(cA.ep().radius().value(),cB.ep().radius().value()) + CellDistance;
     }else{
       if( blockA != blockB ){
 
@@ -1771,8 +1768,8 @@ namespace CAT {
         */
 
         // matching is between different blocks
-        rmin = min(cA.ep().radius().value(),cB.ep().radius().value()) - CellDistance;
-        rmax = max(cA.ep().radius().value(),cB.ep().radius().value()) + CellDistance;
+        rmin = std::min(cA.ep().radius().value(),cB.ep().radius().value()) - CellDistance;
+        rmax = std::max(cA.ep().radius().value(),cB.ep().radius().value()) + CellDistance;
       }
       else if( blockA == blockB && gnA == -1 && gnB != -1 ){ // B is on gap, A is inside
         size_t gn = gnB;
