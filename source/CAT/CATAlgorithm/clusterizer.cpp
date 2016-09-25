@@ -110,6 +110,7 @@ namespace CAT {
   void clusterizer::reset()
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
+    DT_THROW_IF(! is_initialized(), std::logic_error, "Clusterizer is not initialized !");
     _set_defaults();
     _set_initialized(false);
     DT_LOG_TRACE(get_logging_priority(), "Exiting.");
@@ -119,6 +120,7 @@ namespace CAT {
   void clusterizer::clusterize(topology::tracked_data & tracked_data_)
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
+    DT_THROW_IF(! is_initialized(), std::logic_error, "Clusterizer is not initialized !");
 
     DT_LOG_DEBUG(get_logging_priority(), "Fill clusters");
     _clusters_.clear();

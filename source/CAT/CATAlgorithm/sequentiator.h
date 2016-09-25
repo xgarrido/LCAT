@@ -2,8 +2,6 @@
 #ifndef CAT_SEQUENTIATOR_H
 #define CAT_SEQUENTIATOR_H 1
 
-#include <mybhep/messenger.h>
-#include <mybhep/event.h>
 #include <mybhep/utilities.h>
 #include <CLHEP/Units/SystemOfUnits.h>
 #include <mybhep/system_of_units.h>
@@ -11,9 +9,6 @@
 
 #include <iostream>
 #include <vector>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
 
 //#include <CATUtils/NHistoManager2.h>
 #include <CATAlgorithm/cell_base.h>
@@ -32,20 +27,23 @@
 #include <CATAlgorithm/scenario.h>
 #include <CATAlgorithm/logic_scenario.h>
 
+// Third party
+// bayeux/datatools:
+#include <bayeux/datatools/logger.h>
 
 namespace CAT {
   class sequentiator{
 
   public:
 
-    // /// Set logging priority
-    // void set_logging_priority(datatools::logger::priority p);
+    /// Set logging priority
+    void set_logging_priority(datatools::logger::priority p);
 
-    // /// Returns logging priority
-    // datatools::logger::priority get_logging_priority() const;
+    /// Returns logging priority
+    datatools::logger::priority get_logging_priority() const;
 
-    // /// Check if the clusterizer is initialized
-    // bool is_initialized() const;
+    /// Check if the clusterizer is initialized
+    bool is_initialized() const;
 
     /// Constructor
     sequentiator();
@@ -53,10 +51,13 @@ namespace CAT {
     /// Destructor
     ~sequentiator();
 
-    bool initialize( );
-    bool finalize();
+    /// Initialize the sequentiator through configuration properties (not yet)
+    void initialize();
 
-    bool sequentiate(topology::tracked_data & tracked_data);
+    /// Reset the sequentiator
+    void reset();
+
+    void sequentiate(topology::tracked_data & tracked_data);
     void sequentiate_cluster(topology::cluster & cluster);
     void make_new_sequence(topology::node & first_node);
     void make_copy_sequence(topology::node & first_node);
@@ -96,7 +97,12 @@ namespace CAT {
     bool late();
 
   protected:
-    void _set_defaults ();
+
+    /// Set the initialization flag
+    void _set_initialized(bool);
+
+    /// Set default attribute values
+    void _set_defaults();
 
   public:
 
@@ -152,21 +158,6 @@ namespace CAT {
         {
           SOURCE_thick = st;
         }
-      return;
-    }
-
-    // module number (SuperNemo will be modular)
-    void set_module_nr(std::string mID){
-      _moduleNR=mID;
-      return;
-    }
-
-    int get_module_nr(void){
-      return _MaxBlockSize;
-    }
-
-    void set_MaxBlockSize(int mbs){
-      _MaxBlockSize=mbs;
       return;
     }
 
@@ -231,11 +222,6 @@ namespace CAT {
       return;
     }
 
-    void set_hfile(std::string v){
-      hfile = v;
-      return;
-    }
-
     void set_probmin(double v){
       probmin = v;
       return;
@@ -243,12 +229,6 @@ namespace CAT {
 
     void set_nofflayers(size_t v){
       NOffLayers = v;
-      return;
-    }
-
-    void set_level(std::string v){
-      level = mybhep::get_info_level(v);
-      m = mybhep::messenger(level);
       return;
     }
 
@@ -283,7 +263,6 @@ namespace CAT {
           SuperNemoChannel = true;
           set_NemoraOutput (false);
           set_N3_MC (false);
-          set_MaxBlockSize (1);
         }
       else
         {
@@ -341,10 +320,6 @@ namespace CAT {
     //  NHistoManager2 hman;
 
     Clock clock;
-
-    mybhep::prlevel level;
-
-    mybhep::messenger m;
 
     //geom param
     double vel, rad, len, CellDistance;
@@ -410,13 +385,13 @@ namespace CAT {
 
     //----Modification for bar-module---
   private:
-    std::string  _moduleNR;
-    int     _MaxBlockSize;
+
+    datatools::logger::priority _logging_; //!< Logging priority
+    bool _initialized_;           //!< Initialization status
+
+
     std::vector<mybhep::particle*> parts;
     int NFAMILY, NCOPY;
-
-    //histogram file
-    std::string hfile;
 
     topology::cluster * local_cluster_;
 
@@ -436,14 +411,10 @@ namespace CAT {
     void refine_sequences_near_walls(std::vector<topology::calorimeter_hit> & calos);
     bool belongs_to_other_family(topology::cell c, topology::sequence *iseq);
     topology::plane get_foil_plane();
-    topology::circle get_foil_circle();
     void add_pair(const topology::sequence & sequence);
     bool clean_up_sequences();
     bool there_is_free_sequence_beginning_with(const topology::cell &c, size_t *index);
     int gap_number(const topology::cell &c);
-    void make_table_of_true_and_reco_sequences(std::vector<topology::sequence> &trueseqs);
-    void rec_efficiency(std::vector<topology::sequence> &trueseqs);
-    size_t getCommonHits(topology::sequence &tp, topology::sequence &dp);
     void make_name(topology::sequence & seq);
     bool near(const topology::cell &c, topology::calorimeter_hit &ch);
     double distance_from_foil(const topology::experimental_point &ep);
@@ -452,26 +423,10 @@ namespace CAT {
     void make_families();
     bool can_add_family(topology::scenario &sc, size_t* jmin, size_t* nfree, double* Chi2, size_t* noverlaps, int32_t* ndof, topology::tracked_data &td);
     size_t pick_best_scenario();
-    bool can_be_linked(topology::sequence& p, bool inverted);
     bool can_match(topology::sequence &s, size_t* jmin, bool& bestinvertA, bool& bestinvertB, int& with_kink, int &cells_to_delete, std::vector<topology::calorimeter_hit> & calos);
-    bool select_nemo_tracks(topology::tracked_data & __tracked_data);
     bool sequence_is_within_range(topology::node nodeA, topology::node nodeB, topology::sequence seq);
-    topology::joint find_best_matching_joint(topology::joint j, std::vector<topology::joint> js, topology::cell A, topology::cell B, topology::cell C, double *chi2, bool A_in_on_gap, bool B_is_on_gap);
-    bool build_sequences_from_ambiguous_alternatives(std::vector< std::vector<topology::broken_line> > sets_of_bl_alternatives, std::vector<topology::sequence> *seqs);
-    bool increase_iterations(std::vector< std::vector<topology::broken_line> > sets_of_bl_alternatives, std::vector<size_t> * iterations, int * block_which_is_increasing, int * first_augmented_block);
     size_t near_level( const topology::cell & c1, const topology::cell & c2 );
     void reassign_cells_based_on_helix( topology::sequence * seq );
-
-  public:
-    void SetModuleNR(std::string mID){
-      _moduleNR=mID;
-    };
-    //----------------------------------------
-
-    // variables of nemo3 standard analysis
-
-    std::vector<int> run_list;
-    double run_time;
 
 
   };

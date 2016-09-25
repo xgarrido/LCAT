@@ -230,7 +230,7 @@ namespace snemo {
                   "CAT driver is not initialized !");
       _set_initialized(false);
       _CAT_clusterizer_.reset();
-      _CAT_sequentiator_.finalize();
+      _CAT_sequentiator_.reset();
       _CAT_setup_.reset();
       _set_defaults();
       this->base_tracker_clusterizer::_reset();
