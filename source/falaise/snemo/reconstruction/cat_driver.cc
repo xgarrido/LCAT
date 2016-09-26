@@ -199,14 +199,16 @@ namespace snemo {
                   << _CAT_setup_.get_error_message() << " !");
 
       // Configure and initialize the CAT machine :
-      CAT::clusterizer_configure(_CAT_clusterizer_, _CAT_setup_);
+      // CAT::clusterizer_configure(_CAT_clusterizer_, _CAT_setup_);
       CAT::sequentiator_configure(_CAT_sequentiator_, _CAT_setup_);
 
-      _CAT_clusterizer_.initialize ();
+      // Extract the setup of the base gamma builder :
+      datatools::properties cat_setup;
+      setup_.export_and_rename_starting_with(cat_setup, "CAT.", "");
+      _CAT_clusterizer_.initialize(cat_setup);
       _CAT_sequentiator_.initialize();
 
       _set_initialized(true);
-
       return;
     }
 
@@ -338,7 +340,7 @@ namespace snemo {
         DT_LOG_DEBUG (get_logging_priority (),
                       "Geiger cell #" << snemo_gg_hit.get_id() << " has been added "
                       << "to CAT input data with id number #" << c.id());
-      } // BOOST_FOREACH(gg_hits_)
+      } // for loop over gg_hits_
 
       // Take into account calo hits:
       _CAT_input_.calo_cells.clear();
@@ -449,57 +451,86 @@ namespace snemo {
       // Run the clusterizer algorithm :
       _CAT_clusterizer_.clusterize(_CAT_output_.tracked_data);
 
-      // Run the sequentiator algorithm :
-      _CAT_sequentiator_.sequentiate(_CAT_output_.tracked_data);
-
-      _CAT_output_.tracked_data.dump();
-
-      // Analyse the sequentiator output i.e. 'scenarios' made of 'sequences' of geiger cells:
-      const std::vector<CAT::topology::scenario> & tss = _CAT_output_.tracked_data.get_scenarios();
-
-      for (std::vector<CAT::topology::scenario>::const_iterator iscenario = tss.begin();
-           iscenario != tss.end();
-           ++iscenario) {
-        DT_LOG_DEBUG(get_logging_priority(), "Number of scenarios = " << tss.size());
-
+      const bool use_only_clusterizer = false;
+      if (use_only_clusterizer) {
+        // Store solution from clusterizer
         sdm::tracker_clustering_solution::handle_type htcs(new sdm::tracker_clustering_solution);
         clustering_.add_solution(htcs, true);
         clustering_.grab_default_solution().set_solution_id(clustering_.get_number_of_solutions() - 1);
         sdm::tracker_clustering_solution & clustering_solution = clustering_.grab_default_solution();
-        clustering_solution.grab_auxiliaries().update_string(sdm::tracker_clustering_data::clusterizer_id_key(), CAT_ID);
+        clustering_solution.grab_auxiliaries().update_string(sdm::tracker_clustering_data::clusterizer_id_key(), "LCAT");
 
-        // Analyse the sequentiator output :
-        const std::vector<CAT::topology::sequence> & the_sequences = iscenario->sequences();
-        DT_LOG_DEBUG(get_logging_priority(), "Number of sequences = " << the_sequences.size());
-
-        for (std::vector<CAT::topology::sequence>::const_iterator isequence = the_sequences.begin();
-             isequence != the_sequences.end();
-             ++isequence) {
-          const CAT::topology::sequence & a_sequence = *isequence;
-          const size_t seqsz = a_sequence.nodes().size();
-          if (seqsz > 1) {
-            // A CAT cluster with more than one hit/cell(node) :
-            {
-              // Append a new cluster :
-              sdm::tracker_cluster::handle_type tch(new sdm::tracker_cluster);
-              clustering_solution.grab_clusters().push_back(tch);
-            }
-            sdm::tracker_cluster::handle_type & cluster_handle
-              = clustering_solution.grab_clusters().back();
-            cluster_handle.grab().set_cluster_id(clustering_solution.get_clusters().size() - 1);
-
-            // Loop on all hits within the sequence(nodes) :
-            for (int i = 0; i < (int) seqsz; i++) {
-              const CAT::topology::node & a_node = a_sequence.nodes()[i];
-              const int hit_id = a_node.c().id();
-              cluster_handle.grab().grab_hits().push_back(hits_mapping[hit_id]);
-              DT_LOG_DEBUG(get_logging_priority(), "Add tracker hit with id #" << hit_id);
-            }
+        for (const auto & a_cluster : _CAT_output_.tracked_data.get_clusters()) {
+          {
+            // Append a new cluster :
+            sdm::tracker_cluster::handle_type tch(new sdm::tracker_cluster);
+            clustering_solution.grab_clusters().push_back(tch);
           }
-        } /* for sequence */
-      } // finish loop on scenario
+          sdm::tracker_cluster::handle_type & cluster_handle = clustering_solution.grab_clusters().back();
+          cluster_handle.grab().set_cluster_id(clustering_solution.get_clusters().size() - 1);
 
-      // clustering_.tree_dump(std::cerr, "Output clustering data : ", "DEVEL: ");
+          // Loop on all hits within the cluster(nodes) :
+          for (const auto & a_node : a_cluster.nodes()) {
+            const int hit_id = a_node.c().id();
+            cluster_handle.grab().grab_hits().push_back(hits_mapping[hit_id]);
+            DT_LOG_DEBUG(get_logging_priority(), "Add tracker hit with id #" << hit_id);
+          }
+        }
+      } else {
+        // Run the sequentiator algorithm :
+        _CAT_sequentiator_.sequentiate(_CAT_output_.tracked_data);
+
+        // _CAT_output_.tracked_data.dump();
+
+        // Analyse the sequentiator output i.e. 'scenarios' made of 'sequences' of geiger cells:
+        const std::vector<CAT::topology::scenario> & tss = _CAT_output_.tracked_data.get_scenarios();
+
+        for (std::vector<CAT::topology::scenario>::const_iterator iscenario = tss.begin();
+             iscenario != tss.end();
+             ++iscenario) {
+          DT_LOG_DEBUG(get_logging_priority(), "Number of scenarios = " << tss.size());
+
+          sdm::tracker_clustering_solution::handle_type htcs(new sdm::tracker_clustering_solution);
+          clustering_.add_solution(htcs, true);
+          clustering_.grab_default_solution().set_solution_id(clustering_.get_number_of_solutions() - 1);
+          sdm::tracker_clustering_solution & clustering_solution = clustering_.grab_default_solution();
+          clustering_solution.grab_auxiliaries().update_string(sdm::tracker_clustering_data::clusterizer_id_key(), CAT_ID);
+
+          // Analyse the sequentiator output :
+          const std::vector<CAT::topology::sequence> & the_sequences = iscenario->sequences();
+          DT_LOG_DEBUG(get_logging_priority(), "Number of sequences = " << the_sequences.size());
+
+          for (std::vector<CAT::topology::sequence>::const_iterator isequence = the_sequences.begin();
+               isequence != the_sequences.end();
+               ++isequence) {
+            const CAT::topology::sequence & a_sequence = *isequence;
+            const size_t seqsz = a_sequence.nodes().size();
+            if (seqsz > 1) {
+              // A CAT cluster with more than one hit/cell(node) :
+              {
+                // Append a new cluster :
+                sdm::tracker_cluster::handle_type tch(new sdm::tracker_cluster);
+                clustering_solution.grab_clusters().push_back(tch);
+              }
+              sdm::tracker_cluster::handle_type & cluster_handle
+                = clustering_solution.grab_clusters().back();
+              cluster_handle.grab().set_cluster_id(clustering_solution.get_clusters().size() - 1);
+
+              // Loop on all hits within the sequence(nodes) :
+              for (size_t i = 0; i < seqsz; i++) {
+                const CAT::topology::node & a_node = a_sequence.nodes()[i];
+                const int hit_id = a_node.c().id();
+                cluster_handle.grab().grab_hits().push_back(hits_mapping[hit_id]);
+                DT_LOG_DEBUG(get_logging_priority(), "Add tracker hit with id #" << hit_id);
+              }
+            }
+          } /* for sequence */
+        } // finish loop on scenario
+      }
+
+      if (get_logging_priority() >= datatools::logger::PRIO_TRACE) {
+        clustering_.tree_dump(std::clog, "Output clustering data : ", "[trace]: ");
+      }
       return 0;
     }
 

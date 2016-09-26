@@ -2,6 +2,11 @@
 
 #include <CATAlgorithm/cell_triplet.h>
 
+// Third party
+// - Bayeux/datatools:
+#include <bayeux/datatools/logger.h>
+#include <bayeux/datatools/clhep_units.h>
+
 namespace CAT{
   namespace topology{
 
@@ -199,11 +204,11 @@ namespace CAT{
       return begun_;
     }
 
-    void cell_triplet::calculate_joints(double Ratio, double separation_limit, double phi_limit, double theta_limit){
+    void cell_triplet::calculate_joints(double ratio_, double /*separation_limit_*/, double phi_limit, double theta_limit)
+    {
+      datatools::logger::priority local_priority = datatools::logger::PRIO_WARNING;
 
-      if( print_level() > mybhep::VERBOSE ){
-        std::clog << appname_ << " calculate joints for cells: " << ca_.id() << " " << cb_.id() << " " << cc_.id() << std::endl;
-      }
+      DT_LOG_DEBUG(local_priority, "Calculate joints for cells: " << ca_.id() << " " << cb_.id() << " " << cc_.id());
 
       joints_.clear();
       std::vector<line> t1 = cca().tangents(); // note: this tangent goes from cell B to cell A
@@ -212,18 +217,16 @@ namespace CAT{
       bool intersect_bc = cb_.intersect(cc_);
       bool intersect_ca = cc_.intersect(ca_);
 
-      bool is_fast = ca_.fast();
-      if( !is_fast ){
-	phi_limit = std::max(phi_limit, 90.);
-	theta_limit = std::max(theta_limit, 180.);
-        if( print_level() > mybhep::VERBOSE ){
-          std::clog << appname_ << " cells are slow, reset phi_limit " << phi_limit << " theta_limit " << theta_limit << std::endl;
-        }
+      const bool is_fast = ca_.fast();
+      if (! is_fast) {
+	phi_limit = std::max(phi_limit, 90. * CLHEP::degree);
+	theta_limit = std::max(theta_limit, 180. * CLHEP::degree);
+        DT_LOG_DEBUG(local_priority, "Cells are slow, reset phi_limit " << phi_limit/CLHEP::degree << "° theta_limit " << theta_limit/CLHEP::degree << "°");
       }
 
-      if( print_level() > mybhep::VERBOSE ){
-        std::clog << appname_ << " angles of tangents " << ca_.id() << " -> " << cb_.id() << " :" << std::endl;
-        for(std::vector<line>::iterator i1=t1.begin(); i1!=t1.end(); ++i1){
+      if (local_priority >= datatools::logger::PRIO_DEBUG) {
+        DT_LOG_DEBUG(local_priority, "Angles of tangents " << ca_.id() << " -> " << cb_.id() << " :");
+        for (std::vector<line>::const_iterator i1 = t1.begin(); i1!=t1.end(); ++i1){
           std::clog << i1 - t1.begin() << ":  phi "; ca_.dump_point_phi(i1->epb()); std::clog << " -> "; cb_.dump_point_phi(i1->epa()); std::clog << " " << std::endl;
         }
         std::clog << appname_ << " angles of tangents " << cb_.id() << " -> " << cc_.id() << " :" << std::endl;
@@ -238,13 +241,8 @@ namespace CAT{
         if( intersect_ca ) std::clog << " cells " << cc_.id() << " and " << ca_.id() << " intersect " << std::endl;
       }
 
-
-      bool use_ownerror = true;
-
-      experimental_double local_separation;
-      bool shall_include_separation;
-      experimental_vector a0, a, b0, b, c0, c, d0, d;
-      double psc, psc2, psc3;
+      experimental_vector b0, b, c0, c;
+      double psc, psc2;
       // double psc4;
       int32_t ndof;
       experimental_point p;
@@ -253,22 +251,21 @@ namespace CAT{
       bool ok, use_theta_kink;
       experimental_double phi_kink, theta_kink;
 
-      for(std::vector<line>::iterator i1=t1.begin(); i1!=t1.end(); ++i1){
-
-        for(std::vector<line>::iterator i2=t2.begin(); i2!=t2.end(); ++i2){
+      for (std::vector<line>::iterator i1=t1.begin(); i1!=t1.end(); ++i1) {
+        for (std::vector<line>::iterator i2=t2.begin(); i2!=t2.end(); ++i2) {
 
           if( print_level() > mybhep::VERBOSE ){
             std::clog << " tangents " << i1 - t1.begin() << " and " << i2 - t2.begin() << std::endl;
           }
 
-          shall_include_separation = true;
-          a0 = i1->forward_axis();
-          a = a0.hor();
-          d0 = i2->forward_axis();
-          d = d0.hor();
+          bool shall_include_separation = true;
+          experimental_vector a0 = i1->forward_axis();
+          experimental_vector a = a0.hor();
+          experimental_vector d0 = i2->forward_axis();
+          experimental_vector d = d0.hor();
 
           // keep only the connections that don't invert foward sense
-          psc3 = a.kink_phi(d).value()*180./M_PI;
+          const double psc3 = a.kink_phi(d).value()*180./M_PI;
 
           if( std::abs(psc3) < 60. ){
             if( print_level() > mybhep::VERBOSE ){
@@ -339,6 +336,7 @@ namespace CAT{
           if( shall_include_separation )
             ndof ++;
 
+          experimental_double local_separation;
           if( cb_.small() ){
             p = cb_.ep();
             newxa = p.x();
@@ -367,45 +365,25 @@ namespace CAT{
           chi2 = 0.;
           ok = false;
 
-          if( !use_ownerror ){
-            if( std::abs(local_separation.value()) <= separation_limit ){
+          use_theta_kink = !(ca_.unknown_vertical() || cb_.unknown_vertical() || cc_.unknown_vertical());
+          if( !use_theta_kink ) ndof --;
 
-              theta_kink = newt1.kink_theta(newt2);
-              if( print_level() > mybhep::VERBOSE ){
-                std::clog << " phi 1st tangent: "; (newt1.phi()*180./M_PI).dump();
-                std::clog << " phi 2nd tangent: "; (newt2.phi()*180./M_PI).dump();
-                std::clog << "    phi_kink " << phi_kink.value()*180/M_PI << " +- " << phi_kink.error()*180/M_PI << std::endl;
-                std::clog << " theta 1st tangent: "; (newt1.theta()*180./M_PI).dump();
-                std::clog << " theta 2nd tangent: "; (newt2.theta()*180./M_PI).dump();
-                std::clog << "    theta_kink " << theta_kink.value()*180/M_PI << " +- " << theta_kink.error()*180/M_PI << std::endl;
-              }
+          chi2 = newt1.chi2(newt2, use_theta_kink, &chi2_just_phi);
 
-              if(  (std::abs(phi_kink.value())*180./M_PI <= phi_limit ) && (std::abs((newt1.kink_theta(newt2)).value())*180./M_PI <= theta_limit ) )
-                ok = true;
-            }
-          }
-          else{
-            use_theta_kink = !(ca_.unknown_vertical() || cb_.unknown_vertical() || cc_.unknown_vertical());
-            if( !use_theta_kink ) ndof --;
+          // also useul to check just the phi value (adding the theta information reduces the strength of the phi test)
+          prob_just_phi = probof(chi2_just_phi,1);
 
-            chi2 = newt1.chi2(newt2, use_theta_kink, &chi2_just_phi);
+          if( shall_include_separation )
+            chi2 += square(local_separation.value()/local_separation.error());
 
-            // also useul to check just the phi value (adding the theta information reduces the strength of the phi test)
-            prob_just_phi = probof(chi2_just_phi,1);
+          chi2s_.push_back(chi2);
+          local_prob = probof(chi2, ndof);
+          probs_.push_back(local_prob);
+          if( local_prob > probmin() && prob_just_phi > probmin() && std::abs(phi_kink.value())*180./M_PI <= phi_limit )
+            ok = true;
 
-            if( shall_include_separation )
-              chi2 += square(local_separation.value()/local_separation.error());
-
-            chi2s_.push_back(chi2);
-            local_prob = probof(chi2, ndof);
-            probs_.push_back(local_prob);
-            if( local_prob > probmin() && prob_just_phi > probmin() && std::abs(phi_kink.value())*180./M_PI <= phi_limit )
-              ok = true;
-
-            if( print_level() > mybhep::VERBOSE ){
-              std::clog << "    chi2 " << chi2 << " prob " << local_prob << " prob_just_phi " << prob_just_phi << " phi_kink " << phi_kink.value()*180./M_PI << " limit " << phi_limit << " accepted: " << ok << std::endl;
-            }
-
+          if( print_level() > mybhep::VERBOSE ){
+            std::clog << "    chi2 " << chi2 << " prob " << local_prob << " prob_just_phi " << prob_just_phi << " phi_kink " << phi_kink.value()*180./M_PI << " limit " << phi_limit << " accepted: " << ok << std::endl;
           }
 
           if( ok ){
@@ -420,13 +398,13 @@ namespace CAT{
       }
 
 
-      joints_ = refine(joints_, Ratio);
+      joints_ = refine(joints_, ratio_);
 
       return;
 
     }
 
-    std::vector<joint> cell_triplet::refine(const std::vector<joint> & joints, double Ratio, size_t max_njoints)
+    std::vector<joint> cell_triplet::refine(const std::vector<joint> & joints, double ratio_, size_t max_njoints)
     {
       std::vector<joint> _joints;
 
@@ -472,7 +450,7 @@ namespace CAT{
         ijoint ++;
         while( ijoint != _joints.end() ){
           if( (size_t)(ijoint - _joints.begin() + 1) > _joints.size() ) break;
-          if( _joints[0].p() / ijoint->p() > Ratio ){
+          if( _joints[0].p() / ijoint->p() > ratio_ ){
             if( print_level() > mybhep::VERBOSE )
               std::clog << " remove joint with p " << ijoint->p() << " in favor of 1st joint with p " << _joints[0].p() << std::endl;
             _joints.erase(ijoint);
@@ -540,205 +518,6 @@ namespace CAT{
               (this->cc().id() == c.id()) );
 
     }
-
-
-    void cell_triplet::calculate_joints_after_sultan(double Ratio){
-
-      if( print_level() > mybhep::VERBOSE ){
-        std::clog << appname_ << " calculate joints after sultan for cells: " << ca_.id() << " " << cb_.id() << " " << cc_.id() << std::endl;
-      }
-
-      joints_.clear();
-      std::vector<joint> the_joints, the_rejected_joints;
-      std::vector<line> t1 = cca().tangents(); // note: this tangent goes from cell B to cell A
-      std::vector<line> t2 = ccb().tangents(); // this goes from B to C
-      bool intersect_ab = ca_.intersect(cb_);
-      bool intersect_bc = cb_.intersect(cc_);
-      bool intersect_ca = cc_.intersect(ca_);
-
-
-      if( print_level() > mybhep::VERBOSE ){
-        std::clog << appname_ << " angles of tangents " << ca_.id() << " -> " << cb_.id() << " :" << std::endl;
-        for(std::vector<line>::iterator i1=t1.begin(); i1!=t1.end(); ++i1){
-          std::clog << i1 - t1.begin() << ":  phi "; ca_.dump_point_phi(i1->epb()); std::clog << " -> "; cb_.dump_point_phi(i1->epa()); std::clog << " " << std::endl;
-        }
-        std::clog << appname_ << " angles of tangents " << cb_.id() << " -> " << cc_.id() << " :" << std::endl;
-        for(std::vector<line>::iterator i2=t2.begin(); i2!=t2.end(); ++i2){
-          std::clog << i2 - t2.begin() << ":  phi ";  cb_.dump_point_phi(i2->epa()); std::clog << " -> " ; cc_.dump_point_phi(i2->epb()); std::clog << " " << std::endl;
-        }
-        if( ca_.small() ) std::clog << " cell " << ca_.id() << " is small " << std::endl;
-        if( cb_.small() ) std::clog << " cell " << cb_.id() << " is small " << std::endl;
-        if( cc_.small() ) std::clog << " cell " << cc_.id() << " is small " << std::endl;
-        if( intersect_ab ) std::clog << " cells " << ca_.id() << " and " << cb_.id() << " intersect " << std::endl;
-        if( intersect_bc ) std::clog << " cells " << cb_.id() << " and " << cc_.id() << " intersect " << std::endl;
-        if( intersect_ca ) std::clog << " cells " << cc_.id() << " and " << ca_.id() << " intersect " << std::endl;
-      }
-
-
-      experimental_double local_separation;
-      bool shall_include_separation;
-      experimental_vector a0, a, b0, b, c0, c, d0, d;
-      double psc, psc2, psc3;
-      int32_t ndof;
-      experimental_point p;
-      experimental_double newxa, newza;
-      double chi2, local_prob, chi2_just_phi, prob_just_phi;
-      bool use_theta_kink;
-      experimental_double phi_kink, theta_kink;
-      bool is_rejected = false;
-
-      for(std::vector<line>::iterator i1=t1.begin(); i1!=t1.end(); ++i1){
-
-        for(std::vector<line>::iterator i2=t2.begin(); i2!=t2.end(); ++i2){
-
-          if( print_level() > mybhep::VERBOSE ){
-            std::clog << " tangents " << i1 - t1.begin() << " and " << i2 - t2.begin() << std::endl;
-          }
-
-	  is_rejected = false;
-          shall_include_separation = true;
-          a0 = i1->forward_axis();
-          a = a0.hor();
-          d0 = i2->forward_axis();
-          d = d0.hor();
-
-          // keep only the connections that don't invert foward sense
-          psc3 = a.kink_phi(d).value()*180./M_PI;
-
-          if( std::abs(psc3) < 60. ){
-            if( print_level() > mybhep::VERBOSE ){
-              std::clog << " rejected because direction is reversed: psc = " << psc3 << std::endl;
-            }
-	    is_rejected = true;
-          }
-
-          if( cb_.small() ){
-            if( print_level() > mybhep::VERBOSE ){
-              std::clog << " no separation: middle cells is small ";
-            }
-            shall_include_separation = false;
-          }
-          else if( intersect_ab ){
-            b0 = cca().forward_axis();
-            b = b0.hor();
-            psc = a.kink_phi(b).value()*180./M_PI;
-
-            if( std::abs(psc - 90.) < 30. ||  std::abs(psc + 90.) < 30.  ||  std::abs(psc - 270.) < 30.  ){ // connection along the intersection
-
-              // keep only the connection with consistent ordering of cells
-              c0 = ccb().forward_axis();
-              c = c0.hor();
-              psc2 = b.kink_phi(c).value()*180./M_PI;
-              if( std::abs(psc2) < 60. ){
-                if( print_level() > mybhep::VERBOSE ){
-                  std::clog << " rejected because first 2 cells intersect and the ordering is wrong: psc = " << psc2 << std::endl;
-                }
-                continue;
-              }
-
-            }
-          }
-          else if( intersect_bc ){
-            b0 = ccb().forward_axis();
-            b = b0.hor();
-            psc = d.kink_phi(b).value()*180./M_PI;
-            if( std::abs(psc - 90.) < 30. ||  std::abs(psc + 90.) < 30.  ||  std::abs(psc - 270.) < 30.  ){ // connection along the intersection
-              c0 = cca().forward_axis();
-              c = c0.hor();
-              psc2 = b.kink_phi(c).value()*180./M_PI;
-              if( std::abs(psc2) < 60. ){
-                if( print_level() > mybhep::VERBOSE ){
-                  std::clog << " rejected because last 2 cells intersect and the ordering is wrong: psc = " << psc2 << std::endl;
-                }
-                continue;
-              }
-
-            }
-
-          }
-
-          ndof = 2;  // 2 kink angles, 0 or 1 one separation angle
-          if( shall_include_separation )
-            ndof ++;
-
-          if( cb_.small() ){
-            p = cb_.ep();
-            newxa = p.x();
-            newxa.set_error(cb_.r().error());
-            newza = p.z();
-            newza.set_error(cb_.r().error());
-            p.set_x(newxa);
-            p.set_z(newza);
-          }
-          else{
-            p = cb_.angular_average(i1->epa(), i2->epa(), &local_separation);
-          }
-
-          line newt1(i1->epb(), p, print_level(), get_probmin());
-          line newt2(p, i2->epb(), print_level(), get_probmin());
-          phi_kink = newt1.kink_phi(newt2);
-
-          if( print_level() > mybhep::VERBOSE ){
-            std::clog << " p1: phi = "; ca_.dump_point(i1->epb()); std::clog << " " << std::endl;
-            std::clog << " p2 average point: "; cb_.dump_point(p); std::clog << " " << std::endl;
-            std::clog << " p3: "; cc_.dump_point(i2->epb()); std::clog << " " << std::endl;
-            std::clog << "    separation: "; (local_separation*180/M_PI).dump(); std::clog << " " << std::endl;
-            std::clog << "    phi_kink: " << (phi_kink.value()*180/M_PI) << " " << std::endl;
-          }
-
-          chi2 = 0.;
-
-	  use_theta_kink = !(ca_.unknown_vertical() || cb_.unknown_vertical() || cc_.unknown_vertical());
-	  if( !use_theta_kink ) ndof --;
-
-	  chi2 = newt1.chi2(newt2, use_theta_kink, &chi2_just_phi);
-
-	  // also useul to check just the phi value (adding the theta information reduces the strength of the phi test)
-	  prob_just_phi = probof(chi2_just_phi,1);
-
-	  if( shall_include_separation )
-	    chi2 += square(local_separation.value()/local_separation.error());
-
-	  if( !is_rejected ){
-	    chi2s_.push_back(chi2);
-	    local_prob = probof(chi2, ndof);
-	    probs_.push_back(local_prob);
-	  }
-
-	  if( print_level() > mybhep::VERBOSE ){
-	    std::clog << "    chi2 " << chi2 << " prob " << local_prob << " prob_just_phi " << prob_just_phi << " phi_kink " << phi_kink.value()*180./M_PI <<  std::endl;
-          }
-
-	  joint j(newt1.epa(),p,newt2.epb(), print_level(), get_probmin());
-	  j.set_chi2(chi2);
-	  j.set_ndof(ndof);
-	  j.set_p(probof(chi2, ndof));
-	  if( !is_rejected )
-	    the_joints.push_back(j);
-	  else
-	    the_rejected_joints.push_back(j);
-        }
-
-      }
-
-
-      if( print_level() > mybhep::VERBOSE ){
-	std::clog << the_joints.size() << " joints have been produced for triplet and " << the_rejected_joints.size() << " rejected,  now keeping 1 or 2 " << std::endl;
-      }
-
-      if( the_joints.size() == 0 ) the_joints = the_rejected_joints;
-
-      size_t max_njoints=2;
-      joints_ = refine(the_joints, Ratio, max_njoints);
-
-      if( print_level() > mybhep::VERBOSE ){
-	std::clog << joints_.size() << " joints kept after refining " << std::endl;
-      }
-
-      return;
-
-    }
-
 
 
   }

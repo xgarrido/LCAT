@@ -163,7 +163,6 @@ namespace CAT {
         return;
       }
 
-
     make_scenarios(tracked_data_);
 
 
@@ -179,27 +178,22 @@ namespace CAT {
   }
 
 
-  //*************************************************************
-  void sequentiator::sequentiate_cluster(topology::cluster & cluster_) {
-    //*************************************************************
+  void sequentiator::sequentiate_cluster(topology::cluster & cluster_)
+  {
+    for (std::vector<topology::node>::iterator inode = cluster_.nodes_.begin();
+         inode != cluster_.nodes_.end(); ++inode) {
+      topology::node & a_node = *inode;
 
-    for (std::vector<topology::node>::iterator
-          inode = cluster_.nodes_.begin();
-        inode != cluster_.nodes_.end(); ++inode)
-      {
-        topology::node & a_node = *inode;
+      DT_LOG_DEBUG(get_logging_priority(), "First node: " << inode->c().id());
 
-        DT_LOG_DEBUG(get_logging_priority(), "First node: " << inode->c().id());
+      if (!good_first_node(a_node)) continue;
 
-        if (!good_first_node(a_node)) continue;
+      make_new_sequence(a_node);
 
-        make_new_sequence(a_node);
+      if (late()) return;
 
-        if (late()) return;
-
-        make_copy_sequence(a_node);
-      }
-
+      make_copy_sequence(a_node);
+    }
     return;
   }
 
@@ -570,10 +564,8 @@ namespace CAT {
 
 
 
-  //*************************************************************
-  bool sequentiator::good_first_node(topology::node & node_) {
-    //*************************************************************
-
+  bool sequentiator::good_first_node(topology::node & node_)
+  {
     clock.start(" sequentiator: good first node ", "cumulative");
 
     const std::string type = node_.topological_type();

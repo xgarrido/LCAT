@@ -61,7 +61,7 @@ namespace CAT {
       // angle along circle
       double circle_phi_;
 
- 
+
     public:
 
       //!Default constructor
@@ -179,8 +179,6 @@ namespace CAT {
       void remove_link(size_t index);
 
       void calculate_triplets(double Ratio, double separation_limit=90., double phi_limit=25., double theta_limit=180.);
-
-      void calculate_triplets_after_sultan(double Ratio);
 
       node invert();
 

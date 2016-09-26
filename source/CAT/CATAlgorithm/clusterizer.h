@@ -21,6 +21,11 @@
 // - Bayeux/datatools:
 #include <bayeux/datatools/logger.h>
 
+// Forward declaration
+namespace datatools {
+  class properties;
+}
+
 namespace CAT{
 
   /// The clusterizer algorithm
@@ -44,7 +49,7 @@ namespace CAT{
     ~clusterizer();
 
     /// Initialize the clusterizer through configuration properties (not yet)
-    void initialize();
+    void initialize(const datatools::properties & setup_);
 
     /// Reset the clusterizer
     void reset();

@@ -8,6 +8,8 @@
 // - Bayeux/datatools:
 #include <bayeux/datatools/exception.h>
 #include <bayeux/datatools/utils.h>
+#include <bayeux/datatools/clhep_units.h>
+#include <bayeux/datatools/properties.h>
 
 namespace CAT {
 
@@ -68,10 +70,10 @@ namespace CAT {
   {
     _logging_ = datatools::logger::PRIO_WARNING;
 
-    datatools::invalidate(_tangent_phi_);
-    datatools::invalidate(_tangent_theta_);
-    datatools::invalidate(_quadrant_angle_);
-    datatools::invalidate(_ratio_);
+    _tangent_phi_    =   20.0 * CLHEP::degree;
+    _tangent_theta_  =  160.0 * CLHEP::degree;
+    _quadrant_angle_ =   90.0 * CLHEP::degree;
+    _ratio_          =   10000.0;
 
     return;
   }
@@ -97,10 +99,43 @@ namespace CAT {
     return;
   }
 
-  void clusterizer::initialize()
+  void clusterizer::initialize(const datatools::properties & setup_)
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
     DT_THROW_IF(is_initialized(), std::logic_error, "Already initialized !");
+
+    //Logging priority
+    datatools::logger::priority lp = datatools::logger::extract_logging_configuration(setup_);
+    DT_THROW_IF(lp == datatools::logger::PRIO_UNDEFINED, std::logic_error,
+                "Invalid logging priority level for clusterizer !");
+    set_logging_priority(lp);
+
+    std::string key;
+    if (setup_.has_key(key = "tangent_phi")) {
+      _tangent_phi_ = setup_.fetch_real(key);
+      if (! setup_.has_explicit_unit(key)) {
+        _tangent_phi_ *= CLHEP::degree;
+      }
+    }
+
+    if (setup_.has_key(key = "tangent_theta")) {
+      _tangent_theta_ = setup_.fetch_real(key);
+      if (! setup_.has_explicit_unit(key)) {
+        _tangent_theta_ *= CLHEP::degree;
+      }
+    }
+
+    if (setup_.has_key(key = "quadrant_angle")) {
+      _quadrant_angle_ = setup_.fetch_real(key);
+      if (! setup_.has_explicit_unit(key)) {
+        _quadrant_angle_ *= CLHEP::degree;
+      }
+    }
+
+    if (setup_.has_key(key = "ratio")) {
+      _ratio_ = setup_.fetch_real(key);
+    }
+
     _set_initialized(true);
     DT_LOG_TRACE(get_logging_priority(), "Entering.");
     return;
@@ -176,7 +211,7 @@ namespace CAT {
           }
         }
         newnode.set_cc(cc);
-        newnode.calculate_triplets(_ratio_, _quadrant_angle_, _tangent_phi_, _tangent_theta_);
+        newnode.calculate_triplets(_ratio_, _quadrant_angle_, _tangent_phi_/CLHEP::degree, _tangent_theta_/CLHEP::degree);
         nodes_connected_to_c.push_back(newnode);
 
         DT_LOG_DEBUG(get_logging_priority(), "Cluster started with " << icell.id()
@@ -218,7 +253,7 @@ namespace CAT {
       DT_LOG_DEBUG(get_logging_priority(),
                    "... check if near node " << c3.id() << " has triplet " << c1_.id() << " <-> " << c2_.id());
       topology::cell_triplet ccc(c1_, c3, c2_);
-      ccc.calculate_joints(_ratio_, _quadrant_angle_, _tangent_phi_, _tangent_theta_);
+      ccc.calculate_joints(_ratio_, _quadrant_angle_, _tangent_phi_/CLHEP::degree, _tangent_theta_/CLHEP::degree);
       if (ccc.joints().size() > 0) {
         DT_LOG_DEBUG(get_logging_priority(),
                      "... yes it does: so couplet " << c1_.id() << " and " << c2_.id() << " is not good");
