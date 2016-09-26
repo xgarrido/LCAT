@@ -211,7 +211,7 @@ namespace CAT {
           }
         }
         newnode.set_cc(cc);
-        newnode.calculate_triplets(_ratio_, _quadrant_angle_, _tangent_phi_/CLHEP::degree, _tangent_theta_/CLHEP::degree);
+        newnode.calculate_triplets(_ratio_, _quadrant_angle_, _tangent_phi_, _tangent_theta_);
         nodes_connected_to_c.push_back(newnode);
 
         DT_LOG_DEBUG(get_logging_priority(), "Cluster started with " << icell.id()
@@ -253,7 +253,7 @@ namespace CAT {
       DT_LOG_DEBUG(get_logging_priority(),
                    "... check if near node " << c3.id() << " has triplet " << c1_.id() << " <-> " << c2_.id());
       topology::cell_triplet ccc(c1_, c3, c2_);
-      ccc.calculate_joints(_ratio_, _quadrant_angle_, _tangent_phi_/CLHEP::degree, _tangent_theta_/CLHEP::degree);
+      ccc.calculate_joints(_ratio_, _quadrant_angle_, _tangent_phi_, _tangent_theta_);
       if (ccc.joints().size() > 0) {
         DT_LOG_DEBUG(get_logging_priority(),
                      "... yes it does: so couplet " << c1_.id() << " and " << c2_.id() << " is not good");
