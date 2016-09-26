@@ -100,9 +100,6 @@ namespace CAT {
 
   };
 
-  /// Configure the clusterizer from a setup data object
-  void clusterizer_configure (clusterizer & czer_, const setup_data & setup_);
-
   /// Configure the sequentiator from a setup data object
   void sequentiator_configure (sequentiator & stor_, const setup_data & setup_);
 

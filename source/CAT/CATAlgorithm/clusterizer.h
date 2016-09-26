@@ -75,14 +75,6 @@ namespace CAT{
     //! set calorimeter_hits
     void set_calorimeter_hits(const std::vector<topology::calorimeter_hit> & calorimeter_hits);
 
-    void set_tangent_phi(double phi_);
-
-    void set_tangent_theta(double theta_);
-
-    void set_quadrant_angle(double angle_);
-
-    void set_ratio(double ratio_);
-
   protected:
 
     /// Set the initialization flag
@@ -111,8 +103,6 @@ namespace CAT{
 
     //limits
     double _tangent_phi_;
-    double _tangent_theta_;
-    double _quadrant_angle_;
     double _ratio_;
 
     std::vector<topology::cell> _cells_;

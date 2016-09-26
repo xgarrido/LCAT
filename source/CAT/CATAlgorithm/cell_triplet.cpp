@@ -10,9 +10,6 @@
 namespace CAT{
   namespace topology{
 
-    using namespace std;
-    using namespace mybhep;
-
     //!Default constructor
     cell_triplet::cell_triplet()
     {
@@ -25,14 +22,7 @@ namespace CAT{
     cell_triplet::~cell_triplet(){}
 
     //! constructor
-    cell_triplet::cell_triplet(cell_couplet &/*cca*/, cell_couplet &/*ccb*/){
-      appname_= "cell_triplet: ";
-      free_ = false;
-      begun_ = false;
-    }
-
-    //! constructor
-    cell_triplet::cell_triplet(const cell &ca, const cell &cb, const cell &cc, prlevel level, double probmin){
+    cell_triplet::cell_triplet(const cell &ca, const cell &cb, const cell &cc, mybhep::prlevel level, double probmin){
       set_print_level(level);
       set_probmin(probmin);
       appname_= "cell_triplet: ";
@@ -204,7 +194,7 @@ namespace CAT{
       return begun_;
     }
 
-    void cell_triplet::calculate_joints(double ratio_, double /*separation_limit_*/, double phi_limit, double /*theta_limit*/)
+    void cell_triplet::calculate_joints(double ratio_, double phi_limit_)
     {
       datatools::logger::priority local_priority = datatools::logger::PRIO_WARNING;
 
@@ -219,8 +209,8 @@ namespace CAT{
 
       const bool is_fast = ca_.fast();
       if (! is_fast) {
-	phi_limit = std::max(phi_limit, 90. * CLHEP::degree);
-        DT_LOG_DEBUG(local_priority, "Cells are delayed, reset phi_limit " << phi_limit/CLHEP::degree);
+	phi_limit_ = std::max(phi_limit_, 90. * CLHEP::degree);
+        DT_LOG_DEBUG(local_priority, "Cells are delayed, reset phi_limit " << phi_limit_/CLHEP::degree);
       }
 
       if (local_priority >= datatools::logger::PRIO_DEBUG) {
@@ -318,8 +308,8 @@ namespace CAT{
             p = cb_.angular_average(i1.epa(), i2.epa(), &local_separation);
           }
 
-          line newt1(i1.epb(), p, print_level(), get_probmin());
-          line newt2(p, i2.epb(), print_level(), get_probmin());
+          line newt1(i1.epb(), p);
+          line newt2(p, i2.epb());
           const experimental_double phi_kink = newt1.kink_phi(newt2);
 
           if (local_priority >= datatools::logger::PRIO_DEBUG) {
@@ -347,13 +337,13 @@ namespace CAT{
 
           const double local_prob = probof(chi2, ndof);
           probs_.push_back(local_prob);
-          if (local_prob > probmin() && prob_just_phi > probmin() && std::abs(phi_kink.value()) <= phi_limit) {
+          if (local_prob > probmin() && prob_just_phi > probmin() && std::abs(phi_kink.value()) <= phi_limit_) {
             ok = true;
           }
 
           DT_LOG_DEBUG(local_priority, "chi2 " << chi2 << " prob " << local_prob
                        << " prob_just_phi " << prob_just_phi << " phi_kink "
-                       << phi_kink.value()/CLHEP::degree << "° limit " << phi_limit/CLHEP::degree << "° accepted: " << ok);
+                       << phi_kink.value()/CLHEP::degree << "° limit " << phi_limit_/CLHEP::degree << "° accepted: " << ok);
 
           if (ok) {
             joint j(newt1.epa(),p,newt2.epb(), print_level(), get_probmin());

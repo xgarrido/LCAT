@@ -293,31 +293,32 @@ namespace CAT {
         return ep_;
       }
 
-      void node::calculate_triplets(double Ratio, double separation_limit, double phi_limit, double theta_limit){
-        if( cc_.size() < 2 ) return;
-        for(std::vector<cell_couplet>::const_iterator icc=cc_.begin(); icc!=cc_.end(); ++icc){
-          cell c1 = icc->cb();
-          for(std::vector<cell_couplet>::const_iterator jcc=cc_.begin() + (size_t)(icc - cc_.begin()); jcc!=cc_.end(); ++jcc){
-            cell c2 = jcc->cb();
-            if( c1.id() == c2.id() ) continue;
-            cell_triplet ccc(c1,c_,c2, print_level(), probmin());
+    void node::calculate_triplets(double ratio_, double phi_limit_)
+    {
+      if( cc_.size() < 2 ) return;
+      for(std::vector<cell_couplet>::const_iterator icc=cc_.begin(); icc!=cc_.end(); ++icc){
+        cell c1 = icc->cb();
+        for(std::vector<cell_couplet>::const_iterator jcc=cc_.begin() + (size_t)(icc - cc_.begin()); jcc!=cc_.end(); ++jcc){
+          cell c2 = jcc->cb();
+          if( c1.id() == c2.id() ) continue;
+          cell_triplet ccc(c1,c_,c2, print_level(), probmin());
+          if( print_level() >= mybhep::VVERBOSE ){
+            std::clog << appname_ << " calculate triplets for three cells: " << ccc.ca().id() << "  " << ccc.cb().id() << "  " << ccc.cc().id() << std::endl;
+          }
+          ccc.calculate_joints(ratio_, phi_limit_);
+          if( ccc.joints().size() > 0 ){
             if( print_level() >= mybhep::VVERBOSE ){
-              std::clog << appname_ << " calculate triplets for three cells: " << ccc.ca().id() << "  " << ccc.cb().id() << "  " << ccc.cc().id() << std::endl;
+              std::clog << appname_ << " adding joints " << std::endl;
+              for(std::vector<joint>::iterator ijoint = ccc.joints_.begin(); ijoint != ccc.joints_.end(); ++ ijoint )
+                std::clog << " joint " << ijoint - ccc.joints_.begin() << " phia: " << experimental_vector(ccc.ca().ep(), ijoint->epa()).phi().value()*180./M_PI
+                          << " phib: " << experimental_vector(ccc.cb().ep(), ijoint->epb()).phi().value()*180./M_PI
+                          << " phic: " << experimental_vector(ccc.cc().ep(), ijoint->epc()).phi().value()*180./M_PI << " chi2 " << ijoint->chi2() << std::endl;
             }
-            ccc.calculate_joints(Ratio, separation_limit, phi_limit, theta_limit);
-            if( ccc.joints().size() > 0 ){
-              if( print_level() >= mybhep::VVERBOSE ){
-                std::clog << appname_ << " adding joints " << std::endl;
-                for(std::vector<joint>::iterator ijoint = ccc.joints_.begin(); ijoint != ccc.joints_.end(); ++ ijoint )
-                  std::clog << " joint " << ijoint - ccc.joints_.begin() << " phia: " << experimental_vector(ccc.ca().ep(), ijoint->epa()).phi().value()*180./M_PI
-                       << " phib: " << experimental_vector(ccc.cb().ep(), ijoint->epb()).phi().value()*180./M_PI
-                       << " phic: " << experimental_vector(ccc.cc().ep(), ijoint->epc()).phi().value()*180./M_PI << " chi2 " << ijoint->chi2() << std::endl;
-              }
-              add_triplet(ccc);
-            }
+            add_triplet(ccc);
           }
         }
       }
+    }
 
     void node::add_triplet(const cell_triplet &ccc){
       ccc_.push_back(ccc);

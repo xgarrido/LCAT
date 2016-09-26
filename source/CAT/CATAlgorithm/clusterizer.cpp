@@ -69,12 +69,8 @@ namespace CAT {
   void clusterizer::_set_defaults()
   {
     _logging_ = datatools::logger::PRIO_WARNING;
-
-    _tangent_phi_    =   20.0 * CLHEP::degree;
-    _tangent_theta_  =  160.0 * CLHEP::degree;
-    _quadrant_angle_ =   90.0 * CLHEP::degree;
-    _ratio_          =   10000.0;
-
+    _tangent_phi_ = 20.0 * CLHEP::degree;
+    _ratio_       = 10000.0;
     return;
   }
 
@@ -115,20 +111,6 @@ namespace CAT {
       _tangent_phi_ = setup_.fetch_real(key);
       if (! setup_.has_explicit_unit(key)) {
         _tangent_phi_ *= CLHEP::degree;
-      }
-    }
-
-    if (setup_.has_key(key = "tangent_theta")) {
-      _tangent_theta_ = setup_.fetch_real(key);
-      if (! setup_.has_explicit_unit(key)) {
-        _tangent_theta_ *= CLHEP::degree;
-      }
-    }
-
-    if (setup_.has_key(key = "quadrant_angle")) {
-      _quadrant_angle_ = setup_.fetch_real(key);
-      if (! setup_.has_explicit_unit(key)) {
-        _quadrant_angle_ *= CLHEP::degree;
       }
     }
 
@@ -211,7 +193,7 @@ namespace CAT {
           }
         }
         newnode.set_cc(cc);
-        newnode.calculate_triplets(_ratio_, _quadrant_angle_, _tangent_phi_, _tangent_theta_);
+        newnode.calculate_triplets(_ratio_, _tangent_phi_);
         nodes_connected_to_c.push_back(newnode);
 
         DT_LOG_DEBUG(get_logging_priority(), "Cluster started with " << icell.id()
@@ -253,7 +235,7 @@ namespace CAT {
       DT_LOG_DEBUG(get_logging_priority(),
                    "... check if near node " << c3.id() << " has triplet " << c1_.id() << " <-> " << c2_.id());
       topology::cell_triplet ccc(c1_, c3, c2_);
-      ccc.calculate_joints(_ratio_, _quadrant_angle_, _tangent_phi_, _tangent_theta_);
+      ccc.calculate_joints(_ratio_, _tangent_phi_);
       if (ccc.joints().size() > 0) {
         DT_LOG_DEBUG(get_logging_priority(),
                      "... yes it does: so couplet " << c1_.id() << " and " << c2_.id() << " is not good");
@@ -311,26 +293,6 @@ namespace CAT {
         cells_.push_back(icell);
       }
     }
-    return;
-  }
-
-  void clusterizer::set_tangent_phi(double phi_){
-    _tangent_phi_ = phi_;
-    return;
-  }
-
-  void clusterizer::set_tangent_theta(double theta_){
-    _tangent_theta_ = theta_;
-    return;
-  }
-
-  void clusterizer::set_quadrant_angle(double angle_){
-    _quadrant_angle_ = angle_;
-    return;
-  }
-
-  void clusterizer::set_ratio(double ratio_){
-    _ratio_ = ratio_;
     return;
   }
 
