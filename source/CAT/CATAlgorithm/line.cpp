@@ -10,13 +10,12 @@ namespace CAT {
     using namespace mybhep;
 
     //!Default constructor
-    line::line(prlevel level, double probmin)
+    line::line(double probmin)
     {
       appname_= "line: ";
       forward_axis_ = experimental_vector(small_neg,small_neg,small_neg,
                                           small_neg, small_neg, small_neg);
       used_ = false;
-      set_print_level(level);
       set_probmin(probmin);
     }
 
@@ -27,8 +26,7 @@ namespace CAT {
     }
 
     //! constructor
-    line::line(const experimental_point & epa, const experimental_point & epb, prlevel level, double probmin){
-      set_print_level(level);
+    line::line(const experimental_point & epa, const experimental_point & epb, double probmin){
       set_probmin(probmin);
       appname_= "line: ";
       epa_ = epa;
@@ -147,13 +145,13 @@ namespace CAT {
       result += square(theta_kink.value()/theta_kink.error());
     }
 
-    if( print_level() > mybhep::VERBOSE ){
-      std::clog << appname_ << " calculate chi2: phi kink : "; (phi_kink*180./M_PI).dump();
-      if( use_theta_kink ){
-        std::clog << " theta kink : "; (theta_kink*180./M_PI).dump();
-      }
-      std::clog << " chi2 " << result << std::endl;
-    }
+    // if( print_level() > mybhep::VERBOSE ){
+    //   std::clog << appname_ << " calculate chi2: phi kink : "; (phi_kink*180./M_PI).dump();
+    //   if( use_theta_kink ){
+    //     std::clog << " theta kink : "; (theta_kink*180./M_PI).dump();
+    //   }
+    //   std::clog << " chi2 " << result << std::endl;
+    // }
 
     return result;
   }
@@ -169,7 +167,7 @@ namespace CAT {
 
   line line::invert()
   {
-    line inverted(print_level(), probmin());
+    line inverted(probmin());
     inverted.set_epa(epb());
     inverted.set_epb(epa());
     inverted.set_used(used());

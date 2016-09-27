@@ -42,13 +42,12 @@ namespace CAT {
     public:
 
       //!Default constructor
-      helix(mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200)
+      helix(double probmin=1.e-200)
       {
         appname_= "helix: ";
         center_ = experimental_point();
         radius_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
         pitch_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-        set_print_level(level);
         set_probmin(probmin);
       }
 
@@ -56,8 +55,7 @@ namespace CAT {
       virtual ~helix(){};
 
       //! constructor
-      helix(const experimental_point &center, const experimental_double &radius, const experimental_double &pitch, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200){
-        set_print_level(level);
+      helix(const experimental_point &center, const experimental_double &radius, const experimental_double &pitch, double probmin=1.e-200){
         set_probmin(probmin);
         appname_= "helix: ";
         center_ = center;
@@ -66,8 +64,7 @@ namespace CAT {
       }
 
       //! constructor from a circle and a pitch
-      helix(const circle &c, const experimental_double  &pitch, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200){
-        set_print_level(level);
+      helix(const circle &c, const experimental_double  &pitch, double probmin=1.e-200){
         set_probmin(probmin);
         appname_= "helix: ";
         center_ = c.center();
@@ -162,7 +159,7 @@ namespace CAT {
       //! get circle
       circle get_circle()const
       {
-        return circle(center(), radius(), print_level(), probmin());
+        return circle(center(), radius(), probmin());
       }
 
       // get the phi of a point
@@ -272,9 +269,9 @@ namespace CAT {
           mybhep::square(residual.y().value()) +
           mybhep::square(residual.z().value());
 
-        if( print_level() >= mybhep::VVERBOSE ){
-          std::clog << " input point: ( "; ep.x().dump(); std::clog << " , "; ep.y().dump(); std::clog << " , "; ep.z().dump(); std::clog << " ) helix: ("; predicted.x().dump(); std::clog << " , "; predicted.y().dump(); std::clog << " , ";predicted.z().dump(); std::clog << " ) local chi2: " << res2  << " " << std::endl;
-        }
+        // if( print_level() >= mybhep::VVERBOSE ){
+        //   std::clog << " input point: ( "; ep.x().dump(); std::clog << " , "; ep.y().dump(); std::clog << " , "; ep.z().dump(); std::clog << " ) helix: ("; predicted.x().dump(); std::clog << " , "; predicted.y().dump(); std::clog << " , ";predicted.z().dump(); std::clog << " ) local chi2: " << res2  << " " << std::endl;
+        // }
 
         return res2;
       }
@@ -324,9 +321,9 @@ namespace CAT {
 
         if( pl.view() == "x" || pl.view() == "z" || pl.view() == "inner" || pl.view() == "outer" ){
           bool result = get_circle().intersect_plane(pl, ep, _phi);
-	  if( print_level() >= mybhep::VVERBOSE ){
-	    std::clog << " helix intersected point y " << ep->y().value() << " _phi " << _phi.value() << " y_ref " << y_ref << " -> y " << position(*ep,_phi.value(), y_ref).y().value() << std::endl;
-	  }
+	  // if( print_level() >= mybhep::VVERBOSE ){
+	  //   std::clog << " helix intersected point y " << ep->y().value() << " _phi " << _phi.value() << " y_ref " << y_ref << " -> y " << position(*ep,_phi.value(), y_ref).y().value() << std::endl;
+	  // }
           ep->set_y(position(*ep,_phi.value(), y_ref).y());
 
           if( std::isnan(ep->x().value())  || std::isnan(ep->y().value()) || std::isnan(ep->z().value()) ) return false;
@@ -345,9 +342,9 @@ namespace CAT {
 
           // vector from center of plane face to extrapolated point
           experimental_vector dist = experimental_vector(pl.face(), *ep).hor();
-          if( print_level() >= mybhep::VVERBOSE ){
-            std::clog << " helix distance from extrapolation to plane face: " << dist.x().value() << ", " << dist.y().value() << ", " << dist.z().value() << " plane sizes: " << pl.sizes().x().value() << " " << pl.sizes().y().value() << " " << pl.sizes().z().value() << std::endl;
-          }
+          // if( print_level() >= mybhep::VVERBOSE ){
+          //   std::clog << " helix distance from extrapolation to plane face: " << dist.x().value() << ", " << dist.y().value() << ", " << dist.z().value() << " plane sizes: " << pl.sizes().x().value() << " " << pl.sizes().y().value() << " " << pl.sizes().z().value() << std::endl;
+          // }
 
           if( std::abs(dist.x().value()) > pl.sizes().x().value()/2. )
             return false;
@@ -362,7 +359,7 @@ namespace CAT {
         }
 
 
-        std::clog << " problem: cannot intersect helix with plane of view " << pl.view() << std::endl;
+        // std::clog << " problem: cannot intersect helix with plane of view " << pl.view() << std::endl;
         return false;
 
       }
@@ -401,9 +398,9 @@ namespace CAT {
         *ep = c.position(phi0 + sign*alpha);
         ep->set_y(position(*ep, phi0.value(),start.y().value()).y());
 
-        if( print_level() >= mybhep::VVERBOSE ){
-          std::clog << " center (" << c.center().x().value() << ", " << c.center().y().value() << ", " << c.center().z().value() << ") r " << c.radius().value() << " +- " << c.radius().error() << " start (" << start.x().value() << ", " << start.y().value() << ", " << start.z().value() << ") cts (" << center_to_start.x().value() << ", " << center_to_start.y().value() << ", " << center_to_start.z().value() << ") length " << center_to_start.length().value() << " +- " << center_to_start.length().error() <<  " beta " << beta.value()*180./acos(-1.) << " +- " << beta.error()*180./acos(-1.) << " phi0 " << phi0.value()*180./acos(-1.) << " angle " << angle.value() << " +- " << angle.error() << " alpha " << alpha.value()*180./acos(-1.) << " sign " << sign.value() << " newangle " << (phi0+sign*alpha).value()*180./acos(-1.) << " pos: (" << ep->x().value() << ", " << ep->y().value() << ", " << ep->z().value() << ") " << std::endl;
-        }
+        // if( print_level() >= mybhep::VVERBOSE ){
+        //   std::clog << " center (" << c.center().x().value() << ", " << c.center().y().value() << ", " << c.center().z().value() << ") r " << c.radius().value() << " +- " << c.radius().error() << " start (" << start.x().value() << ", " << start.y().value() << ", " << start.z().value() << ") cts (" << center_to_start.x().value() << ", " << center_to_start.y().value() << ", " << center_to_start.z().value() << ") length " << center_to_start.length().value() << " +- " << center_to_start.length().error() <<  " beta " << beta.value()*180./acos(-1.) << " +- " << beta.error()*180./acos(-1.) << " phi0 " << phi0.value()*180./acos(-1.) << " angle " << angle.value() << " +- " << angle.error() << " alpha " << alpha.value()*180./acos(-1.) << " sign " << sign.value() << " newangle " << (phi0+sign*alpha).value()*180./acos(-1.) << " pos: (" << ep->x().value() << ", " << ep->y().value() << ", " << ep->z().value() << ") " << std::endl;
+        // }
 
         if( std::isnan(ep->x().value())  || std::isnan(ep->y().value()) || std::isnan(ep->z().value()) ) return false;
 
@@ -413,7 +410,6 @@ namespace CAT {
 
       helix invert(){
         helix inverted;
-        inverted.set_print_level(print_level());
         inverted.set_probmin(probmin());
         inverted.set_center(center());
         inverted.set_radius(radius());

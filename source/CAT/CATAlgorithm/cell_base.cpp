@@ -36,9 +36,6 @@ namespace topology{
 
   experimental_point cell::angular_average(experimental_point epa, experimental_point epb, experimental_double* angle){
 
-    if( print_level() >= mybhep::VVERBOSE )
-      std::clog << "CAT::cell::angular_average: calculating angular average for cell " << id() << std::endl;
-
     if( small() ){
       angle->set_value(0.);
       angle->set_error(0.1); // fictitious value to avoid divergences
@@ -74,12 +71,12 @@ namespace topology{
     //    experimental_double ave_phi = (phi1 + phi2)/2.;
     *angle = phi1 - phi2;
 
-    if( print_level() >= mybhep::VVERBOSE ){
-      std::clog << "CAT::cell::angular_average: averaging phi1: "; (phi1*180./M_PI).dump();
-      std::clog << " and phi2: "; (phi2*180./M_PI).dump();
-      std::clog << " to phi_ave: "; (ave_phi*180./M_PI).dump();
-      std::clog << " " << std::endl;
-    }
+    // if( print_level() >= mybhep::VVERBOSE ){
+    //   std::clog << "CAT::cell::angular_average: averaging phi1: "; (phi1*180./M_PI).dump();
+    //   std::clog << " and phi2: "; (phi2*180./M_PI).dump();
+    //   std::clog << " to phi_ave: "; (ave_phi*180./M_PI).dump();
+    //   std::clog << " " << std::endl;
+    // }
 
     experimental_double cos_ave_phi = experimental_cos(ave_phi);
 
@@ -173,9 +170,9 @@ namespace topology{
     experimental_double rsum = r() + c.r();
 
     if( rsum.value() > dist*fraction_limit ){
-      if( print_level() >= mybhep::VVERBOSE ){
-        std::clog << "CAT::cell::intersect: cells " << id() << " and " << c.id() << " intersect: dist " << dist << " radii " << r().value() << " and " << c.r().value() << " rsum " << rsum.value() << std::endl;
-      }
+      // if( print_level() >= mybhep::VVERBOSE ){
+      //   std::clog << "CAT::cell::intersect: cells " << id() << " and " << c.id() << " intersect: dist " << dist << " radii " << r().value() << " and " << c.r().value() << " rsum " << rsum.value() << std::endl;
+      // }
       return true;
     }
 

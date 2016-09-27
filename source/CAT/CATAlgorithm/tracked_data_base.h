@@ -85,9 +85,7 @@ namespace CAT{
                    const std::vector<scenario> &scenarios,
                    const std::vector<sequence> &true_sequences,
                    const std::vector<sequence> &nemo_sequences,
-                   mybhep::prlevel level=mybhep::NORMAL,
                    double probmin=1.e-200){
-        set_print_level(level);
         set_probmin(probmin);
         appname_= "tracked_data: ";
         cells_ = cells;

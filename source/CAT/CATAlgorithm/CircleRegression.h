@@ -28,13 +28,12 @@ namespace CAT{
     public:
 
       //!Default constructor
-      CircleRegression(mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200)
+      CircleRegression(double probmin=1.e-200)
       {
         appname_= "CircleRegression: ";
         c_ = circle();
         xi_.clear();
         yi_.clear();
-        set_print_level(level);
         set_probmin(probmin);
       }
 
@@ -43,8 +42,7 @@ namespace CAT{
       virtual ~CircleRegression(){};
 
       //! constructor
-      CircleRegression(std::vector<experimental_double> &xi, std::vector<experimental_double> &yi, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200){
-        set_print_level(level);
+      CircleRegression(std::vector<experimental_double> &xi, std::vector<experimental_double> &yi, double probmin=1.e-200){
         set_probmin(probmin);
         appname_= "CircleRegression: ";
         xi_ = xi;

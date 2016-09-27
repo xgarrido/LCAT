@@ -22,8 +22,7 @@ namespace CAT{
     cell_triplet::~cell_triplet(){}
 
     //! constructor
-    cell_triplet::cell_triplet(const cell &ca, const cell &cb, const cell &cc, mybhep::prlevel level, double probmin){
-      set_print_level(level);
+    cell_triplet::cell_triplet(const cell &ca, const cell &cb, const cell &cc, double probmin){
       set_probmin(probmin);
       appname_= "cell_triplet: ";
       ca_ = ca;
@@ -136,14 +135,14 @@ namespace CAT{
     //! get first cell couplet
     cell_couplet cell_triplet::cca()
     {
-      cell_couplet cc1(cb_, ca_, print_level(), probmin());
+      cell_couplet cc1(cb_, ca_, probmin());
       return cc1;
     }
 
     //! get second cell couplet
     cell_couplet cell_triplet::ccb()
     {
-      cell_couplet cc2(cb_, cc_, print_level(), probmin());
+      cell_couplet cc2(cb_, cc_, probmin());
       return cc2;
     }
 
@@ -346,7 +345,7 @@ namespace CAT{
                        << phi_kink.value()/CLHEP::degree << "° limit " << phi_limit_/CLHEP::degree << "° accepted: " << ok);
 
           if (ok) {
-            joint j(newt1.epa(),p,newt2.epb(), print_level(), get_probmin());
+            joint j(newt1.epa(),p,newt2.epb(), get_probmin());
             j.set_chi2(chi2);
             j.set_ndof(ndof);
             j.set_p(probof(chi2, ndof));
@@ -363,9 +362,9 @@ namespace CAT{
     {
       std::vector<joint> _joints;
 
-      if( print_level() > mybhep::VERBOSE ){
-        std::clog << " refining " << joints.size() << " joints " << std::endl;
-      }
+      // if( print_level() > mybhep::VERBOSE ){
+      //   std::clog << " refining " << joints.size() << " joints " << std::endl;
+      // }
       experimental_double delta_phi;
       bool found;
       for(std::vector<joint>::const_iterator ijoint=joints.begin(); ijoint != joints.end(); ++ijoint){
@@ -376,9 +375,9 @@ namespace CAT{
           if( ca_.same_quadrant(ijoint->epa(), jjoint->epa() ) &&
               cc_.same_quadrant(ijoint->epc(), jjoint->epc() ) &&
               ijoint->p() < jjoint->p() ){
-            if( print_level() > mybhep::VERBOSE ){
-              std::clog << " ... removing joint " << ijoint - joints.begin()  << " with prob " << ijoint->p() << " because joint " << jjoint - joints.begin()  <<  " with prob " << jjoint->p() << " has the same initial and final quadrant " << std::endl;
-            }
+            // if( print_level() > mybhep::VERBOSE ){
+            //   std::clog << " ... removing joint " << ijoint - joints.begin()  << " with prob " << ijoint->p() << " because joint " << jjoint - joints.begin()  <<  " with prob " << jjoint->p() << " has the same initial and final quadrant " << std::endl;
+            // }
             found = true;
             break;
           }
@@ -406,8 +405,8 @@ namespace CAT{
         while( ijoint != _joints.end() ){
           if( (size_t)(ijoint - _joints.begin() + 1) > _joints.size() ) break;
           if( _joints[0].p() / ijoint->p() > ratio_ ){
-            if( print_level() > mybhep::VERBOSE )
-              std::clog << " remove joint with p " << ijoint->p() << " in favor of 1st joint with p " << _joints[0].p() << std::endl;
+            // if( print_level() > mybhep::VERBOSE )
+            //   std::clog << " remove joint with p " << ijoint->p() << " in favor of 1st joint with p " << _joints[0].p() << std::endl;
             _joints.erase(ijoint);
             ijoint = _joints.begin() + (ijoint - _joints.begin());
           }else{
@@ -416,12 +415,12 @@ namespace CAT{
         }
       }
 
-      if( print_level() > mybhep::VERBOSE ){
-        std::clog << " after refining there are " << _joints.size() << " joints " << std::endl;
-        for(std::vector<joint>::const_iterator ij=_joints.begin(); ij!=_joints.end(); ++ij){
-          std::clog << " joint " << ij - _joints.begin() << " : "; dump_joint(*ij);
-        }
-      }
+      // if( print_level() > mybhep::VERBOSE ){
+      //   std::clog << " after refining there are " << _joints.size() << " joints " << std::endl;
+      //   for(std::vector<joint>::const_iterator ij=_joints.begin(); ij!=_joints.end(); ++ij){
+      //     std::clog << " joint " << ij - _joints.begin() << " : "; dump_joint(*ij);
+      //   }
+      // }
 
       return _joints;
     }

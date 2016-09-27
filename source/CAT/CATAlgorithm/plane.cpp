@@ -17,14 +17,13 @@ namespace CAT {
     using namespace mybhep;
 
     //!Default constructor
-    plane::plane(prlevel level, double probmin)
+    plane::plane(double probmin)
     {
       appname_= "plane: ";
       sizes_ = experimental_vector(small_neg,small_neg,small_neg,
                                    small_neg, small_neg, small_neg);
       norm_ = experimental_vector(small_neg,small_neg,small_neg,
                                   small_neg, small_neg, small_neg);
-      set_print_level(level);
       set_probmin(probmin);
       type_="undefined";
     }
@@ -39,9 +38,8 @@ namespace CAT {
     plane::plane(const experimental_point &center,
                  const experimental_vector &sizes,
                  const experimental_vector &norm,
-                 prlevel level, double probmin)
+                 double probmin)
     {
-      set_print_level(level);
       set_probmin(probmin);
       appname_= "plane: ";
       center_ = center;
@@ -196,9 +194,9 @@ namespace CAT {
         else if( view() == "top" || view() == "bottom" )
           the_size = sizes().y();
         else{
-          if( print_level() >= mybhep::NORMAL ){
-            std::clog << " problem: unknown calo view " << view() << std::endl;
-          }
+          // if( print_level() >= mybhep::NORMAL ){
+          //   std::clog << " problem: unknown calo view " << view() << std::endl;
+          // }
           the_size = sizes().x();
         }
 
@@ -259,12 +257,12 @@ namespace CAT {
         experimental_double dist_transv = pv.hor().length(); // transverse distance
         experimental_double dist_vert = pv.y(); // vertical distance
 
-        if( print_level() >= mybhep::VVERBOSE ){
-          std::clog << " check intersection plane/point: face (" << face().x().value() << ", " << face().y().value() << ", " << face().z().value() << ") point ( "
-                    << ep.x().value() << ", " << ep.y().value() << ", " << ep.z().value() << ") dist_norm " << dist_norm.value() << " +- " << dist_norm.error()
-                    << " dist_transv " << dist_transv.value() << " +- " << dist_transv.error() << " dist_vert " << dist_vert.value() << " +- " << dist_vert.error()
-                    << std::endl;
-        }
+        // if( print_level() >= mybhep::VVERBOSE ){
+        //   std::clog << " check intersection plane/point: face (" << face().x().value() << ", " << face().y().value() << ", " << face().z().value() << ") point ( "
+        //             << ep.x().value() << ", " << ep.y().value() << ", " << ep.z().value() << ") dist_norm " << dist_norm.value() << " +- " << dist_norm.error()
+        //             << " dist_transv " << dist_transv.value() << " +- " << dist_transv.error() << " dist_vert " << dist_vert.value() << " +- " << dist_vert.error()
+        //             << std::endl;
+        // }
 
         if( std::abs(dist_norm.value()) > std::abs( dist_norm.error()))
           return false;

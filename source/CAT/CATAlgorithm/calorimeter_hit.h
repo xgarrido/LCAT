@@ -44,7 +44,7 @@ namespace CAT {
       double layer_;
 
       //!Default constructor
-      calorimeter_hit(mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
+      calorimeter_hit(double probmin=1.e-200);
 
       //!Default destructor
       virtual ~calorimeter_hit();
@@ -55,7 +55,6 @@ namespace CAT {
                       const experimental_double & t,
                       size_t id,
                       double layer,
-                      mybhep::prlevel level=mybhep::NORMAL,
                       double probmin=1.e-200);
 
       /*** dump ***/

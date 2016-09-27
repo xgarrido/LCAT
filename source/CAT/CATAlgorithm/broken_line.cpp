@@ -7,9 +7,6 @@ namespace CAT {
 
   namespace topology{
 
-    using namespace std;
-    using namespace mybhep;
-
     //!Default constructor
     broken_line::broken_line()
     {
@@ -29,10 +26,8 @@ namespace CAT {
     }
 
     //! constructor
-    broken_line::broken_line(const std::vector<experimental_point> &eps, 
-			     prlevel level, double probmin)
+    broken_line::broken_line(const std::vector<experimental_point> &eps, double probmin)
     {
-      set_print_level(level);
       set_probmin(probmin);
       appname_= "broken_line: ";
       eps_ = eps;
@@ -61,7 +56,7 @@ namespace CAT {
       for(std::vector<experimental_point>::const_iterator p = eps_.begin(); p!=eps_.end(); ++p)
 	p->dump(a_out, "", indent + "    ");
       a_out << indent << " -------------- " << std::endl;
-      
+
       return;
     }
 

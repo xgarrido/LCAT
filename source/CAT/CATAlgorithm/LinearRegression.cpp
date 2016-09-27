@@ -77,9 +77,9 @@ namespace topology{
 
 
       if( xi_.size() != yi_.size() ){
-        if( print_level() >= mybhep::NORMAL ){
-          std::clog << "CAT::LinearRegression::fit: problem: in least square regression, sizes x " << xi_.size() << " y " << yi_.size() << std::endl;
-        }
+        // if( print_level() >= mybhep::NORMAL ){
+        //   std::clog << "CAT::LinearRegression::fit: problem: in least square regression, sizes x " << xi_.size() << " y " << yi_.size() << std::endl;
+        // }
         return false;
       }
 
@@ -103,9 +103,9 @@ namespace topology{
       double delta = Sw*Swxx - mybhep::square(Swx);
 
       if( delta == 0.){
-        if( print_level() >= mybhep::NORMAL ){
-          std::clog << "CAT::LinearRegression::fit: problem: in least square regression, delta " << delta << " Sw " << Sw << " Swx " << Swx << " Swxx " << Swxx << std::endl;
-        }
+        // if( print_level() >= mybhep::NORMAL ){
+        //   std::clog << "CAT::LinearRegression::fit: problem: in least square regression, delta " << delta << " Sw " << Sw << " Swx " << Swx << " Swxx " << Swxx << std::endl;
+        // }
         return false;
       }
 
@@ -117,9 +117,9 @@ namespace topology{
         erra = std::sqrt(Swxx/delta);
       }
       else{
-        if( print_level() >= mybhep::NORMAL ){
-          std::clog << "CAT::LinearRegression::fit: problem: linear regression sy02 " << Swxx/delta << " Swxx " << Swxx << " delta " << delta << std::endl;
-        }
+        // if( print_level() >= mybhep::NORMAL ){
+        //   std::clog << "CAT::LinearRegression::fit: problem: linear regression sy02 " << Swxx/delta << " Swxx " << Swxx << " delta " << delta << std::endl;
+        // }
         return false;
       }
 
@@ -127,9 +127,9 @@ namespace topology{
         errb = std::sqrt(Sw/delta);
       }
       else{
-        if( print_level() >= mybhep::NORMAL ){
-          std::clog << "CAT::LinearRegression::fit: problem: linear regression stangent2 " << Sw/delta << " Sw " << Sw << " delta " << delta << std::endl;
-        }
+        // if( print_level() >= mybhep::NORMAL ){
+        //   std::clog << "CAT::LinearRegression::fit: problem: linear regression stangent2 " << Sw/delta << " Sw " << Sw << " delta " << delta << std::endl;
+        // }
         return false;
       }
 
@@ -139,68 +139,6 @@ namespace topology{
       return true;
 
     }
-
-
-#if CAT_WITH_DEVEL_ROOT == 1
-    bool LinearRegression::root_fit(void){
-
-      if( !xi_.size() ) return false;
-
-      Double_t *array_x = new Double_t[xi_.size()];
-      Double_t *array_y = new Double_t[xi_.size()];
-      Double_t *array_xerr = new Double_t[xi_.size()];
-      Double_t *array_yerr = new Double_t[xi_.size()];
-
-      Double_t xmin = 9999999.;
-      Double_t xmax = -9999999.;
-
-      for(std::vector<experimental_double>::iterator ix=xi_.begin(); ix!=xi_.end(); ix++){
-        size_t index = ix - xi_.begin();
-        array_x[index] = ix->value();
-        array_y[index] = yi_[index].value();
-        array_xerr[index] = xi_[index].error();
-        array_yerr[index] = yi_[index].error();
-        if( array_x[index] > xmax ) xmax = array_x[index];
-        if( array_x[index] < xmin ) xmin = array_x[index];
-      }
-
-      // Make the vectors 'Use" the data : they are not copied, the vector data
-      // pointer is just set appropriately
-
-      TVectorD x; x.Use(xi_.size(),array_x);
-      TVectorD y; y.Use(xi_.size(),array_y);
-      //      TVectorD ex; ex.Use(xi_.size(),array_xerr);
-      TVectorD ey; ey.Use(xi_.size(),array_yerr);
-
-      TMatrixD A(xi_.size(), 2);
-      TMatrixDColumn(A,0) = 1.0;
-      TMatrixDColumn(A,1) = x;
-
-      // first bring the weights in place
-      TMatrixD Aw = A;
-      TVectorD yw = y;
-      for (Int_t irow = 0; irow < A.GetNrows(); irow++) {
-        TMatrixDRow(Aw,irow) *= 1/ey(irow);
-        yw(irow) /= ey(irow);
-      }
-
-      TDecompSVD svd(Aw);
-      Bool_t ok;
-
-      const TVectorD c_svd = svd.Solve(yw,ok);
-
-      delete array_x;
-      delete array_y;
-      delete array_xerr;
-      delete array_yerr;
-
-      set_y0(experimental_double(c_svd(0), 0.));
-      set_tangent(experimental_double(c_svd(1), 0.));
-
-      return true;
-
-    }
-#endif // CAT_WITH_DEVEL_ROOT == 1
 
     experimental_double LinearRegression::position(const experimental_double &x){
 

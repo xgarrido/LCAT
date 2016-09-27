@@ -17,7 +17,7 @@ namespace CAT {
 
     class plane : public tracking_object {
 
-      // a plane (calorimeter block) is identified by 
+      // a plane (calorimeter block) is identified by
       // a type (Nemo3 or SuperNemo)
       // one point (center) in middle of block
       // the plane sizes (sizex, sizey, sizez for SuperNemo
@@ -44,13 +44,13 @@ namespace CAT {
 
     public:
       //!Default constructor
-      plane(mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
+      plane(double probmin=1.e-200);
 
       //!Default destructor
       virtual ~plane();
 
       //! constructor
-      plane(const experimental_point &center, const experimental_vector &sizes, const experimental_vector &norm, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
+      plane(const experimental_point &center, const experimental_vector &sizes, const experimental_vector &norm, double probmin=1.e-200);
 
       /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,
@@ -60,8 +60,8 @@ namespace CAT {
 
 
       //! set
-      void set(const experimental_point &center, 
-               const experimental_vector &sizes, 
+      void set(const experimental_point &center,
+               const experimental_vector &sizes,
                const experimental_vector &norm);
 
 
@@ -98,8 +98,8 @@ namespace CAT {
 
       bool intersect(const experimental_point &ep)const;
 
-      bool intersect (const experimental_point &start, 
-                      const experimental_vector &direction, 
+      bool intersect (const experimental_point &start,
+                      const experimental_vector &direction,
                       experimental_point* ep)const;
 
       // std::vector from the face of the plane to the point

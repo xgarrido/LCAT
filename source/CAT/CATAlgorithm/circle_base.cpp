@@ -9,12 +9,11 @@ namespace CAT{
     using namespace mybhep;
 
     //!Default constructor
-    circle::circle(prlevel level, double probmin)
+    circle::circle(double probmin)
     {
       appname_= "circle: ";
       center_ = experimental_point();
       radius_ = experimental_double(small_neg, small_neg);
-      set_print_level(level);
       set_probmin(probmin);
     }
 
@@ -25,8 +24,7 @@ namespace CAT{
     }
 
     //! constructor
-    circle::circle(const experimental_point &center, const experimental_double &radius, prlevel level, double probmin){
-      set_print_level(level);
+    circle::circle(const experimental_point &center, const experimental_double &radius, double probmin){
       set_probmin(probmin);
       appname_= "circle: ";
       center_ = center;
@@ -223,32 +221,32 @@ namespace CAT{
       *_pitch = experimental_double(pi, errpi);
       *_center = experimental_double(ce, errce);
 
-      if( print_level() >= mybhep::VVERBOSE ){
-        std::clog << " average y " << average(ys).value() << " average phi " << average(phis).value() << " 1/p " << one_over_pi << " -y0/p " << min_ce_over_pi << " center y " << ce << " pitch " << pi << " " << std::endl;
+      // if( print_level() >= mybhep::VVERBOSE ){
+      //   std::clog << " average y " << average(ys).value() << " average phi " << average(phis).value() << " 1/p " << one_over_pi << " -y0/p " << min_ce_over_pi << " center y " << ce << " pitch " << pi << " " << std::endl;
 
-        phi_ref = 0.;
+      //   phi_ref = 0.;
 
-        for(std::vector<experimental_point>::iterator ip=ps.begin(); ip!=ps.end(); ++ip){
-          phi_ref = phi.value();
-          phi = phi_of_point(*ip, phi_ref);
-          experimental_double predicted = *_center + *_pitch*phi;
-          experimental_double res = predicted - ip->y();
+      //   for(std::vector<experimental_point>::iterator ip=ps.begin(); ip!=ps.end(); ++ip){
+      //     phi_ref = phi.value();
+      //     phi = phi_of_point(*ip, phi_ref);
+      //     experimental_double predicted = *_center + *_pitch*phi;
+      //     experimental_double res = predicted - ip->y();
 
-          if( print_level() >= mybhep::VVERBOSE ){
-            std::clog << " input y: ( ";
-            ip->y().dump();
-            std::clog << " ) predicted: (";
-            predicted.dump();
-            std::clog << " ) local res: " ;
-            res.dump();
-            std::clog << " phi: " ;
-            phi.dump();
-            std::clog << " " << std::endl;
-          }
+      //     if( print_level() >= mybhep::VVERBOSE ){
+      //       std::clog << " input y: ( ";
+      //       ip->y().dump();
+      //       std::clog << " ) predicted: (";
+      //       predicted.dump();
+      //       std::clog << " ) local res: " ;
+      //       res.dump();
+      //       std::clog << " phi: " ;
+      //       phi.dump();
+      //       std::clog << " " << std::endl;
+      //     }
 
 
-        }
-      }
+      //   }
+      // }
 
       return;
 
@@ -271,10 +269,10 @@ namespace CAT{
         *ep = (center() - the_norm*radius().value()).point_from_vector();
       }
       else{ // the circle intersects the plane
-        if( print_level() >= mybhep::VVERBOSE ){
-          std::clog << " intersecting circle with center " << center().x().value() << " " << center().z().value() <<
-            " with plain with face " << pl.face().x().value() << " " << pl.face().z().value() << " phi " << _phi.value()*180./acos(-1.) << std::endl;
-        }
+        // if( print_level() >= mybhep::VVERBOSE ){
+        //   std::clog << " intersecting circle with center " << center().x().value() << " " << center().z().value() <<
+        //     " with plain with face " << pl.face().x().value() << " " << pl.face().z().value() << " phi " << _phi.value()*180./acos(-1.) << std::endl;
+        // }
 
         if( pl.view() == "x" ){
 
@@ -318,10 +316,10 @@ namespace CAT{
             signz = -1.;
 
 
-          if( print_level() >= mybhep::VVERBOSE ){
-            std::clog << " normal to plane (" << the_norm.x().value() << ", " << the_norm.y().value() << ", " << the_norm.z().value() << ") normal vector from face of plane to parallel plane through center of circle ( " << ntp.x().value() << ", " << ntp.y().value() << ", " << ntp.z().value() << ") diff " << diff << " foot on face of plane in front of circle center: ( " << foot.x().value() << ", " << foot.y().value() << ", " << foot.z().value() <<
-              ") transverse dist: " << transverse_dist.value() << " angle " << angle.value()*180./acos(-1.) << std::endl;
-          }
+          // if( print_level() >= mybhep::VVERBOSE ){
+          //   std::clog << " normal to plane (" << the_norm.x().value() << ", " << the_norm.y().value() << ", " << the_norm.z().value() << ") normal vector from face of plane to parallel plane through center of circle ( " << ntp.x().value() << ", " << ntp.y().value() << ", " << ntp.z().value() << ") diff " << diff << " foot on face of plane in front of circle center: ( " << foot.x().value() << ", " << foot.y().value() << ", " << foot.z().value() <<
+          //     ") transverse dist: " << transverse_dist.value() << " angle " << angle.value()*180./acos(-1.) << std::endl;
+          // }
 
           ep->set_x(foot.x() + transverse_dist*experimental_fabs(experimental_sin(angle))*signx);
           ep->set_z(foot.z() + transverse_dist*experimental_fabs(experimental_cos(angle))*signz);
@@ -345,9 +343,9 @@ namespace CAT{
 
       // vector from center of plane face to extrapolated point
       experimental_vector dist = experimental_vector(pl.face(), *ep).hor();
-      if( print_level() >= mybhep::VVERBOSE ){
-        std::clog << " extrapolated point: (" << ep->x().value() << ", " << ep->y().value() << ", " << ep->z().value() << "), circle distance from extrapolation to plane face: " << dist.x().value() << ", " << dist.y().value() << ", " << dist.z().value() << " plane sizes: " << pl.sizes().x().value() << " " << pl.sizes().y().value() << " " << pl.sizes().z().value() << std::endl;
-      }
+      // if( print_level() >= mybhep::VVERBOSE ){
+      //   std::clog << " extrapolated point: (" << ep->x().value() << ", " << ep->y().value() << ", " << ep->z().value() << "), circle distance from extrapolation to plane face: " << dist.x().value() << ", " << dist.y().value() << ", " << dist.z().value() << " plane sizes: " << pl.sizes().x().value() << " " << pl.sizes().y().value() << " " << pl.sizes().z().value() << std::endl;
+      // }
       if( pl.view() == "x" ){
         if( std::abs(dist.z().value()) > pl.sizes().z().value()/2. )
           return false;
@@ -366,8 +364,8 @@ namespace CAT{
         return true;
       }
 
-      if( print_level() >= mybhep::NORMAL )
-        std::clog << " problem: intersecting circle with plane of view " << pl.view() << std::endl;
+      // if( print_level() >= mybhep::NORMAL )
+      //   std::clog << " problem: intersecting circle with plane of view " << pl.view() << std::endl;
 
       return false;
 
@@ -381,9 +379,9 @@ namespace CAT{
       experimental_double rsum = radius() + c.radius();
 
       if( rsum.value() < dist.value() ){
-        if( print_level() >= mybhep::VVERBOSE ){
-          std::clog << " can't extrapolate circle to circle: the circles don't intesect " << std::endl;
-        }
+        // if( print_level() >= mybhep::VVERBOSE ){
+        //   std::clog << " can't extrapolate circle to circle: the circles don't intesect " << std::endl;
+        // }
         return false;
       }
 
@@ -431,20 +429,20 @@ namespace CAT{
       if( ep->x().value() == small_neg ||
           ep->y().value() == small_neg ||
           ep->z().value() == small_neg ){
-        if( print_level() >= mybhep::VVERBOSE )
-          std::clog << " can't extrapolate circle to circle: ep is small_neg " << std::endl;
+        // if( print_level() >= mybhep::VVERBOSE )
+        //   std::clog << " can't extrapolate circle to circle: ep is small_neg " << std::endl;
         return false;
       }
 
       if( std::isnan(ep->x().value())  || std::isnan(ep->y().value()) || std::isnan(ep->z().value()) ) return false;
 
-      if( print_level() >= mybhep::VVERBOSE ){
-        clog << " track: "; dump();
-        clog << " foil : "; c.dump();
-        clog << " intersection 1: "; p1.dump(); clog << " phi1 " << phi1 << " initial phi " << initial_phi1 << " dphi1 " << dphi1 << endl;
-        clog << " intersection 2: "; p2.dump(); clog << " phi2 " << phi2 << " initial phi " << initial_phi2 << " dphi2 " << dphi2 << endl;
-        clog << " dist "; dist.dump(); std::clog << " rsum "; rsum.dump(); std::clog << " a "; a.dump(); std::clog << " h "; h.dump(); std::clog << " middle "; middle.dump(); clog << " chosing intersection: "; ep->dump();
-      }
+      // if( print_level() >= mybhep::VVERBOSE ){
+      //   clog << " track: "; dump();
+      //   clog << " foil : "; c.dump();
+      //   clog << " intersection 1: "; p1.dump(); clog << " phi1 " << phi1 << " initial phi " << initial_phi1 << " dphi1 " << dphi1 << endl;
+      //   clog << " intersection 2: "; p2.dump(); clog << " phi2 " << phi2 << " initial phi " << initial_phi2 << " dphi2 " << dphi2 << endl;
+      //   clog << " dist "; dist.dump(); std::clog << " rsum "; rsum.dump(); std::clog << " a "; a.dump(); std::clog << " h "; h.dump(); std::clog << " middle "; middle.dump(); clog << " chosing intersection: "; ep->dump();
+      // }
 
       return true;
 
@@ -486,12 +484,12 @@ namespace CAT{
           *epmin = epb;
       }
 
-      if( print_level() >= mybhep::VVERBOSE ){
-        std::clog << " along the circle between points (" << epa.x().value() << ", " << epa.z().value() << ") and (" <<
-          epb.x().value() << ", " << epb.z().value() << ") the point of max radius is (" <<
-          epmax->x().value() << ", " << epmax->z().value() << "), that of min radius is (" <<
-          epmin->x().value() << ", " << epmin->z().value() << ")" << std::endl;
-      }
+      // if( print_level() >= mybhep::VVERBOSE ){
+      //   std::clog << " along the circle between points (" << epa.x().value() << ", " << epa.z().value() << ") and (" <<
+      //     epb.x().value() << ", " << epb.z().value() << ") the point of max radius is (" <<
+      //     epmax->x().value() << ", " << epmax->z().value() << "), that of min radius is (" <<
+      //     epmin->x().value() << ", " << epmin->z().value() << ")" << std::endl;
+      // }
 
       return;
 

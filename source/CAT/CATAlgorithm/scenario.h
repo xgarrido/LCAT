@@ -53,7 +53,7 @@ namespace CAT {
       virtual ~scenario();
 
       //! constructor
-      scenario(const std::vector<sequence> & seqs, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
+      scenario(const std::vector<sequence> & seqs, double probmin=1.e-200);
 
       /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,

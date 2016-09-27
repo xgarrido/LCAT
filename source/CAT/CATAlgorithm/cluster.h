@@ -46,10 +46,10 @@ namespace CAT{
       virtual ~cluster();
 
       //! constructor from std::vector of nodes
-      cluster(const std::vector<node> &nodes, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
+      cluster(const std::vector<node> &nodes, double probmin=1.e-200);
 
       //! constructor from single node
-      cluster(node &a_node, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
+      cluster(node &a_node, double probmin=1.e-200);
 
       /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,
@@ -101,7 +101,7 @@ namespace CAT{
 
       void merge__more_than_4_nodes(topology::broken_line ACD[2][2][2], topology::broken_line aACD[2][2][2][2]);
 
-      std::vector<topology::broken_line> finish__more_than_4_nodes(topology::broken_line ACD[2][2][2], size_t ifirst, size_t ipivot, size_t n_residuals);
+      std::vector<topology::broken_line> finish__more_than_4_nodes(topology::broken_line ACD[2][2][2], size_t ipivot, size_t n_residuals);
 
     };
 

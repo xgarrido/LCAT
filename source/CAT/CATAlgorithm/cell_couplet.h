@@ -65,13 +65,7 @@ namespace CAT{
       cell_couplet(const cell &ca,const cell &cb,const std::vector<line> &tangents);
 
       //! constructor
-      cell_couplet(const cell &ca, const cell &cb, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
-
-      //! constructor
-      cell_couplet(const cell &ca, const cell &cb, const std::string &just, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
-
-      //! constructor from bhep hit
-      cell_couplet(const mybhep::hit &hita, const mybhep::hit &hitb);
+      cell_couplet(const cell &ca, const cell &cb, double probmin=1.e-200);
 
       /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,

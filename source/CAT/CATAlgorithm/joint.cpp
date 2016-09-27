@@ -30,9 +30,9 @@ namespace CAT {
     //! constructor
     joint::joint(const experimental_point &epa,
                  const experimental_point &epb,
-                 const experimental_point &epc, prlevel level, double probmin)
+                 const experimental_point &epc,
+                 double probmin)
     {
-      set_print_level(level);
       set_probmin(probmin);
       appname_= "joint: ";
       epa_ = epa;
@@ -188,7 +188,6 @@ namespace CAT {
     joint joint::invert()
     {
       joint inverted;
-      inverted.set_print_level(print_level());
       inverted.set_probmin(probmin());
       inverted.set_epa(epc());
       inverted.set_epb(epb());
@@ -216,7 +215,7 @@ namespace CAT {
       return;
     }
 
-    double joint::calculate_chi2(joint j, topology::cell A, topology::cell B, topology::cell C, joint * modified, bool A_is_on_gap, bool B_is_on_gap)const{
+    double joint::calculate_chi2(joint j, topology::cell A, topology::cell B, joint * modified, bool A_is_on_gap, bool B_is_on_gap)const{
       // this: A B C
       // j:    0 A B
 
@@ -234,9 +233,9 @@ namespace CAT {
       *modified = lj;
       //double local_chi2 = pow(angle_AA.value()/angle_AA.error(),2) + pow(angle_BB.value()/angle_BB.error(),2) + pow(angle_phi.value()/angle_phi.error(),2) + pow(angle_theta.value()/angle_theta.error(),2);
       double local_chi2 = pow(angle_phi.value(),2);
-      if (print_level() >= mybhep::VVERBOSE){
-	std::clog << " CAT::joint::calculate_chi2: phiA " << experimental_vector(A.ep(), lj.epa()).phi().value()*180./acos(-1.) <<  " phiB " << experimental_vector(B.ep(), lj.epb()).phi().value()*180./acos(-1.) << " phiC " << experimental_vector(C.ep(), lj.epc()).phi().value()*180./acos(-1.) << " cell A_is_on_gap " << A_is_on_gap << " A " << A.id() << " angle_AA " << angle_AA.value() << " +- " << angle_AA.error() <<  " B_is_on_gap " << B_is_on_gap << " B " << B.id() << " angle_BB " << angle_BB.value() << " +- " << angle_BB.error() << " angle_phi " << angle_phi.value() << " +- " << angle_phi.error() << " angle_theta " << angle_theta.value() << " +- " << angle_theta.error() << " local chi2 " << local_chi2 << std::endl;
-      }
+      // if (print_level() >= mybhep::VVERBOSE){
+      //   std::clog << " CAT::joint::calculate_chi2: phiA " << experimental_vector(A.ep(), lj.epa()).phi().value()*180./acos(-1.) <<  " phiB " << experimental_vector(B.ep(), lj.epb()).phi().value()*180./acos(-1.) << " phiC " << experimental_vector(C.ep(), lj.epc()).phi().value()*180./acos(-1.) << " cell A_is_on_gap " << A_is_on_gap << " A " << A.id() << " angle_AA " << angle_AA.value() << " +- " << angle_AA.error() <<  " B_is_on_gap " << B_is_on_gap << " B " << B.id() << " angle_BB " << angle_BB.value() << " +- " << angle_BB.error() << " angle_phi " << angle_phi.value() << " +- " << angle_phi.error() << " angle_theta " << angle_theta.value() << " +- " << angle_theta.error() << " local chi2 " << local_chi2 << std::endl;
+      // }
       return local_chi2;
 
     }

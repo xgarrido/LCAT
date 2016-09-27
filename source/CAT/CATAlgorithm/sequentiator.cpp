@@ -2,7 +2,7 @@
 #include <vector>
 #include <mybhep/system_of_units.h>
 #include <sys/time.h>
-#include <math.h>
+#include <cmath>
 
 // Third party
 // - Bayeux/datatools:
@@ -917,8 +917,8 @@ namespace CAT {
       if( gap_number( iseq->second_last_node().c() ) == 0 &&
           iseq->phi_kink(iseq->nodes_.size()-2)*180./M_PI > 45 &&
           belongs_to_other_family(iseq->last_node().c(), &(*iseq)) ){
-        DT_LOG_DEBUG(get_logging_priority(), "Removing last node " << iseq->last_node().c()
-                     << " near foil of sequence " << iseq->name() << " (it belongs to other family and makes large kink)");
+        DT_LOG_DEBUG(get_logging_priority(), "Removing last node near foil of sequence "
+                     << iseq->name() << " (it belongs to other family and makes large kink)");
         iseq->remove_last_node();
       }
 
@@ -926,7 +926,7 @@ namespace CAT {
       if( gap_number( iseq->nodes_[1].c() ) == 0 &&
           iseq->phi_kink(1)*180./M_PI > 45 &&
           belongs_to_other_family(iseq->nodes_[0].c(), &(*iseq)) ){
-        DT_LOG_DEBUG(get_logging_priority(), "Removing 1st node " << iseq->last_node().c() << " near foil of sequence "
+        DT_LOG_DEBUG(get_logging_priority(), "Removing 1st node near foil of sequence "
                      << iseq->name() << " (it belongs to other family and makes large kink)");
         iseq->remove_first_node();
       }
@@ -937,7 +937,7 @@ namespace CAT {
         if( near(iseq->nodes_[1].c(), *ic) &&
             iseq->phi_kink(1)*180./M_PI > 45 &&
             belongs_to_other_family(iseq->nodes_[0].c(), &(*iseq)) ){
-          DT_LOG_DEBUG(get_logging_priority(), "Removing 1st node " << iseq->last_node().c() << " near calo of sequence "
+          DT_LOG_DEBUG(get_logging_priority(), "Removing 1st node near calo of sequence "
                        << iseq->name() << " (it belongs to other family and makes large kink)");
           iseq->remove_first_node();
           break;
@@ -949,7 +949,7 @@ namespace CAT {
         if( near(iseq->second_last_node().c(), *ic) &&
             iseq->phi_kink(iseq->nodes_.size()-2)*180./M_PI > 45 &&
             belongs_to_other_family(iseq->last_node().c(), &(*iseq)) ){
-          DT_LOG_DEBUG(get_logging_priority(), "Removing last node " << iseq->last_node().c() << " near calo of sequence " <<
+          DT_LOG_DEBUG(get_logging_priority(), "Removing last node near calo of sequence " <<
                        iseq->name() <<  " (it belongs to other family and makes large kink)");
           iseq->remove_last_node();
           break;

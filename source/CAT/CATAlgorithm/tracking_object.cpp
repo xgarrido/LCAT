@@ -18,9 +18,6 @@
 namespace CAT{
   namespace topology{
 
-    using namespace std;
-    using namespace mybhep;
-
     void tracking_object::set_probmin( double probmin )
     {
       probmin_ = probmin;
@@ -55,9 +52,3 @@ namespace CAT{
 
   }
 }
-
-
-
-
-
-

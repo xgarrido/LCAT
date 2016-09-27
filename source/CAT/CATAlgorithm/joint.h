@@ -56,7 +56,7 @@ namespace CAT {
       virtual ~joint();
 
       //! constructor
-      joint(const experimental_point &epa, const experimental_point &epb, const experimental_point &epc, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
+      joint(const experimental_point &epa, const experimental_point &epb, const experimental_point &epc, double probmin=1.e-200);
 
       /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,
@@ -120,7 +120,7 @@ namespace CAT {
 
       bool operator<(const joint &j) const;
 
-      double calculate_chi2(joint j, topology::cell A, topology::cell B, topology::cell C, joint * modified, bool A_is_on_gap, bool B_is_on_gap)const;
+      double calculate_chi2(joint j, topology::cell A, topology::cell B, joint * modified, bool A_is_on_gap, bool B_is_on_gap)const;
 
     private:
 

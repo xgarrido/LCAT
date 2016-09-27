@@ -3,9 +3,6 @@
 namespace CAT{
   namespace topology{
 
-    using namespace std;
-    using namespace mybhep;
-
     cell_couplet::~cell_couplet()
     {
     }
@@ -42,37 +39,11 @@ namespace CAT{
       begun_ = false;
     }
 
-    cell_couplet::cell_couplet(const cell &ca, const cell &cb, mybhep::prlevel level, double probmin){
-      set_print_level(level);
+    cell_couplet::cell_couplet(const cell &ca, const cell &cb, double probmin){
       set_probmin(probmin);
       appname_= "cell_couplet: ";
       ca_ = ca;
       cb_ = cb;
-      forward_axis_calculated_ = false;
-      transverse_axis_calculated_ = false;
-      set_forward_axis();
-      set_transverse_axis();
-      obtain_tangents();
-      free_ = false;
-      begun_ = false;
-    }
-
-    cell_couplet::cell_couplet(const cell &ca, const cell &cb, const std::string & /*just*/, mybhep::prlevel level, double probmin){
-      set_print_level(level);
-      set_probmin(probmin);
-      appname_= "cell_couplet: ";
-      ca_ = ca;
-      cb_ = cb;
-      forward_axis_calculated_ = false;
-      transverse_axis_calculated_ = false;
-      free_ = false;
-      begun_ = false;
-    }
-
-    cell_couplet::cell_couplet(const mybhep::hit &hita, const mybhep::hit &hitb){
-      appname_= "cell_couplet: ";
-      ca_ = cell(hita);
-      cb_ = cell(hitb);
       forward_axis_calculated_ = false;
       transverse_axis_calculated_ = false;
       set_forward_axis();
@@ -266,7 +237,7 @@ void cell_couplet::dump (std::ostream & a_out,
         set_first_error_in_build_from_cell(sina.value(), sign_parallel_crossed[0], sign_up_down[i], &epa);
         set_second_error_in_build_from_cell(sina.value(), sign_parallel_crossed[0], sign_up_down[i], &epb);
 
-        line l(epa, epb, prlevel(), probmin());
+        line l(epa, epb, probmin());
 
         tangents_.push_back( l );
       }
@@ -289,7 +260,7 @@ void cell_couplet::dump (std::ostream & a_out,
           epa = (average + transverse_axis()*sign_up_down[i]*small_offset).point_from_vector();
           epb = (average - transverse_axis()*sign_up_down[i]*small_offset).point_from_vector();
 
-          line l(epa, epb, prlevel(), probmin());
+          line l(epa, epb, probmin());
 
           tangents_.push_back( l );
         }
@@ -309,7 +280,7 @@ void cell_couplet::dump (std::ostream & a_out,
           set_first_error_in_build_from_cell(sina.value(), sign_parallel_crossed[1], sign_up_down[i], &epa);
           set_second_error_in_build_from_cell(sina.value(), sign_parallel_crossed[1], sign_up_down[i], &epb);
 
-          line l(epa, epb, prlevel(), probmin());
+          line l(epa, epb, probmin());
 
           tangents_.push_back( l );
         }
@@ -340,7 +311,7 @@ void cell_couplet::dump (std::ostream & a_out,
         sin = experimental_sin(experimental_acos(cos))*sign_up_down[i];
         set_first_error_in_build_from_cell(sin.value(), 1, sign_up_down[i], &epa);
 
-        line l(epa, ep, prlevel(), probmin());
+        line l(epa, ep, probmin());
 
         tangents_.push_back( l );
       }
@@ -370,7 +341,7 @@ void cell_couplet::dump (std::ostream & a_out,
         sin = experimental_sin(experimental_acos(cos))*sign_up_down[i];
         set_second_error_in_build_from_cell(sin.value(), 1, sign_up_down[i], &epb);
 
-        line l(ep, epb, prlevel(), probmin());
+        line l(ep, epb, probmin());
 
         tangents_.push_back( l );
       }
@@ -382,7 +353,7 @@ void cell_couplet::dump (std::ostream & a_out,
 
     void cell_couplet::obtain_tangents_between_point_and_point(experimental_point &epa, experimental_point &epb){
 
-      line l(epa, epb, prlevel(), probmin());
+      line l(epa, epb, probmin());
 
       tangents_.push_back( l );
 

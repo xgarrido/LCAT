@@ -43,7 +43,7 @@ namespace CAT {
       virtual ~broken_line();
 
       //! constructor
-      broken_line(const std::vector<experimental_point> &eps, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
+      broken_line(const std::vector<experimental_point> &eps, double probmin=1.e-200);
 
       /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,

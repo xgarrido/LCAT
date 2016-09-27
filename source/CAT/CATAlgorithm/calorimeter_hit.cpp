@@ -7,21 +7,16 @@
 namespace CAT {
   namespace topology {
 
-    using namespace std;
-    using namespace mybhep;
-
-
-      //!Default constructor
-    calorimeter_hit::calorimeter_hit(prlevel level, double probmin)
+    //!Default constructor
+    calorimeter_hit::calorimeter_hit(double probmin)
       {
         appname_= "calorimeter_hit: ";
-        e_ = experimental_double(small_neg, small_neg);
-        t_ = experimental_double(small_neg, small_neg);
-        set_print_level(level);
+        e_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
+        t_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
         set_probmin(probmin);
-        id_ = default_integer;
-        user_id_ = default_integer;
-        layer_ = small_neg;
+        id_ = mybhep::default_integer;
+        user_id_ = mybhep::default_integer;
+        layer_ = mybhep::small_neg;
         return;
       }
 
@@ -33,14 +28,12 @@ namespace CAT {
 
       //! constructor
       calorimeter_hit::calorimeter_hit(const plane & pl,
-                      const experimental_double & e,
-                      const experimental_double & t,
-                      size_t id,
-                      double layer,
-                      prlevel level,
-                      double probmin)
+                                       const experimental_double & e,
+                                       const experimental_double & t,
+                                       size_t id,
+                                       double layer,
+                                       double probmin)
       {
-        set_print_level(level);
         set_probmin(probmin);
         appname_= "calorimeter_hit: ";
         pl_ = pl;
@@ -52,10 +45,10 @@ namespace CAT {
       }
 
       /*** dump ***/
-      void calorimeter_hit::dump (ostream & a_out,
-                                  const std::string & a_title,
-                                  const std::string & a_indent,
-                                  bool /* a_inherit */)const
+    void calorimeter_hit::dump(std::ostream & a_out,
+                               const std::string & a_title,
+                               const std::string & a_indent,
+                               bool /* a_inherit */) const
       {
         std::string indent;
         if (! a_indent.empty ()) indent = a_indent;

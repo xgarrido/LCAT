@@ -116,10 +116,10 @@ namespace CAT {
       virtual ~sequence();
 
       //! constructor from std::vector of nodes
-      sequence(const std::vector<node>&  nodes, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
+      sequence(const std::vector<node>&  nodes, double probmin=1.e-200);
 
       //! constructor from single node
-      sequence(const node &node, mybhep::prlevel level=mybhep::NORMAL, double probmin=1.e-200);
+      sequence(const node &node, double probmin=1.e-200);
 
       /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,

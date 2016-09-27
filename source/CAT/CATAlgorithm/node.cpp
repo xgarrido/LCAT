@@ -41,8 +41,7 @@ namespace CAT {
       }
 
       //! constructor
-      node::node(const cell &c, prlevel level, double probmin){
-        set_print_level(level);
+      node::node(const cell &c, double probmin){
         set_probmin(probmin);
         appname_= "node: ";
         c_ = c;
@@ -51,93 +50,6 @@ namespace CAT {
         chi2_ = 0.;
         ndof_=0;
         circle_phi_ = mybhep::small_neg;
-      }
-
-      //! constructor from bhep true hit
-      node::node(const mybhep::hit &truehit, size_t id, bool SuperNemo, prlevel level, double probmin){
-        set_print_level(level);
-        set_probmin(probmin);
-        appname_= "node: ";
-        chi2_ = 0.;
-        ndof_=0;
-        std::vector<double> cellpos;
-        mybhep::vector_from_string(truehit.fetch_property("CELL_POS"), cellpos);
-        double rpos = mybhep::float_from_string(truehit.fetch_property("DIST"));
-        experimental_point center(cellpos[0], cellpos[1], cellpos[2],
-                                  0., 0., 0.);
-        experimental_double radius(rpos, 0.);
-
-        bool fast;
-        if( truehit.find_property("SLOW"))
-          fast = false;
-        else
-          fast = true;
-        {
-          cell tmp_cell (center, radius, id, fast, probmin, level);
-          c_ = tmp_cell;
-        }
-        int block, plane, iid, n3id;
-        if( SuperNemo )
-          {
-            c_.set_type("SN");
-            std::string value = truehit.fetch_property("CELL"); // GG_CELL_block_plane_id
-
-            sscanf(value.c_str(),"GG_CELL_%d_%d_%d",&block,&plane,&iid);
-            plane --;
-            if( block < 0 ) plane *= -1;
-            n3id = 0;
-
-          }
-        else
-          {
-            c_.set_type("N3");
-            std::string value = truehit.fetch_property("BLK");  // BLK = sector_io_layer
-            // sector = petal of the detector
-            // io = 1 if hit is between foil and external calorimeter
-            //     0 if hit is between foil and internal calorimeter
-            // layer = 0-8
-
-            int io;
-            sscanf(value.c_str(),"%d_%d_%d",&block,&io,&iid);
-
-            plane = iid;
-
-            //translate layer into block number
-            if (plane<4)
-              block = 1;  // 0, 1, 2, 3
-            else if(plane >=4 && plane <6)
-              block = 2; // 4, 5
-            else
-              block = 3;  // 6, 7, 8
-
-            if( io == 0 ){
-              plane *= -1;
-              block *= -1;
-            }
-            // block = 1, 2, 3 or -1, -2, -3
-            // layer = 0, 1, ..., 8 or 0, -1, ..., -8
-
-            std::string val = truehit.fetch_property("CELL");  // cell number
-            sscanf(val.c_str(),"%d",&n3id);
-
-          }
-
-        c_.set_layer(plane);
-        c_.set_n3id(n3id);
-        c_.set_block(block);
-        c_.set_iid(iid);
-
-        free_ = false;
-        is_kink_ = false;
-        {
-          experimental_point tmp_ep(truehit.x().x(), truehit.x().y(), truehit.x().z(),
-                                    0., 0., 0.);
-          ep_ = tmp_ep;
-        }
-        circle_phi_ = mybhep::small_neg;
-        return;
-
-
       }
 
       /*** dump ***/
@@ -301,19 +213,19 @@ namespace CAT {
         for(std::vector<cell_couplet>::const_iterator jcc=cc_.begin() + (size_t)(icc - cc_.begin()); jcc!=cc_.end(); ++jcc){
           cell c2 = jcc->cb();
           if( c1.id() == c2.id() ) continue;
-          cell_triplet ccc(c1,c_,c2, print_level(), probmin());
-          if( print_level() >= mybhep::VVERBOSE ){
-            std::clog << appname_ << " calculate triplets for three cells: " << ccc.ca().id() << "  " << ccc.cb().id() << "  " << ccc.cc().id() << std::endl;
-          }
+          cell_triplet ccc(c1,c_,c2, probmin());
+          // if( print_level() >= mybhep::VVERBOSE ){
+          //   std::clog << appname_ << " calculate triplets for three cells: " << ccc.ca().id() << "  " << ccc.cb().id() << "  " << ccc.cc().id() << std::endl;
+          // }
           ccc.calculate_joints(ratio_, phi_limit_);
           if( ccc.joints().size() > 0 ){
-            if( print_level() >= mybhep::VVERBOSE ){
-              std::clog << appname_ << " adding joints " << std::endl;
-              for(std::vector<joint>::iterator ijoint = ccc.joints_.begin(); ijoint != ccc.joints_.end(); ++ ijoint )
-                std::clog << " joint " << ijoint - ccc.joints_.begin() << " phia: " << experimental_vector(ccc.ca().ep(), ijoint->epa()).phi().value()*180./M_PI
-                          << " phib: " << experimental_vector(ccc.cb().ep(), ijoint->epb()).phi().value()*180./M_PI
-                          << " phic: " << experimental_vector(ccc.cc().ep(), ijoint->epc()).phi().value()*180./M_PI << " chi2 " << ijoint->chi2() << std::endl;
-            }
+            // if( print_level() >= mybhep::VVERBOSE ){
+            //   std::clog << appname_ << " adding joints " << std::endl;
+            //   for(std::vector<joint>::iterator ijoint = ccc.joints_.begin(); ijoint != ccc.joints_.end(); ++ ijoint )
+            //     std::clog << " joint " << ijoint - ccc.joints_.begin() << " phia: " << experimental_vector(ccc.ca().ep(), ijoint->epa()).phi().value()*180./M_PI
+            //               << " phib: " << experimental_vector(ccc.cb().ep(), ijoint->epb()).phi().value()*180./M_PI
+            //               << " phic: " << experimental_vector(ccc.cc().ep(), ijoint->epc()).phi().value()*180./M_PI << " chi2 " << ijoint->chi2() << std::endl;
+            // }
             add_triplet(ccc);
           }
         }
@@ -346,7 +258,6 @@ namespace CAT {
 
       node node::invert(){
         node inverted;
-        inverted.set_print_level(print_level());
         inverted.set_probmin(probmin());
         inverted.set_c(c());
         inverted.set_cc(cc());
@@ -394,18 +305,6 @@ namespace CAT {
 
       bool node::has_couplet(const cell & a, cell_couplet* ct)const {
 
-#if 0
-        cell null;
-        std::vector<cell_couplet>::const_iterator fcouplet = std::find(cc_.begin(), cc_.end(), cell_couplet(null, a));
-
-        if( fcouplet != cc().end() ){
-          *ct = *fcouplet;
-          return true;
-        }
-
-        return false;
-#else
-
         if( !cc_index_.count(a.id()) ) return false;
         size_t index=cc_index()[a.id()];
         if( index >= cc_.size() ){
@@ -415,24 +314,10 @@ namespace CAT {
         }
         *ct = cc_.at(index);
         return true;
-#endif
 
       }
 
       bool node::has_couplet(const cell& a, size_t* index)const{
-
-#if 0
-        cell null;
-        std::vector<cell_couplet>::const_iterator fcouplet = std::find(cc_.begin(),
-                                                            cc_.end(),
-                                                            cell_couplet(null, a, "just"));
-
-        if( fcouplet != cc().end()){
-          *index = fcouplet - cc_.begin();
-          return true;
-        }
-        return false;
-#else
 
         if( !cc_index_.count(a.id()) ) return false;
         *index= cc_index()[a.id()];
@@ -442,17 +327,9 @@ namespace CAT {
           return false;
         }
         return true;
-#endif
-
       }
 
       bool node::has_couplet(size_t idd, size_t* index)const{
-
-#if 0
-        cell null;
-        null.set_id(idd);
-        return has_couplet(null, index);
-#else
 
         if( !cc_index_.count(idd) ) return false;
         *index= cc_index()[idd];
@@ -463,13 +340,10 @@ namespace CAT {
         }
         return true;
 
-#endif
-
       }
 
     bool node::has_triplet(const cell &a, const cell &c, size_t *index)const{
 
-#if 1
       cell null;
       std::vector<cell_triplet>::const_iterator ftriplet = std::find(ccc().begin(), ccc().end(),cell_triplet(a,null,c) );
 
@@ -478,57 +352,17 @@ namespace CAT {
         return true;
       }
       return false;
-#else
-
-        if( !ccc_ca_index_.count(a.id()) ) return false;
-        if( !ccc_cc_index_.count(c.id()) ) return false;
-        size_t indexa=ccc_ca_index()[a.id()];
-        if( indexa >= ccc_ca_index_.size() ){
-          std::clog << " problem: ccc ca index " << indexa << " is larger than ccc size " << ccc_.size() << endl;
-          return false;
-        }
-        size_t indexc=ccc_cc_index()[c.id()];
-        if( indexc >= ccc_cc_index_.size() ){
-          std::clog << " problem: ccc cc index " << indexc << " is larger than ccc size " << ccc_.size() << endl;
-          return false;
-        }
-        if( indexa != indexc ) return false;
-        *index = indexa;
-        return true;
-#endif
-
-      }
+    }
 
       bool node::has_triplet(const cell &a, const cell &c)const{
 
-#if 1
         cell null;
         if( std::find(ccc().begin(), ccc().end(),cell_triplet(a,null,c) ) != ccc().end() )
           return true;
         return false;
-#else
-
-        if( !ccc_ca_index_.count(a.id()) ) return false;
-        if( !ccc_cc_index_.count(c.id()) ) return false;
-        size_t indexa=ccc_ca_index()[a.id()];
-        if( indexa >= ccc_ca_index_.size() ){
-          std::clog << " problem: ccc ca index " << indexa << " is larger than ccc size " << ccc_.size() << endl;
-          return false;
-        }
-        size_t indexc=ccc_cc_index()[c.id()];
-        if( indexc >= ccc_cc_index_.size() ){
-          std::clog << " problem: ccc cc index " << indexc << " is larger than ccc size " << ccc_.size() << endl;
-          return false;
-        }
-        if( indexa != indexc ) return false;
-        return true;
-#endif
-
       }
 
       bool node::has_triplet(const cell &a)const{
-
-#if 1
         for(std::vector<cell_triplet>::const_iterator iccc=ccc_.begin(); iccc!=ccc_.end(); ++iccc){
           size_t ida = iccc->ca().id();
           size_t idc = iccc->cc().id();
@@ -538,12 +372,6 @@ namespace CAT {
         }
 
         return false;
-#else
-
-        return( ccc_ca_index_.count(a.id()) || ccc_cc_index_.count(a.id()) );
-
-#endif
-
 
       }
 

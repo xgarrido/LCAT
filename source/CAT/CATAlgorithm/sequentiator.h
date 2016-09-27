@@ -18,14 +18,14 @@
 #include <CATAlgorithm/cluster.h>
 #include <CATAlgorithm/calorimeter_hit.h>
 #include <CATAlgorithm/sequence_base.h>
-#include <CATAlgorithm/logic_sequence.h>
+// #include <CATAlgorithm/logic_sequence.h>
 #include <CATAlgorithm/experimental_double.h>
 #include <CATAlgorithm/Clock.h>
 #include <CATAlgorithm/plane.h>
 #include <CATAlgorithm/tracked_data_base.h>
 #include <CATAlgorithm/helix.h>
 #include <CATAlgorithm/scenario.h>
-#include <CATAlgorithm/logic_scenario.h>
+// #include <CATAlgorithm/logic_scenario.h>
 
 // Third party
 // bayeux/datatools:

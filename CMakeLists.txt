@@ -21,17 +21,14 @@ list(APPEND LCAT_HEADERS
   source/CAT/CATAlgorithm/CAT_interface.h
   source/CAT/CATAlgorithm/cell_base.h
   source/CAT/CATAlgorithm/cell_couplet.h
-  source/CAT/CATAlgorithm/Cell.h
   source/CAT/CATAlgorithm/cell_triplet.h
   source/CAT/CATAlgorithm/circle_base.h
-  source/CAT/CATAlgorithm/Circle.h
   source/CAT/CATAlgorithm/CircleRegression.h
   source/CAT/CATAlgorithm/clockable.h
   source/CAT/CATAlgorithm/Clock.h
   source/CAT/CATAlgorithm/cluster.h
   source/CAT/CATAlgorithm/clusterizer.h
   source/CAT/CATAlgorithm/cylinder.h
-  source/CAT/CATAlgorithm/Detector.h
   source/CAT/CATAlgorithm/experimental_double.h
   source/CAT/CATAlgorithm/experimental_point.h
   source/CAT/CATAlgorithm/experimental_vector.h
@@ -39,16 +36,11 @@ list(APPEND LCAT_HEADERS
   source/CAT/CATAlgorithm/helix.h
   source/CAT/CATAlgorithm/i_predicate.h
   source/CAT/CATAlgorithm/joint.h
-  source/CAT/CATAlgorithm/Legendre_function.h
   source/CAT/CATAlgorithm/LinearRegression.h
   source/CAT/CATAlgorithm/line.h
-  source/CAT/CATAlgorithm/logic_cell.h
-  source/CAT/CATAlgorithm/logic_scenario.h
-  source/CAT/CATAlgorithm/logic_sequence.h
   source/CAT/CATAlgorithm/lt_utils.h
   source/CAT/CATAlgorithm/node.h
   source/CAT/CATAlgorithm/plane.h
-  source/CAT/CATAlgorithm/printable.h
   source/CAT/CATAlgorithm/scenario.h
   source/CAT/CATAlgorithm/sequence_base.h
   source/CAT/CATAlgorithm/Sequence.h
@@ -90,27 +82,22 @@ list(APPEND LCAT_SOURCES
   source/CAT/CATAlgorithm/CAT_interface.cpp
   source/CAT/CATAlgorithm/cell_base.cpp
   source/CAT/CATAlgorithm/cell_couplet.cpp
-  source/CAT/CATAlgorithm/Cell.cpp
   source/CAT/CATAlgorithm/cell_triplet.cpp
   source/CAT/CATAlgorithm/circle_base.cpp
-  source/CAT/CATAlgorithm/Circle.cpp
   source/CAT/CATAlgorithm/CircleRegression.cpp
   source/CAT/CATAlgorithm/clockable.cpp
   source/CAT/CATAlgorithm/Clock.cpp
   source/CAT/CATAlgorithm/cluster.cpp
   source/CAT/CATAlgorithm/clusterizer.cpp
-  source/CAT/CATAlgorithm/Detector.cpp
   source/CAT/CATAlgorithm/experimental_double.cpp
   source/CAT/CATAlgorithm/experimental_point.cpp
   source/CAT/CATAlgorithm/experimental_vector.cpp
   source/CAT/CATAlgorithm/joint.cpp
-  source/CAT/CATAlgorithm/Legendre_function.cpp
   source/CAT/CATAlgorithm/LinearRegression.cpp
   source/CAT/CATAlgorithm/line.cpp
   source/CAT/CATAlgorithm/mparticle.cpp
   source/CAT/CATAlgorithm/node.cpp
   source/CAT/CATAlgorithm/plane.cpp
-  source/CAT/CATAlgorithm/printable.cpp
   source/CAT/CATAlgorithm/scenario.cpp
   source/CAT/CATAlgorithm/sequence_base.cpp
   source/CAT/CATAlgorithm/sequentiator.cpp
