@@ -48,6 +48,7 @@ list(APPEND LCAT_HEADERS
   source/CAT/CATAlgorithm/tracked_data_base.h
   source/CAT/CATAlgorithm/Tracked_data.h
   source/CAT/CATAlgorithm/tracking_object.h
+  source/CAT/CATAlgorithm/utilities.h
   source/CAT/mybhep/axis.h
   source/CAT/mybhep/bprint.h
   source/CAT/mybhep/bproperties.h
@@ -73,7 +74,6 @@ list(APPEND LCAT_HEADERS
   source/CAT/mybhep/system_of_units.h
   source/CAT/mybhep/track.h
   source/CAT/mybhep/tstore.h
-  source/CAT/mybhep/utilities.h
   )
 
 list(APPEND LCAT_SOURCES

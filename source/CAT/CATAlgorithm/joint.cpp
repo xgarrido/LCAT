@@ -224,8 +224,8 @@ namespace CAT {
       topology::experimental_point pb= this->epb();
 
       if( !A_is_on_gap && !B_is_on_gap){ // connection A->B is not through a gap
-	pa = A.angular_average(pa, this->epa(), &angle_AA);
-	pb = B.angular_average(j.epc(), pb, &angle_BB);
+	pa = A.angular_average(pa, this->epa(), angle_AA);
+	pb = B.angular_average(j.epc(), pb, angle_BB);
       }
       topology::joint lj(pa, pb, this->epc());
       angle_phi = lj.kink_phi();

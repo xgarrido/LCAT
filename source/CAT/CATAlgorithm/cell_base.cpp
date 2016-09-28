@@ -6,40 +6,34 @@ namespace topology{
 
   using namespace mybhep;
 
-  experimental_point cell::build_from_cell(experimental_vector forward, experimental_vector transverse, experimental_double cos, int sign, bool replace_r, double maxr ) const{
+  experimental_point cell::build_from_cell(const experimental_vector & forward_,
+                                           const experimental_vector & transverse_,
+                                           const experimental_double & cos_,
+                                           int sign_,
+                                           bool replace_r_,
+                                           double max_r_) const {
 
-    experimental_double sin = experimental_sin(experimental_acos(cos))*sign;
-
+    const experimental_double sin = experimental_sin(experimental_acos(cos_))*sign_;
     experimental_double radius = r();
-    if( replace_r ){
-      radius.set_value(maxr);
+    if (replace_r_) {
+      radius.set_value(max_r_);
     }
 
-    experimental_point p = (experimental_vector(ep()) + radius*(forward*cos + transverse*sin)).point_from_vector();
-
+    const experimental_point p = (experimental_vector(ep()) + radius*(forward_*cos_ + transverse_*sin)).point_from_vector();
     return p;
-
-
   }
 
 
-  experimental_point cell::angular_average(experimental_point epa, experimental_point epb, experimental_double* angle){
+  experimental_point cell::angular_average(const experimental_point & epa_, const experimental_point & epb_, experimental_double & angle_){
 
-    if( small() ){
-      angle->set_value(0.);
-      angle->set_error(0.1); // fictitious value to avoid divergences
-      /*
-      experimental_double avx = (epa.x() + epb.x())/2.;
-      experimental_double avy = (epa.y() + epb.y())/2.;
-      experimental_double avz = (epa.z() + epb.z())/2.;
-      experimental_point average(avx, avy, avz);
-      return average;
-      */
+    if (small()){
+      angle_.set_value(0.);
+      angle_.set_error(0.1); // fictitious value to avoid divergences
       return ep();
     }
 
-    experimental_vector v1 = experimental_vector(ep(), epa);
-    experimental_vector v2 = experimental_vector(ep(), epb);
+    const experimental_vector v1(ep(), epa_);
+    const experimental_vector v2(ep(), epb_);
 
     experimental_double phi1 = v1.phi();
     experimental_double phi2 = v2.phi();
@@ -51,14 +45,13 @@ namespace topology{
 
     phi1.set_value(rephi1);
     phi2.set_value(rephi2);
+    angle_ = phi1 - phi2;
 
     std::vector<experimental_double> phis;
     phis.push_back(phi1);
     phis.push_back(phi2);
 
-    experimental_double ave_phi = weighted_average(phis);
-    //    experimental_double ave_phi = (phi1 + phi2)/2.;
-    *angle = phi1 - phi2;
+    const experimental_double ave_phi = weighted_average(phis);
 
     // if( print_level() >= mybhep::VVERBOSE ){
     //   std::clog << "CAT::cell::angular_average: averaging phi1: "; (phi1*180./M_PI).dump();
@@ -67,10 +60,10 @@ namespace topology{
     //   std::clog << " " << std::endl;
     // }
 
-    experimental_double cos_ave_phi = experimental_cos(ave_phi);
+    const experimental_double cos_ave_phi = experimental_cos(ave_phi);
 
-    experimental_vector x(1.,0.,0.,0.,0.,0.);
-    experimental_vector z(0.,0.,1.,0.,0.,0.);
+    const experimental_vector x(1.,0.,0.,0.,0.,0.);
+    const experimental_vector z(0.,0.,1.,0.,0.,0.);
     int sign = 1;
     if( ave_phi.value() < 0. ) sign = -1;  // ave_phi in [180,360], i.e. p to the left of cell center
 
@@ -79,8 +72,8 @@ namespace topology{
     // not necessarily the same if one of the 2 points results from intersecting cells
     // in such case, keep largest of 2 values to locate average
     // otherwise it will not make sense with the other point from intersecting cells
-    double r1 = v1.hor().length().value();
-    double r2 = v2.hor().length().value();
+    const double r1 = v1.hor().length().value();
+    const double r2 = v2.hor().length().value();
     bool replace_r = false;
     double maxr = 0.;
     if( r1 != r2 ){
@@ -88,15 +81,13 @@ namespace topology{
       maxr = std::max(r1,r2);
     }
 
-    double errx = std::max(std::abs( epb.x().value() - epa.x().value() ), (epb+epa).x().error());
-    double errz = std::max(std::abs( epb.z().value() - epa.z().value() ), (epb+epa).z().error());
+    const double errx = std::max(std::abs(epb_.x().value() - epa_.x().value()), (epb_+epa_).x().error());
+    const double errz = std::max(std::abs(epb_.z().value() - epa_.z().value()), (epb_+epa_).z().error());
 
     experimental_point p = build_from_cell(x, z, cos_ave_phi, sign, replace_r, maxr);
     p.set_ex(errx);
     p.set_ez(errz);
-
     return p;
-
   }
 
 

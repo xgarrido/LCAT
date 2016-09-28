@@ -357,12 +357,12 @@ namespace CAT {
     }
 
     // average
-    experimental_double average (const std::vector<experimental_double> vs)
+    experimental_double average(const std::vector<experimental_double> & vs_)
     {
 
-      if( vs.size() == 0 ){
+      if (vs_.empty()){
         experimental_double bad;
-        std::clog << "CAT::average: problem: averaging std::vector of size " << vs.size() << std::endl;
+        std::clog << "CAT::average: problem: averaging over an empty vector !" << std::endl;
         return bad;
       }
 
@@ -370,30 +370,30 @@ namespace CAT {
       double mean = 0.;
       double err = 0.;
 
-      for(std::vector<experimental_double>::const_iterator iv=vs.begin(); iv!=vs.end(); ++iv){
+      for(std::vector<experimental_double>::const_iterator iv=vs_.begin(); iv!=vs_.end(); ++iv){
         mean += iv->value();
         err += mybhep::square(iv->error());
       }
 
-      return experimental_double(mean/vs.size(), std::sqrt(err)/vs.size());
+      return experimental_double(mean/vs_.size(), std::sqrt(err)/vs_.size());
 
     }
 
     // weighted average
-    experimental_double weighted_average (const std::vector<experimental_double> vs)
+    experimental_double weighted_average (const std::vector<experimental_double> & vs_)
     {
       double mean = 0.;
       double inverr = 0.;
       double newerr = 0.;
 
-      for(std::vector<experimental_double>::const_iterator iv=vs.begin(); iv!=vs.end(); ++iv){
+      for(std::vector<experimental_double>::const_iterator iv=vs_.begin(); iv!=vs_.end(); ++iv){
 	if( iv->error() ){
 	  mean += iv->value()/mybhep::square(iv->error());
 	  inverr += 1/mybhep::square(iv->error());
 	  newerr += mybhep::square(iv->error());
 	}else{
 	  std::clog << "CAT::weighted_average: problem: double has error zero; switch to normal average " << std::endl;
-	  return average(vs);
+	  return average(vs_);
 	}
       }
 

@@ -1424,7 +1424,7 @@ namespace CAT {
 
       if( s > 2 ){
         if( !ca.small() && !ca.intersect(cb) ){
-          pa = ca.angular_average(second_last_node().ep(), j->epa(), &local_separation_a);
+          pa = ca.angular_average(second_last_node().ep(), j->epa(), local_separation_a);
           chi2_separation_a = mybhep::square(local_separation_a.value()/local_separation_a.error());
           // if( print_level() >= mybhep::VVERBOSE ){
           //   std::clog << " separation chi2 for cell " << ca.id() << " is " << chi2_separation_a << std::endl; fflush(stdout);
@@ -1433,7 +1433,7 @@ namespace CAT {
         }
 
         if( !cb.small() && !cb.intersect(ca) && !cb.intersect(cc) ){
-          pb = cb.angular_average(last_node().ep(), j->epb(), &local_separation_b);
+          pb = cb.angular_average(last_node().ep(), j->epb(), local_separation_b);
           chi2_separation_b = mybhep::square(local_separation_b.value()/local_separation_b.error());
           // if( print_level() >= mybhep::VVERBOSE ){
           //   std::clog << " separation chi2 for cell " << cb.id() << " is " << chi2_separation_b << std::endl; fflush(stdout);

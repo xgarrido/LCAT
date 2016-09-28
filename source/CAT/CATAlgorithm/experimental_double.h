@@ -136,10 +136,10 @@ namespace CAT {
     experimental_double operator / (double d, const experimental_double& v1);
 
     // average
-    experimental_double average (const std::vector<experimental_double> vs);
+    experimental_double average (const std::vector<experimental_double> & vs_);
 
     // weighted average
-    experimental_double weighted_average (const std::vector<experimental_double> vs);
+    experimental_double weighted_average (const std::vector<experimental_double> & vs_);
 
   }
 }

@@ -304,7 +304,7 @@ namespace CAT{
             p.set_x(newxa);
             p.set_z(newza);
           } else {
-            p = cb_.angular_average(i1.epa(), i2.epa(), &local_separation);
+            p = cb_.angular_average(i1.epa(), i2.epa(), local_separation);
           }
 
           line newt1(i1.epb(), p);

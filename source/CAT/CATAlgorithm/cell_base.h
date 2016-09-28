@@ -3,11 +3,7 @@
 #define __CATAlgorithm__ICELL
 #include <iostream>
 #include <cmath>
-#include <mybhep/error.h>
 #include <mybhep/utilities.h>
-#include <mybhep/point.h>
-#include <mybhep/hit.h>
-#include <mybhep/system_of_units.h>
 #include <CATAlgorithm/tracking_object.h>
 #include <CATAlgorithm/experimental_point.h>
 #include <CATAlgorithm/experimental_vector.h>
@@ -236,9 +232,12 @@ namespace CAT {
 
     public:
 
-      // experimental_double distance(cell c) const;
-      experimental_point angular_average(experimental_point epa, experimental_point epb, experimental_double* angle);
-      experimental_point build_from_cell(experimental_vector forward, experimental_vector transverse, experimental_double cos, int sign, bool replace_r, double maxr) const;
+      experimental_point angular_average(const experimental_point & epa_, const experimental_point & epb_, experimental_double & angle_);
+      experimental_point build_from_cell(const experimental_vector & forward_,
+                                         const experimental_vector & transverse_,
+                                         const experimental_double & cos_,
+                                         int sign_, bool replace_r_, double max_r_) const;
+
       void dump_point(experimental_point ep) const;
       void dump_point_phi(experimental_point ep) const;
       bool same_quadrant(experimental_point epa, experimental_point epb) const;
