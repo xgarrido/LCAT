@@ -62,7 +62,7 @@ list(APPEND LCAT_HEADERS
   source/CAT/mybhep/gstore.h
   source/CAT/mybhep/hit.h
   source/CAT/mybhep/material.h
-  source/CAT/mybhep/messenger.h
+  # source/CAT/mybhep/messenger.h
   source/CAT/mybhep/mparticle.h
   source/CAT/mybhep/particle_definition.h
   source/CAT/mybhep/particle.h
