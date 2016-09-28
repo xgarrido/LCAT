@@ -50,9 +50,6 @@ namespace CAT {
       // iid number
       int iid_;
 
-      // n3id number
-      int n3id_;
-
       // N3 or SN
       std::string type_;
 
@@ -80,7 +77,6 @@ namespace CAT {
         layer_ = mybhep::default_integer;
         block_ = mybhep::default_integer;
         iid_ = mybhep::default_integer;
-        n3id_ = mybhep::default_integer;
         fast_ = true;
         free_ = false;
         begun_ = false;
@@ -90,69 +86,6 @@ namespace CAT {
 
       //!Default destructor
       virtual ~cell(){};
-
-      //! constructor
-      cell(experimental_point &p, experimental_double r, size_t id, bool fast=true, double probmin=1.e-200){
-        appname_= "cell: ";
-        set_probmin(probmin);
-        ep_ = p;
-        r0_ = r;
-        id_ = id;
-        user_id_ = id;
-        layer_ = mybhep::default_integer;
-        block_ = mybhep::default_integer;
-        iid_ = mybhep::default_integer;
-        n3id_ = mybhep::default_integer;
-        fast_ = fast;
-        set_radius();
-        free_ = false;
-        begun_ = false;
-        type_ ="SN";
-        small_radius_= 0.;
-      }
-
-      //! constructor
-      cell(experimental_point &p, double r, double er, size_t id, bool fast=true, double probmin=1.e-200){
-        appname_= "cell: ";
-        set_probmin(probmin);
-        ep_ = p;
-        r0_.set_value(r);
-        r0_.set_error(er);
-        id_ = id;
-        user_id_ = id;
-        layer_ = mybhep::default_integer;
-        block_ = mybhep::default_integer;
-        iid_ = mybhep::default_integer;
-        n3id_ = mybhep::default_integer;
-        fast_ = fast;
-        set_radius();
-        free_ = false;
-        begun_ = false;
-        type_ ="SN";
-        small_radius_= 0.;
-      }
-
-      //! constructor
-      cell(experimental_point &p, double r, size_t id, bool fast=true){
-        appname_= "cell: ";
-        set_probmin(10.);
-        ep_ = p;
-        r0_.set_value(r);
-        r0_.set_error(mybhep::small_neg);
-        id_ = id;
-        user_id_ = id;
-        layer_ = mybhep::default_integer;
-        block_ = mybhep::default_integer;
-        iid_ = mybhep::default_integer;
-        n3id_ = mybhep::default_integer;
-        fast_ = fast;
-        set_radius();
-        free_ = false;
-        begun_ = false;
-        type_ ="SN";
-        small_radius_= 0.;
-      }
-
 
       /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,
@@ -168,7 +101,7 @@ namespace CAT {
             }
 
           a_out << indent << appname_ << " -------------- " << std::endl;
-          a_out << indent << "id : " << this->id() << " layer " << this->layer() << " block " << this->block() << " iid " << this->iid() << " n3id " << this->n3id() << " fast " << this->fast() << " small " << this->small() << " unknown vertical " << this->unknown_vertical() << std::endl;
+          a_out << indent << "id : " << this->id() << " layer " << this->layer() << " block " << this->block() << " iid " << this->iid() << " fast " << this->fast() << " small " << this->small() << " unknown vertical " << this->unknown_vertical() << std::endl;
           a_out << indent << " point " << std::endl;
           this->ep().dump(a_out,"", indent + "   ");
           a_out << indent << "radius : "; (r()/mybhep::mm).dump(); a_out << " [mm ] " << std::endl;
@@ -249,12 +182,6 @@ namespace CAT {
         iid_ = iid;
       }
 
-      //! set n3id
-      void set_n3id(size_t n3id)
-      {
-        n3id_ = n3id;
-      }
-
       //! set fast flag
       void set_fast(bool fast)
       {
@@ -332,9 +259,6 @@ namespace CAT {
       //!get iid
        int iid() const {return iid_;}
 
-      //!get n3id
-       int n3id() const {return n3id_;}
-
       //!get fast flag
        bool fast() const {return fast_;}
 
@@ -359,22 +283,6 @@ namespace CAT {
         if( type_ == "SN" )
           {
             return iid();
-          }
-        else if( type_ == "N3" )
-          {
-            // for Nemo3, cell number repeats within each sector
-            // cell numbers vary from 0 to N in each layer of each block, where:
-            // block -3 ... N = 11
-            // block -2 ... N = 13
-            // block -1 ... N = 15
-            // block 1 ... N = 17
-            // block 2 ... N = 19
-            // block 3 ... N = 22
-
-            // so to distinguish cells of different sectors I add 100*sector number
-
-            return n3id() + 100*block();
-
           }
 
           std::clog << " problem: unknown cell type " << type_ << std::endl;
@@ -428,10 +336,6 @@ namespace CAT {
           return true;
         }
 
-        if(this->n3id() <= c.n3id()){
-          return false;
-        }
-
 
         return true;
 
@@ -457,11 +361,6 @@ namespace CAT {
         }
         if(c1.iid() > c.iid())
           return true;
-
-
-        if(c1.n3id() < c.n3id()){
-          return false;
-        }
 
 
         return true;

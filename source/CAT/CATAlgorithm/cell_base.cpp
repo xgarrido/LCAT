@@ -154,8 +154,7 @@ namespace topology{
 
     if( block() == c.block() &&
         layer() == c.layer() &&
-        iid() == c.iid() &&
-        n3id() == c.n3id() )
+        iid() == c.iid())
       return true;
 
     return false;
