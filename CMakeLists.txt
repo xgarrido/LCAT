@@ -46,34 +46,8 @@ list(APPEND LCAT_HEADERS
   source/CAT/CATAlgorithm/Sequence.h
   source/CAT/CATAlgorithm/sequentiator.h
   source/CAT/CATAlgorithm/tracked_data_base.h
-  source/CAT/CATAlgorithm/Tracked_data.h
   source/CAT/CATAlgorithm/tracking_object.h
   source/CAT/CATAlgorithm/utilities.h
-  source/CAT/mybhep/axis.h
-  source/CAT/mybhep/bprint.h
-  source/CAT/mybhep/bproperties.h
-  source/CAT/mybhep/brw.h
-  source/CAT/mybhep/clhep.h
-  source/CAT/mybhep/container_algorithm.h
-  source/CAT/mybhep/control_panel.h
-  source/CAT/mybhep/dvector.h
-  source/CAT/mybhep/engine.h
-  source/CAT/mybhep/error.h
-  source/CAT/mybhep/event.h
-  source/CAT/mybhep/gstore.h
-  source/CAT/mybhep/hit.h
-  source/CAT/mybhep/material.h
-  # source/CAT/mybhep/messenger.h
-  source/CAT/mybhep/mparticle.h
-  source/CAT/mybhep/particle_definition.h
-  source/CAT/mybhep/particle.h
-  source/CAT/mybhep/point.h
-  source/CAT/mybhep/ray.h
-  source/CAT/mybhep/sparticle.h
-  source/CAT/mybhep/store.h
-  source/CAT/mybhep/system_of_units.h
-  source/CAT/mybhep/track.h
-  source/CAT/mybhep/tstore.h
   )
 
 list(APPEND LCAT_SOURCES
@@ -95,23 +69,12 @@ list(APPEND LCAT_SOURCES
   source/CAT/CATAlgorithm/joint.cpp
   source/CAT/CATAlgorithm/LinearRegression.cpp
   source/CAT/CATAlgorithm/line.cpp
-  source/CAT/CATAlgorithm/mparticle.cpp
   source/CAT/CATAlgorithm/node.cpp
   source/CAT/CATAlgorithm/plane.cpp
   source/CAT/CATAlgorithm/scenario.cpp
   source/CAT/CATAlgorithm/sequence_base.cpp
   source/CAT/CATAlgorithm/sequentiator.cpp
   source/CAT/CATAlgorithm/tracking_object.cpp
-  source/CAT/mybhep/axis.cpp
-  source/CAT/mybhep/brw.cpp
-  source/CAT/mybhep/event.cpp
-  source/CAT/mybhep/hit.cpp
-  source/CAT/mybhep/material.cpp
-  source/CAT/mybhep/particle.cpp
-  source/CAT/mybhep/particle_definition.cpp
-  source/CAT/mybhep/ray.cpp
-  source/CAT/mybhep/sparticle.cpp
-  source/CAT/mybhep/track.cpp
   )
 
 # Build a dynamic library from our sources

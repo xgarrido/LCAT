@@ -1,19 +1,19 @@
 /* -*- mode: c++ -*- */
 
 #include <CATAlgorithm/circle_base.h>
+#include <CATAlgorithm/utilities.h>
 
 namespace CAT{
   namespace topology{
 
     using namespace std;
-    using namespace mybhep;
 
     //!Default constructor
     circle::circle(double probmin)
     {
       appname_= "circle: ";
       center_ = experimental_point();
-      radius_ = experimental_double(small_neg, small_neg);
+      radius_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
       set_probmin(probmin);
     }
 
@@ -198,25 +198,25 @@ namespace CAT{
         phi_ref = phi.value();
         phi = phi_of_point(*ip, phi_ref);
         phis.push_back(phi);
-        double weight = 1/square(ip->y().error());
+        double weight = 1/std::pow(ip->y().error(),2);
         weight = 1.;
         Sy += ip->y().value()*weight;
-        Sy2 += square(ip->y().value())*weight;
+        Sy2 += std::pow(ip->y().value(),2)*weight;
         Sphi += phi.value()*weight;
         Syphi += ip->y().value()*phi.value()*weight;
         Sw += weight;
       }
 
-      double det = 1./(Sy2*Sw - square(Sy));
+      double det = 1./(Sy2*Sw - Sy*Sy);
 
       double one_over_pi = (Syphi*Sw - Sy*Sphi)/det;
       double min_ce_over_pi = average(phis).value() - average(ys).value()*one_over_pi;
-      double one_over_pi_err = square(Sw)/(Sy2 - square(Sy));
+      double one_over_pi_err = Sw*Sw/(Sy2 - Sy*Sy);
       double min_ce_over_pi_err = one_over_pi_err*Sy2/Sw;
       double pi = 1./one_over_pi;
       double ce = - min_ce_over_pi/one_over_pi;
-      double errpi = sqrt(one_over_pi_err)/square(one_over_pi);
-      double errce = ce*sqrt(one_over_pi_err/square(one_over_pi) + min_ce_over_pi_err/square(min_ce_over_pi));
+      double errpi = sqrt(one_over_pi_err)/std::pow(one_over_pi,2);
+      double errce = ce*sqrt(one_over_pi_err/std::pow(one_over_pi,2) + min_ce_over_pi_err/std::pow(min_ce_over_pi,2));
 
       *_pitch = experimental_double(pi, errpi);
       *_center = experimental_double(ce, errce);
@@ -334,9 +334,9 @@ namespace CAT{
 
       }
 
-      if( ep->x().value() == small_neg ||
-          ep->y().value() == small_neg ||
-          ep->z().value() == small_neg )
+      if( ep->x().value() == mybhep::small_neg ||
+          ep->y().value() == mybhep::small_neg ||
+          ep->z().value() == mybhep::small_neg )
         return false;
 
       if( std::isnan(ep->x().value())  || std::isnan(ep->y().value()) || std::isnan(ep->z().value()) ) return false;
@@ -395,7 +395,7 @@ namespace CAT{
       // 2ad = R0^2 - R1^2 + d^2
       experimental_double a=(experimental_square(radius()) - experimental_square(c.radius()) + experimental_square(dist))/(dist*2.);
       experimental_point middle = (center() + (c.center() - center())*a/dist).point_from_vector();
-      experimental_double h=experimental_sqrt(experimental_fabs(experimental_square(radius()) - square(a)));
+      experimental_double h=experimental_sqrt(experimental_fabs(experimental_square(radius()) - a*a));
 
 
 
@@ -413,11 +413,11 @@ namespace CAT{
       double initial_phi1 = _phi.value();
       double initial_phi2 = _phi.value();
       double phi1 = phi_of_point(p1).value();
-      fix_angles(&phi1, &initial_phi1);
+      mybhep::fix_angles(phi1, initial_phi1);
       double dphi1 = std::abs(phi1 - initial_phi1);
       experimental_point p2=(middle - transverse_axis*h).point_from_vector();
       double phi2 = phi_of_point(p2, phi1).value();
-      fix_angles(&phi2, &initial_phi2);
+      mybhep::fix_angles(phi2, initial_phi2);
       double dphi2 = std::abs(phi2 - initial_phi2);
 
       // pick closest to initial point of extrapolation
@@ -426,9 +426,9 @@ namespace CAT{
       else
         *ep = p2;
 
-      if( ep->x().value() == small_neg ||
-          ep->y().value() == small_neg ||
-          ep->z().value() == small_neg ){
+      if( ep->x().value() == mybhep::small_neg ||
+          ep->y().value() == mybhep::small_neg ||
+          ep->z().value() == mybhep::small_neg ){
         // if( print_level() >= mybhep::VVERBOSE )
         //   std::clog << " can't extrapolate circle to circle: ep is small_neg " << std::endl;
         return false;
@@ -535,7 +535,7 @@ namespace CAT{
       experimental_double _radius = experimental_sqrt(experimental_square(Xc - epa.x()) + experimental_square(Zc - epa.z()));
 
       if( std::isnan(_radius.value()) )
-        _radius.set_value(small_neg);
+        _radius.set_value(mybhep::small_neg);
 
       experimental_double dist = epc.distance(epa);
 
@@ -605,7 +605,7 @@ namespace CAT{
         Svvv += experimental_cube(v);
       }
 
-      experimental_double det = Suu*Svv - square(Suv);
+      experimental_double det = Suu*Svv - Suv*Suv;
       experimental_double suma = (Suuu + Suvv)/2.;
       experimental_double sumb = (Svvv + Suuv)/2.;
       experimental_double sum = (Suu + Suv)/xs.size();
@@ -615,7 +615,7 @@ namespace CAT{
       experimental_double xc = uc + xave;
       experimental_double zc = vc + zave;
       experimental_point center(xc, experimental_double(0.,0.), zc);
-      experimental_double radius = experimental_sqrt( square(uc) + square(vc) + sum  );
+      experimental_double radius = experimental_sqrt(uc*uc + vc*vc + sum);
 
       h = circle(center,radius);
       return h;

@@ -2,9 +2,6 @@
 #ifndef CAT_SEQUENTIATOR_H
 #define CAT_SEQUENTIATOR_H 1
 
-#include <mybhep/utilities.h>
-#include <CLHEP/Units/SystemOfUnits.h>
-#include <mybhep/system_of_units.h>
 #include <boost/cstdint.hpp>
 
 #include <iostream>
@@ -373,8 +370,8 @@ namespace CAT {
                             */
 
     int num_blocks;
-    mybhep::dvector<double> planes_per_block ;
-    mybhep::dvector<double> gaps_Z;
+    std::vector<double> planes_per_block ;
+    std::vector<double> gaps_Z;
     int num_cells_per_plane;
     double SOURCE_thick;
     double bfield;
@@ -390,7 +387,6 @@ namespace CAT {
     bool _initialized_;           //!< Initialization status
 
 
-    std::vector<mybhep::particle*> parts;
     int NFAMILY, NCOPY;
 
     topology::cluster * local_cluster_;

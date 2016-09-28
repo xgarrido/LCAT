@@ -4,14 +4,9 @@
 
 #include <iostream>
 #include <cmath>
-#include <mybhep/error.h>
-#include <mybhep/utilities.h>
-#include <mybhep/point.h>
 #include <CATAlgorithm/experimental_point.h>
 #include <CATAlgorithm/experimental_vector.h>
 #include <CATAlgorithm/plane.h>
-#include <mybhep/hit.h>
-#include <mybhep/system_of_units.h>
 
 
 namespace CAT {

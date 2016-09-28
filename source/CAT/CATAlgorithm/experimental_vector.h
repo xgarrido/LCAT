@@ -3,8 +3,6 @@
 #define __CATAlgorithm__IEVEC
 #include <iostream>
 #include <cmath>
-#include <mybhep/error.h>
-#include <mybhep/utilities.h>
 #include <CATAlgorithm/experimental_double.h>
 #include <CATAlgorithm/experimental_point.h>
 

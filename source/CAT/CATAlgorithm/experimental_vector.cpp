@@ -1,5 +1,10 @@
 /* -*- mode: c++ -*- */
 #include <CATAlgorithm/experimental_vector.h>
+#include <CATAlgorithm/utilities.h>
+
+// Third party
+// - Bayeux/datatools:
+#include <bayeux/datatools/clhep_units.h>
 
 namespace CAT{
   namespace topology{
@@ -73,9 +78,9 @@ namespace CAT{
           }
 
         a_out << indent << appname_ << std::endl;
-        a_out << indent << " x: "; (x()/mybhep::mm).dump(); a_out << " [mm ] " << std::endl;
-        a_out << indent << " y: "; (y()/mybhep::mm).dump(); a_out << " [mm ] " << std::endl;
-        a_out << indent << " z: "; (z()/mybhep::mm).dump(); a_out << " [mm ] " << std::endl;
+        a_out << indent << " x: "; (x()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
+        a_out << indent << " y: "; (y()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
+        a_out << indent << " z: "; (z()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
 
         return;
       }
@@ -334,7 +339,7 @@ namespace CAT{
       experimental_double p2 = v.phi();
       double phi1 = p1.value();
       double phi2 = p2.value();
-      mybhep::fix_angles(&phi1, &phi2);
+      mybhep::fix_angles(phi1, phi2);
       result.set_value(phi2 - phi1);
       result.set_error(std::sqrt(mybhep::square(p1.error()) +
                                  mybhep::square(p2.error()) ));
@@ -350,7 +355,7 @@ namespace CAT{
       experimental_double t2 = v.theta();
       double theta1 = t1.value();
       double theta2 = t2.value();
-      mybhep::fix_angles(&theta1, &theta2);
+      mybhep::fix_angles(theta1, theta2);
       result.set_value(theta2 - theta1);
       result.set_error(std::sqrt(mybhep::square(t1.error()) +
                                  mybhep::square(t2.error()) ));

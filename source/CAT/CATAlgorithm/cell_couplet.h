@@ -3,10 +3,6 @@
 #define __CATAlgorithm__ICELLCOUP
 #include <iostream>
 #include <cmath>
-#include <mybhep/error.h>
-#include <mybhep/utilities.h>
-#include <mybhep/point.h>
-#include <mybhep/clhep.h>
 #include <CATAlgorithm/experimental_point.h>
 #include <CATAlgorithm/experimental_vector.h>
 #include <CATAlgorithm/cell_base.h>

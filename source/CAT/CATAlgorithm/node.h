@@ -6,7 +6,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <mybhep/utilities.h>
 #include <CATAlgorithm/experimental_point.h>
 #include <CATAlgorithm/experimental_vector.h>
 #include <CATAlgorithm/cell_base.h>

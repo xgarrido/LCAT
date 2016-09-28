@@ -11,8 +11,8 @@ namespace topology{
                                            const experimental_double & cos_,
                                            int sign_,
                                            bool replace_r_,
-                                           double max_r_) const {
-
+                                           double max_r_) const
+  {
     const experimental_double sin = experimental_sin(experimental_acos(cos_))*sign_;
     experimental_double radius = r();
     if (replace_r_) {
@@ -24,8 +24,8 @@ namespace topology{
   }
 
 
-  experimental_point cell::angular_average(const experimental_point & epa_, const experimental_point & epb_, experimental_double & angle_){
-
+  experimental_point cell::angular_average(const experimental_point & epa_, const experimental_point & epb_, experimental_double & angle_)
+  {
     if (small()){
       angle_.set_value(0.);
       angle_.set_error(0.1); // fictitious value to avoid divergences
@@ -41,7 +41,7 @@ namespace topology{
     double rephi1 = phi1.value();
     double rephi2 = phi2.value();
 
-    fix_angles(&rephi1, &rephi2);
+    fix_angles(rephi1, rephi2);
 
     phi1.set_value(rephi1);
     phi2.set_value(rephi2);
@@ -91,43 +91,20 @@ namespace topology{
   }
 
 
-  void cell::dump_point(experimental_point epp)const{
-
-    experimental_vector v(ep(), epp);
-
-    std::clog << " x: "; (v.x()).dump();
-    std::clog << " y: "; (v.y()).dump();
-    std::clog << " z: "; (v.z()).dump();
-    std::clog << " phi: "; (v.phi()*180./M_PI).dump();
-
-
-  }
-
-
-  void cell::dump_point_phi(experimental_point epp)const{
-
-    experimental_vector v(ep(), epp);
-    std::clog << " phi: "; (v.phi()*180./M_PI).dump();
-
-
-  }
-
-
-  bool cell::same_quadrant(experimental_point epa, experimental_point epb)const{
+  bool cell::same_quadrant(const experimental_point & epa_, const experimental_point & epb_) const
+  {
     // check if the angular position of points epa and epb
     // is less than 90 degrees apart around the cell
 
-    experimental_double initial_phi1 = experimental_vector(ep(), epa).phi();
-    experimental_double initial_phi2 = experimental_vector(ep(), epb).phi();
+    experimental_double initial_phi1 = experimental_vector(ep(), epa_).phi();
+    experimental_double initial_phi2 = experimental_vector(ep(), epb_).phi();
 
     double re_initial_phi1 = initial_phi1.value();
     double re_initial_phi2 = initial_phi2.value();
-    fix_angles(&re_initial_phi1, &re_initial_phi2);
+    fix_angles(re_initial_phi1, re_initial_phi2);
 
-    if( std::abs(re_initial_phi1 - re_initial_phi2) > M_PI/2. ) return false;
-
+    if (std::abs(re_initial_phi1 - re_initial_phi2) > M_PI/2.) return false;
     return true;
-
   }
 
   bool cell::same_cell(topology::cell c)const{

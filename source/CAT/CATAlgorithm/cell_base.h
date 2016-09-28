@@ -1,12 +1,17 @@
 /* -*- mode: c++ -*- */
 #ifndef __CATAlgorithm__ICELL
 #define __CATAlgorithm__ICELL
+
 #include <iostream>
 #include <cmath>
-#include <mybhep/utilities.h>
+#include <CATAlgorithm/utilities.h>
 #include <CATAlgorithm/tracking_object.h>
 #include <CATAlgorithm/experimental_point.h>
 #include <CATAlgorithm/experimental_vector.h>
+
+// Third party
+// - Bayeux/datatools:
+#include <bayeux/datatools/clhep_units.h>
 
 namespace CAT {
 
@@ -92,9 +97,9 @@ namespace CAT {
           a_out << indent << "id : " << this->id() << " layer " << this->layer() << " block " << this->block() << " iid " << this->iid() << " fast " << this->fast() << " small " << this->small() << std::endl;
           a_out << indent << " point " << std::endl;
           this->ep().dump(a_out,"", indent + "   ");
-          a_out << indent << "radius : "; (r()/mybhep::mm).dump(); a_out << " [mm ] " << std::endl;
+          a_out << indent << "radius : "; (r()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
           if( small() && fast() ){
-            a_out << indent << "original radius : "; (r0()/mybhep::mm).dump(); a_out << " [mm ] " << std::endl;
+            a_out << indent << "original radius : "; (r0()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
           }
           a_out << indent << " -------------- " << std::endl;
 
@@ -238,9 +243,8 @@ namespace CAT {
                                          const experimental_double & cos_,
                                          int sign_, bool replace_r_, double max_r_) const;
 
-      void dump_point(experimental_point ep) const;
-      void dump_point_phi(experimental_point ep) const;
-      bool same_quadrant(experimental_point epa, experimental_point epb) const;
+      bool same_quadrant(const experimental_point & epa_, const experimental_point & epb_) const;
+
       bool same_cell(topology::cell c) const;
       bool intersect(topology::cell c) const;
 

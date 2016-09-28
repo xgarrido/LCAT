@@ -1,20 +1,20 @@
 /* -*- mode: c++ -*- */
 
 #include <CATAlgorithm/line.h>
+#include <CATAlgorithm/utilities.h>
 
 namespace CAT {
 
   namespace topology{
 
     using namespace std;
-    using namespace mybhep;
 
     //!Default constructor
     line::line(double probmin)
     {
       appname_= "line: ";
-      forward_axis_ = experimental_vector(small_neg,small_neg,small_neg,
-                                          small_neg, small_neg, small_neg);
+      forward_axis_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
+                                          mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
       used_ = false;
       set_probmin(probmin);
     }
@@ -137,12 +137,12 @@ namespace CAT {
     experimental_double phi_kink = kink_phi(l);
     experimental_double theta_kink = kink_theta(l);
 
-    double result = square(phi_kink.value()/phi_kink.error()) ;
+    double result = std::pow(phi_kink.value()/phi_kink.error(),2);
 
     *chi2_just_phi = result;
 
     if( use_theta_kink ){
-      result += square(theta_kink.value()/theta_kink.error());
+      result += std::pow(theta_kink.value()/theta_kink.error(),2);
     }
 
     // if( print_level() > mybhep::VERBOSE ){

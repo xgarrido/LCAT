@@ -1,6 +1,5 @@
 #include "CATAlgorithm/sequentiator.h"
 #include <vector>
-#include <mybhep/system_of_units.h>
 #include <sys/time.h>
 #include <cmath>
 
@@ -243,9 +242,9 @@ namespace CAT {
 
   void sequentiator::make_name(topology::sequence & sequence_)
   {
-    std::string number = mybhep::to_string(NFAMILY)+"_"+mybhep::to_string(NCOPY);
-    std::string name = "track_"+number;
-    sequence_.set_name(name);
+    std::ostringstream oss;
+    oss << "track_" << NFAMILY << "_" << NCOPY;
+    sequence_.set_name(oss.str());
     return;
   }
 
@@ -658,7 +657,9 @@ namespace CAT {
          iseq != sequences_.end(); ++iseq){
 
       const size_t ipart = iseq - sequences_.begin();
-      const size_t this_family = mybhep::int_from_string(iseq->family());
+      std::istringstream iss(iseq->family());
+      size_t this_family;
+      iss >> this_family;
 
       found = false;
       for(size_t i=0; i<families_.size(); i++)
@@ -1865,7 +1866,6 @@ namespace CAT {
 
     std::vector<topology::sequence> newseqs;
 
-    size_t ifam;
     size_t jmin;
     bool invertA, invertB, first;
     for(std::vector<topology::sequence>::iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq){
@@ -1873,7 +1873,11 @@ namespace CAT {
       if( late() )
         return false;
 
-      ifam = mybhep::int_from_string(iseq->family());
+      size_t ifam;
+      {
+        std::istringstream iss(iseq->family());
+        iss >> ifam;
+      }
 
       if( matched[ifam] ) continue;
 
@@ -1904,7 +1908,9 @@ namespace CAT {
             //      matched[ifam] = true;
             first = false;
           }
-          size_t ifa = mybhep::int_from_string(sequences_[jmin].family());
+          size_t ifa;
+          std::istringstream iss(sequences_[jmin].family());
+          iss >> ifa;
           matched[ifa] = true;
           DT_LOG_DEBUG(get_logging_priority(), "Setting family " << ifa << " as used for matching");
 
@@ -1920,7 +1926,10 @@ namespace CAT {
     DT_LOG_DEBUG(get_logging_priority(), "Made matching through gaps");
 
     for(std::vector<topology::sequence>::iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq){
-      if( !matched[mybhep::int_from_string(iseq->family())] )
+      size_t ifam;
+      std::istringstream iss(iseq->family());
+      iss >> ifam;
+      if( !matched[ifam] )
         newseqs.push_back(*iseq);
     }
 

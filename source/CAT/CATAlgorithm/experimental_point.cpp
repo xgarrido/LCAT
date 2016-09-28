@@ -1,4 +1,9 @@
 #include <CATAlgorithm/experimental_point.h>
+#include <CATAlgorithm/utilities.h>
+
+// Third party
+// - Bayeux/datatools:
+#include <bayeux/datatools/clhep_units.h>
 
 namespace CAT{
 
@@ -40,41 +45,6 @@ namespace CAT{
         set_radius();
       }
 
-      //! constructor
-      experimental_point::experimental_point(const mybhep::point &p, double ex, double ey, double ez){
-        appname_ = "experimental_point: ";
-        x_.set_value(p.x());
-        y_.set_value(p.y());
-        z_.set_value(p.z());
-        set_radius();
-        x_.set_error(ex);
-        y_.set_error(ey);
-        z_.set_error(ez);
-
-      }
-
-      //! constructor from bhep hit
-      experimental_point::experimental_point(const mybhep::hit &hit){
-        appname_ = "experimental_point: ";
-        std::vector<float> cellpos;
-        mybhep::vector_from_string(hit.fetch_property("CELL_POS"), cellpos);
-        x_.set_value(cellpos[0]);
-        y_.set_value(cellpos[1]);
-        z_.set_value(cellpos[2]);
-        set_radius();
-
-        x_.set_error(0.); // exact position of center of wire
-        z_.set_error(0.);
-        y_.set_error(8.*mybhep::mm); // transverse error (mm)
-
-        if( hit.find_property("ERRY") ){
-          double erry = mybhep::double_from_string(hit.fetch_property("ERRY"));
-          if(! std::isnan(erry) && !std::isinf(erry) )
-            y_.set_error(erry);
-        }
-
-      }
-
       /*** dump ***/
       void experimental_point::dump (std::ostream & a_out,
                          const std::string & a_title  ,
@@ -89,25 +59,12 @@ namespace CAT{
             }
 
           a_out << indent << appname_ << std::endl;
-          a_out << indent << " x : "; (x()/mybhep::mm).dump(); a_out << " [mm] " << std::endl;
-          a_out << indent << " y : "; (y()/mybhep::mm).dump(); a_out << " [mm] " << std::endl;
-          a_out << indent << " z : "; (z()/mybhep::mm).dump(); a_out << " [mm] " << std::endl;
+          a_out << indent << " x : "; (x()/CLHEP::mm).dump(); a_out << " [mm] " << std::endl;
+          a_out << indent << " y : "; (y()/CLHEP::mm).dump(); a_out << " [mm] " << std::endl;
+          a_out << indent << " z : "; (z()/CLHEP::mm).dump(); a_out << " [mm] " << std::endl;
 
           return;
         }
-      }
-
-
-      //! set point and errors
-      void experimental_point::set(const mybhep::point &p, double ex,double ey, double ez)
-      {
-        x_.set_value(p.x());
-        y_.set_value(p.y());
-        z_.set_value(p.z());
-        set_radius();
-        x_.set_error(ex);
-        y_.set_error(ey);
-        z_.set_error(ez);
       }
 
 
@@ -184,12 +141,12 @@ namespace CAT{
       {
         experimental_double result;
 
-        result.set_value( std::sqrt(mybhep::square(x_.value()-p2.x().value())
-                               + mybhep::square(y_.value()-p2.y().value()) +
-                               mybhep::square(z_.value()-p2.z().value())));
-        result.set_error( std::sqrt( mybhep::square(x_.value()*x_.error()) + mybhep::square(p2.x().value()*p2.x().error()) +
-                                mybhep::square(y_.value()*y_.error()) + mybhep::square(p2.y().value()*p2.y().error()) +
-                                mybhep::square(z_.value()*z_.error()) + mybhep::square(p2.z().value()*p2.z().error()))/result.value());
+        result.set_value(std::sqrt(std::pow(x_.value()-p2.x().value(),2) +
+                                   std::pow(y_.value()-p2.y().value(),2) +
+                                   std::pow(z_.value()-p2.z().value(),2)));
+        result.set_error(std::sqrt(std::pow(x_.value()*x_.error(),2) + std::pow(p2.x().value()*p2.x().error(),2) +
+                                   std::pow(y_.value()*y_.error(),2) + std::pow(p2.y().value()*p2.y().error(),2) +
+                                   std::pow(z_.value()*z_.error(),2) + std::pow(p2.z().value()*p2.z().error(),2))/result.value());
 
         return result;
       }
@@ -200,10 +157,9 @@ namespace CAT{
       {
         experimental_double result;
 
-        result.set_value( std::sqrt(mybhep::square(x_.value()-p2.x().value())+
-                               mybhep::square(z_.value()-p2.z().value())));
-        result.set_error( std::sqrt( mybhep::square(x_.value()*x_.error()) + mybhep::square(p2.x().value()*p2.x().error()) +
-                                mybhep::square(z_.value()*z_.error()) + mybhep::square(p2.z().value()*p2.z().error()))/result.value());
+        result.set_value(std::hypot(x_.value()-p2.x().value(),z_.value()-p2.z().value()));
+        result.set_error(std::sqrt(std::pow(x_.value()*x_.error(),2) + std::pow(p2.x().value()*p2.x().error(),2) +
+                                   std::pow(z_.value()*z_.error(),2) + std::pow(p2.z().value()*p2.z().error(),2))/result.value());
 
         return result;
       }
@@ -215,10 +171,9 @@ namespace CAT{
         //  dr/dx = x/r,
         //  dr/dz = z/r
 
-        double rr = std::sqrt(mybhep::square(x_.value()) + mybhep::square(z_.value()));
+        double rr = std::hypot(x_.value(), z_.value());
         if( std::isnan(rr) ) rr = mybhep::small_neg;
-        double err = std::sqrt(mybhep::square(x_.value()*x_.error())
-                          + mybhep::square(z_.value()*z_.error()))/rr;
+        double err = std::hypot(x_.value()*x_.error(), z_.value()*z_.error())/rr;
         if( std::isnan(err) ) err = mybhep::small_neg;
 
         radius_.set_value(rr);

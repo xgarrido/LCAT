@@ -1,6 +1,10 @@
 /* -*- mode: c++ -*- */
 
+// Ourselves
 #include <CATAlgorithm/cell_triplet.h>
+
+// Standard library
+#include <algorithm>
 
 // Third party
 // - Bayeux/datatools:
@@ -62,29 +66,29 @@ namespace CAT{
     }
 
     /*** dump ***/
-    void cell_triplet::dump_joint (joint j,
-                                   std::ostream & a_out,
-                                   const std::string & a_title,
-                                   const std::string & a_indent,
-                                   bool /* a_inherit*/) const{
-      std::string indent;
-      if (! a_indent.empty ()) indent = a_indent;
-      if (! a_title.empty ())
-        {
-          a_out << indent << a_title << std::endl;
-        }
+    // void cell_triplet::dump_joint (joint j,
+    //                                std::ostream & a_out,
+    //                                const std::string & a_title,
+    //                                const std::string & a_indent,
+    //                                bool /* a_inherit*/) const{
+    //   std::string indent;
+    //   if (! a_indent.empty ()) indent = a_indent;
+    //   if (! a_title.empty ())
+    //     {
+    //       a_out << indent << a_title << std::endl;
+    //     }
 
-      a_out << indent << appname_ << " -------------- " << std::endl;
-      a_out << indent << " first point " << std::endl;
-      this->ca().dump_point(j.epa());
-      a_out << indent << " second point " << std::endl;
-      this->cb().dump_point(j.epb());
-      a_out << indent << " third point " << std::endl;
-      this->cc().dump_point(j.epc());
-      a_out << indent << " -------------- " << std::endl;
+    //   // a_out << indent << appname_ << " -------------- " << std::endl;
+    //   // a_out << indent << " first point " << std::endl;
+    //   // this->ca().dump_point(j.epa());
+    //   // a_out << indent << " second point " << std::endl;
+    //   // this->cb().dump_point(j.epb());
+    //   // a_out << indent << " third point " << std::endl;
+    //   // this->cc().dump_point(j.epc());
+    //   // a_out << indent << " -------------- " << std::endl;
 
-      return;
-    }
+    //   return;
+    // }
 
     //! set cells
     void cell_triplet::set(const cell_couplet &cca, const cell_couplet &ccb){
@@ -214,13 +218,13 @@ namespace CAT{
 
       if (local_priority >= datatools::logger::PRIO_DEBUG) {
         DT_LOG_DEBUG(local_priority, "Angles of tangents " << ca_.id() << " -> " << cb_.id() << " :");
-        for (std::vector<line>::const_iterator i1 = t1.begin(); i1!=t1.end(); ++i1){
-          std::clog << i1 - t1.begin() << ":  phi "; ca_.dump_point_phi(i1->epb()); std::clog << " -> "; cb_.dump_point_phi(i1->epa()); std::clog << " " << std::endl;
-        }
+        // for (std::vector<line>::const_iterator i1 = t1.begin(); i1!=t1.end(); ++i1){
+        //   std::clog << i1 - t1.begin() << ":  phi "; ca_.dump_point_phi(i1->epb()); std::clog << " -> "; cb_.dump_point_phi(i1->epa()); std::clog << " " << std::endl;
+        // }
         std::clog << appname_ << " angles of tangents " << cb_.id() << " -> " << cc_.id() << " :" << std::endl;
-        for(std::vector<line>::const_iterator i2=t2.begin(); i2!=t2.end(); ++i2){
-          std::clog << i2 - t2.begin() << ":  phi ";  cb_.dump_point_phi(i2->epa()); std::clog << " -> " ; cc_.dump_point_phi(i2->epb()); std::clog << " " << std::endl;
-        }
+        // for(std::vector<line>::const_iterator i2=t2.begin(); i2!=t2.end(); ++i2){
+        //   std::clog << i2 - t2.begin() << ":  phi ";  cb_.dump_point_phi(i2->epa()); std::clog << " -> " ; cc_.dump_point_phi(i2->epb()); std::clog << " " << std::endl;
+        // }
         if( ca_.small() ) std::clog << " cell " << ca_.id() << " is small " << std::endl;
         if( cb_.small() ) std::clog << " cell " << cb_.id() << " is small " << std::endl;
         if( cc_.small() ) std::clog << " cell " << cc_.id() << " is small " << std::endl;
@@ -311,13 +315,13 @@ namespace CAT{
           line newt2(p, i2.epb());
           const experimental_double phi_kink = newt1.kink_phi(newt2);
 
-          if (local_priority >= datatools::logger::PRIO_DEBUG) {
-            std::clog << " p1: phi = "; ca_.dump_point(i1.epb()); std::clog << " " << std::endl;
-            std::clog << " p2 average point: "; cb_.dump_point(p); std::clog << " " << std::endl;
-            std::clog << " p3: "; cc_.dump_point(i2.epb()); std::clog << " " << std::endl;
-            std::clog << "    separation: "; (local_separation*180/M_PI).dump(); std::clog << " " << std::endl;
-            std::clog << "    phi_kink: " << (phi_kink.value()*180/M_PI) << " " << std::endl;
-          }
+          // if (local_priority >= datatools::logger::PRIO_DEBUG) {
+          //   std::clog << " p1: phi = "; ca_.dump_point(i1.epb()); std::clog << " " << std::endl;
+          //   std::clog << " p2 average point: "; cb_.dump_point(p); std::clog << " " << std::endl;
+          //   std::clog << " p3: "; cc_.dump_point(i2.epb()); std::clog << " " << std::endl;
+          //   std::clog << "    separation: "; (local_separation*180/M_PI).dump(); std::clog << " " << std::endl;
+          //   std::clog << "    phi_kink: " << (phi_kink.value()*180/M_PI) << " " << std::endl;
+          // }
 
           bool ok = false;
 

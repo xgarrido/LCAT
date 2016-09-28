@@ -5,7 +5,6 @@
 
 #include <iostream>
 #include <string>
-#include <mybhep/utilities.h>
 #include <CATAlgorithm/tracking_object.h>
 #include <CATAlgorithm/experimental_vector.h>
 #include <CATAlgorithm/experimental_point.h>

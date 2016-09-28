@@ -3,9 +3,6 @@
 #define __CATAlgorithm__joint_h 1
 #include <iostream>
 #include <cmath>
-#include <mybhep/error.h>
-#include <mybhep/utilities.h>
-#include <mybhep/point.h>
 #include <CATAlgorithm/experimental_point.h>
 #include <CATAlgorithm/experimental_vector.h>
 #include <CATAlgorithm/tracking_object.h>

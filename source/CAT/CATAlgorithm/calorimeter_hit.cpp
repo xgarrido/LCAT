@@ -2,7 +2,7 @@
 
 
 #include <CATAlgorithm/calorimeter_hit.h>
-#include <mybhep/system_of_units.h>
+#include <CATAlgorithm/utilities.h>
 
 namespace CAT {
   namespace topology {

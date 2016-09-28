@@ -3,11 +3,6 @@
 #define __CATAlgorithm__IEPOINT
 #include <iostream>
 #include <cmath>
-#include <mybhep/error.h>
-#include <mybhep/utilities.h>
-#include <mybhep/point.h>
-#include <mybhep/hit.h>
-#include <mybhep/system_of_units.h>
 #include <CATAlgorithm/experimental_double.h>
 
 namespace CAT{
@@ -49,20 +44,11 @@ namespace CAT{
       //! constructor from coordinates with error
       experimental_point(double x, double y, double z, double ex, double ey, double ez);
 
-      //! constructor
-      experimental_point(const mybhep::point &p, double ex, double ey, double ez);
-
-      //! constructor from bhep hit
-      experimental_point(const mybhep::hit & hit);
-
       /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,
                          const std::string & a_title  = "",
                          const std::string & a_indent = "",
                          bool a_inherit               = false) const;
-
-      //! set point and errors
-      void set(const mybhep::point &p, double ex,double ey, double ez);
 
       //! set x
       void set_x(const experimental_double &x);
@@ -87,13 +73,13 @@ namespace CAT{
 
       //!get experimental y
         const experimental_double& y() const;
- 
+
       //!get experimental z
         const experimental_double& z() const;
 
       //!get experimental radius
         const experimental_double& radius() const;
- 
+
       //! distance
         experimental_double distance(const experimental_point& p2) const;
 

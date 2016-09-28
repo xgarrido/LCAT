@@ -2,28 +2,25 @@
 
 #include <iostream>
 #include <cmath>
-#include <mybhep/error.h>
-#include <mybhep/utilities.h>
-#include <mybhep/point.h>
 #include <CATAlgorithm/experimental_point.h>
 #include <CATAlgorithm/experimental_vector.h>
 #include <CATAlgorithm/plane.h>
+#include <CATAlgorithm/utilities.h>
 
 
 namespace CAT {
   namespace topology{
 
     using namespace std;
-    using namespace mybhep;
 
     //!Default constructor
     plane::plane(double probmin)
     {
       appname_= "plane: ";
-      sizes_ = experimental_vector(small_neg,small_neg,small_neg,
-                                   small_neg, small_neg, small_neg);
-      norm_ = experimental_vector(small_neg,small_neg,small_neg,
-                                  small_neg, small_neg, small_neg);
+      sizes_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
+                                   mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+      norm_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
+                                  mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
       set_probmin(probmin);
       type_="undefined";
     }

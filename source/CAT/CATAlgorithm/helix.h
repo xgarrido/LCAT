@@ -3,9 +3,6 @@
 #define __CATAlgorithm__IHELIX
 #include <iostream>
 #include <cmath>
-#include <mybhep/error.h>
-#include <mybhep/utilities.h>
-#include <mybhep/point.h>
 #include <CATAlgorithm/experimental_point.h>
 #include <CATAlgorithm/experimental_vector.h>
 #include <CATAlgorithm/circle_base.h>
@@ -197,7 +194,7 @@ namespace CAT {
         double vphi1 = phi1.value();
         double vphi2 = phi2.value();
 
-        mybhep::fix_angles(&vphi1, &vphi2);
+        mybhep::fix_angles(vphi1, vphi2);
 
         dp.set_value(vphi2 - vphi1);
         return dp;

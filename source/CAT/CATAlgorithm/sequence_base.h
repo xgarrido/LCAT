@@ -4,12 +4,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
-#include <stdio.h>
-#include <stdlib.h>
-#include <mybhep/error.h>
-#include <mybhep/utilities.h>
-#include <mybhep/point.h>
-#include <mybhep/clhep.h>
+#include <CATAlgorithm/utilities.h>
 #include <boost/cstdint.hpp>
 
 #include <CATAlgorithm/experimental_point.h>

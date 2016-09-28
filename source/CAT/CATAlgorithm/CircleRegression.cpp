@@ -134,7 +134,7 @@ namespace CAT{
           {
             double y = yi_[it - xi_.begin()].value();
             double yerr = yi_[it - xi_.begin()].error();
-            double w = 1./(mybhep::square(it->error())) + 1./(mybhep::square(yerr));
+            double w = 1./(std::pow(it->error(),2)) + 1./(std::pow(yerr,2));
             if( std::isnan(w) || std::isinf(w) )
               w = 1.;
             Sw += w;
@@ -142,28 +142,29 @@ namespace CAT{
             if( method1 ){
               double u = it->value() - xave;
               double v = y - yave;
-              Swuu += w*mybhep::square(u);
+              Swuu += w*u*u;
               Swuv += w*u*v;
-              Swvv += w*mybhep::square(v);
-              Swuuu += w*mybhep::cube(u);
-              Swuuv += w*mybhep::square(u)*v;
-              Swuvv += w*u*mybhep::square(v);
-              Swvvv += w*mybhep::cube(v);
+              Swvv += w*v*v;
+              Swuuu += w*u*u*u;
+              Swuuv += w*u*u*v;
+              Swuvv += w*u*v*v;
+              Swvvv += w*v*v*v;
             } else {
-              Swx += w*it->value();
+              double x = it->value();
+              Swx += w*x;
               Swy += w*y;
-              Swxx += w*mybhep::square(it->value());
-              Swxy += w*it->value()*y;
-              Swyy += w*mybhep::square(y);
-              Swxyy += w*it->value()*mybhep::square(y);
-              Swxxy += w*mybhep::square(it->value())*y;
-              Swyyy += w*mybhep::cube(y);
-              Swxxx += w*mybhep::cube(it->value());
+              Swxx += w*x*x;
+              Swxy += w*x*y;
+              Swyy += w*y*y;
+              Swxyy += w*x*y*y;
+              Swxxy += w*x*x*y;
+              Swyyy += w*y*y*y;
+              Swxxx += w*x*x*x;
             }
           }
 
         if( method1 ){
-          delta = Swuu*Swvv - mybhep::square(Swuv);
+          delta = Swuu*Swvv - Swuv*Swuv;
 
           if( delta == 0.){
             // if( print_level() >= mybhep::NORMAL ){
@@ -176,7 +177,7 @@ namespace CAT{
           double vc = (Swuuv + Swvvv)/(2.*delta);
           double erruc = 0.;
           double errvc = 0.;
-          double alpha = mybhep::square(uc) + mybhep::square(vc) + (Swuu + Swvv)/Sw;
+          double alpha = uc*uc + vc*vc + (Swuu + Swvv)/Sw;
           double erralpha = 0.;
 
           std::clog << "CAT::CircleRegression::fit: uc " << uc << " vc " << vc << std::endl;
@@ -186,12 +187,12 @@ namespace CAT{
           r.set(std::sqrt(alpha), erralpha/(2.*std::sqrt(alpha)));
         }
         else{
-          double A = Sw*Swxx - mybhep::square(Swx);
+          double A = Sw*Swxx - Swx*Swx;
           double B = Sw*Swxy - Swx*Swy;
-          double C = Sw*Swyy - mybhep::square(Swy);
+          double C = Sw*Swyy - Swy*Swy;
           double D = (Sw*Swxyy - Swx*Swyy + Sw*Swxxx - Swx*Swxx)/2.;
           double E = (Sw*Swxxy - Swy*Swxx + Sw*Swyyy - Swy*Swyy)/2.;
-          delta = A*C - mybhep::square(B);
+          delta = A*C - B*B;
 
           if( std::isnan(A) || std::isinf(A) ){
             // if( print_level() >= mybhep::NORMAL ){
@@ -244,7 +245,7 @@ namespace CAT{
               double u = it->value() - XC;
               double y = yi_[it - xi_.begin()].value();
               double v = y - YC;
-              rsum += std::sqrt(mybhep::square(u) + mybhep::square(v));
+              rsum += std::hypot(u, v);
             }
 	  rsum /= xi_.size();
 

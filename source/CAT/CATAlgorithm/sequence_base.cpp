@@ -1955,7 +1955,7 @@ namespace CAT {
 
       double phi1 = vi.phi().value();
       double phi2 = vf.phi().value();
-      mybhep::fix_angles(&phi1, &phi2);
+      mybhep::fix_angles(phi1, phi2);
 
       experimental_double deltaphi = vf.phi() - vi.phi();
       deltaphi.set_value(phi2 - phi1);
@@ -1974,7 +1974,7 @@ namespace CAT {
 
       double helix_phi1 = first_helix_phi.value();
       double helix_phi2 = last_helix_phi.value();
-      mybhep::fix_angles(&helix_phi1, &helix_phi2);
+      mybhep::fix_angles(helix_phi1, helix_phi2);
 
       experimental_double deltahelix_phi = last_helix_phi - first_helix_phi;
       deltahelix_phi.set_value(helix_phi2 - helix_phi1);
@@ -1998,7 +1998,7 @@ namespace CAT {
 
         phi1 = a_vi.phi().value();
         phi2 = a_vf.phi().value();
-        mybhep::fix_angles(&phi1, &phi2);
+        mybhep::fix_angles(phi1, phi2);
 
         deltaphi = vf.phi() - vi.phi();
         deltaphi.set_value(phi2 - phi1);
@@ -2343,7 +2343,10 @@ namespace CAT {
       for(std::vector<std::string>::const_iterator iname=names_.begin(); iname!=names_.end(); ++iname){
         i1 = iname->find("_");
         i2 = iname->find("_",i1+1);
-        fs.push_back(mybhep::int_from_string(iname->substr(i1+1,i2-i1-1)));
+        std::istringstream iss(iname->substr(i1+1,i2-i1-1));
+        int i;
+        iss >> i;
+        fs.push_back(i);
       }
       return fs;
     }

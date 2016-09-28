@@ -3,11 +3,6 @@
 #define __CATAlgorithm__ISCENARIO
 #include <iostream>
 #include <cmath>
-#include <mybhep/error.h>
-#include <mybhep/utilities.h>
-#include <mybhep/point.h>
-#include <mybhep/hit.h>
-#include <mybhep/system_of_units.h>
 #include <boost/cstdint.hpp>
 
 
