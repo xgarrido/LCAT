@@ -106,21 +106,8 @@ namespace CAT {
         }
       }
 
-
-
-      //! set experimental_point, radius, error and id;
-      void set(experimental_point p, double r,double er, size_t id, bool fast)
-      {
-        ep_ = p;
-        r0_.set_value(r);
-        r0_.set_error(er);
-        id_ = id;
-        fast_ = fast;
-        set_radius();
-      }
-
       //! set experimental_point
-      void set_p(experimental_point p)
+      void set_p(const experimental_point & p)
       {
         ep_ = p;
       }
@@ -178,39 +165,37 @@ namespace CAT {
 
 
       //! set free level
-      void set_free(bool free){
+      void set_free(bool free)
+      {
         free_ = free;
       }
 
       //! set begun level
-      void set_begun(bool begun){
+      void set_begun(bool begun)
+      {
         begun_ = begun;
       }
 
       bool small() const
       {
-        bool sm = false;
-
-        //        if (r0_.value() <= probmin()*r0_.error() ) sm = true;
-        if (r0_.value() <= small_radius() ) sm = true;
-
-        return sm;
+        if (r0_.value() <= small_radius_) return true;
+        return false;
       }
 
       //! get experimental_point
-      const experimental_point& ep()const
+      const experimental_point & ep() const
       {
         return ep_;
       }
 
       //!get experimental r
-      const experimental_double& r() const
+      const experimental_double & r() const
       {
         return r_;
       }
 
       //!get original experimental r
-      const experimental_double& r0() const
+      const experimental_double & r0() const
       {
         return r0_;
       }
@@ -218,8 +203,8 @@ namespace CAT {
       //!get id
        size_t id() const {return id_;}
 
-      //!get small_radius
-       double small_radius() const {return small_radius_;}
+      // //!get small_radius
+      //  double small_radius() const {return small_radius_;}
 
       //!get layer
        int layer() const {return layer_;}
@@ -251,7 +236,7 @@ namespace CAT {
 
     public:
 
-      experimental_double distance(cell c) const;
+      // experimental_double distance(cell c) const;
       experimental_point angular_average(experimental_point epa, experimental_point epb, experimental_double* angle);
       experimental_point build_from_cell(experimental_vector forward, experimental_vector transverse, experimental_double cos, int sign, bool replace_r, double maxr) const;
       void dump_point(experimental_point ep) const;

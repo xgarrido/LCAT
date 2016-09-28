@@ -5,17 +5,6 @@ namespace CAT{
 namespace topology{
 
   using namespace mybhep;
-  using namespace std;
-
-  experimental_double cell::distance(cell c) const{
-
-    experimental_vector v(ep(),c.ep());
-
-    return v.length();
-
-  }
-
-
 
   experimental_point cell::build_from_cell(experimental_vector forward, experimental_vector transverse, experimental_double cos, int sign, bool replace_r, double maxr ) const{
 
@@ -96,11 +85,11 @@ namespace topology{
     double maxr = 0.;
     if( r1 != r2 ){
       replace_r = true;
-      maxr = max(r1,r2);
+      maxr = std::max(r1,r2);
     }
 
-    double errx = max(std::abs( epb.x().value() - epa.x().value() ), (epb+epa).x().error());
-    double errz = max(std::abs( epb.z().value() - epa.z().value() ), (epb+epa).z().error());
+    double errx = std::max(std::abs( epb.x().value() - epa.x().value() ), (epb+epa).x().error());
+    double errz = std::max(std::abs( epb.z().value() - epa.z().value() ), (epb+epa).z().error());
 
     experimental_point p = build_from_cell(x, z, cos_ave_phi, sign, replace_r, maxr);
     p.set_ex(errx);
