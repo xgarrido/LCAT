@@ -322,7 +322,6 @@ namespace snemo {
 
         // Add a new hit cell in the CAT input data model :
         CAT::topology::cell & c = _CAT_input_.add_cell();
-        c.set_type("SN");
         c.set_id(ihit++);
         c.set_probmin(_CAT_setup_.probmin);
         c.set_p(gg_hit_position);
