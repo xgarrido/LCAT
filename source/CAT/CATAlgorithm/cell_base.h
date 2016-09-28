@@ -93,7 +93,7 @@ namespace CAT {
               a_out << indent << a_title << std::endl;
             }
 
-          a_out << indent << "id : " << this->id() << " layer " << this->layer() << " block " << this->block() << " iid " << this->iid() << " fast " << this->fast() << " small " << this->small() << " unknown vertical " << this->unknown_vertical() << std::endl;
+          a_out << indent << "id : " << this->id() << " layer " << this->layer() << " block " << this->block() << " iid " << this->iid() << " fast " << this->fast() << " small " << this->small() << std::endl;
           a_out << indent << " point " << std::endl;
           this->ep().dump(a_out,"", indent + "   ");
           a_out << indent << "radius : "; (r()/mybhep::mm).dump(); a_out << " [mm ] " << std::endl;
@@ -195,16 +195,6 @@ namespace CAT {
         if (r0_.value() <= small_radius() ) sm = true;
 
         return sm;
-      }
-
-      bool unknown_vertical() const
-      {
-        bool uv = false;
-
-        if( ep().y().value() == 0. &&
-            ep().y().error() > 1000. ) uv = true;
-
-        return uv;
       }
 
       //! get experimental_point

@@ -1397,7 +1397,13 @@ namespace CAT {
       topology::cell ca = second_last_node().c();
       topology::cell cb = last_node().c();
 
-      if(ca.unknown_vertical() || cb.unknown_vertical() || cc.unknown_vertical()){
+      auto unknown_vertical = [] (const topology::cell & cell_) -> bool
+        {
+          if (cell_.ep().y().value() == 0. &&
+              cell_.ep().y().error() > 1000.) return true;
+          return false;
+        };
+      if (unknown_vertical(ca) || unknown_vertical(cb) || unknown_vertical(cc)) {
         use_theta_kink = false;
         ndof --;
       }
@@ -1511,7 +1517,7 @@ namespace CAT {
     }
 
 
-      void sequence::get_chi2_change_for_changing_end_of_sequence(const topology::experimental_point &new_pa, const topology::experimental_point &new_pb, double *delta_chi_A, double *delta_chi_alpha){
+    void sequence::get_chi2_change_for_changing_end_of_sequence(const topology::experimental_point &new_pa, const topology::experimental_point &new_pb, double *delta_chi_A, double *delta_chi_alpha){
       // sequence: [ ... alpha0 alpha A B ]
       size_t s = nodes_.size();
       if( s < 3 ){
@@ -1528,7 +1534,13 @@ namespace CAT {
 
       topology::line l_alpha_A(palpha, pa, probmin());
       topology::line l_A_B(pa, pb, probmin());
-      bool use_theta_kink_alpha_A_B = !(nodes_[s-3].c().unknown_vertical() || nodes_[s-2].c().unknown_vertical() || nodes_[s-1].c().unknown_vertical() );
+      auto unknown_vertical = [] (const topology::cell & cell_) -> bool
+        {
+          if (cell_.ep().y().value() == 0. &&
+              cell_.ep().y().error() > 1000.) return true;
+          return false;
+        };
+      bool use_theta_kink_alpha_A_B = !(unknown_vertical(nodes_[s-3].c()) || unknown_vertical(nodes_[s-2].c()) || unknown_vertical(nodes_[s-1].c()));
 
       double chi2_just_phi;
       double old_chi2 = l_alpha_A.chi2(l_A_B, use_theta_kink_alpha_A_B, &chi2_just_phi);
@@ -1555,7 +1567,7 @@ namespace CAT {
       }
 
       if( s >= 4 ){
-        bool use_theta_kink_alpha0_alpha_A = !(nodes_[s-4].c().unknown_vertical() || nodes_[s-3].c().unknown_vertical() || nodes_[s-2].c().unknown_vertical() );
+        bool use_theta_kink_alpha0_alpha_A = !(unknown_vertical(nodes_[s-4].c()) || unknown_vertical(nodes_[s-3].c()) || unknown_vertical(nodes_[s-2].c()));
         topology::experimental_point palpha0 = nodes_[s-4].ep();
         topology::line l_alpha0_alpha(palpha0, palpha, probmin());
         old_chi2 = l_alpha0_alpha.chi2(l_alpha_A, use_theta_kink_alpha0_alpha_A, &chi2_just_phi);

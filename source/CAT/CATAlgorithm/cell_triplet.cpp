@@ -321,7 +321,14 @@ namespace CAT{
 
           bool ok = false;
 
-          const bool use_theta_kink = !(ca_.unknown_vertical() || cb_.unknown_vertical() || cc_.unknown_vertical());
+          auto unknown_vertical = [] (const topology::cell & cell_) -> bool
+            {
+              if (cell_.ep().y().value() == 0. &&
+                  cell_.ep().y().error() > 1000.) return true;
+              return false;
+            };
+
+          const bool use_theta_kink = !(unknown_vertical(ca_) || unknown_vertical(cb_) || unknown_vertical(cc_));
           if (! use_theta_kink) ndof--;
 
           double chi2_just_phi = 0.0;
