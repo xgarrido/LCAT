@@ -1,7 +1,6 @@
-/* -*- mode: c++ -*- */
+// -*- mode: c++ -*-
 
 /*
- *
  * Copyright (C) 2002 J.J. Gomez-Cadenas, J.A. Hernando
  *
  * This program is free software; you can redistribute it and/or modify
@@ -15,9 +14,10 @@
  * General Public License for more details.
  */
 
-#ifndef __UTIL__
-#define __UTIL__
+#ifndef LCAT_UTILITIES
+#define LCAT_UTILITIES
 
+// Standard library:
 #include <string>
 #include <vector>
 #include <sstream>
@@ -26,7 +26,7 @@
 #include <cfloat>
 #include <limits.h>
 
-namespace mybhep{
+namespace mybhep {
 
   enum prlevel{MUTE,CONCISE,NORMAL,WARNING,DETAILED,VERBOSE,VVERBOSE,DUMP};
 
@@ -43,49 +43,46 @@ namespace mybhep{
     else return NORMAL;
   }
 
-  static const double plus_infinity = DBL_MAX;
-  static const double small_neg = -plus_infinity;
+  static const double plus_infinity   = DBL_MAX;
+  static const double small_neg       = -plus_infinity;
   static const size_t default_integer = INT_MAX;
-  static const double default_min = plus_infinity;
-  static const double default_max = -default_min;
+  static const double default_min     = plus_infinity;
+  static const double default_max     = -default_min;
 
-/// square
-/**
- *\ingroup util
- */
+  /// Square function
   template <class T>
   inline T square(T a)
   {
-      return a*a;
+    return a*a;
   }
 
+  /// Cubic power function
   template <class T>
   inline T cube(T a)
   {
-      return a*a*a;
+    return a*a*a;
   }
 
-
+  /// Shift angle values in a limited range
   inline void fix_angles(double & a1_, double & a2_)
   {
     if (std::abs(a1_ - a2_) > M_PI) {
-      if (a1_ < a2_)
+      if (a1_ < a2_) {
         a1_ += 2.*M_PI;
-      else
+      } else {
         a2_ += 2.*M_PI;
+      }
     }
     return;
   }
 
+  /// Round up a double type to show n decimals
   inline double round_to(double value, int to = 1)
-  //round up a double type to show n decimals
   {
-
     double places = pow(10.0, to);
-
     return round(value * places) / places;
-
   }
 
-}
-#endif
+} // namespace mybhep
+
+#endif // LCAT_UTILITIES

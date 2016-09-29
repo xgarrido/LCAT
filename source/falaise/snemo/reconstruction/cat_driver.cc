@@ -30,7 +30,12 @@ namespace snemo {
 
   namespace reconstruction {
 
-    const std::string cat_driver::CAT_ID = "CAT";
+    // static
+    const std::string & cat_driver::cat_id()
+    {
+      static const std::string _id("CAT");
+      return _id;
+    }
 
     void cat_driver::set_magfield(double value_)
     {
@@ -45,7 +50,7 @@ namespace snemo {
     }
 
     cat_driver::cat_driver() :
-      ::snemo::processing::base_tracker_clusterizer(cat_driver::CAT_ID)
+      ::snemo::processing::base_tracker_clusterizer(cat_driver::cat_id())
     {
       _set_defaults();
       return;
@@ -493,7 +498,7 @@ namespace snemo {
           clustering_.add_solution(htcs, true);
           clustering_.grab_default_solution().set_solution_id(clustering_.get_number_of_solutions() - 1);
           sdm::tracker_clustering_solution & clustering_solution = clustering_.grab_default_solution();
-          clustering_solution.grab_auxiliaries().update_string(sdm::tracker_clustering_data::clusterizer_id_key(), CAT_ID);
+          clustering_solution.grab_auxiliaries().update_string(sdm::tracker_clustering_data::clusterizer_id_key(), cat_id());
 
           // Analyse the sequentiator output :
           const std::vector<CAT::topology::sequence> & the_sequences = iscenario->sequences();

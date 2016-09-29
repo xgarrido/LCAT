@@ -177,16 +177,17 @@ namespace CAT {
         // Get the list of cells near the connected cell
         std::vector<topology::cell> cells_near_iconn;
         _get_near_cells_(cconn, cells_near_iconn);
+        cc.reserve(cells_near_iconn.size());
         DT_LOG_DEBUG(get_logging_priority(), "Cluster " << _clusters_.size()
                      << " starts with " << icell.id() << " try to add cell " << cconn.id()
                      << " with n of neighbours = " << cells_near_iconn.size());
+        cells_connected_to_c.reserve(cells_near_iconn.size());
         for (const auto & cnc : cells_near_iconn) {
           if (!_is_good_couplet_(cconn, cnc, cells_near_iconn)) continue;
 
           DT_LOG_DEBUG(get_logging_priority(), "Creating couplet " << cconn.id() << " -> " << cnc.id());
           topology::cell_couplet ccnc(cconn, cnc);
           cc.push_back(ccnc);
-
           if (! flagged.count(cnc.id())) {
             flagged.insert(cnc.id());
             cells_connected_to_c.push_back(cnc);
@@ -284,10 +285,10 @@ namespace CAT {
   void clusterizer::_get_near_cells_(const topology::cell & c_, std::vector<topology::cell> & cells_) const
   {
     DT_LOG_DEBUG(get_logging_priority(), "Filling list of cells near cell " << c_.id());
-
+    cells_.clear();
+    cells_.reserve(8);
     for (const auto & icell : _cells_) {
       if (icell.id() == c_.id()) continue;
-
       const size_t nl = _near_level_(c_, icell);
       if (nl > 0) {
         cells_.push_back(icell);

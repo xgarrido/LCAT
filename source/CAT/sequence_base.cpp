@@ -1,8 +1,11 @@
-/* -*- mode: c++ -*- */
-#include <CAT/sequence_base.h>
+// -*- mode: c++ -*-
 
+// Standard library:
 #include <limits>
+#include <sys/time.h>
 
+// This project:
+#include <CAT/sequence_base.h>
 #include <CAT/experimental_point.h>
 #include <CAT/experimental_vector.h>
 #include <CAT/line.h>
@@ -16,15 +19,12 @@
 #include <CAT/LinearRegression.h>
 #include <CAT/CircleRegression.h>
 
-#include <sys/time.h>
-
 namespace CAT {
+
   namespace topology{
 
-    //!Default constructor
     sequence::sequence()
     {
-      appname_= "sequence: ";
       nodes_.clear();
       free_ = false;
       names_.clear();names_.push_back("default");
@@ -69,19 +69,17 @@ namespace CAT {
       momentum_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
                                       mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
       helix_momentum_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                      mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+                                            mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
       primary_ = true;
     }
 
-    //!Default destructor
     sequence::~sequence()
     {
     }
 
-    //! constructor from std::vector of nodes
-    sequence::sequence(const std::vector<node> & nodes, double probmin){
+    sequence::sequence(const std::vector<node> & nodes, double probmin)
+    {
       set_probmin(probmin);
-      appname_= "sequence: ";
       nodes_ = nodes;
       free_ = false;
       names_.clear();
@@ -125,14 +123,14 @@ namespace CAT {
       momentum_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
                                       mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
       helix_momentum_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                      mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+                                            mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
       primary_ = true;
     }
 
     //! constructor from single node
-    sequence::sequence(const node &node, double probmin){
+    sequence::sequence(const node &node, double probmin)
+    {
       set_probmin(probmin);
-      appname_= "sequence: ";
       //node.set_free(false);
       nodes_.clear();
       nodes_.push_back(node);
@@ -178,15 +176,15 @@ namespace CAT {
       momentum_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
                                       mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
       helix_momentum_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                      mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+                                            mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
       primary_ = true;
     }
 
-    /*** dump ***/
     void sequence::dump (std::ostream & a_out   ,
                          const std::string & a_title ,
                          const std::string & a_indent ,
-                         bool /*a_inherit*/          ) const{
+                         bool /*a_inherit*/) const
+    {
       std::string indent;
       if (! a_indent.empty ()) indent = a_indent;
       if (! a_title.empty ())
@@ -194,7 +192,7 @@ namespace CAT {
           a_out << indent << a_title << std::endl;
         }
 
-      a_out << indent << appname_ << " ------------------- " << std::endl;
+      a_out << indent << " ------------------- " << std::endl;
       a_out << indent << names_[0] << ". Number of nodes: " << nodes().size() << " free: " << Free() << " chi2 " << chi2() << " helix chi2 " << helix_chi2() << " prob " << Prob() << " helix prob " << helix_Prob() << " momentum " << momentum().length().value() << " primary " << primary() << std::endl;
       for(std::vector<node>::const_iterator inode=nodes_.begin(); inode!=nodes_.end(); ++inode)
         inode->dump(a_out, "",indent + "     ");
@@ -220,34 +218,40 @@ namespace CAT {
     }
 
     //! set nodes
-    void sequence::set_nodes(const std::vector<node> &nodes){
+    void sequence::set_nodes(const std::vector<node> &nodes)
+    {
       nodes_ = nodes;
     }
 
     //! set free level
-    void sequence::set_free(bool free){
+    void sequence::set_free(bool free)
+    {
       free_ = free;
     }
 
     //! set name
-    void sequence::set_name(const std::string &name){
+    void sequence::set_name(const std::string &name)
+    {
       names_.clear();
       names_.push_back(name);
     }
 
     //! set names
-    void sequence::set_names(const std::vector<std::string> &names){
+    void sequence::set_names(const std::vector<std::string> &names)
+    {
       names_.clear();
       names_=names;
     }
 
     //! add name
-    void sequence::add_name(const std::string &name){
+    void sequence::add_name(const std::string &name)
+    {
       names_.push_back(name);
     }
 
     //! set helix_vertex
-    void sequence::set_helix_vertex(const experimental_point &v, const std::string &type, size_t calo_helix_id){
+    void sequence::set_helix_vertex(const experimental_point &v, const std::string &type, size_t calo_helix_id)
+    {
       has_helix_vertex_ = true;
       helix_vertex_ = v;
       helix_vertex_type_ = type;
@@ -256,7 +260,8 @@ namespace CAT {
     }
 
     //! set decay_helix_vertex
-    void sequence::set_decay_helix_vertex(const experimental_point &v, const std::string &type, size_t calo_helix_id){
+    void sequence::set_decay_helix_vertex(const experimental_point &v, const std::string &type, size_t calo_helix_id)
+    {
       has_decay_helix_vertex_ = true;
       decay_helix_vertex_ = v;
       decay_helix_vertex_type_ = type;
@@ -265,7 +270,8 @@ namespace CAT {
     }
 
     //! set tangent_vertex
-    void sequence::set_tangent_vertex(const experimental_point &v,  const std::string &type, size_t tangent_vertex_id){
+    void sequence::set_tangent_vertex(const experimental_point &v,  const std::string &type, size_t tangent_vertex_id)
+    {
       has_tangent_vertex_ = true;
       tangent_vertex_ = v;
       tangent_vertex_type_ = type;
@@ -274,7 +280,8 @@ namespace CAT {
     }
 
     //! set decay_tangent_vertex
-    void sequence::set_decay_tangent_vertex(const experimental_point & v, const std::string  &type, size_t calo_tangent_id){
+    void sequence::set_decay_tangent_vertex(const experimental_point & v, const std::string  &type, size_t calo_tangent_id)
+    {
       has_decay_tangent_vertex_ = true;
       decay_tangent_vertex_ = v;
       decay_tangent_vertex_type_ = type;
@@ -283,96 +290,113 @@ namespace CAT {
     }
 
     //! set chi2 list
-    void sequence::set_chi2s(const std::vector<double> & chi2s){
+    void sequence::set_chi2s(const std::vector<double> & chi2s)
+    {
       chi2s_all_ = chi2s;
     }
 
     //! set helix_chi2 list
-    void sequence::set_helix_chi2s(const std::vector<double> &helix_chi2s){
+    void sequence::set_helix_chi2s(const std::vector<double> &helix_chi2s)
+    {
       helix_chi2s_ = helix_chi2s;
     }
 
     //! set prob list
-    void sequence::set_probs(const std::vector<double> &probs){
+    void sequence::set_probs(const std::vector<double> &probs)
+    {
       probs_all_ = probs;
     }
 
 
     //! set charge
-    void sequence::set_charge(const experimental_double &charge){
+    void sequence::set_charge(const experimental_double &charge)
+    {
       has_charge_ = true;
       charge_ = charge;
     }
 
     //! set helix_charge
-    void sequence::set_helix_charge(const experimental_double &helix_charge){
+    void sequence::set_helix_charge(const experimental_double &helix_charge)
+    {
       has_helix_charge_ = true;
       helix_charge_ = helix_charge;
     }
 
     //! set detailed_charge
-    void sequence::set_detailed_charge(const experimental_double &detailed_charge){
+    void sequence::set_detailed_charge(const experimental_double &detailed_charge)
+    {
       has_detailed_charge_ = true;
       detailed_charge_ = detailed_charge;
     }
 
     //! set momentum
-    void sequence::set_momentum(const experimental_vector &mom){
+    void sequence::set_momentum(const experimental_vector &mom)
+    {
       has_momentum_ = true;
       momentum_ = mom;
     }
 
     //! set helix_momentum
-    void sequence::set_helix_momentum(const experimental_vector &mom){
+    void sequence::set_helix_momentum(const experimental_vector &mom)
+    {
       has_momentum_ = true;
       helix_momentum_ = mom;
     }
 
     //! set tangent length
-    void sequence::set_tangent_length(const experimental_double &mom){
+    void sequence::set_tangent_length(const experimental_double &mom)
+    {
       has_tangent_length_ = true;
       tangent_length_ = mom;
     }
 
     //! set helix length
-    void sequence::set_helix_length(const experimental_double &mom){
+    void sequence::set_helix_length(const experimental_double &mom)
+    {
       has_helix_length_ = true;
       helix_length_ = mom;
     }
 
     //! set primary
-    void sequence::set_primary(bool primary){
+    void sequence::set_primary(bool primary)
+    {
       primary_ = primary;
     }
 
     //! set helix
-    void sequence::set_helix(const  helix & h){
+    void sequence::set_helix(const  helix & h)
+    {
       helix_ = h;
     }
 
 
     //! get nodes
-    const std::vector<node> & sequence::nodes()const{
+    const std::vector<node> & sequence::nodes() const
+    {
       return nodes_;
     }
 
     //! get free level
-    bool sequence::Free()const{
+    bool sequence::Free() const
+    {
       return free_;
     }
 
     //! get name
-    const std::string & sequence::name()const{
+    const std::string & sequence::name() const
+    {
       return names_[0];
     }
 
     //! get names
-    const std::vector<std::string> & sequence::names()const{
+    const std::vector<std::string> & sequence::names() const
+    {
       return names_;
     }
 
     //! get primary
-    bool sequence::primary()const{
+    bool sequence::primary() const
+    {
       return primary_;
     }
 
@@ -424,7 +448,7 @@ namespace CAT {
     }
 
     //! get list of probs used in the sequence
-    std::vector<double> sequence::probs()const
+    std::vector<double> sequence::probs() const
     {
       std::vector<double> p;
       make_probs(p);
@@ -432,7 +456,8 @@ namespace CAT {
     }
 
     // get chi2 of sequence
-    double sequence::chi2()const{
+    double sequence::chi2() const
+    {
       double chi2 = 0.;
       std::vector<double> cs = chi2s();
       for(std::vector<double>::const_iterator ichi = cs.begin(); ichi != cs.end(); ++ichi){
@@ -444,7 +469,8 @@ namespace CAT {
     }
 
     // get helix_chi2 of sequence
-    double sequence::helix_chi2()const{
+    double sequence::helix_chi2() const
+    {
       double helix_chi2 = 0.;
       std::vector<double> cs = helix_chi2s();
       for(std::vector<double>::const_iterator ichi = cs.begin(); ichi != cs.end(); ++ichi){
@@ -456,13 +482,15 @@ namespace CAT {
     }
 
     // get prob of sequence
-    double sequence::Prob()const{
+    double sequence::Prob() const
+    {
       return probof(chi2(), ndof());
 
     }
 
     // get ndof of sequence
-    int32_t sequence::ndof()const{
+    int32_t sequence::ndof() const
+    {
 
       int32_t ndof = 0;
       for(std::vector<node>::const_iterator in = nodes_.begin(); in != nodes_.end(); ++in)
@@ -472,7 +500,8 @@ namespace CAT {
     }
 
     // get prob of sequence
-    double sequence::helix_Prob()const{
+    double sequence::helix_Prob() const
+    {
       double c = helix_chi2();
       // for each triplet's point, three coordinates
       std::vector<double> cs = helix_chi2s();
@@ -485,117 +514,140 @@ namespace CAT {
     }
 
     //! has momentum
-    bool sequence::has_momentum()const{
+    bool sequence::has_momentum() const
+    {
       return has_momentum_;
     }
 
     //! has helix
-    bool sequence::has_helix()const{
+    bool sequence::has_helix() const
+    {
       return has_helix_;
     }
 
     //! has charge
-    bool sequence::has_charge()const{
+    bool sequence::has_charge() const
+    {
       return has_charge_;
     }
 
     //! has helix_charge
-    bool sequence::has_helix_charge()const{
+    bool sequence::has_helix_charge() const
+    {
       return has_helix_charge_;
     }
 
     //! has detailed_charge
-    bool sequence::has_detailed_charge()const{
+    bool sequence::has_detailed_charge() const
+    {
       return has_detailed_charge_;
     }
 
     //! has tangent length
-    bool sequence::has_tangent_length()const{
+    bool sequence::has_tangent_length() const
+    {
       return has_tangent_length_;
     }
 
     //! has helix length
-    bool sequence::has_helix_length()const{
+    bool sequence::has_helix_length() const
+    {
       return has_helix_length_;
     }
 
     //! has helix_vertex
-    bool sequence::has_helix_vertex()const{
+    bool sequence::has_helix_vertex() const
+    {
       return has_helix_vertex_;
     }
 
     //! get helix_vertex
-    const experimental_point &  sequence::helix_vertex()const{
+    const experimental_point &  sequence::helix_vertex() const
+    {
       return helix_vertex_;
     }
 
     //! get helix_vertex type
-    const std::string & sequence::helix_vertex_type()const{
+    const std::string & sequence::helix_vertex_type() const
+    {
       return helix_vertex_type_;
     }
 
     //! get helix_vertex id
-    size_t sequence::helix_vertex_id()const{
+    size_t sequence::helix_vertex_id() const
+    {
       return helix_vertex_id_;
     }
 
     //! has decay_helix_vertex
-    bool sequence::has_decay_helix_vertex()const{
+    bool sequence::has_decay_helix_vertex() const
+    {
       return has_decay_helix_vertex_;
     }
 
     //! get decay_helix_vertex
-    const experimental_point & sequence::decay_helix_vertex()const{
+    const experimental_point & sequence::decay_helix_vertex() const
+    {
       return decay_helix_vertex_;
     }
 
     //! get calo id
-    size_t sequence::calo_helix_id()const{
+    size_t sequence::calo_helix_id() const
+    {
       return calo_helix_id_;
     }
 
     //! get decay helix_vertex type
-    const std::string & sequence::decay_helix_vertex_type()const{
+    const std::string & sequence::decay_helix_vertex_type() const
+    {
       return decay_helix_vertex_type_;
     }
 
     //! has tangent_vertex
-    bool sequence::has_tangent_vertex()const{
+    bool sequence::has_tangent_vertex() const
+    {
       return has_tangent_vertex_;
     }
 
     //! get tangent_vertex
-    const experimental_point & sequence::tangent_vertex()const{
+    const experimental_point & sequence::tangent_vertex() const
+    {
       return tangent_vertex_;
     }
 
     //! get tangent_vertex type
-    const std::string & sequence::tangent_vertex_type()const{
+    const std::string & sequence::tangent_vertex_type() const
+    {
       return tangent_vertex_type_;
     }
 
     //! get tangent_vertex id
-    size_t sequence:: tangent_vertex_id()const{
+    size_t sequence:: tangent_vertex_id() const
+    {
       return tangent_vertex_id_;
     }
 
     //! has decay_tangent_vertex
-    bool sequence:: has_decay_tangent_vertex()const{
+    bool sequence:: has_decay_tangent_vertex() const
+    {
       return has_decay_tangent_vertex_;
     }
 
     //! get decay_tangent_vertex
-    const experimental_point & sequence::decay_tangent_vertex()const{
+    const experimental_point & sequence::decay_tangent_vertex() const
+    {
       return decay_tangent_vertex_;
     }
 
     //! get calo id
-    size_t sequence::calo_tangent_id()const{
+    size_t sequence::calo_tangent_id() const
+    {
       return calo_tangent_id_;
     }
 
     //! get decay tangent_vertex type
-    const std::string & sequence::decay_tangent_vertex_type()const{
+    const std::string & sequence::decay_tangent_vertex_type() const
+    {
       return decay_tangent_vertex_type_;
     }
 
@@ -689,7 +741,8 @@ namespace CAT {
 
 
     //! get middle node
-    node sequence::middle_node()const{
+    node sequence::middle_node() const
+    {
       size_t s = nodes().size();
 
       if( s < 1 ){
@@ -712,7 +765,8 @@ namespace CAT {
     }
 
 
-    bool sequence::has_cell(const cell & c)const{
+    bool sequence::has_cell(const cell & c) const
+    {
       if(std::find(nodes_.begin(), nodes_.end(), c) != nodes_.end())
 
         return true;
@@ -934,7 +988,8 @@ namespace CAT {
     }
 
 
-    bool sequence::contained(const topology::sequence & big)const{
+    bool sequence::contained(const topology::sequence & big) const
+    {
       // true if the sequence is shorter than BIG and each node is also in BIG
       // false otherwise
 
@@ -954,7 +1009,8 @@ namespace CAT {
     }
 
 
-    bool sequence::contained_same_size_and_cells(const topology::sequence & big)const{
+    bool sequence::contained_same_size_and_cells(const topology::sequence & big) const
+    {
 
       if( !contained_same_extreme_quadrants(big) ) return false;
 
@@ -965,7 +1021,8 @@ namespace CAT {
 
     }
 
-    bool sequence::contained_same_extreme_quadrants(const topology::sequence & big)const{
+    bool sequence::contained_same_extreme_quadrants(const topology::sequence & big) const
+    {
 
       size_t s = nodes().size();
 
@@ -992,7 +1049,8 @@ namespace CAT {
     }
 
 
-    bool sequence::is_bridge(const topology::sequence & first, const topology::sequence & second)const{
+    bool sequence::is_bridge(const topology::sequence & first, const topology::sequence & second) const
+    {
 
       size_t s = nodes().size();
 
@@ -1109,9 +1167,9 @@ namespace CAT {
             }
 
             if( i < lfn  || (i == lfn && (size_t)(itlink - newsequence.nodes_[i].links_.begin()) < link ) ){
-                itlink->set_free( false);
-                itlink->set_begun( true);
-              }
+              itlink->set_free( false);
+              itlink->set_begun( true);
+            }
             if( i == lfn && (size_t)(itlink - newsequence.nodes_[i].links_.begin()) > link ){
               // if( print_level() >= mybhep::VVERBOSE ) {
               //   std::clog << " removing from node " << newsequence.nodes_[i].c().id()  << "  link " << itlink - newsequence.nodes_[i].links_.begin() << " id " << itlink->id() << " larger than link " << link << " from copied sequence " << std::endl;
@@ -1217,14 +1275,10 @@ namespace CAT {
       }
 
       return;
-
-
     }
 
-
-
-    bool sequence::pick_new_cell(size_t *ilink, experimental_point *newp, cluster local_cluster){
-
+    bool sequence::pick_new_cell(size_t *ilink, experimental_point *newp, cluster local_cluster)
+    {
       size_t s = nodes().size();
 
       bool ok = false;
@@ -1357,19 +1411,14 @@ namespace CAT {
               *newp = j.epc();
               ok = true;
               break;
-
             }
-
-
           }
       }
-
-
-
       return ok;
     }
 
-    bool sequence::compatible(joint *j, cell cc){
+    bool sequence::compatible(joint *j, cell cc)
+    {
       // sequence: [ ... alpha A B ]    C
       // C = cc is the proposed new cell
 
@@ -1460,10 +1509,7 @@ namespace CAT {
           //   }
           // }
         }
-
-
       }
-
 
       topology::line l1(pa, pb, probmin());
       topology::line l2(pb, j->epc(), probmin());
@@ -1517,7 +1563,8 @@ namespace CAT {
     }
 
 
-    void sequence::get_chi2_change_for_changing_end_of_sequence(const topology::experimental_point &new_pa, const topology::experimental_point &new_pb, double *delta_chi_A, double *delta_chi_alpha){
+    void sequence::get_chi2_change_for_changing_end_of_sequence(const topology::experimental_point &new_pa, const topology::experimental_point &new_pb, double *delta_chi_A, double *delta_chi_alpha)
+    {
       // sequence: [ ... alpha0 alpha A B ]
       size_t s = nodes_.size();
       if( s < 3 ){
@@ -1590,13 +1637,12 @@ namespace CAT {
         }
 
       }
-
       return;
-
     }
 
 
-    int sequence::get_link_index_of_cell(size_t inode, const cell & link) const {
+    int sequence::get_link_index_of_cell(size_t inode, const cell & link) const
+    {
       // inode = 0 if it is the first node, 1 if it is the second node...
       // link = a cell to which the node inode links with a couplet or triplet
       // returns an index, such that cc[index] or ccc[index] is the needed couplet or triplet
@@ -1610,10 +1656,10 @@ namespace CAT {
 
 
       /*
-      if( std::abs( nodes()[inode].c().block() - link.block()) == 1 ){
+        if( std::abs( nodes()[inode].c().block() - link.block()) == 1 ){
         // the connection happens through a gap
         return -1;
-      }
+        }
       */
 
       cell null;
@@ -1638,17 +1684,16 @@ namespace CAT {
         // }
         return 0;
       }
-
       return index;
-
     }
 
 
-    void sequence::circle_order(double /*Ratio*/){
+    void sequence::circle_order(double /*Ratio*/)
+    {
 
       std::vector<size_t> original_ids;
       for(std::vector<node>::iterator inode = nodes_.begin(); inode != nodes_.end(); ++inode)
-	original_ids.push_back(inode->c().id());
+        original_ids.push_back(inode->c().id());
 
       // if( print_level() >= mybhep::VERBOSE ){
       //   std::clog << " sequence before circle reordering: ";
@@ -1667,72 +1712,68 @@ namespace CAT {
       // }
 
       for(std::vector<node>::iterator inode = nodes_.begin(); inode != nodes_.end(); ++inode){
-	size_t index = inode - nodes_.begin();
-	if( inode->c().id() != original_ids[index] ){
+        size_t index = inode - nodes_.begin();
+        if( inode->c().id() != original_ids[index] ){
 
-	  topology::cell c = inode->c();
+          topology::cell c = inode->c();
 
-	  std::vector<topology::cell_couplet> cc;
-	  std::vector<topology::cell> links;
-	  if( index > 0 ){
-	    topology::cell pc = nodes_[index - 1].c();
-	    topology::cell_couplet pcc(c, pc);
-	    cc.push_back(pcc);
-	  }
-	  if( (size_t)(index + 1) < nodes_.size() ){
-	    topology::cell nc = nodes_[index + 1].c();
-	    topology::cell_couplet ncc(c,nc);
-	    cc.push_back(ncc);
-	    links.push_back(nc);
-	  }
+          std::vector<topology::cell_couplet> cc;
+          std::vector<topology::cell> links;
+          if( index > 0 ){
+            topology::cell pc = nodes_[index - 1].c();
+            topology::cell_couplet pcc(c, pc);
+            cc.push_back(pcc);
+          }
+          if( (size_t)(index + 1) < nodes_.size() ){
+            topology::cell nc = nodes_[index + 1].c();
+            topology::cell_couplet ncc(c,nc);
+            cc.push_back(ncc);
+            links.push_back(nc);
+          }
 
-	  inode->set_cc(cc);
-	  inode->set_links(links);
+          inode->set_cc(cc);
+          inode->set_links(links);
 
-	  /*
-	  // recalculate position closest to helix
-	  experimental_point helix_point = helix_.position(inode->c().ep());
-	  double local_diff;
-	  double diff = mybhep::default_min;
-	  for(std::vector<topology::cell_couplet>::const_iterator icc = cc.begin(); icc!=cc.end(); ++icc){
-	    std::vector<line> tangents = icc->tangents();
-	    for( std::vector<line>::const_iterator il=tangents.begin(); il!=tangents.end(); ++il){
-	      local_diff = il->epa().distance(helix_point).value();
-	      if( local_diff < diff ){
-		diff = local_diff;
-		inode->set_ep(il->epa());
-	      }
-	    }
-	  }
-	  */
-
-	}
-
+          /*
+          // recalculate position closest to helix
+          experimental_point helix_point = helix_.position(inode->c().ep());
+          double local_diff;
+          double diff = mybhep::default_min;
+          for(std::vector<topology::cell_couplet>::const_iterator icc = cc.begin(); icc!=cc.end(); ++icc){
+          std::vector<line> tangents = icc->tangents();
+          for( std::vector<line>::const_iterator il=tangents.begin(); il!=tangents.end(); ++il){
+          local_diff = il->epa().distance(helix_point).value();
+          if( local_diff < diff ){
+          diff = local_diff;
+          inode->set_ep(il->epa());
+          }
+          }
+          }
+          */
+        }
       }
-
       return;
     }
 
-    void sequence::reorder_cells(double Ratio){
-
+    void sequence::reorder_cells(double Ratio)
+    {
       double angle = 0.;
       for(std::vector<node>::iterator inode = nodes_.begin(); inode != nodes_.end(); ++inode){
-	if( inode - nodes_.begin() == 0 )
-	  angle = helix_.phi_of_point(inode->c().ep()).value();
-	else
-	  angle = helix_.phi_of_point(inode->c().ep(), angle).value();
+        if( inode - nodes_.begin() == 0 )
+          angle = helix_.phi_of_point(inode->c().ep()).value();
+        else
+          angle = helix_.phi_of_point(inode->c().ep(), angle).value();
 
-	// if( print_level() >= mybhep::VVERBOSE ){
-	//   std::clog << " node " << inode->c().id() << " has circle phi " << angle << std::endl;
-	// }
-	inode->set_circle_phi(angle);
+        // if( print_level() >= mybhep::VVERBOSE ){
+        //   std::clog << " node " << inode->c().id() << " has circle phi " << angle << std::endl;
+        // }
+        inode->set_circle_phi(angle);
       }
-
       this->circle_order(Ratio);
-
     }
 
-    bool sequence::calculate_helix(double Ratio, bool conserve_clustering_from_removal, bool conserve_clustering_from_reordering) {
+    bool sequence::calculate_helix(double Ratio, bool conserve_clustering_from_removal, bool conserve_clustering_from_reordering)
+    {
       // after_sultan, conserve_clustering_from_removal  = true, conserve_clustering_from_reordering = false
       // after_nemor, conserve_clustering_from_removal  = true, conserve_clustering_from_reordering = false
       // by default, cat was used for the clustering, so conserve_clustering_from_removal = false and conserve_clustering_from_reordering = true
@@ -1901,33 +1942,31 @@ namespace CAT {
           // if( print_level() >= mybhep::VVERBOSE ){
           //   std::clog << " so reject helix " << std::endl;
           // }
-
           good_fit = false;
         }
-
       }
-
-
       return good_fit;
     }
 
 
-    const experimental_double & sequence::radius()const{
+    const experimental_double & sequence::radius()const
+    {
       return helix_.radius();
     }
 
-    const experimental_double & sequence::pitch()const{
+    const experimental_double & sequence::pitch()const
+    {
       return helix_.pitch();
     }
 
-    const experimental_point & sequence::center()const{
+    const experimental_point & sequence::center()const
+    {
       return helix_.center();
     }
 
-    void sequence::calculate_momentum(double bfield,bool SuperNEMO, double ref_value){
-
+    void sequence::calculate_momentum(double bfield,bool SuperNEMO, double ref_value)
+    {
       experimental_double mom = experimental_sqrt(experimental_square(radius()) + experimental_square(pitch()))*0.3*bfield;
-
 
       momentum_=mom*initial_dir(SuperNEMO, ref_value);
 
@@ -1943,11 +1982,10 @@ namespace CAT {
       //   std::clog << " sequence radius " << radius().value() << " pitch " << pitch().value() << " bfield " << bfield
       //             << " mom " << mom.value() << " dir (" << initial_dir(SuperNEMO, ref_value).x().value() << ", " <<  initial_dir(SuperNEMO, ref_value).y().value() << ", " << initial_dir(SuperNEMO, ref_value).z().value() << ")" << std::endl;
       // }
-
     }
 
-    void sequence::calculate_charge(void){
-
+    void sequence::calculate_charge(void)
+    {
       if( nodes().size() < 3 ) return;
 
       experimental_vector vi(nodes().front().ep(), nodes_[1].ep());
@@ -1989,8 +2027,6 @@ namespace CAT {
       //   std::clog << " calculate detailed charges: " << std::endl;
       // }
 
-
-
       std::vector<experimental_double> angles;
       for(size_t i=0; i<nodes().size()-2; i++){
         experimental_vector a_vi(nodes_[i].ep(), nodes_[i+1].ep());
@@ -2025,13 +2061,12 @@ namespace CAT {
       // if( print_level() >= mybhep::VVERBOSE ){
       //   std::clog << " detailed charge " << detailed_charge_.value() << " +- " << detailed_charge_.error() << std::endl;
       // }
-
       return;
-
     }
 
     bool sequence::intersect_plane_with_tangent_from_end(const plane & pl,
-                                                         experimental_point * ep)const{
+                                                         experimental_point * ep) const
+    {
       // need 2 nodes to build the tangent line
       if( nodes().size() < 2 ) return false;
 
@@ -2043,117 +2078,86 @@ namespace CAT {
     }
 
 
-
-    bool sequence::intersect_plane_from_end(const plane & pl, experimental_point * ep)const{
-
+    bool sequence::intersect_plane_from_end(const plane & pl, experimental_point * ep) const
+    {
       experimental_double _phi = helix_.phi_of_point(last_node().ep());
-
       bool result = helix_.intersect_plane(pl, ep, _phi, last_node().ep().y().value());
-
       return result;
-
     }
 
 
-    bool sequence::intersect_plane_with_tangent_from_begin(const plane & pl, experimental_point * ep)const{
+    bool sequence::intersect_plane_with_tangent_from_begin(const plane & pl, experimental_point * ep) const
+    {
       // need 2 nodes to build the tangent line
       if( nodes().size() < 2 ) return false;
-
       experimental_vector direction(nodes_[1].ep(), nodes_[0].ep());
       bool result = pl.intersect(nodes_[0].ep(), direction, ep);
-
       return result;
     }
 
-    bool sequence::intersect_plane_from_begin(const plane & pl, experimental_point * ep)const{
-
+    bool sequence::intersect_plane_from_begin(const plane & pl, experimental_point * ep) const
+    {
       if( nodes().size() < 1 ) return false;
-
       experimental_double _phi = helix_.phi_of_point(nodes_[0].ep());
-
       bool result = helix_.intersect_plane(pl, ep, _phi, nodes_[0].ep().y().value());
-
       return result;
-
     }
 
 
-    bool sequence::intersect_circle_with_tangent_from_end(const circle & c, experimental_point * ep)const{
-
+    bool sequence::intersect_circle_with_tangent_from_end(const circle & c, experimental_point * ep) const
+    {
       // need 2 nodes to build the tangent line
       if( nodes().size() < 2 ) return false;
-
       experimental_vector direction(second_last_node().ep(), last_node().ep());
       bool result = helix_.intersect_circle_with_tangent(c, last_node().ep(), direction.hor(), ep);
-
       return result;
     }
 
-    bool sequence::intersect_circle_from_end(const circle & c, experimental_point * ep)const{
-
+    bool sequence::intersect_circle_from_end(const circle & c, experimental_point * ep) const
+    {
       experimental_double _phi = helix_.phi_of_point(last_node().ep());
-
       bool result = helix_.intersect_circle(c, ep, _phi);
-
       return result;
-
     }
 
-    bool sequence::intersect_circle_from_end_minus_one(const circle & c, experimental_point * ep)const{
-
+    bool sequence::intersect_circle_from_end_minus_one(const circle & c, experimental_point * ep) const
+    {
       if( nodes().size() < 2 ) return false;
-
       experimental_double _phi = helix_.phi_of_point(second_last_node().ep());
-
       bool result = helix_.intersect_circle(c, ep, _phi);
-
       return result;
-
     }
 
-    bool sequence::intersect_circle_with_tangent_from_begin(const circle & c, experimental_point * ep)const{
-
+    bool sequence::intersect_circle_with_tangent_from_begin(const circle & c, experimental_point * ep) const
+    {
       // need 2 nodes to build the tangent line
       if( nodes().size() < 2 ) return false;
-
       experimental_vector direction(nodes_[1].ep(), nodes_[0].ep());
-
       bool result = helix_.intersect_circle_with_tangent(c, nodes_[0].ep(), direction.hor(), ep);
-
-
-
       return result;
     }
 
-    bool sequence::intersect_circle_from_begin(const circle & c, experimental_point * ep)const{
-
+    bool sequence::intersect_circle_from_begin(const circle & c, experimental_point * ep) const
+    {
       if( nodes().size() < 1 ) return false;
-
       experimental_double _phi = helix_.phi_of_point(nodes_[0].ep());
-
       bool result = helix_.intersect_circle(c, ep, _phi);
-
       return result;
-
     }
 
-    bool sequence::intersect_circle_from_begin_minus_one(const circle & c, experimental_point * ep)const{
-
+    bool sequence::intersect_circle_from_begin_minus_one(const circle & c, experimental_point * ep) const
+    {
       if( nodes().size() < 2 ) return false;
-
       experimental_double _phi = helix_.phi_of_point(nodes_[1].ep());
-
       bool result = helix_.intersect_circle(c, ep, _phi);
-
       return result;
-
     }
-
 
     bool sequence::intersect_sequence(sequence & seq,
                                       bool invertA, bool invertB, bool acrossGAP,
                                       experimental_point * ep,
-                                      double limit_distance, int* with_kink, int cells_to_delete, double Ratio){
+                                      double limit_distance, int* with_kink, int cells_to_delete, double Ratio)
+    {
       bool result(false);
       double distanceA, distanceB;
       distanceA = std::numeric_limits<double>::quiet_NaN();
@@ -2326,18 +2330,18 @@ namespace CAT {
       }
 
       return ( (resultA || resultB) && std::max(distance - distance_error, 0.) < 2.*limit_distance );
-
-
     }
 
 
-    std::string sequence::family()const{
+    std::string sequence::family() const
+    {
       size_t i1 = name().find("_");
       size_t i2 = name().find("_",i1+1);
       return name().substr(i1+1,i2-i1-1);
     }
 
-    std::vector<size_t> sequence::families()const{
+    std::vector<size_t> sequence::families() const
+    {
       std::vector<size_t> fs;
       size_t i1, i2;
       for(std::vector<std::string>::const_iterator iname=names_.begin(); iname!=names_.end(); ++iname){
@@ -2353,21 +2357,19 @@ namespace CAT {
 
     bool sequence::good_match(const sequence & seq,
                               bool &invertA, bool &invertB,
-                              size_t NOffLayers)const{
-
+                              size_t NOffLayers) const
+    {
       if( !seq.fast() ){
         // if( print_level() >= mybhep::VVERBOSE )
         //   std::clog << " ... forbidden, delayed track " << std::endl;
         return false;
       }
 
-
       if( seq.nodes().size() < 1 ){
         // if( print_level() >= mybhep::VVERBOSE )
         //   std::clog << " ... forbidden, hits size is " << seq.nodes().size() << std::endl;
         return false;
       }
-
 
       //no connection if on opposite sides of the foil
       if( nodes_[0].c().block() * seq.nodes_[0].c().block() < 0 ){
@@ -2382,7 +2384,6 @@ namespace CAT {
         //   std::clog << " ... forbidden, belongs to same family " << family() << std::endl;
         return false;
       }
-
 
       int layer_distance, cell_number_distance, block_distance;
 
@@ -2500,39 +2501,40 @@ namespace CAT {
       }
 
       // connection in the same block must be between neighbouring cell numbers
-    if( block_distance == 0 && static_cast<size_t>(std::abs(cell_number_distance)) > 1 + NOffLayers){
+      if( block_distance == 0 && static_cast<size_t>(std::abs(cell_number_distance)) > 1 + NOffLayers){
         // if( print_level() >= mybhep::VVERBOSE )
         //   std::clog << " ... forbidden, because block is the same and cell numbers are far away by " << cell_number_distance << " cells " << std::endl;
         return false;
       }
 
-
-
       // if( print_level() >= mybhep::VVERBOSE ){
       //   std::clog << " ... good match, distances: FF " << distFF << " FL " << distFL << " LF " << distLF << " LL " << distLL << " so invertA " << invertA << " invertB " << invertB << " layerdistance " << layer_distance << std::endl;
       // }
-
-
       return true;
     }
 
 
-    void sequence::remove_first_node(){
+    void sequence::remove_first_node()
+    {
       // if( print_level() >= mybhep::VVERBOSE ){
       //   std::clog << " removing first node " << nodes_.begin()->c().id() << std::endl;
       // }
       nodes_.erase(nodes_.begin());
     }
 
-    void sequence::remove_last_node(){
+    void sequence::remove_last_node()
+    {
       // if( print_level() >= mybhep::VVERBOSE ){
       //   std::clog << " removing last node " << nodes_.back().c().id() << std::endl;
       // }
       nodes_.pop_back();
     }
 
-    sequence sequence::match(sequence & seq, bool invertA, bool invertB, bool *ok, int with_kink, int cells_to_delete, double Ratio){
-
+    sequence sequence::match(sequence & seq,
+                             bool invertA, bool invertB,
+                             bool *ok, int with_kink,
+                             int cells_to_delete, double Ratio)
+    {
       sequence new_first_sequence;
       if( invertA )
         new_first_sequence = this->invert();
@@ -2594,7 +2596,6 @@ namespace CAT {
           in.ccc_.clear();
         }
 
-
         new_first_sequence.nodes_.push_back(in);
       }
 
@@ -2614,14 +2615,12 @@ namespace CAT {
       }
 
       *ok = new_first_sequence.calculate_helix(Ratio);
-
       return new_first_sequence;
-
     }
 
 
-    void sequence::calculate_length(void) {
-
+    void sequence::calculate_length(void)
+    {
       if( nodes_.size() >= 3 ){
         experimental_point fp = nodes_[0].ep();
         experimental_point lp = nodes_.back().ep();
@@ -2656,22 +2655,19 @@ namespace CAT {
         tangent_length_ = tl;
         has_tangent_length_ = true;
       }
-
       return;
-
     }
 
     bool sequence::good_match_with_kink(const sequence & seq,
                                         bool &invertA, bool &invertB, bool &acrossGAP,
                                         double limit_distance, size_t NOffLayers,
-                                        int &cells_to_delete)const{
-
-      if( !seq.fast() ){
+                                        int &cells_to_delete) const
+    {
+      if( !seq.fast() ) {
         // if( print_level() >= mybhep::VVERBOSE )
         //   std::clog << " ... forbidden, delayed track " << std::endl;
         return false;
       }
-
 
       if( nodes_.size() < 2 || seq.nodes().size() < 2 ){
         // if( print_level() >= mybhep::VVERBOSE )
@@ -2679,15 +2675,12 @@ namespace CAT {
         return false;
       }
 
-
       //no connection if on opposite sides of the foil
       if( nodes_[0].c().block() * seq.nodes_[0].c().block() < 0 ){
         // if( print_level() >= mybhep::VVERBOSE )
         //   std::clog << " ... forbidden, opposite side of foil " << std::endl;
         return false;
       }
-
-
 
       acrossGAP=false;
       cells_to_delete = 0;
@@ -2793,7 +2786,6 @@ namespace CAT {
           return false;
         }
 
-
       }
       else if( distFL <= distFF && distFL <= distLL && distFL <= distLF ){ // first to last  LF -> LF
 
@@ -2887,9 +2879,7 @@ namespace CAT {
           //   std::clog << " ... forbidden, because distance " << distFF << " is larger than limit " << limit_distance*(cells_to_delete + 1) << std::endl;
           return false;
         }
-
       }
-
 
       // connection must be between neighboring layers
       if( static_cast<size_t>(std::abs(layer_distance)) > 1 + NOffLayers){
@@ -2898,7 +2888,6 @@ namespace CAT {
         return false;
       }
 
-
       // connection in the same block must be between neighbouring cell numbers
       if( !acrossGAP && static_cast<size_t>(std::abs(cell_number_distance)) > 1 + NOffLayers){
         // if( print_level() >= mybhep::VVERBOSE )
@@ -2906,38 +2895,33 @@ namespace CAT {
         return false;
       }
 
-
       // if( print_level() >= mybhep::VVERBOSE ){
       //   std::clog << " ... good kink match, distances: FF " << distFF << " FL " << distFL << " LF " << distLF << " LL " << distLL << " so invertA " << invertA << " invertB " << invertB << " across gap " << acrossGAP << " cells_to_delete " << cells_to_delete << std::endl;
       // }
-
-
       return true;
-
     }
 
 
-    bool sequence::same_families(const topology::sequence & s)const{
-
+    bool sequence::same_families(const topology::sequence & s) const
+    {
       std::vector<size_t> fA = families();
       std::vector<size_t> fB = s.families();
-
       for(std::vector<size_t>::iterator ifA=fA.begin(); ifA!=fA.end(); ++ifA)
         for(std::vector<size_t>::iterator ifB=fB.begin(); ifB!=fB.end(); ++ifB)
           if( *ifA == *ifB )
             return true;
-
       return false;
     }
 
     experimental_double sequence::delta_phi(const experimental_point & epa,
-                               const experimental_point & epb)const{
+                                            const experimental_point & epb) const
+    {
       return helix_.delta_phi(epa, epb);
     }
 
-
     // is the (true) track all on one side of the foil?
-    bool sequence::one_side()const{
+    bool sequence::one_side() const
+    {
       int old_block = 0;
       for(std::vector<node>::const_iterator inode=nodes_.begin(); inode != nodes_.end(); ++inode){
         if( inode - nodes_.begin() == 0 ){
@@ -2952,30 +2936,28 @@ namespace CAT {
         }
         old_block = inode->c().block();
       }
-
       return true;
-
     }
 
 
-    experimental_vector sequence::initial_dir(bool SuperNEMO, double ref_value)const{
-
+    experimental_vector sequence::initial_dir(bool SuperNEMO, double ref_value) const
+    {
       size_t s = nodes_.size();
       if( s < 1 ){
-	// if( print_level() >= mybhep::NORMAL ){
-	//   std::clog << " problem: asking for initial dir of sequence with " << s << " nodes " << std::endl;
-	// }
+        // if( print_level() >= mybhep::NORMAL ){
+        //   std::clog << " problem: asking for initial dir of sequence with " << s << " nodes " << std::endl;
+        // }
         return experimental_vector();
       }
       experimental_point p_first = nodes_[0].ep();
       experimental_point p_last = nodes_[s-1].ep();
       double dist_first, dist_last;
       if( has_helix_vertex() ){
-	dist_first = helix_vertex_.distance(p_first).value();
-	dist_last = helix_vertex_.distance(p_last).value();
-	if( dist_first < dist_last )
-	  return experimental_vector(helix_vertex_, p_first).unit();
-	return experimental_vector(helix_vertex_, p_last).unit();
+        dist_first = helix_vertex_.distance(p_first).value();
+        dist_last = helix_vertex_.distance(p_last).value();
+        if( dist_first < dist_last )
+          return experimental_vector(helix_vertex_, p_first).unit();
+        return experimental_vector(helix_vertex_, p_last).unit();
       }
       if( s < 2 ){
         // if( print_level() >= mybhep::NORMAL ){
@@ -2985,22 +2967,22 @@ namespace CAT {
       }
 
       if( SuperNEMO ){
-	dist_first = std::abs(p_first.z().value() - ref_value);
-	dist_last = std::abs(p_last.z().value() - ref_value);
-	if( dist_first < dist_last )
-	  return experimental_vector(p_first, nodes_[1].ep()).unit();
-	return experimental_vector(p_last, nodes_[s-2].ep()).unit();
+        dist_first = std::abs(p_first.z().value() - ref_value);
+        dist_last = std::abs(p_last.z().value() - ref_value);
+        if( dist_first < dist_last )
+          return experimental_vector(p_first, nodes_[1].ep()).unit();
+        return experimental_vector(p_last, nodes_[s-2].ep()).unit();
       }
 
       dist_first = std::abs(p_first.radius().value() - ref_value);
       dist_last = std::abs(p_last.radius().value() - ref_value);
       if( dist_first < dist_last )
-	return experimental_vector(p_first, nodes_[1].ep()).unit();
+        return experimental_vector(p_first, nodes_[1].ep()).unit();
       return experimental_vector(p_last, nodes_[s-2].ep()).unit();
-
     }
 
-    experimental_vector sequence::initial_helix_dir(bool SuperNEMO, double ref_value)const{
+    experimental_vector sequence::initial_helix_dir(bool SuperNEMO, double ref_value) const
+    {
       if( has_helix_vertex() ){
         return helix_.direction_at(helix_vertex_);
       }
@@ -3019,22 +3001,22 @@ namespace CAT {
       double dist_first, dist_last;
 
       if( SuperNEMO ){
-	dist_first = std::abs(p_first.z().value() - ref_value);
-	dist_last = std::abs(p_last.z().value() - ref_value);
-	if( dist_first < dist_last )
-	  return helix_.direction_at(p_first);
-	return helix_.direction_at(p_last);
+        dist_first = std::abs(p_first.z().value() - ref_value);
+        dist_last = std::abs(p_last.z().value() - ref_value);
+        if( dist_first < dist_last )
+          return helix_.direction_at(p_first);
+        return helix_.direction_at(p_last);
       }
 
       dist_first = std::abs(p_first.radius().value() - ref_value);
       dist_last = std::abs(p_last.radius().value() - ref_value);
       if( dist_first < dist_last )
-	return helix_.direction_at(p_first);
+        return helix_.direction_at(p_first);
       return helix_.direction_at(p_last);
-
     }
 
-    experimental_vector sequence::final_dir()const{
+    experimental_vector sequence::final_dir() const
+    {
       if( has_decay_helix_vertex() ){
         if( nodes_.size() < 1 ){
           // if( print_level() >= mybhep::NORMAL ){
@@ -3050,20 +3032,16 @@ namespace CAT {
         // }
         return experimental_vector();
       }
-
       size_t s = nodes_.size();
       return experimental_vector(nodes_[s-2].ep(), nodes_.back().ep()).unit();
-
     }
 
 
     //! get node of worst chi2
-    bool sequence::worst_node(topology::node& n)const{
-
+    bool sequence::worst_node(topology::node& n) const
+    {
       if( nodes_.size() <= 2 ) return false;
-
       int index = -1;
-
       double chi2max = mybhep::default_max;
       for(std::vector<node>::const_iterator in = nodes_.begin(); in != nodes_.end(); ++in){
         if( in->chi2() > chi2max ){
@@ -3071,33 +3049,27 @@ namespace CAT {
           index = in - nodes_.begin();
         }
       }
-
       if( index >= 0 ){
         n = nodes_[index];
         return  true;
       }
-
       return false;
     }
 
-
     // get node of largest horizontal kink
-    double sequence::phi_kink(size_t inode)const{
-
+    double sequence::phi_kink(size_t inode) const
+    {
       if( nodes_.size() <= 2 ) return 0.;
       if( inode == 0 ) return 0.;
       if( inode >= nodes_.size() - 1 ) return 0.;
-
       double phi = std::abs((joint(nodes_[inode - 1].ep(), nodes_[inode].ep(), nodes_[inode + 1].ep())).kink_phi().value());
-
       return phi;
     }
 
     // get node of largest horizontal kink
-    bool sequence::largest_kink_node(topology::node& n, double& phi)const{
-
+    bool sequence::largest_kink_node(topology::node& n, double& phi) const
+    {
       if( nodes_.size() <= 2 ) return false;
-
       int nindex = -1;
 
       double phimax = mybhep::default_max;
@@ -3121,12 +3093,11 @@ namespace CAT {
         phi = phimax;
         return  true;
       }
-
       return false;
     }
 
-    bool sequence::helix_out_of_range(double lim){
-
+    bool sequence::helix_out_of_range(double lim)
+    {
       experimental_double phi(0.,0.);
       double phi_ref =0.;
       experimental_point p;
@@ -3145,12 +3116,11 @@ namespace CAT {
           return true;
         }
       }
-
       return true;
-
     }
 
-    bool sequence::has_kink(std::vector<size_t> *index) const{
+    bool sequence::has_kink(std::vector<size_t> *index) const
+    {
       bool has_kink=false;
       for(std::vector<node>::const_iterator in = nodes_.begin(); in != nodes_.end(); ++in){
         if( in->is_kink() ){
@@ -3158,73 +3128,71 @@ namespace CAT {
           index->push_back(in - nodes_.begin());
         }
       }
-
       return has_kink;
     }
 
-    bool sequence::has_kink(void) const{
+    bool sequence::has_kink(void) const
+    {
       std::vector<size_t> index;
       return has_kink(&index);
     }
 
-    void sequence::point_of_max_min_radius(experimental_point epa, experimental_point epb, experimental_point *epmax, experimental_point *epmin){
+    void sequence::point_of_max_min_radius(experimental_point epa,
+                                           experimental_point epb,
+                                           experimental_point *epmax,
+                                           experimental_point *epmin)
+    {
       helix_.point_of_max_min_radius(epa, epb, epmax, epmin);
       return;
     }
 
 
-  //*************************************************************
-    bool sequence::common_vertex_on_foil(const sequence *seqB, double *the_distance)const{
-    //*************************************************************
+    bool sequence::common_vertex_on_foil(const sequence *seqB,
+                                         double *the_distance) const
+    {
+      std::vector<experimental_point> foil_vertex_A, foil_vertex_B;
 
-    std::vector<experimental_point> foil_vertex_A, foil_vertex_B;
+      if( this->has_helix_vertex() && this->helix_vertex_type() == "foil" )
+        foil_vertex_A.push_back(this->helix_vertex());
+      if( this->has_tangent_vertex() && this->tangent_vertex_type() == "foil" )
+        foil_vertex_A.push_back(this->tangent_vertex());
+      if( this->has_decay_helix_vertex() && this->decay_helix_vertex_type() == "foil" )
+        foil_vertex_A.push_back(this->decay_helix_vertex());
+      if( this->has_decay_tangent_vertex() && this->decay_tangent_vertex_type() == "foil" )
+        foil_vertex_A.push_back(this->decay_tangent_vertex());
 
-    if( this->has_helix_vertex() && this->helix_vertex_type() == "foil" )
-      foil_vertex_A.push_back(this->helix_vertex());
-    if( this->has_tangent_vertex() && this->tangent_vertex_type() == "foil" )
-      foil_vertex_A.push_back(this->tangent_vertex());
-    if( this->has_decay_helix_vertex() && this->decay_helix_vertex_type() == "foil" )
-      foil_vertex_A.push_back(this->decay_helix_vertex());
-    if( this->has_decay_tangent_vertex() && this->decay_tangent_vertex_type() == "foil" )
-      foil_vertex_A.push_back(this->decay_tangent_vertex());
+      if( seqB->has_helix_vertex() && seqB->helix_vertex_type() == "foil" )
+        foil_vertex_B.push_back(seqB->helix_vertex());
+      if( seqB->has_tangent_vertex() && seqB->tangent_vertex_type() == "foil" )
+        foil_vertex_B.push_back(seqB->tangent_vertex());
+      if( seqB->has_decay_helix_vertex() && seqB->decay_helix_vertex_type() == "foil" )
+        foil_vertex_B.push_back(seqB->decay_helix_vertex());
+      if( seqB->has_decay_tangent_vertex() && seqB->decay_tangent_vertex_type() == "foil" )
+        foil_vertex_B.push_back(seqB->decay_tangent_vertex());
 
-    if( seqB->has_helix_vertex() && seqB->helix_vertex_type() == "foil" )
-      foil_vertex_B.push_back(seqB->helix_vertex());
-    if( seqB->has_tangent_vertex() && seqB->tangent_vertex_type() == "foil" )
-      foil_vertex_B.push_back(seqB->tangent_vertex());
-    if( seqB->has_decay_helix_vertex() && seqB->decay_helix_vertex_type() == "foil" )
-      foil_vertex_B.push_back(seqB->decay_helix_vertex());
-    if( seqB->has_decay_tangent_vertex() && seqB->decay_tangent_vertex_type() == "foil" )
-      foil_vertex_B.push_back(seqB->decay_tangent_vertex());
+      bool found = false;
+      double distance;
+      double min_distance = mybhep::default_min;
 
-    bool found = false;
-    double distance;
-    double min_distance = mybhep::default_min;
-
-    for(std::vector<experimental_point>::const_iterator vA=foil_vertex_A.begin(); vA!=foil_vertex_A.end(); vA++)
-      for(std::vector<experimental_point>::const_iterator vB=foil_vertex_B.begin(); vB!=foil_vertex_B.end(); vB++)
-        {
-          distance = (vA->distance(*vB)).value();
-          if( distance < min_distance ){
-            min_distance = distance;
-            found = true;
+      for(std::vector<experimental_point>::const_iterator vA=foil_vertex_A.begin(); vA!=foil_vertex_A.end(); vA++)
+        for(std::vector<experimental_point>::const_iterator vB=foil_vertex_B.begin(); vB!=foil_vertex_B.end(); vB++)
+          {
+            distance = (vA->distance(*vB)).value();
+            if( distance < min_distance ){
+              min_distance = distance;
+              found = true;
+            }
           }
-        }
 
-    if( found ){
-      *the_distance = min_distance;
-      // if( print_level() >= mybhep::VVERBOSE ){
-      //   std::clog << " sequences " << this->name() << " and " << seqB->name() << " have vertex on foil with distance " << min_distance << std::endl;
-      // }
+      if( found ){
+        *the_distance = min_distance;
+        // if( print_level() >= mybhep::VVERBOSE ){
+        //   std::clog << " sequences " << this->name() << " and " << seqB->name() << " have vertex on foil with distance " << min_distance << std::endl;
+        // }
+      }
+      return found;
     }
 
-    return found;
+  } // namespace topology
 
-  }
-
-
-
-  }
-}
-
-// end
+} // namespace CAT
