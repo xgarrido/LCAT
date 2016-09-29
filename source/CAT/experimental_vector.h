@@ -1,21 +1,25 @@
-/* -*- mode: c++ -*- */
-#ifndef __CATAlgorithm__IEVEC
-#define __CATAlgorithm__IEVEC
+// -*- mode: c++ -*-
+
+#ifndef CAT_TOPOLOGY_EXPERIMENTAL_VECTOR_H
+#define CAT_TOPOLOGY_EXPERIMENTAL_VECTOR_H
+
+// Standard library:
 #include <iostream>
 #include <cmath>
+
+// This project:
 #include <CAT/experimental_double.h>
 #include <CAT/experimental_point.h>
 
 namespace CAT{
-  namespace topology{
 
+  namespace topology {
 
-    // an experimental std::vector is composed of an ordinary std::vector (x, y, z)
-    // with corresponding error (ex, ey, ez)
-
-    class experimental_vector {
+    /// \brief An experimental std::vector is composed of an ordinary std::vector (x, y, z)
+    /// with corresponding error (ex, ey, ez)
+    class experimental_vector
+    {
     private:
-      std::string appname_;
 
       //! x coordinate
       experimental_double x_;
@@ -25,6 +29,7 @@ namespace CAT{
       experimental_double z_;
 
     public:
+
       //!Default constructor
       experimental_vector();
 
@@ -43,8 +48,6 @@ namespace CAT{
       //! constructor from one experimental point
       experimental_vector(const experimental_point &ep);
 
-
-      /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,
                          const std::string & a_title  = "",
                          const std::string & a_indent = "",
@@ -149,61 +152,37 @@ namespace CAT{
 
       experimental_double kink_theta(const experimental_vector &v);
 
-
     };
 
-    std::ostream& operator << (std::ostream& s, const experimental_vector& ip);
-
-
-    // Operations with experimental_vectors
-    // -v
-    /*
-      inline experimental_vector operator - (const experimental_vector& v1)
-      {
-      experimental_vector v = v1;
-      experimental_double newx;
-      newx.set_value(-v1.x().value());
-      newx.set_error(v1.x().error());
-      experimental_double newy;
-      newy.set_value(-v1.y().value());
-      newy.set_error(v1.y().error());
-      experimental_double newz;
-      newz.set_value(-v1.z().value());
-      newz.set_error(v1.z().error());
-      v.set_x(newx);
-      v.set_y(newy);
-      v.set_z(newz);
-
-      return v;
-      }
-    */
+    std::ostream& operator<<(std::ostream& s, const experimental_vector& ip);
 
     // v1+v2
-    experimental_vector operator + (const experimental_vector& v1, const experimental_vector& v2);
+    experimental_vector operator+(const experimental_vector& v1, const experimental_vector& v2);
 
     //! v1-v2
-    experimental_vector operator - (const experimental_vector& v1, const experimental_vector& v2);
+    experimental_vector operator-(const experimental_vector& v1, const experimental_vector& v2);
 
     // v*d
-    experimental_vector operator * (const experimental_vector& v1, experimental_double d);
+    experimental_vector operator*(const experimental_vector& v1, experimental_double d);
 
-    experimental_vector operator * (const experimental_vector& v1, double d);
+    experimental_vector operator*(const experimental_vector& v1, double d);
 
     // v/d
-    experimental_vector operator / (const experimental_vector& v1, experimental_double d);
+    experimental_vector operator/(const experimental_vector& v1, experimental_double d);
 
-    experimental_vector operator / (const experimental_vector& v1, double d);
+    experimental_vector operator/(const experimental_vector& v1, double d);
 
     // d*v
-    experimental_vector operator * (experimental_double d, const experimental_vector& v1);
+    experimental_vector operator*(experimental_double d, const experimental_vector& v1);
 
     // scalar product
-    experimental_double operator * (const experimental_vector& a, const experimental_vector& b);
+    experimental_double operator*(const experimental_vector& a, const experimental_vector& b);
 
     // std::vectorial product
-    experimental_vector operator ^ (const experimental_vector& a, const experimental_vector& b);
+    experimental_vector operator^(const experimental_vector& a, const experimental_vector& b);
 
-  }
-}
+  } // namespace topology
 
-#endif
+} // namespace CAT
+
+#endif // CAT_TOPOLOGY_EXPERIMENTAL_VECTOR_H

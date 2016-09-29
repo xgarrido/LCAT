@@ -1,16 +1,19 @@
-/* -*- mode: c++ -*- */
-#ifndef __CATAlgorithm__experimental_double
-#define __CATAlgorithm__experimental_double 1
+// -*- mode: c++ -*-
 
+#ifndef CAT_TOPOLOGY_EXPERIMENTAL_DOUBLE_H
+#define CAT_TOPOLOGY_EXPERIMENTAL_DOUBLE_H
+
+// Standard library:
 #include <iostream>
 #include <vector>
 
 namespace CAT {
+
   namespace topology {
 
-    class experimental_double {
-
-      // an experimental_double is composed of a value and an error
+    /// \brief An experimental_double is composed of a value and an error
+    class experimental_double
+    {
 
     protected:
 
@@ -34,7 +37,6 @@ namespace CAT {
       //! constructor
       experimental_double(const double &v, const double &e);
 
-      /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,
                          const std::string & a_title  = "",
                          const std::string & a_indent = "",
@@ -78,7 +80,6 @@ namespace CAT {
       experimental_double& operator /= (double a);
 
     };
-
 
     // Operations with experimental_points
     // -v
@@ -141,7 +142,8 @@ namespace CAT {
     // weighted average
     experimental_double weighted_average (const std::vector<experimental_double> & vs_);
 
-  }
-}
+  } // namespace topology
 
-#endif // __CATAlgorithm__experimental_double
+} // namespace CAT
+
+#endif // CAT_TOPOLOGY_EXPERIMENTAL_DOUBLE_H

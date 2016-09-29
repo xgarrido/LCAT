@@ -1,18 +1,19 @@
-/* -*- mode: c++ -*- */
+// Ourselves:
 #include <CAT/experimental_vector.h>
-#include <CAT/utilities.h>
 
 // Third party
 // - Bayeux/datatools:
 #include <bayeux/datatools/clhep_units.h>
 
-namespace CAT{
-  namespace topology{
+// This project:
+#include <CAT/utilities.h>
 
-    //!Default constructor
+namespace CAT {
+
+  namespace topology {
+
     experimental_vector::experimental_vector()
     {
-      appname_ = "experimental_vector: ";
       x_.set_value( mybhep::small_neg );
       y_.set_value( mybhep::small_neg );
       z_.set_value( mybhep::small_neg );
@@ -20,23 +21,19 @@ namespace CAT{
       x_.set_error( mybhep::small_neg );
       y_.set_error( mybhep::small_neg );
       z_.set_error( mybhep::small_neg );
-
     }
 
-    //!Default destructor
     experimental_vector::~experimental_vector()
     {
     }
 
-    //! constructor from coordinates
-    experimental_vector::experimental_vector(const experimental_double &x, const experimental_double &y, const experimental_double &z){
-      appname_ = "experimental_vector: ";
+    experimental_vector::experimental_vector(const experimental_double &x, const experimental_double &y, const experimental_double &z)
+    {
       x_=x; y_=y; z_=z;
     }
 
-    //! constructor from coordinates with error
-    experimental_vector::experimental_vector(double x, double y, double z, double ex, double ey, double ez){
-      appname_ = "experimental_vector: ";
+    experimental_vector::experimental_vector(double x, double y, double z, double ex, double ey, double ez)
+    {
       x_.set_value(x);
       y_.set_value(y);
       z_.set_value(z);
@@ -46,17 +43,15 @@ namespace CAT{
 
     }
 
-    //! constructor from two experimental points
-    experimental_vector::experimental_vector(const experimental_point &epa, const experimental_point &epb){
-      appname_ = "experimental_vector: ";
+    experimental_vector::experimental_vector(const experimental_point &epa, const experimental_point &epb)
+    {
       x_ = epb.x() - epa.x();
       y_ = epb.y() - epa.y();
       z_ = epb.z() - epa.z();
     }
 
-    //! constructor from one experimental point
-    experimental_vector::experimental_vector(const experimental_point &ep){
-      appname_ = "experimental_vector: ";
+    experimental_vector::experimental_vector(const experimental_point &ep)
+    {
       experimental_point p0(0.,0.,0.,0.,0.,0.);
       x_ = ep.x() - p0.x();
       y_ = ep.y() - p0.y();
@@ -64,39 +59,34 @@ namespace CAT{
     }
 
 
-    /*** dump ***/
     void experimental_vector::dump (std::ostream & a_out,
                                     const std::string & a_title,
                                     const std::string & a_indent,
-                                    bool /* a_inherit */              ) const{
-      {
-        std::string indent;
-        if (! a_indent.empty ()) indent = a_indent;
-        if (! a_title.empty ())
-          {
-            a_out << indent << a_title << std::endl;
-          }
-
-        a_out << indent << appname_ << std::endl;
-        a_out << indent << " x: "; (x()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
-        a_out << indent << " y: "; (y()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
-        a_out << indent << " z: "; (z()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
-
-        return;
-      }
+                                    bool /* a_inherit */ ) const
+    {
+      std::string indent;
+      if (! a_indent.empty ()) indent = a_indent;
+      if (! a_title.empty ())
+        {
+          a_out << indent << a_title << std::endl;
+        }
+      a_out << indent << " x: "; (x()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
+      a_out << indent << " y: "; (y()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
+      a_out << indent << " z: "; (z()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
+      return;
     }
 
 
-    //! set all coordinates
-    void experimental_vector::coordinates(const experimental_double &x,const experimental_double &y, const experimental_double &z){
+    void experimental_vector::coordinates(const experimental_double &x,const experimental_double &y, const experimental_double &z)
+    {
       x_=x; y_=y; z_=z;
     }
-    //! set all coordinates
-    void experimental_vector::set(const experimental_double &x, const experimental_double &y, const experimental_double &z){
+
+    void experimental_vector::set(const experimental_double &x, const experimental_double &y, const experimental_double &z)
+    {
       coordinates(x,y,z);
     }
 
-    //! set std::vector and errors
     void experimental_vector::set(double x, double y, double z, double ex,double ey, double ez)
     {
       x_.set_value( x);
@@ -124,36 +114,54 @@ namespace CAT{
 
 
     //! set from two points
-    void experimental_vector::set(const experimental_point &epa, const experimental_point &epb){
+    void experimental_vector::set(const experimental_point &epa, const experimental_point &epb)
+    {
       x_.set( epb.x() - epa.x());
       y_.set( epb.y() - epa.y());
       z_.set( epb.z() - epa.z());
     }
 
     //! get all coordinates
-    const experimental_vector& experimental_vector::coordinates()const {return *this;}
+    const experimental_vector& experimental_vector::coordinates() const
+    {
+      return *this;
+    }
+
     //!get x
     const experimental_double& experimental_vector::x() const
     {
       return x_;
     }
+
     //! read x
-    experimental_double& experimental_vector::x(){
+    experimental_double& experimental_vector::x()
+    {
       return x_;
     }
 
     //!get y
-    const experimental_double& experimental_vector::y() const {
+    const experimental_double& experimental_vector::y() const
+    {
       return y_;
     }
+
     //! read y
-    experimental_double& experimental_vector::y(){
+    experimental_double& experimental_vector::y()
+    {
       return y_;
     }
+
     //!get z
-    const experimental_double& experimental_vector::z() const {return z_;}
+    const experimental_double& experimental_vector::z() const
+    {
+      return z_;
+    }
+
     //! read z
-    experimental_double& experimental_vector::z(){return z_;}
+    experimental_double& experimental_vector::z()
+    {
+      return z_;
+    }
 
     // Operators
     // operator () returns/set x,y,z
@@ -258,7 +266,8 @@ namespace CAT{
     }
 
     //!get unit std::vector
-    experimental_vector experimental_vector::unit() const{
+    experimental_vector experimental_vector::unit() const
+    {
       experimental_vector p1(x_, y_, z_);
       p1 /= p1.length().value();
       return p1;
@@ -312,28 +321,27 @@ namespace CAT{
 
     }
 
-
-    experimental_double experimental_vector::phi() const{
+    experimental_double experimental_vector::phi() const
+    {
 
       return experimental_atan2(z_, x_);
 
     }
 
-    experimental_double experimental_vector::tan_phi(){
-
+    experimental_double experimental_vector::tan_phi()
+    {
       if( x_.value() == 0. )
         return experimental_double(mybhep::plus_infinity, 0.);
-
       return z_/x_;
-
     }
 
-    experimental_double experimental_vector::theta() const{
+    experimental_double experimental_vector::theta() const
+    {
       return experimental_atan2(y_, hor().length());
-
     }
 
-    experimental_double experimental_vector::kink_phi(const experimental_vector &v){
+    experimental_double experimental_vector::kink_phi(const experimental_vector &v)
+    {
       experimental_double result;
       experimental_double p1 = phi();
       experimental_double p2 = v.phi();
@@ -343,13 +351,12 @@ namespace CAT{
       result.set_value(phi2 - phi1);
       result.set_error(std::sqrt(mybhep::square(p1.error()) +
                                  mybhep::square(p2.error()) ));
-
       return result;
-
     }
 
 
-    experimental_double experimental_vector::kink_theta(const experimental_vector &v){
+    experimental_double experimental_vector::kink_theta(const experimental_vector &v)
+    {
       experimental_double result;
       experimental_double t1 = theta();
       experimental_double t2 = v.theta();
@@ -359,14 +366,12 @@ namespace CAT{
       result.set_value(theta2 - theta1);
       result.set_error(std::sqrt(mybhep::square(t1.error()) +
                                  mybhep::square(t2.error()) ));
-
       return result;
-
     }
 
 
-
-    std::ostream& operator << (std::ostream& s, const experimental_vector& ip) {
+    std::ostream& operator << (std::ostream& s, const experimental_vector& ip)
+    {
       s << std::endl;
 
       s << "(" << ip.x().value() << "," <<ip.y().value() <<","<<ip.z().value() <<")";
@@ -448,5 +453,6 @@ namespace CAT{
       return v;
     }
 
-  }
-}
+  } // namespace topology
+
+} // namespace CAT

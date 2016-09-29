@@ -1,23 +1,25 @@
-/* -*- mode: c++ -*- */
-#ifndef __CATAlgorithm__IEPOINT
-#define __CATAlgorithm__IEPOINT
+// -*- mode: c++ -*-
+
+#ifndef CAT_TOPOLOGY_EXPERIMENTAL_POINT_H
+#define CAT_TOPOLOGY_EXPERIMENTAL_POINT_H
+
+// Standard library:
 #include <iostream>
 #include <cmath>
+
+// This project:
 #include <CAT/experimental_double.h>
 
-namespace CAT{
+namespace CAT {
 
-  namespace topology{
+  namespace topology {
 
-
-    //  class experimental_point : public point{
-    class experimental_point {
-
-      // an experimental point is composed of an ordinary point (x, y, z)
-      // with corresponding error (ex, ey, ez)
+    /// \brief An experimental point is composed of an ordinary point (x, y, z)
+    /// with corresponding error (ex, ey, ez)
+    class experimental_point
+    {
 
     private:
-      std::string appname_;
 
       // x coordinate
       experimental_double x_;
@@ -66,37 +68,36 @@ namespace CAT{
       void set_z(const experimental_double &z);
 
       //! set ez
-        void set_ez(double ez);
+      void set_ez(double ez);
 
       //!get experimental x
-        const experimental_double& x() const;
+      const experimental_double& x() const;
 
       //!get experimental y
-        const experimental_double& y() const;
+      const experimental_double& y() const;
 
       //!get experimental z
-        const experimental_double& z() const;
+      const experimental_double& z() const;
 
       //!get experimental radius
-        const experimental_double& radius() const;
+      const experimental_double& radius() const;
 
       //! distance
-        experimental_double distance(const experimental_point& p2) const;
+      experimental_double distance(const experimental_point& p2) const;
 
       //! distance
-        experimental_double hor_distance(const experimental_point& p2) const;
-
+      experimental_double hor_distance(const experimental_point& p2) const;
 
     private:
 
-        void set_radius();
+      void set_radius();
     };
 
-
     // average
-    experimental_point average (const std::vector<experimental_point> &vs);
+    experimental_point average(const std::vector<experimental_point> &vs);
 
-  }
-}
+  } // namespace topology
 
-#endif
+} // namespace CAT
+
+#endif // CAT_TOPOLOGY_EXPERIMENTAL_POINT_H

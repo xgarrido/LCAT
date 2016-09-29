@@ -1,9 +1,14 @@
-/* -*- mode: c++ -*- */
-#ifndef __CATAlgorithm__ICLUSTER
-#define __CATAlgorithm__ICLUSTER
+// -*- mode: c++ -*-
+
+#ifndef CAT_TOPOLOGY_CLUSTER_H
+#define CAT_TOPOLOGY_CLUSTER_H
+
+// Standard library:
 #include <iostream>
 #include <cmath>
 #include <vector>
+
+// This project:
 #include <CAT/experimental_point.h>
 #include <CAT/experimental_vector.h>
 #include <CAT/cell_base.h>
@@ -14,17 +19,13 @@
 #include <CAT/broken_line.h>
 
 
-namespace CAT{
-  namespace topology{
+namespace CAT {
 
+  namespace topology {
 
-    class cluster : public tracking_object{
-
-      // a cluster is composed of a list of nodes
-
-    protected:
-      std::string appname_;
-
+    /// \brief A cluster is composed of a list of nodes
+    class cluster : public tracking_object
+    {
     public:
 
       // list of nodes
@@ -99,7 +100,8 @@ namespace CAT{
 
     };
 
-  }
-}
+  } // namespace topology
 
-#endif
+} // namespace CAT
+
+#endif // CAT_TOPOLOGY_CLUSTER_H
