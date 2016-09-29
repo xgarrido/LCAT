@@ -1,26 +1,25 @@
-/* -*- mode: c++ -*- */
+// -*- mode: c++ -*-
 
-#ifndef __CATAlgorithm__line_h
-#define __CATAlgorithm__line_h 1
+#ifndef CAT_TOPOLOGY_LINE_H
+#define CAT_TOPOLOGY_LINE_H
 
+// Standard library:
 #include <iostream>
 #include <cmath>
+
+// This project:
 #include <CAT/tracking_object.h>
 #include <CAT/experimental_vector.h>
 #include <CAT/experimental_vector.h>
 
 namespace CAT {
 
-  namespace topology{
+  namespace topology {
 
-
-    class line : public tracking_object {
-
-      // a line is composed of two experimental points
-
+    /// \brief A line is composed of two experimental points
+    class line : public tracking_object
+    {
     private:
-
-      std::string appname_;
 
       // first experimental point
       experimental_point epa_;
@@ -42,9 +41,10 @@ namespace CAT {
       virtual ~line();
 
       //! constructor
-      line(const experimental_point & epa, const experimental_point & epb, double probmin=1.e-200);
+      line(const experimental_point & epa,
+           const experimental_point & epb,
+           double probmin=1.e-200);
 
-      /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,
                          const std::string & a_title  = "",
                          const std::string & a_indent = "",
@@ -97,7 +97,9 @@ namespace CAT {
       void set_forward_axis();
 
     };
-  }
-}
 
-#endif // __CATAlgorithm__line_h
+  } // namespace topology
+
+} // namespace CAT
+
+#endif // CAT_TOPOLOGY_LINE_H

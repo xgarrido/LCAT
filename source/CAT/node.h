@@ -193,7 +193,8 @@ namespace CAT {
       friend bool operator==(const node & left,
                              const node & right);
 
-      static bool circle_order(const topology::node & c1, const topology::node & c) {
+      static bool circle_order(const topology::node & c1, const topology::node & c)
+      {
         // order nodes based on their angle along an assigned circle
         return( c1.circle_phi() > c.circle_phi() );
       }
