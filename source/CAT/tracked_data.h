@@ -44,14 +44,10 @@ namespace CAT{
       //!Default constructor
       tracked_data()
       {
-        //cells_.clear();
-        //calos_.clear();
-        //clusters_.clear();
-        //scenarios_.clear();
       }
 
       //!Default destructor
-      virtual ~tracked_data(){};
+      virtual ~tracked_data(){}
 
       /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,
@@ -106,11 +102,8 @@ namespace CAT{
         scenarios_ = scenarios;
       }
 
-      // //! set true sequences
-      // void set_true_sequences(const std::vector<sequence> & sequences)
-      // {
-      //   true_sequences_ = sequences;
-      // }
+      /// Add a Geiger cell
+      topology::cell & add_gg_cell();
 
       //! get cells
       std::vector<cell>& get_cells()
@@ -122,6 +115,9 @@ namespace CAT{
       {
         return cells_;
       }
+
+      /// Add a calorimeter cell
+      topology::calorimeter_hit & add_calo_cell();
 
       //! get calos
       std::vector<calorimeter_hit>& get_calos()

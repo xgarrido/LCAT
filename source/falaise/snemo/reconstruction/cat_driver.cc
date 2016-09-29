@@ -253,11 +253,13 @@ namespace snemo {
       if (_CAT_input_.cells.capacity() < gg_hits_.size()){
         _CAT_input_.cells.reserve(gg_hits_.size());
       }
-      size_t ihit = 0;
+
+      _CAT_output_.tracked_data.reset();
 
       // Hit accounting :
       std::map<int, sdm::calibrated_data::tracker_hit_handle_type> hits_mapping;
 
+      size_t ihit = 0;
       // GG hit loop :
       for (const auto & gg_handle : gg_hits_) {
         // Skip NULL handle :
@@ -295,8 +297,8 @@ namespace snemo {
         const int cell_id  = row - (_CAT_setup_.num_cells_per_plane / 2);
 
         // X-Y position of the anode wire of the hit cell :
-        CAT::topology::experimental_double z; // == X in sngeometry SN module frame
-        CAT::topology::experimental_double x; // == Y in sngeometry SN module frame
+        ct::experimental_double z; // == X in sngeometry SN module frame
+        ct::experimental_double x; // == Y in sngeometry SN module frame
 
         // Center of the cell set in CAT's own reference frame:
         z.set_value(snemo_gg_hit.get_x());
@@ -305,7 +307,7 @@ namespace snemo {
         x.set_error(0.0);
 
         // Transverse Geiger drift distance :
-        CAT::topology::experimental_double y;
+        ct::experimental_double y;
         // Plasma longitudinal origin along the anode wire :
         y.set_value(snemo_gg_hit.get_z());
         y.set_error(_sigma_z_factor_ * snemo_gg_hit.get_sigma_z());
@@ -318,10 +320,10 @@ namespace snemo {
         const double rdrift_err = snemo_gg_hit.get_sigma_r();
 
         // Build the Geiger hit position :
-        CAT::topology::experimental_point gg_hit_position(x,y,z);
+        ct::experimental_point gg_hit_position(x,y,z);
 
         // Add a new hit cell in the CAT input data model :
-        CAT::topology::cell & c = _CAT_input_.add_cell();
+        ct::cell & c = _CAT_output_.tracked_data.add_gg_cell();
         c.set_id(ihit++);
         c.set_probmin(_CAT_setup_.probmin);
         c.set_p(gg_hit_position);
@@ -342,110 +344,102 @@ namespace snemo {
       } // for loop over gg_hits_
 
       // Take into account calo hits:
-      _CAT_input_.calo_cells.clear();
       // Calo hit accounting :
       std::map<int, sdm::calibrated_data::calorimeter_hit_handle_type> calo_hits_mapping;
-      if (_process_calo_hits_) {
-        if (_CAT_input_.calo_cells.capacity() < calo_hits_.size()) {
-          _CAT_input_.calo_cells.reserve(calo_hits_.size());
+      size_t jhit = 0;
+
+      // CALO hit loop :
+      for (const auto & calo_handle : calo_hits_) {
+        // Skip NULL handle :
+        if (! calo_handle.has_data()) continue;
+
+        // Get a const reference on the calibrated Calo hit :
+        const sdm::calibrated_calorimeter_hit & sncore_calo_hit = calo_handle.get();
+
+        // Get calibrated calo. geom_id
+        const geomtools::geom_id & a_calo_hit_gid = sncore_calo_hit.get_geom_id();
+        // Extract the numbering scheme of the calo_cell from its geom ID :
+        int column = -1;
+        int side = -1;
+        double width = datatools::invalid_real();
+        double height = datatools::invalid_real();
+        double thickness = datatools::invalid_real();
+        ct::experimental_vector norm(0., 0., 0., 0., 0., 0.);
+        geomtools::vector_3d block_position;
+        // Extract the numbering scheme of the scin block from its geom ID :
+        if (_calo_locator_->is_calo_block_in_current_module(a_calo_hit_gid)) {
+          _calo_locator_->get_block_position(a_calo_hit_gid, block_position);
+          width     = _calo_locator_->get_block_width();
+          height    = _calo_locator_->get_block_height();
+          thickness = _calo_locator_->get_block_thickness();
+          column    = _calo_locator_->extract_column(a_calo_hit_gid);
+          side      = _calo_locator_->extract_side(a_calo_hit_gid);
+          const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
+          norm.set_x(ct::experimental_double((double) side_number, 0.));
+        } else if (_xcalo_locator_->is_calo_block_in_current_module(a_calo_hit_gid)) {
+          _xcalo_locator_->get_block_position(a_calo_hit_gid, block_position);
+          width     = _xcalo_locator_->get_block_width();
+          height    = _xcalo_locator_->get_block_height();
+          thickness = _xcalo_locator_->get_block_thickness();
+          column    = _xcalo_locator_->extract_column(a_calo_hit_gid);
+          side      = _xcalo_locator_->extract_side(a_calo_hit_gid);
+          const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
+          norm.set_y(ct::experimental_double((double) side_number, 0.));
+        } else if (_gveto_locator_->is_calo_block_in_current_module(a_calo_hit_gid)) {
+          _gveto_locator_->get_block_position(a_calo_hit_gid, block_position);
+          width     = _gveto_locator_->get_block_width();
+          height    = _gveto_locator_->get_block_height();
+          thickness = _gveto_locator_->get_block_thickness();
+          column    = _gveto_locator_->extract_column(a_calo_hit_gid);
+          side      = _xcalo_locator_->extract_side(a_calo_hit_gid);
+          const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
+          norm.set_z(ct::experimental_double((double) side_number, 0.));
         }
-        _CAT_output_.tracked_data.reset();
-        size_t jhit = 0;
 
-        // CALO hit loop :
-        BOOST_FOREACH(const sdm::calibrated_data::calorimeter_hit_handle_type & calo_handle,
-                      calo_hits_) {
-          // Skip NULL handle :
-          if (! calo_handle.has_data()) continue;
+        ct::experimental_double energy(sncore_calo_hit.get_energy(),
+                                       sncore_calo_hit.get_sigma_energy());
+        ct::experimental_double time(sncore_calo_hit.get_time(),
+                                     sncore_calo_hit.get_sigma_time());
+        // size_t id = sncore_calo_hit.get_hit_id();
+        ct::experimental_point center(block_position.x(),
+                                      block_position.y(),
+                                      block_position.z(),
+                                      0., 0., 0.);
+        ct::experimental_vector sizes(width, height, thickness,
+                                      0., 0., 0.);
+        ct::plane pl(center, sizes, norm);
+        pl.set_probmin(_CAT_setup_.probmin);
+        pl.set_type("SuperNEMO");
 
-          // Get a const reference on the calibrated Calo hit :
-          const sdm::calibrated_calorimeter_hit & sncore_calo_hit = calo_handle.get();
+        // Build the Calo hit position :
+        // Add a new hit calo_cell in the CAT input data model :
+        ct::calorimeter_hit & c = _CAT_output_.tracked_data.add_calo_cell();
+        c.set_pl(pl);
+        c.set_e(energy);
+        c.set_t(time);
+        c.set_probmin(_CAT_setup_.probmin);
+        c.set_layer(column);
+        c.set_id(jhit++);
 
-          // Get calibrated calo. geom_id
-          const geomtools::geom_id & a_calo_hit_gid = sncore_calo_hit.get_geom_id();
-          // Extract the numbering scheme of the calo_cell from its geom ID :
-          int column = -1;
-          int side = -1;
-          double width = datatools::invalid_real();
-          double height = datatools::invalid_real();
-          double thickness = datatools::invalid_real();
-          ct::experimental_vector norm(0., 0., 0., 0., 0., 0.);
-          geomtools::vector_3d block_position;
-          // Extract the numbering scheme of the scin block from its geom ID :
-          if (_calo_locator_->is_calo_block_in_current_module(a_calo_hit_gid)) {
-            _calo_locator_->get_block_position(a_calo_hit_gid, block_position);
-            width     = _calo_locator_->get_block_width();
-            height    = _calo_locator_->get_block_height();
-            thickness = _calo_locator_->get_block_thickness();
-            column    = _calo_locator_->extract_column(a_calo_hit_gid);
-            side      = _calo_locator_->extract_side(a_calo_hit_gid);
-            const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
-            norm.set_x(ct::experimental_double((double) side_number, 0.));
-          } else if (_xcalo_locator_->is_calo_block_in_current_module(a_calo_hit_gid)) {
-            _xcalo_locator_->get_block_position(a_calo_hit_gid, block_position);
-            width     = _xcalo_locator_->get_block_width();
-            height    = _xcalo_locator_->get_block_height();
-            thickness = _xcalo_locator_->get_block_thickness();
-            column    = _xcalo_locator_->extract_column(a_calo_hit_gid);
-            side      = _xcalo_locator_->extract_side(a_calo_hit_gid);
-            const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
-            norm.set_y(ct::experimental_double((double) side_number, 0.));
-          } else if (_gveto_locator_->is_calo_block_in_current_module(a_calo_hit_gid)) {
-            _gveto_locator_->get_block_position(a_calo_hit_gid, block_position);
-            width     = _gveto_locator_->get_block_width();
-            height    = _gveto_locator_->get_block_height();
-            thickness = _gveto_locator_->get_block_thickness();
-            column    = _gveto_locator_->extract_column(a_calo_hit_gid);
-            side      = _xcalo_locator_->extract_side(a_calo_hit_gid);
-            const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
-            norm.set_z(ct::experimental_double((double) side_number, 0.));
-          }
+        // Store mapping info between both data models :
+        calo_hits_mapping[c.id()] = calo_handle;
 
-          ct::experimental_double energy(sncore_calo_hit.get_energy(),
-                                         sncore_calo_hit.get_sigma_energy());
-          ct::experimental_double time(sncore_calo_hit.get_time(),
-                                       sncore_calo_hit.get_sigma_time());
-          // size_t id = sncore_calo_hit.get_hit_id();
-          ct::experimental_point center(block_position.x(),
-                                        block_position.y(),
-                                        block_position.z(),
-                                        0., 0., 0.);
-          ct::experimental_vector sizes(width, height, thickness,
-                                        0., 0., 0.);
-          ct::plane pl(center, sizes, norm);
-          pl.set_probmin(_CAT_setup_.probmin);
-          pl.set_type("SuperNEMO");
-
-          // Build the Calo hit position :
-          // Add a new hit calo_cell in the CAT input data model :
-          ct::calorimeter_hit & c = _CAT_input_.add_calo_cell();
-          c.set_pl(pl);
-          c.set_e(energy);
-          c.set_t(time);
-          c.set_probmin(_CAT_setup_.probmin);
-          c.set_layer(column);
-          c.set_id(jhit++);
-
-          // Store mapping info between both data models :
-          calo_hits_mapping[c.id()] = calo_handle;
-
-          DT_LOG_DEBUG(get_logging_priority(),
-                       "Calo_cell #" << sncore_calo_hit.get_hit_id() << " has been added "
-                       << "to CAT input data with id number #" << c.id());
-        }
+        DT_LOG_DEBUG(get_logging_priority(),
+                     "Calo_cell #" << sncore_calo_hit.get_hit_id() << " has been added "
+                     << "to CAT input data with id number #" << c.id());
       }
 
-      // Validate the input data :
-      if (! _CAT_input_.check()) {
-        DT_LOG_ERROR(get_logging_priority (), "Invalid CAT input data !");
-        return 1;
-      }
+      // // Validate the input data :
+      // if (! _CAT_input_.check()) {
+      //   DT_LOG_ERROR(get_logging_priority (), "Invalid CAT input data !");
+      //   return 1;
+      // }
 
-      // Install the input data model within the algorithm object :
-      _CAT_clusterizer_.set_cells(_CAT_input_.cells);
+      // // Install the input data model within the algorithm object :
+      // _CAT_clusterizer_.set_cells(_CAT_input_.cells);
 
-      // Install the input data model within the algorithm object :
-      _CAT_clusterizer_.set_calorimeter_hits(_CAT_input_.calo_cells);
+      // // Install the input data model within the algorithm object :
+      // _CAT_clusterizer_.set_calorimeter_hits(_CAT_input_.calo_cells);
 
       // Run the clusterizer algorithm :
       _CAT_clusterizer_.clusterize(_CAT_output_.tracked_data);

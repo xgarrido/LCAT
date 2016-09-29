@@ -19,7 +19,7 @@
 #include <CAT/experimental_double.h>
 #include <CAT/Clock.h>
 #include <CAT/plane.h>
-#include <CAT/tracked_data_base.h>
+#include <CAT/tracked_data.h>
 #include <CAT/helix.h>
 #include <CAT/scenario.h>
 // #include <CAT/logic_scenario.h>

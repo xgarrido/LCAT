@@ -745,17 +745,13 @@ namespace CAT {
 
     direct_scenarios_out_of_foil();
 
-    if( scenarios_.size() > 0 ){
-
-      size_t index_tmp = pick_best_scenario();
-
-      DT_LOG_DEBUG(get_logging_priority(), "Made scenario");
-
+    if (scenarios_.size() > 0) {
+      DT_LOG_DEBUG(get_logging_priority(), "Pick best scenario");
+      const size_t index_tmp = pick_best_scenario();
       td.scenarios_.push_back(scenarios_[index_tmp]);
 
       clock.stop(" sequentiator: make scenarios ");
       return true;
-
     }
 
     DT_LOG_DEBUG(get_logging_priority(), "Not made scenario");

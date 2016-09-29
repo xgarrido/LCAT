@@ -15,7 +15,7 @@
 #include <CAT/cluster.h>
 #include <CAT/calorimeter_hit.h>
 #include <CAT/sequence_base.h>
-#include <CAT/tracked_data_base.h>
+#include <CAT/tracked_data.h>
 
 // Third party
 // - Bayeux/datatools:
@@ -92,9 +92,6 @@ namespace CAT{
 
     /// Get level of 'closeness' of cells
     size_t _near_level_(const topology::cell & c1_, const topology::cell & c2_) const;
-
-    /// Get a list of neighbors given a cell
-    void _get_near_cells_(const topology::cell & c_, std::vector<topology::cell> & cells_) const;
 
   private:
 

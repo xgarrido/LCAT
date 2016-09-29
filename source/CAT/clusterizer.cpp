@@ -70,7 +70,7 @@ namespace CAT {
   {
     _logging_ = datatools::logger::PRIO_WARNING;
     _tangent_phi_ = 20.0 * CLHEP::degree;
-    _ratio_       = 10000.0;
+    _ratio_ = 10000.0;
     return;
   }
 
@@ -143,8 +143,10 @@ namespace CAT {
     _clusters_.clear();
 
     DT_LOG_DEBUG(get_logging_priority(), "Order cells");
-    if (_cells_.empty()) return;
-    std::sort(_cells_.begin(), _cells_.end(),
+    std::vector<topology::cell> & cells = tracked_data_.get_cells();
+
+    if (cells.empty()) return;
+    std::sort(cells.begin(), cells.end(),
               [] (const topology::cell & a_, const topology::cell & b_) -> bool
               {
                 if (a_.id() == b_.id()) return false;
@@ -172,7 +174,7 @@ namespace CAT {
     // List of cells already used
     std::set<int> flagged;
 
-    for (const auto & icell : _cells_) {
+    for (const auto & icell : cells) {
       // Pick a cell that was never added
       if (flagged.count(icell.id())) continue;
       flagged.insert(icell.id());
@@ -198,8 +200,15 @@ namespace CAT {
         std::vector<topology::cell_couplet> cc;
 
         // Get the list of cells near the connected cell
+        DT_LOG_DEBUG(get_logging_priority(), "Filling list of cells near cell " << cconn.id());
         std::vector<topology::cell> cells_near_iconn;
-        _get_near_cells_(cconn, cells_near_iconn);
+        for (const auto & jcell : cells) {
+          if (jcell.id() == cconn.id()) continue;
+          const size_t nl = _near_level_(cconn, jcell);
+          if (nl > 0) {
+            cells_near_iconn.push_back(jcell);
+          }
+        }
         DT_LOG_DEBUG(get_logging_priority(), "Cluster " << _clusters_.size()
                      << " starts with " << icell.id() << " try to add cell " << cconn.id()
                      << " with n of neighbours = " << cells_near_iconn.size());
@@ -229,8 +238,8 @@ namespace CAT {
 
     DT_LOG_DEBUG(get_logging_priority(), "There are " << _clusters_.size() << " clusters of cells");
 
-    tracked_data_.set_cells(_cells_);
-    tracked_data_.set_calos(_calorimeter_hits_);
+    // tracked_data_.set_cells(_cells_);
+    // tracked_data_.set_calos(_calorimeter_hits_);
     tracked_data_.set_clusters(_clusters_);
 
     return;
@@ -301,22 +310,6 @@ namespace CAT {
     else if (layer_distance == 0 && row_distance == 1) return 2;
     else if (layer_distance == 1 && row_distance == 1) return 1;
     return 0;
-  }
-
-
-  void clusterizer::_get_near_cells_(const topology::cell & c_, std::vector<topology::cell> & cells_) const
-  {
-    DT_LOG_DEBUG(get_logging_priority(), "Filling list of cells near cell " << c_.id());
-
-    for (const auto & icell : _cells_) {
-      if (icell.id() == c_.id()) continue;
-
-      const size_t nl = _near_level_(c_, icell);
-      if (nl > 0) {
-        cells_.push_back(icell);
-      }
-    }
-    return;
   }
 
 }
