@@ -13,9 +13,9 @@
 #include <CAT/cluster.h>
 #include <CAT/scenario.h>
 
-namespace CAT{
+namespace CAT {
 
-  namespace topology{
+  namespace topology {
 
     /// \brief Tracked data
     ///
