@@ -139,7 +139,6 @@ namespace CAT {
 
     if (late())
       {
-        tracked_data_.set_skipped(true);
         return;
       }
 
@@ -158,7 +157,6 @@ namespace CAT {
 
     if (late())
       {
-        tracked_data_.set_skipped(true);
         return;
       }
 
@@ -167,7 +165,6 @@ namespace CAT {
 
     if (late())
       {
-        tracked_data_.set_skipped(true);
         return;
       }
 
@@ -709,7 +706,6 @@ namespace CAT {
 
     for(std::vector<topology::sequence>::iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq){
       if( late() ){
-        td.set_skipped(true);
         return false;
       }
 
@@ -743,7 +739,6 @@ namespace CAT {
     }
 
     if( late() ){
-      td.set_skipped(true);
       return false;
     }
 

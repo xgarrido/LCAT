@@ -27,9 +27,6 @@ namespace CAT{
       // a list of clusters
       // and a list of scenarios
 
-    protected:
-      std::string appname_;
-
     public:
 
       // list of cells
@@ -44,54 +41,17 @@ namespace CAT{
       // list of scenarios
       std::vector<scenario> scenarios_;
 
-      // list of true sequences
-      std::vector<sequence> true_sequences_;
-
-      // list of nemo3 sequences
-      std::vector<sequence> nemo_sequences_;
-
-      // is event selcted?
-      bool selected_;
-
-      // is event skipped?
-      bool skipped_;
-
       //!Default constructor
       tracked_data()
       {
-        appname_= "tracked_data: ";
         //cells_.clear();
         //calos_.clear();
         //clusters_.clear();
         //scenarios_.clear();
-        //true_sequences_.clear();
-        //nemo_sequences_.clear();
-        selected_ = true;
-        skipped_ = false;
       }
 
       //!Default destructor
       virtual ~tracked_data(){};
-
-      //! constructor
-      tracked_data(const std::vector<cell> &cells,
-                   const std::vector<calorimeter_hit> &calos,
-                   const std::vector<cluster> &clusters,
-                   const std::vector<scenario> &scenarios,
-                   const std::vector<sequence> &true_sequences,
-                   const std::vector<sequence> &nemo_sequences,
-                   double probmin=1.e-200){
-        set_probmin(probmin);
-        appname_= "tracked_data: ";
-        cells_ = cells;
-        calos_ = calos;
-        clusters_ = clusters;
-        scenarios_ = scenarios;
-        true_sequences_ = true_sequences;
-        nemo_sequences_ = nemo_sequences;
-        selected_ = true;
-        skipped_ = false;
-      }
 
       /*** dump ***/
       virtual void dump (std::ostream & a_out         = std::clog,
@@ -105,7 +65,6 @@ namespace CAT{
             a_out << indent << a_title << std::endl;
           }
 
-        a_out << indent << appname_ << " ------------------- " << std::endl;
         a_out << indent << " number of cells : " << cells_.size() << std::endl;
         for(std::vector<cell>::const_iterator icell=cells_.begin(); icell!=cells_.end();++icell)
           icell->dump(a_out, "",indent + "     ");
@@ -147,29 +106,11 @@ namespace CAT{
         scenarios_ = scenarios;
       }
 
-      //! set true sequences
-      void set_true_sequences(const std::vector<sequence> & sequences)
-      {
-        true_sequences_ = sequences;
-      }
-
-      //! set nemo sequences
-      void set_nemo_sequences(const std::vector<sequence> & sequences)
-      {
-        nemo_sequences_ = sequences;
-      }
-
-      //! set selected
-      void set_selected(bool selected)
-      {
-        selected_ = selected;
-      }
-
-      //! set skipped
-      void set_skipped(bool skipped)
-      {
-        skipped_ = skipped;
-      }
+      // //! set true sequences
+      // void set_true_sequences(const std::vector<sequence> & sequences)
+      // {
+      //   true_sequences_ = sequences;
+      // }
 
       //! get cells
       std::vector<cell>& get_cells()
@@ -213,40 +154,6 @@ namespace CAT{
       const std::vector<scenario>& get_scenarios()const
       {
         return scenarios_;
-      }
-
-      //! get true sequences
-      std::vector<sequence>& get_true_sequences()
-      {
-        return true_sequences_;
-      }
-
-      const std::vector<sequence>& get_true_sequences()const
-      {
-        return true_sequences_;
-      }
-
-      //! get nemo sequences
-      std::vector<sequence>& get_nemo_sequences()
-      {
-        return nemo_sequences_;
-      }
-
-      const std::vector<sequence>& get_nemo_sequences()const
-      {
-        return nemo_sequences_;
-      }
-      //! get selected
-
-      bool selected()const
-      {
-        return selected_;
-      }
-
-      //! get skipped
-      bool skipped()const
-      {
-        return skipped_;
       }
 
       void reset(){
