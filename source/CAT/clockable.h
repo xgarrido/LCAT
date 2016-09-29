@@ -1,28 +1,29 @@
-/* -*- mode: c++ -*- */
+// -*- mode: c++ -*-
 
-#ifndef __CATAlgorithm__clockable_h
-#define __CATAlgorithm__clockable_h 1
+#ifndef CAT_CLOCKABLE_H
+#define CAT_CLOCKABLE_H
 
+// Standard library:
 #include <iostream>
 #include <string>
-#include <sys/time.h> 
+#include <sys/time.h>
 
 namespace CAT {
 
-  class clockable {
-
-    // a clockable is a time counter
+  /// \brief A clockable is a time counter
+  class clockable
+  {
 
     struct timeval tv_begin_, tv_end_;
     struct timezone tz_begin_, tz_end_;
-    
+
   public:
 
     std::string name_;
 
     // time in milliseconds
     double time_;
-    
+
     //!Default constructor
     clockable(std::string name="default");
 
@@ -53,6 +54,7 @@ namespace CAT {
     static bool compare(const clockable& c1, const clockable& c2);
 
   };
-}
 
-#endif // __CATAlgorithm__clockable_h
+} // namespace CAT
+
+#endif // CAT_CLOCKABLE_H
