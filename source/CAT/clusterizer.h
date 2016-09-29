@@ -6,16 +6,7 @@
 #include <iostream>
 #include <vector>
 
-#include <CAT/line.h>
-#include <CAT/cell_couplet.h>
-#include <CAT/cell_triplet.h>
-#include <CAT/experimental_double.h>
-
 #include <CAT/cell_base.h>
-#include <CAT/cluster.h>
-#include <CAT/calorimeter_hit.h>
-#include <CAT/sequence_base.h>
-#include <CAT/tracked_data.h>
 
 // Third party
 // - Bayeux/datatools:
@@ -26,7 +17,12 @@ namespace datatools {
   class properties;
 }
 
-namespace CAT{
+namespace CAT {
+
+  // Forward declaration
+  namespace topology {
+    class tracked_data;
+  }
 
   /// The clusterizer algorithm
   class clusterizer {
@@ -57,24 +53,6 @@ namespace CAT{
     /// Main algorithm
     void clusterize(topology::tracked_data & tracked_data_);
 
-    //! get cells
-    const std::vector<topology::cell>& get_cells()const;
-
-    //! set cells
-    void set_cells(const std::vector<topology::cell> & cells);
-
-    //! get clusters
-    const std::vector<topology::cluster>& get_clusters()const;
-
-    //! set clusters
-    void set_clusters(const std::vector<topology::cluster> & clusters);
-
-    //! get calorimeter_hits
-    const std::vector<topology::calorimeter_hit>& get_calorimeter_hits()const;
-
-    //! set calorimeter_hits
-    void set_calorimeter_hits(const std::vector<topology::calorimeter_hit> & calorimeter_hits);
-
   protected:
 
     /// Set the initialization flag
@@ -101,10 +79,6 @@ namespace CAT{
     //limits
     double _tangent_phi_;
     double _ratio_;
-
-    std::vector<topology::cell> _cells_;
-    std::vector<topology::cluster> _clusters_;
-    std::vector<topology::calorimeter_hit> _calorimeter_hits_;
 
   };
 

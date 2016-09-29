@@ -129,7 +129,7 @@ namespace CAT{
         return calos_;
       }
 
-      std::vector<cluster>& get_clusters()
+      std::vector<cluster>& grab_clusters()
       {
         return clusters_;
       }

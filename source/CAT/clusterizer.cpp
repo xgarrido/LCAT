@@ -1,5 +1,6 @@
 // Ourselves
 #include <CAT/clusterizer.h>
+#include <CAT/tracked_data.h>
 
 // Standard library
 #include <set>
@@ -22,42 +23,6 @@ namespace CAT {
   datatools::logger::priority clusterizer::get_logging_priority() const
   {
     return _logging_;
-  }
-
-  //! get cells
-  const std::vector<topology::cell>& clusterizer::get_cells()const
-  {
-    return _cells_;
-  }
-
-  //! set cells
-  void clusterizer::set_cells(const std::vector<topology::cell> & cells_)
-  {
-    _cells_ = cells_;
-  }
-
-  //! get clusters
-  const std::vector<topology::cluster>& clusterizer::get_clusters()const
-  {
-    return _clusters_;
-  }
-
-  //! set clusters
-  void clusterizer::set_clusters(const std::vector<topology::cluster> & clusters_)
-  {
-    _clusters_ = clusters_;
-  }
-
-  //! get calorimeter_hits
-  const std::vector<topology::calorimeter_hit>& clusterizer::get_calorimeter_hits()const
-  {
-    return _calorimeter_hits_;
-  }
-
-  //! set calorimeter_hits
-  void clusterizer::set_calorimeter_hits(const std::vector<topology::calorimeter_hit> & calorimeter_hits_)
-  {
-    _calorimeter_hits_ = calorimeter_hits_;
   }
 
   void clusterizer::_set_initialized(bool i_)
@@ -139,14 +104,10 @@ namespace CAT {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
     DT_THROW_IF(! is_initialized(), std::logic_error, "Clusterizer is not initialized !");
 
-    DT_LOG_DEBUG(get_logging_priority(), "Fill clusters");
-    _clusters_.clear();
-
     DT_LOG_DEBUG(get_logging_priority(), "Order cells");
-    std::vector<topology::cell> & cells = tracked_data_.get_cells();
-
-    if (cells.empty()) return;
-    std::sort(cells.begin(), cells.end(),
+    std::vector<topology::cell> & the_cells = tracked_data_.get_cells();
+    if (the_cells.empty()) return;
+    std::sort(the_cells.begin(), the_cells.end(),
               [] (const topology::cell & a_, const topology::cell & b_) -> bool
               {
                 if (a_.id() == b_.id()) return false;
@@ -171,10 +132,13 @@ namespace CAT {
                 return true;
               });
 
+    DT_LOG_DEBUG(get_logging_priority(), "Fill clusters");
+    std::vector<topology::cluster> & the_clusters = tracked_data_.grab_clusters();
+    the_clusters.clear();
+
     // List of cells already used
     std::set<int> flagged;
-
-    for (const auto & icell : cells) {
+    for (const auto & icell : the_cells) {
       // Pick a cell that was never added
       if (flagged.count(icell.id())) continue;
       flagged.insert(icell.id());
@@ -203,7 +167,7 @@ namespace CAT {
         DT_LOG_DEBUG(get_logging_priority(), "Filling list of cells near cell " << cconn.id());
         std::vector<topology::cell> cells_near_iconn;
         cells_near_iconn.reserve(8);
-        for (const auto & jcell : cells) {
+        for (const auto & jcell : the_cells) {
           if (jcell.id() == cconn.id()) continue;
           const size_t nl = _near_level_(cconn, jcell);
           if (nl > 0) {
@@ -212,7 +176,7 @@ namespace CAT {
         }
         cc.reserve(cells_near_iconn.size());
 
-        DT_LOG_DEBUG(get_logging_priority(), "Cluster " << _clusters_.size()
+        DT_LOG_DEBUG(get_logging_priority(), "Cluster " << the_clusters.size()
                      << " starts with " << icell.id() << " try to add cell " << cconn.id()
                      << " with n of neighbours = " << cells_near_iconn.size());
         cells_connected_to_c.reserve(cells_near_iconn.size());
@@ -235,21 +199,15 @@ namespace CAT {
                      << " has been given cell " << cconn.id() << " with " << cc.size() << " couplets ");
       }
       cluster_connected_to_c.set_nodes(nodes_connected_to_c);
-      _clusters_.push_back(cluster_connected_to_c);
+      the_clusters.push_back(cluster_connected_to_c);
     }
 
 
-    DT_LOG_DEBUG(get_logging_priority(), "There are " << _clusters_.size() << " clusters of cells");
-
-    // tracked_data_.set_cells(_cells_);
-    // tracked_data_.set_calos(_calorimeter_hits_);
-    tracked_data_.set_clusters(_clusters_);
-
+    DT_LOG_DEBUG(get_logging_priority(), "There are " << the_clusters.size() << " clusters of cells");
     return;
   }
 
-  bool clusterizer::_is_good_couplet_(const topology::cell & c1_,
-                                      const topology::cell & c2_,
+  bool clusterizer::_is_good_couplet_(const topology::cell & c1_, const topology::cell & c2_,
                                       const std::vector<topology::cell> & c1_neighbors_) const
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");

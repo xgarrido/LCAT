@@ -116,7 +116,7 @@ namespace CAT {
     clock.start(" sequentiator: sequentiation ","restart");
 
     // set_clusters(tracked_data_.get_clusters());
-    std::vector<topology::cluster> & the_clusters = tracked_data_.get_clusters();
+    std::vector<topology::cluster> & the_clusters = tracked_data_.grab_clusters();
 
     NFAMILY = -1;
     NCOPY = 0;
