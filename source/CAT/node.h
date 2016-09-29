@@ -1,33 +1,34 @@
-/* -*- mode: c++ -*- */
+// -*- mode: c++ -*-
 
-#ifndef __CATAlgorithm__node_h
-#define __CATAlgorithm__node_h 1
+#ifndef CAT_TOPOLOGY_NODE_H
+#define CAT_TOPOLOGY_NODE_H
 
+// Standard library:
 #include <iostream>
 #include <vector>
 #include <string>
+#include <algorithm>
+#include <map>
+
+// This project:
 #include <CAT/experimental_point.h>
 #include <CAT/experimental_vector.h>
 #include <CAT/cell_base.h>
 #include <CAT/line.h>
 #include <CAT/cell_couplet.h>
 #include <CAT/cell_triplet.h>
-#include <algorithm>
-#include <map>
 
 namespace CAT {
-  namespace topology{
 
+  namespace topology {
 
-    class node : public tracking_object {
-
-      // a node is composed of a main cell,
-      // a list of cell_couplet
-      // and a list of cell_triplet
-
-    protected:
-      std::string appname_;
-
+    /// \brief Tracking node
+    ///
+    /// A node is composed of a main cell,
+    /// a list of cell couplets
+    /// and a list of cell triplets
+    class node : public tracking_object
+    {
     public:
 
       // main cell
@@ -63,23 +64,23 @@ namespace CAT {
 
     public:
 
-      //!Default constructor
+      //! Default constructor
       node();
 
-      //!Default destructor
+      //! Default destructor
       virtual ~node();
 
-      //! constructor
+      //! Constructor
       node(const cell & c, const std::vector<cell_couplet> & cc, const std::vector<cell_triplet> & ccc);
 
-      //! constructor
+      //! Constructor
       node(const cell &c, double probmin=1.e-200);
 
-      /*** dump ***/
-      virtual void dump (std::ostream & a_out         = std::clog,
-                         const std::string & a_title  = "",
-                         const std::string & a_indent = "",
-                         bool a_inherit          = false) const;
+      //! Smart print
+      void dump(std::ostream & a_out         = std::clog,
+                const std::string & a_title  = "",
+                const std::string & a_indent = "",
+                bool a_inherit               = false) const;
 
       //! set cells
       void set(const cell &c,
@@ -117,46 +118,47 @@ namespace CAT {
       void set_is_kink(bool is_kink);
 
       //! get main cell
-      const cell& c()const;
+      const cell& c() const;
 
       //! get cell couplets
-      const std::vector<cell_couplet> &cc()const;
+      const std::vector<cell_couplet> & cc() const;
 
       //! get cell triplets
-      const std::vector<cell_triplet> &ccc()const;
+      const std::vector<cell_triplet> & ccc() const;
 
       //! get links
-      const std::vector<cell> &links()const;
+      const std::vector<cell> & links() const;
 
       //! get free level
-      bool free()const;
+      bool free() const;
 
       //! get chi2
-      double chi2()const;
+      double chi2() const;
 
       //! get ndof
-      int32_t ndof()const;
+      int32_t ndof() const;
 
       //! get Prob
-      double Prob()const;
+      double Prob() const;
 
       //! get is_kink
-      bool is_kink()const;
+      bool is_kink() const;
 
       //! get fitted experimental_point
-      const experimental_point& ep()const;
+      const experimental_point& ep() const;
 
       //! get circle phi
-      double circle_phi()const{return circle_phi_;}
+      double circle_phi() const{return circle_phi_;}
 
       //! grab cc index map
-      std::map<size_t,size_t> cc_index()const;
+      const std::map<size_t,size_t> & cc_index() const;
 
       //! grab ccc index map
-      std::map<size_t,size_t> ccc_ca_index()const;
-      std::map<size_t,size_t> ccc_cc_index()const;
+      const std::map<size_t,size_t> & ccc_ca_index() const;
+      const std::map<size_t,size_t> & ccc_cc_index() const;
 
     private:
+
       void setup_cc_maps();
       void setup_ccc_maps();
 
@@ -176,30 +178,31 @@ namespace CAT {
 
       std::string topological_type() const;
 
-      bool has_couplet(const cell & a, cell_couplet* ct)const;
+      bool has_couplet(const cell & a, cell_couplet * ct) const;
 
-      bool has_couplet(const cell& a, size_t* index)const;
+      bool has_couplet(const cell & a, size_t * index) const;
 
-      bool has_couplet(size_t idd, size_t* index)const;
+      bool has_couplet(size_t idd, size_t * index) const;
 
-      bool has_triplet(const cell &a, const cell &c, size_t *index)const;
+      bool has_triplet(const cell & a, const cell & c, size_t *index) const;
 
-      bool has_triplet(const cell &a, const cell &c)const;
+      bool has_triplet(const cell & a, const cell & c) const;
 
-      bool has_triplet(const cell &a)const;
+      bool has_triplet(const cell & a) const;
 
-      friend bool operator==(const node& left,
-                             const node& right);
+      friend bool operator==(const node & left,
+                             const node & right);
 
-      static bool circle_order(const topology::node& c1, const topology::node& c) {
+      static bool circle_order(const topology::node & c1, const topology::node & c)
+      {
         // order nodes based on their angle along an assigned circle
-
         return( c1.circle_phi() > c.circle_phi() );
       }
 
-  };
-}
-}
+    };
 
+  } // namespace topology
 
-#endif // __CATAlgorithm__node_h
+} // namespace CAT
+
+#endif // CAT_TOPOLOGY_NODE_H

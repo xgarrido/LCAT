@@ -1,5 +1,4 @@
-/* -*- mode: c++ -*- */
-
+// Ourselves:
 #include <CAT/clockable.h>
 
 namespace CAT {
@@ -81,4 +80,4 @@ namespace CAT {
     return;
   }
 
-}
+} // namespace CAT

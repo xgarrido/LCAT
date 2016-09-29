@@ -1,12 +1,19 @@
-/* -*- mode: c++ -*- */
-#ifndef __CATAlgorithm__ISEQUENCE
-#define __CATAlgorithm__ISEQUENCE
+// -*- mode: c++ -*-
+
+#ifndef CAT_TOPOLOGY_SEQUENCE_H
+#define CAT_TOPOLOGY_SEQUENCE_H
+
+// Standard library:
 #include <iostream>
 #include <cmath>
 #include <vector>
-#include <CAT/utilities.h>
+
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
 
+// This project:
+#include <CAT/utilities.h>
 #include <CAT/experimental_point.h>
 #include <CAT/experimental_vector.h>
 #include <CAT/cell_base.h>
@@ -19,19 +26,15 @@
 #include <CAT/cluster.h>
 #include <CAT/calorimeter_hit.h>
 
-
-
 namespace CAT {
-  namespace topology{
 
+  namespace topology {
 
-
-    class sequence : public tracking_object{
-
-      // a sequence is composed of a list of nodes
+    /// \brief A sequence is composed of a list of nodes
+    class sequence : public tracking_object
+    {
 
     protected:
-      std::string appname_;
 
       // list of all chi2 values found in the construction
       // of the sequence (some of them discarded, kept only for plotting)
@@ -103,6 +106,8 @@ namespace CAT {
       experimental_point decay_tangent_vertex_;
       std::string decay_tangent_vertex_type_;
       size_t calo_tangent_id_;
+
+    public:
 
       //!Default constructor
       sequence();
@@ -444,7 +449,7 @@ namespace CAT {
       bool same_families(const topology::sequence & s)const;
 
       experimental_double delta_phi(const experimental_point & epa,
-                       const experimental_point & epb)const;
+                                    const experimental_point & epb)const;
 
       // is the (true) track all on one side of the foil?
       bool one_side()const;
@@ -473,9 +478,8 @@ namespace CAT {
 
     };
 
-  }
+  } // namespace topology
 
+} // namespace CAT
 
-}
-
-#endif
+#endif // CAT_TOPOLOGY_SEQUENCE_H

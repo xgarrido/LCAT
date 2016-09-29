@@ -1,25 +1,26 @@
-/* -*- mode: c++ -*- */
-#ifndef __CATAlgorithm__joint_h
-#define __CATAlgorithm__joint_h 1
+// -*- mode: c++ -*-
+
+#ifndef CAT_TOPOLOGY_JOINT_H
+#define CAT_TOPOLOGY_JOINT_H
+
+// Standard library:
 #include <iostream>
 #include <cmath>
+
+// This project:
 #include <CAT/experimental_point.h>
 #include <CAT/experimental_vector.h>
 #include <CAT/tracking_object.h>
 #include <CAT/cell_base.h>
 
-
 namespace CAT {
 
-  namespace topology{
+  namespace topology {
 
-
-    class joint : public tracking_object{
-
-      // a joint is composed of three experimental points
-
+    /// \brief A joint is composed of three experimental points
+    class joint : public tracking_object
+    {
     private:
-      std::string appname_;
 
       // first experimental point
       experimental_point epa_;
@@ -125,6 +126,8 @@ namespace CAT {
 
     };
 
-  }
-}
-#endif // __CATAlgorithm__joint_h
+  } // namespace topology
+
+} // namespace CAT
+
+#endif // CAT_TOPOLOGY_JOINT_H

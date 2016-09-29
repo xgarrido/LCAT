@@ -1,11 +1,13 @@
-/* -*- mode: c++ -*- */
-
+// Ourselves:
 #include <CAT/experimental_double.h>
+
+// Standard library:
 #include <cmath>
 #include <limits>
 #include <iomanip>
 
 namespace CAT {
+
   namespace topology {
 
     using namespace std;
@@ -39,7 +41,6 @@ namespace CAT {
       return;
     }
 
-
     //! constructor
     experimental_double::experimental_double(const double &v, const double &e)
     {
@@ -48,7 +49,6 @@ namespace CAT {
       return;
     }
 
-    /*** dump ***/
     void experimental_double::dump (ostream & a_out,
                                     const std::string & /* a_title */,
                                     const std::string & /* a_indent */,
@@ -59,34 +59,40 @@ namespace CAT {
     }
 
     //! set value and error
-    void experimental_double::set(const experimental_double &v){
+    void experimental_double::set(const experimental_double &v)
+    {
       v_ = v.value();
       e_ = v.error();
     }
 
     //! set value and error
-    void experimental_double::set(const double &val, const double &err){
+    void experimental_double::set(const double &val, const double &err)
+    {
       v_ = val;
       e_ = err;
     }
 
     //! set value
-    void experimental_double::set_value(const double &v){
+    void experimental_double::set_value(const double &v)
+    {
       v_ = v;
     }
 
     //! set error
-    void experimental_double::set_error(const double &e){
+    void experimental_double::set_error(const double &e)
+    {
       e_ = e;
     }
 
     //! get value
-    const double& experimental_double::value() const{
+    const double& experimental_double::value() const
+    {
       return v_;
     }
 
     //! get error
-    const double& experimental_double::error() const{
+    const double& experimental_double::error() const
+    {
       return e_;
     }
 
@@ -220,7 +226,8 @@ namespace CAT {
     }
 
     // atan(v)
-    experimental_double experimental_atan2 (const experimental_double& v1, const experimental_double& v2)
+    experimental_double experimental_atan2 (const experimental_double& v1,
+                                            const experimental_double& v2)
     {
       experimental_double v;
       v.set_value(atan2(v1.value(), v2.value()));
@@ -304,6 +311,7 @@ namespace CAT {
       v+=v2;
       return v;
     }
+
     //! v1-v2
     experimental_double operator - (const experimental_double& v1, const experimental_double& v2)
     {
@@ -358,13 +366,11 @@ namespace CAT {
     // average
     experimental_double average(const std::vector<experimental_double> & vs_)
     {
-
       if (vs_.empty()){
         experimental_double bad;
         std::clog << "CAT::average: problem: averaging over an empty vector !" << std::endl;
         return bad;
       }
-
 
       double mean = 0.;
       double err = 0.;
@@ -375,7 +381,6 @@ namespace CAT {
       }
 
       return experimental_double(mean/vs_.size(), std::sqrt(err)/vs_.size());
-
     }
 
     // weighted average
@@ -384,22 +389,19 @@ namespace CAT {
       double mean = 0.;
       double inverr = 0.;
       double newerr = 0.;
-
       for(std::vector<experimental_double>::const_iterator iv=vs_.begin(); iv!=vs_.end(); ++iv){
-	if( iv->error() ){
-	  mean += iv->value()/std::pow(iv->error(),2);
-	  inverr += 1/std::pow(iv->error(),2);
-	  newerr += std::pow(iv->error(),2);
-	}else{
-	  std::clog << "CAT::weighted_average: problem: double has error zero; switch to normal average " << std::endl;
-	  return average(vs_);
-	}
+        if( iv->error() ){
+          mean += iv->value()/std::pow(iv->error(),2);
+          inverr += 1/std::pow(iv->error(),2);
+          newerr += std::pow(iv->error(),2);
+        }else{
+          std::clog << "CAT::weighted_average: problem: double has error zero; switch to normal average " << std::endl;
+          return average(vs_);
+        }
       }
-
       return experimental_double(mean/inverr, sqrt(newerr));
     }
 
+  } // namespace topology
 
-  }
-
-}
+} // namespace CAT

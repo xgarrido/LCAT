@@ -133,7 +133,7 @@ namespace snemo {
       }
 
       // Clustering algorithm :
-      std::string algorithm_id = cat_driver::CAT_ID;
+      std::string algorithm_id = cat_driver::cat_id();
       _driver_.reset(new cat_driver);
       DT_THROW_IF (! _driver_, std::logic_error,
                    "Module '" << get_name() << "' could not instantiate the '"

@@ -1,9 +1,9 @@
 /** \file falaise/snemo/processing/cat_driver.h
  * Author(s)     : Francois Mauger <mauger@lpccaen.in2p3.fr>
  * Creation date : 2012-03-29
- * Last modified : 2014-02-21
+ * Last modified : 2016-09-29
  *
- * Copyright (C) 2012-2014 Francois Mauger <mauger@lpccaen.in2p3.fr>
+ * Copyright (C) 2012-2016 Francois Mauger <mauger@lpccaen.in2p3.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,12 +53,13 @@ namespace snemo {
 
   namespace reconstruction {
 
-    /// Driver for the Channel/CellularAutomatonTracker (CAT) clustering algorithms
+    /// \brief Driver for the (Light) Channel/CellularAutomatonTracker clustering algorithms
     class cat_driver : public ::snemo::processing::base_tracker_clusterizer
     {
     public:
 
-      static const std::string CAT_ID; /// The CAT string identifier
+      /// Return the CAT string identifier
+      static const std::string & cat_id();
 
       /// Set the mag field
       void set_magfield(double);
@@ -93,20 +94,20 @@ namespace snemo {
 
     private:
 
-      CAT::setup_data   _CAT_setup_;         /// Configuration data
-      CAT::input_data   _CAT_input_;         /// Input data
-      CAT::output_data  _CAT_output_;        /// Output data
-      CAT::clusterizer  _CAT_clusterizer_;   /// CAT clusterizer
-      CAT::sequentiator _CAT_sequentiator_;  /// CAT sequentiator
-      double            _sigma_z_factor_;    /// Factor for longitudinal error
-      double            _magfield_;          /// Enforced magnetic field
-      bool              _process_calo_hits_; /// Flag to process associated calorimeter hits
-      bool     _store_result_as_properties_; /// Flag to store CAT result as data properties
+      CAT::setup_data   _CAT_setup_;         ///< Configuration data
+      CAT::input_data   _CAT_input_;         ///< Input data
+      CAT::output_data  _CAT_output_;        ///< Output data
+      CAT::clusterizer  _CAT_clusterizer_;   ///< CAT clusterizer
+      CAT::sequentiator _CAT_sequentiator_;  ///< CAT sequentiator
+      double            _sigma_z_factor_;    ///< Factor for longitudinal error
+      double            _magfield_;          ///< Enforced magnetic field
+      bool              _process_calo_hits_ = true; ///< Flag to process associated calorimeter hits
+      // UNUSED ? bool     _store_result_as_properties_; ///< Flag to store CAT result as data properties
 
       /// Calorimeter locators
-      const snemo::geometry::calo_locator  * _calo_locator_;
-      const snemo::geometry::xcalo_locator * _xcalo_locator_;
-      const snemo::geometry::gveto_locator * _gveto_locator_;
+      const snemo::geometry::calo_locator  * _calo_locator_ = nullptr;  ///< Handle to the calo locator
+      const snemo::geometry::xcalo_locator * _xcalo_locator_ = nullptr; ///< Handle to the xcalo locator
+      const snemo::geometry::gveto_locator * _gveto_locator_ = nullptr; ///< Handle to the gveto locator
 
     };
 
@@ -121,10 +122,8 @@ DOCD_CLASS_DECLARATION(snemo::reconstruction::cat_driver)
 
 #endif // FALAISE_CAT_PLUGIN_SNEMO_RECONSTRUCTION_CAT_DRIVER_H
 
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

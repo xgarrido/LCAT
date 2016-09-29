@@ -202,6 +202,7 @@ namespace CAT {
         // Get the list of cells near the connected cell
         DT_LOG_DEBUG(get_logging_priority(), "Filling list of cells near cell " << cconn.id());
         std::vector<topology::cell> cells_near_iconn;
+        cells_near_iconn.reserve(8);
         for (const auto & jcell : cells) {
           if (jcell.id() == cconn.id()) continue;
           const size_t nl = _near_level_(cconn, jcell);
@@ -209,16 +210,18 @@ namespace CAT {
             cells_near_iconn.push_back(jcell);
           }
         }
+        cc.reserve(cells_near_iconn.size());
+
         DT_LOG_DEBUG(get_logging_priority(), "Cluster " << _clusters_.size()
                      << " starts with " << icell.id() << " try to add cell " << cconn.id()
                      << " with n of neighbours = " << cells_near_iconn.size());
+        cells_connected_to_c.reserve(cells_near_iconn.size());
         for (const auto & cnc : cells_near_iconn) {
           if (!_is_good_couplet_(cconn, cnc, cells_near_iconn)) continue;
 
           DT_LOG_DEBUG(get_logging_priority(), "Creating couplet " << cconn.id() << " -> " << cnc.id());
           topology::cell_couplet ccnc(cconn, cnc);
           cc.push_back(ccnc);
-
           if (! flagged.count(cnc.id())) {
             flagged.insert(cnc.id());
             cells_connected_to_c.push_back(cnc);
@@ -311,5 +314,4 @@ namespace CAT {
     else if (layer_distance == 1 && row_distance == 1) return 1;
     return 0;
   }
-
 }

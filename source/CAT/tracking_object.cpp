@@ -1,22 +1,22 @@
-/* -*- mode: c++ -*- */
+// -*- mode: c++ -*-
 
+// Ourselves:
 #include <CAT/tracking_object.h>
 
+// Third party:
+// - Boost:
 #if defined(__clang__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #endif
-
 #include <boost/math/special_functions/gamma.hpp>
-
 #if defined(__clang__)
 #pragma clang diagnostic pop
 #endif
 
+namespace CAT {
 
-
-namespace CAT{
-  namespace topology{
+  namespace topology {
 
     void tracking_object::set_probmin( double probmin )
     {
@@ -28,13 +28,11 @@ namespace CAT{
       return probmin_;
     }
 
-
     double tracking_object::probof(double chi2, int ndof) const
     {
-      //double p  =  TMath::Prob(chi2, ndof);
-      double p=0.;
-      if( ndof && chi2 )
-	p = boost::math::gamma_q<double, double> (0.5 * ndof, 0.5 * chi2);
+      double p = 0.;
+      if ( ndof && chi2 )
+        p = boost::math::gamma_q<double, double> (0.5 * ndof, 0.5 * chi2);
       return p;
     }
 
@@ -43,12 +41,6 @@ namespace CAT{
       return probmin_;
     }
 
-    /*
-      inline void print_clock(){
-      clock.dump();
-      return;
-      }
-    */
+  } // namespace topology
 
-  }
-}
+} // namespace CAT

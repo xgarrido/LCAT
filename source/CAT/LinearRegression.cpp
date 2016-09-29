@@ -1,51 +1,51 @@
-/* -*- mode: c++ -*- */
+// Ourselves:
 #include <CAT/LinearRegression.h>
-#if CAT_WITH_DEVEL_ROOT == 1
-#include <Riostream.h>
-#include <TMatrixD.h>
-#include <TVectorD.h>
-#include <TGraphErrors.h>
-#include <TDecompChol.h>
-#include <TDecompSVD.h>
-#include <TF1.h>
-#endif // CAT_WITH_DEVEL_ROOT == 1
+
+// #if CAT_WITH_DEVEL_ROOT == 1
+// #include <Riostream.h>
+// #include <TMatrixD.h>
+// #include <TVectorD.h>
+// #include <TGraphErrors.h>
+// #include <TDecompChol.h>
+// #include <TDecompSVD.h>
+// #include <TF1.h>
+// #endif // CAT_WITH_DEVEL_ROOT == 1
 
 namespace CAT {
-namespace topology{
 
+  namespace topology {
 
-
-    //! set
-    void LinearRegression::set(const std::vector<experimental_double> &xi, const std::vector<experimental_double> &yi)
-      {
-        xi_ = xi;
-        yi_ = yi;
-      }
+    void LinearRegression::set(const std::vector<experimental_double> &xi,
+                               const std::vector<experimental_double> &yi)
+    {
+      xi_ = xi;
+      yi_ = yi;
+    }
 
 
     //! set xi
     void LinearRegression::set_xi(const std::vector<experimental_double> &xi)
-      {
-        xi_ = xi;
-      }
+    {
+      xi_ = xi;
+    }
 
     //! set yi
     void LinearRegression::set_yi(const std::vector<experimental_double> &yi)
-      {
-        yi_ = yi;
-      }
+    {
+      yi_ = yi;
+    }
 
     //! set y0
     void LinearRegression::set_y0(const experimental_double &y0)
-      {
-        y0_ = y0;
-      }
+    {
+      y0_ = y0;
+    }
 
     //! set tangent
     void LinearRegression::set_tangent(const experimental_double &tangent)
-      {
-        tangent_ = tangent;
-      }
+    {
+      tangent_ = tangent;
+    }
 
     //! get xi
     const std::vector<experimental_double>& LinearRegression::xi()const
@@ -71,11 +71,8 @@ namespace topology{
       return tangent_;
     }
 
-
-
-    bool LinearRegression::fit(void){
-
-
+    bool LinearRegression::fit(void)
+    {
       if( xi_.size() != yi_.size() ){
         // if( print_level() >= mybhep::NORMAL ){
         //   std::clog << "CAT::LinearRegression::fit: problem: in least square regression, sizes x " << xi_.size() << " y " << yi_.size() << std::endl;
@@ -135,18 +132,17 @@ namespace topology{
 
       set_y0(experimental_double(a, erra));
       set_tangent(experimental_double(b, errb));
-
       return true;
-
     }
 
-    experimental_double LinearRegression::position(const experimental_double &x){
-
+    experimental_double LinearRegression::position(const experimental_double &x)
+    {
       return y0() + tangent()*x;
     }
 
 
-    void LinearRegression::invert(){
+    void LinearRegression::invert()
+    {
       // go from:
       // y = y0 + tangent x
       // to
@@ -159,12 +155,9 @@ namespace topology{
       set_yi(tmp);
       set_y0(- y0()/tangent());
       set_tangent(1./tangent());
-
-
+      return;
     }
 
+  } // namespace topology
 
-
-  }
-
-}
+} // namespace CAT

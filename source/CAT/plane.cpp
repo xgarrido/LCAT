@@ -1,55 +1,58 @@
-/* -*- mode: c++ -*- */
+// Ourselves:
+#include <CAT/plane.h>
 
+// Standard library:
 #include <iostream>
 #include <cmath>
+
+// Third party:
+// - Bayeux:
+#include <bayeux/datatools/exception.h>
+
+// This project:
 #include <CAT/experimental_point.h>
 #include <CAT/experimental_vector.h>
-#include <CAT/plane.h>
 #include <CAT/utilities.h>
 
-
 namespace CAT {
-  namespace topology{
 
-    using namespace std;
+  namespace topology {
 
-    //!Default constructor
+    // using namespace std;
+
     plane::plane(double probmin)
     {
-      appname_= "plane: ";
       sizes_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
                                    mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
       norm_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
                                   mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
       set_probmin(probmin);
       type_="undefined";
+      return;
     }
 
-    //!Default destructor
     plane::~plane()
     {
       return;
     }
 
-    //! constructor
     plane::plane(const experimental_point &center,
                  const experimental_vector &sizes,
                  const experimental_vector &norm,
                  double probmin)
     {
       set_probmin(probmin);
-      appname_= "plane: ";
       center_ = center;
       sizes_ = sizes;
       norm_ = norm;
       type_="undefined";
     }
 
-    /*** dump ***/
-    void plane::dump (ostream & a_out ,
+    void plane::dump (std::ostream & a_out ,
                       const std::string & a_title,
                       const std::string & a_indent,
-                      bool /*a_inherit*/)const{
+                      bool /*a_inherit*/) const
+    {
       {
         std::string indent;
         if (! a_indent.empty ()) indent = a_indent;
@@ -57,15 +60,13 @@ namespace CAT {
           {
             a_out << indent << a_title << std::endl;
           }
-
-        a_out << indent << appname_ << " -------------- " << std::endl;
+        a_out << indent << "plane: -------------- " << std::endl;
         a_out << indent << " type: " << this->type() << " view: " << this->view() << std::endl;
         a_out << indent << " center " << std::endl;
         this->center().dump(a_out, "", indent + "    ");
         a_out << indent << " sizes " << std::endl;
         this->sizes().dump(a_out, "", indent + "    ");
         a_out << indent << " -------------- " << std::endl;
-
         return;
       }
     }
@@ -80,6 +81,7 @@ namespace CAT {
       center_ = center;
       sizes_ = sizes;
       norm_ = norm;
+      return;
     }
 
 
@@ -87,12 +89,14 @@ namespace CAT {
     void plane::set_center(const experimental_point &center)
     {
       center_ = center;
+      return;
     }
 
     //! set sizes
     void plane::set_sizes(const experimental_vector &sizes)
     {
       sizes_ = sizes;
+      return;
     }
 
 
@@ -100,6 +104,7 @@ namespace CAT {
     void plane::set_norm(const experimental_vector &norm)
     {
       norm_ = norm;
+      return;
     }
 
 
@@ -107,32 +112,36 @@ namespace CAT {
     void plane::set_type(const std::string &type)
     {
       type_ = type;
+      return;
     }
 
 
     //! get center
-    const experimental_point& plane::center()const
+    const experimental_point& plane::center() const
     {
       return center_;
     }
 
     //! get sizes
-    const experimental_vector& plane::sizes()const
+    const experimental_vector& plane::sizes() const
     {
       return sizes_;
     }
 
     // returns the normal looking towards the origin
-    const experimental_vector& plane::norm() const{
+    const experimental_vector& plane::norm() const
+    {
       return norm_;
     }
 
     // get type
-    const string& plane::type() const{
+    const std::string& plane::type() const
+    {
       return type_;
     }
 
-    std::string plane::view()const{
+    std::string plane::view() const
+    {
       if( type() == "SuperNEMO" ){
         if( norm().x().value() != 0 )
           return "x";
@@ -146,7 +155,7 @@ namespace CAT {
         if( norm().y().value() == 0. ){ // inner and outer walls
           const experimental_point origin(0.,0.,0.,0.,0.,0.);
           experimental_vector v(origin, center_);  // vector from center of detector
-                                                        // to center of calo block
+          // to center of calo block
           if( (v.hor()*norm()).value() > 0. )
             return "inner";
           return "outer";
@@ -158,33 +167,24 @@ namespace CAT {
         if( norm().y().value() == -1. )
           return "top";
 
-        clog << " warning: undefined view for plane of type " << type() << std::endl;
+        DT_THROW(std::logic_error, "undefined view for plane of type " << type());
         return "null";
       }
-
-
-      std::clog << " warning: undefined plane type: " << type() << " cannot determine view " << std::endl;
-      exit(0);
-
+      DT_THROW(std::logic_error, "undefined plane type: " << type() << " cannot determine view !");
       return "null";
-
     }
 
 
     //! get point of the front face of the block
-    experimental_point plane::face()const
+    experimental_point plane::face() const
     {
       if( view() == "x" )
         return (center_ + norm()*sizes().x()/2.).point_from_vector();
-
       else if( view() == "y" )
         return (center_ + norm()*sizes().y()/2.).point_from_vector();
-
       else if( view() == "z" )
         return (center_ + norm()*sizes().z()/2.).point_from_vector();
-
       else{ // Nemo3
-
         experimental_double the_size;
         if( view() == "inner" || view() == "outer" )
           the_size = sizes().x();
@@ -196,14 +196,12 @@ namespace CAT {
           // }
           the_size = sizes().x();
         }
-
         return (center_ + norm()*the_size/2.).point_from_vector();
       }
-
     }
 
-    bool plane::intersect(const experimental_point &ep)const{
-
+    bool plane::intersect(const experimental_point &ep) const
+    {
       if( std::isnan(ep.x().value())  || std::isnan(ep.y().value()) || std::isnan(ep.z().value()) ) return false;
 
       experimental_vector dist = ep - face();
@@ -274,68 +272,51 @@ namespace CAT {
 
         return true;
       }
-
     }
 
-    bool plane::intersect(const experimental_point &start, const experimental_vector &direction, experimental_point* ep)const{
-
+    bool plane::intersect(const experimental_point &start,
+                          const experimental_vector &direction,
+                          experimental_point* ep) const
+    {
       if( view() == "x" ){
         if( direction.x().value() == 0 ){
           return false;
         }
-
         experimental_double time = (face().x() - start.x())/direction.x();
-
         *ep = (experimental_vector(start) + time*direction).point_from_vector();
-
         return intersect(*ep);
       }
       else if( view() == "y" ){
         if( direction.y().value() == 0 ){
           return false;
         }
-
         experimental_double time = (face().y() - start.y())/direction.y();
-
         *ep = (experimental_vector(start) + time*direction).point_from_vector();
-
         return intersect(*ep);
       }
-
       else if( view() == "z" ){
         if( direction.z().value() == 0 ){
           return false;
         }
-
         experimental_double time = (face().z() - start.z())/direction.z();
-
         *ep = (experimental_vector(start) + time*direction).point_from_vector();
-
         return intersect(*ep);
       }
       else{ // Nemo3
-
         if( (direction*norm()).value() == 0 ) return false;
-
         experimental_double time = (face() - start)*norm()/(direction*norm());
-
         *ep = (experimental_vector(start) + time*direction).point_from_vector();
-
         return intersect(*ep);
       }
-
-
-
     }
-
 
     // normal vector from the face of the plane to the parallel plane through the point
-    experimental_vector plane::norm_to_point(const experimental_point &ep)const{
-
+    experimental_vector plane::norm_to_point(const experimental_point &ep) const
+    {
       experimental_vector result = norm();
       return ((ep - face())*result)*result;
-
     }
 
-  }
-}
+  } // namespace topology
+
+} // namespace CAT

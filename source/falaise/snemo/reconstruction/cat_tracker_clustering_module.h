@@ -28,8 +28,8 @@
  *
  */
 
-#ifndef FALAISE_CAT_PLUGIN_SNEMO_RECONSTRUCTION_CAT_TRACKER_CLUSTERING_MODULE_H
-#define FALAISE_CAT_PLUGIN_SNEMO_RECONSTRUCTION_CAT_TRACKER_CLUSTERING_MODULE_H 1
+#ifndef FALAISE_CAT_PLUGIN_SNEMO_RECONSTRUCTION_LCAT_TRACKER_CLUSTERING_MODULE_H
+#define FALAISE_CAT_PLUGIN_SNEMO_RECONSTRUCTION_LCAT_TRACKER_CLUSTERING_MODULE_H 1
 
 // Third party:
 // - Boost:
@@ -55,7 +55,7 @@ namespace snemo {
 
   namespace reconstruction {
 
-    /// \brief Tracker clustering module using the CAT algorithm
+    /// \brief Tracker clustering module using the (L)CAT algorithm
     class lcat_tracker_clustering_module : public dpp::base_module
     {
 
@@ -127,11 +127,10 @@ namespace snemo {
 // Declare the OCD interface of the module
 DOCD_CLASS_DECLARATION(snemo::reconstruction::lcat_tracker_clustering_module)
 
-#endif // FALAISE_CAT_PLUGIN_SNEMO_RECONSTRUCTION_CAT_TRACKER_CLUSTERING_MODULE_H
-/*
-** Local Variables: --
-** mode: c++ --
-** c-file-style: "gnu" --
-** tab-width: 2 --
-** End: --
-*/
+#endif // FALAISE_CAT_PLUGIN_SNEMO_RECONSTRUCTION_LCAT_TRACKER_CLUSTERING_MODULE_H
+
+// Local Variables: --
+// mode: c++ --
+// c-file-style: "gnu" --
+// tab-width: 2 --
+// End: --

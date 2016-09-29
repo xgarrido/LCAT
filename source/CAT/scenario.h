@@ -1,11 +1,17 @@
-/* -*- mode: c++ -*- */
-#ifndef __CATAlgorithm__ISCENARIO
-#define __CATAlgorithm__ISCENARIO
+// -*- mode: c++ -*-
+
+#ifndef CAT_TOPOLOGY_SCENARIO_H
+#define CAT_TOPOLOGY_SCENARIO_H
+
+// Standard library:
 #include <iostream>
 #include <cmath>
+
+// Third party:
+// - Boost:
 #include <boost/cstdint.hpp>
 
-
+// This project:
 #include <CAT/tracking_object.h>
 #include <CAT/experimental_point.h>
 #include <CAT/experimental_vector.h>
@@ -14,16 +20,15 @@
 #include <CAT/calorimeter_hit.h>
 
 namespace CAT {
-  namespace topology{
 
+  namespace topology {
 
-    class scenario : public tracking_object{
-
-      // a reconstruction scenario is composed of
-      // a collection of tracks
+    /// \broef A reconstruction scenario is composed of
+    /// a collection of tracks.
+    class scenario : public tracking_object
+    {
 
     private:
-      std::string appname_;
 
       // chi2
       double helix_chi2_;
@@ -41,6 +46,8 @@ namespace CAT {
       // tracks
       std::vector<topology::sequence> sequences_;
 
+    public:
+
       //!Default constructor
       scenario();
 
@@ -50,11 +57,11 @@ namespace CAT {
       //! constructor
       scenario(const std::vector<sequence> & seqs, double probmin=1.e-200);
 
-      /*** dump ***/
+      //! Smart print
       virtual void dump (std::ostream & a_out         = std::clog,
                          const std::string & a_title  = "",
                          const std::string & a_indent = "",
-                         bool a_inherit          = false)const;
+                         bool a_inherit          = false) const;
 
 
       //! set experimental_point, radius, error and id;
@@ -79,7 +86,7 @@ namespace CAT {
       void set_ndof(int32_t n);
 
       //! get sequences
-      const std::vector<sequence> & sequences()const;
+      const std::vector<sequence> & sequences() const;
 
       //!get helix_chi2
       double helix_chi2() const;
@@ -105,19 +112,20 @@ namespace CAT {
 
       void calculate_chi2();
 
-      double helix_Prob()const;
+      double helix_Prob() const;
 
-      double tangent_Prob()const;
+      double tangent_Prob() const;
 
-      bool better_scenario_than( const scenario & s, double limit)const;
+      bool better_scenario_than( const scenario & s, double limit) const;
 
-      size_t n_of_common_vertexes(double limit)const;
+      size_t n_of_common_vertexes(double limit) const;
 
-      size_t n_of_ends_on_wire(void)const;
-
+      size_t n_of_ends_on_wire(void) const;
 
     };
-  }
-}
 
-#endif
+  } // namespace topology
+
+} // namespace CAT
+
+#endif // CAT_TOPOLOGY_SCENARIO_H

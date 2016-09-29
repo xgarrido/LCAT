@@ -1,11 +1,9 @@
-/* -*- mode: c++ -*- */
-
+// Ourselves:
 #include <CAT/joint.h>
-
 
 namespace CAT {
 
-  namespace topology{
+  namespace topology {
 
     using namespace std;
     using namespace mybhep;
@@ -13,7 +11,6 @@ namespace CAT {
     //!Default constructor
     joint::joint()
     {
-      appname_= "joint: ";
       used_ = false;
       chi2_ = 0.;
       ndof_ = 0;
@@ -34,7 +31,6 @@ namespace CAT {
                  double probmin)
     {
       set_probmin(probmin);
-      appname_= "joint: ";
       epa_ = epa;
       epb_ = epb;
       epc_ = epc;
@@ -45,7 +41,6 @@ namespace CAT {
       p_ = 0.;
     }
 
-    /*** dump ***/
     void joint::dump (std::ostream & a_out ,
                       const std::string & a_title,
                       const std::string & a_indent,
@@ -58,7 +53,7 @@ namespace CAT {
           a_out << indent << a_title << std::endl;
         }
 
-      a_out << indent << appname_ << " -------------- " << std::endl;
+      a_out << indent << "joint: -------------- " << std::endl;
       a_out << indent << " used: " << used() << " chi2 " << chi2() << " ndof " << ndof() << " prob " << p() << std::endl;
       a_out << indent << " first point " << std::endl;
       this->epa().dump(a_out, "", indent + "    ");
@@ -72,8 +67,6 @@ namespace CAT {
 
       return;
     }
-
-
 
     //! set experimental_points
     void joint::set(const experimental_point &epa, const experimental_point &epb, const experimental_point &epc)
@@ -224,8 +217,8 @@ namespace CAT {
       topology::experimental_point pb= this->epb();
 
       if( !A_is_on_gap && !B_is_on_gap){ // connection A->B is not through a gap
-	pa = A.angular_average(pa, this->epa(), angle_AA);
-	pb = B.angular_average(j.epc(), pb, angle_BB);
+        pa = A.angular_average(pa, this->epa(), angle_AA);
+        pb = B.angular_average(j.epc(), pb, angle_BB);
       }
       topology::joint lj(pa, pb, this->epc());
       angle_phi = lj.kink_phi();
@@ -240,5 +233,6 @@ namespace CAT {
 
     }
 
-  }
-}
+  } // namespace topology
+
+} // namespace CAT
