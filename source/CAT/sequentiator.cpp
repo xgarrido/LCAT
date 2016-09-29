@@ -126,7 +126,7 @@ namespace CAT {
     sequences_.clear();
     scenarios_.clear();
 
-    tracked_data_.scenarios_.clear();
+    tracked_data_.grab_scenarios().clear();
 
     for (std::vector<topology::cluster>::iterator
            icluster = the_clusters.begin();
@@ -147,15 +147,15 @@ namespace CAT {
     clean_up_sequences();
     direct_out_of_foil();
 
-    interpret_physics(tracked_data_.get_calos());
+    interpret_physics(tracked_data_.get_calo_hits());
     make_families();
 
-    match_gaps(tracked_data_.get_calos());
+    match_gaps(tracked_data_.get_calo_hits());
     clean_up_sequences();
     direct_out_of_foil();
 
-    refine_sequences_near_walls(tracked_data_.get_calos());
-    interpret_physics(tracked_data_.get_calos());
+    refine_sequences_near_walls(tracked_data_.get_calo_hits());
+    interpret_physics(tracked_data_.get_calo_hits());
 
     if (late())
       {
@@ -709,8 +709,8 @@ namespace CAT {
       topology::scenario sc;
       sc.set_probmin(probmin);
       sc.sequences_.push_back(*iseq);
-      sc.calculate_n_free_families(td.get_cells(), td.get_calos());
-      sc.calculate_n_overlaps(td.get_cells(), td.get_calos());
+      sc.calculate_n_free_families(td.get_gg_hits(), td.get_calo_hits());
+      sc.calculate_n_overlaps(td.get_gg_hits(), td.get_calo_hits());
       sc.calculate_chi2();
 
       size_t jmin = 0, nfree = 0, noverlaps = 0;
@@ -742,7 +742,7 @@ namespace CAT {
     if (scenarios_.size() > 0) {
       DT_LOG_DEBUG(get_logging_priority(), "Pick best scenario");
       const size_t index_tmp = pick_best_scenario();
-      td.scenarios_.push_back(scenarios_[index_tmp]);
+      td.grab_scenarios().push_back(scenarios_[index_tmp]);
 
       clock.stop(" sequentiator: make scenarios ");
       return true;
@@ -800,18 +800,10 @@ namespace CAT {
       return false;
     }
 
-#if 0
-    clock.start(" sequentiator: copy logic scenario ", "cumulative");
-    topology::logic_scenario tmpmin = topology::logic_scenario(sc);
-    topology::logic_scenario tmpsave = tmpmin;
-    clock.stop(" sequentiator: copy logic scenario ");
-    topology::logic_scenario tmp;
-#else
     clock.start(" sequentiator: copy scenario ", "cumulative");
     topology::scenario tmpmin = sc;
     clock.stop(" sequentiator: copy scenario ");
     topology::scenario tmp = sc;
-#endif
 
     std::map<std::string,int> scnames;
     for(std::vector<topology::sequence>::iterator iseq=sc.sequences_.begin(); iseq!=sc.sequences_.end(); ++iseq)
@@ -822,25 +814,16 @@ namespace CAT {
 
         if( scnames.count(jseq->name()) ) continue;
 
-#if 0
-        clock.start(" sequentiator: copy logic scenario ", "cumulative");
-        tmp = tmpsave;
-        clock.stop(" sequentiator: copy logic scenario ");
-        clock.start(" sequentiator: copy logic sequence ", "cumulative");
-        tmp.sequences_.push_back(topology::logic_sequence(*jseq));
-        clock.stop(" sequentiator: copy logic sequence ");
-#else
         clock.start(" sequentiator: copy scenario ", "cumulative");
         tmp = sc;
         clock.stop(" sequentiator: copy scenario ");
         clock.start(" sequentiator: copy sequence ", "cumulative");
         tmp.sequences_.push_back(*jseq);
         clock.stop(" sequentiator: copy sequence ");
-#endif
 
         clock.start(" sequentiator: calculate scenario ", "cumulative");
-        tmp.calculate_n_free_families(td.get_cells(), td.get_calos());
-        tmp.calculate_n_overlaps(td.get_cells(), td.get_calos());
+        tmp.calculate_n_free_families(td.get_gg_hits(), td.get_calo_hits());
+        tmp.calculate_n_overlaps(td.get_gg_hits(), td.get_calo_hits());
         tmp.calculate_chi2();
         clock.stop(" sequentiator: calculate scenario ");
 
@@ -892,7 +875,7 @@ namespace CAT {
 
   }
 
-  void sequentiator::refine_sequences_near_walls(std::vector<topology::calorimeter_hit> & calos)
+  void sequentiator::refine_sequences_near_walls(const std::vector<topology::calorimeter_hit> & calos)
   {
     for( std::vector<topology::sequence>::iterator iseq = sequences_.begin(); iseq!=sequences_.end(); ++iseq){
 
@@ -916,7 +899,7 @@ namespace CAT {
 
 
       if( iseq->nodes_.size() < 3 ) continue;
-      for(std::vector<topology::calorimeter_hit>::iterator ic=calos.begin(); ic != calos.end(); ++ic){
+      for(std::vector<topology::calorimeter_hit>::const_iterator ic=calos.begin(); ic != calos.end(); ++ic){
         if( near(iseq->nodes_[1].c(), *ic) &&
             iseq->phi_kink(1)*180./M_PI > 45 &&
             belongs_to_other_family(iseq->nodes_[0].c(), &(*iseq)) ){
@@ -928,7 +911,7 @@ namespace CAT {
       }
 
       if( iseq->nodes_.size() < 3 ) continue;
-      for(std::vector<topology::calorimeter_hit>::iterator ic=calos.begin(); ic != calos.end(); ++ic){
+      for(std::vector<topology::calorimeter_hit>::const_iterator ic=calos.begin(); ic != calos.end(); ++ic){
         if( near(iseq->second_last_node().c(), *ic) &&
             iseq->phi_kink(iseq->nodes_.size()-2)*180./M_PI > 45 &&
             belongs_to_other_family(iseq->last_node().c(), &(*iseq)) ){
@@ -953,7 +936,7 @@ namespace CAT {
     return false;
   }
 
-  void sequentiator::interpret_physics(std::vector<topology::calorimeter_hit> & calos)
+  void sequentiator::interpret_physics(const std::vector<topology::calorimeter_hit> & calos)
   {
     clock.start(" sequentiator: interpret physics ", "cumulative");
 
@@ -1025,7 +1008,7 @@ namespace CAT {
             tangent_found_from_end = false;
             tangent_found_from_begin = false;
 
-            for(std::vector<topology::calorimeter_hit>::iterator ic=calos.begin(); ic != calos.end(); ++ic){
+            for(std::vector<topology::calorimeter_hit>::const_iterator ic=calos.begin(); ic != calos.end(); ++ic){
 
               DT_LOG_DEBUG(get_logging_priority(), "Trying to extrapolate to calo hit " << ic - calos.begin()
                            << " id " << ic->id() << " on view " << ic->pl_.view() << " energy " << ic->e().value());
@@ -1546,7 +1529,7 @@ namespace CAT {
     return false;
   }
 
-  bool sequentiator::near(const topology::cell &c, topology::calorimeter_hit &ch)
+  bool sequentiator::near(const topology::cell &c, const topology::calorimeter_hit &ch)
   {
     topology::plane pl = ch.pl();
     double calorimeter_layer = ch.layer();
@@ -1772,7 +1755,7 @@ namespace CAT {
     return true;
   }
 
-  bool sequentiator::match_gaps(std::vector<topology::calorimeter_hit> & calos)
+  bool sequentiator::match_gaps(const std::vector<topology::calorimeter_hit> & calos)
   {
     //if( gaps_Z.size() <= 1 ) return true;
     if( sequences_.size() < 2 ) return true;
@@ -1864,7 +1847,7 @@ namespace CAT {
                                bool& bestinvertB,
                                int &with_kink,
                                int &cells_to_delete_best,
-                               std::vector<topology::calorimeter_hit> & calos)
+                               const std::vector<topology::calorimeter_hit> & calos)
   {
     if( late() )
       return false;
@@ -1966,7 +1949,7 @@ namespace CAT {
             }
 
             DT_LOG_DEBUG(get_logging_priority(), "Possible match with kink, across GAP" << acrossGAP << ", cells to delete " << cells_to_delete << ", try to extrapolate");
-            for(std::vector<topology::calorimeter_hit>::iterator ic=calos.begin(); ic != calos.end(); ++ic){
+            for(std::vector<topology::calorimeter_hit>::const_iterator ic=calos.begin(); ic != calos.end(); ++ic){
               if( near(nodeA.c(), *ic) ||  near(nodeB.c(), *ic) ){
                 ok_kink_match = false;
                 DT_LOG_DEBUG(get_logging_priority(), "  will not match with kink because end cell is near calo " << ic - calos.begin());

@@ -328,7 +328,7 @@ namespace snemo {
         ct::experimental_point gg_hit_position(x,y,z);
 
         // Add a new hit cell in the CAT input data model :
-        ct::cell & c = _CAT_output_.tracked_data.add_gg_cell();
+        ct::cell & c = _CAT_output_.tracked_data.add_gg_hit();
         c.set_id(ihit++);
         c.set_probmin(_CAT_setup_.probmin);
         c.set_p(gg_hit_position);
@@ -418,7 +418,7 @@ namespace snemo {
 
         // Build the Calo hit position :
         // Add a new hit calo_cell in the CAT input data model :
-        ct::calorimeter_hit & c = _CAT_output_.tracked_data.add_calo_cell();
+        ct::calorimeter_hit & c = _CAT_output_.tracked_data.add_calo_hit();
         c.set_pl(pl);
         c.set_e(energy);
         c.set_t(time);

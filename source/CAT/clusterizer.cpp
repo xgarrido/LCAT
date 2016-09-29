@@ -105,7 +105,7 @@ namespace CAT {
     DT_THROW_IF(! is_initialized(), std::logic_error, "Clusterizer is not initialized !");
 
     DT_LOG_DEBUG(get_logging_priority(), "Order cells");
-    std::vector<topology::cell> & the_cells = tracked_data_.get_cells();
+    std::vector<topology::cell> & the_cells = tracked_data_.grab_gg_hits();
     if (the_cells.empty()) return;
     std::sort(the_cells.begin(), the_cells.end(),
               [] (const topology::cell & a_, const topology::cell & b_) -> bool

@@ -64,8 +64,7 @@ namespace CAT {
     bool evolve(topology::sequence & sequence);
     bool good_first_node(topology::node & node_);
     bool good_first_to_be_matched(topology::sequence& seq);
-    bool match_gaps(std::vector<topology::calorimeter_hit> & calos);
-    // void match_to_calorimeter(std::vector<topology::calorimeter_hit> & calos, topology::sequence *sequence);
+    bool match_gaps(const std::vector<topology::calorimeter_hit> & calos);
 
     //! get clusters
     const std::vector<topology::cluster> & get_clusters() const
@@ -407,8 +406,8 @@ namespace CAT {
   private:
 
     bool make_scenarios(topology::tracked_data &td);
-    void interpret_physics(std::vector<topology::calorimeter_hit> & calos);
-    void refine_sequences_near_walls(std::vector<topology::calorimeter_hit> & calos);
+    void interpret_physics(const std::vector<topology::calorimeter_hit> & calos);
+    void refine_sequences_near_walls(const std::vector<topology::calorimeter_hit> & calos);
     bool belongs_to_other_family(topology::cell c, topology::sequence *iseq);
     topology::plane get_foil_plane();
     void add_pair(const topology::sequence & sequence);
@@ -416,14 +415,14 @@ namespace CAT {
     bool there_is_free_sequence_beginning_with(const topology::cell &c, size_t *index);
     int gap_number(const topology::cell &c);
     void make_name(topology::sequence & seq);
-    bool near(const topology::cell &c, topology::calorimeter_hit &ch);
+    bool near(const topology::cell &c, const topology::calorimeter_hit &ch);
     double distance_from_foil(const topology::experimental_point &ep);
     bool direct_out_of_foil(void);
     bool direct_scenarios_out_of_foil(void);
     void make_families();
     bool can_add_family(topology::scenario &sc, size_t* jmin, size_t* nfree, double* Chi2, size_t* noverlaps, int32_t* ndof, topology::tracked_data &td);
     size_t pick_best_scenario();
-    bool can_match(topology::sequence &s, size_t* jmin, bool& bestinvertA, bool& bestinvertB, int& with_kink, int &cells_to_delete, std::vector<topology::calorimeter_hit> & calos);
+    bool can_match(topology::sequence &s, size_t* jmin, bool& bestinvertA, bool& bestinvertB, int& with_kink, int &cells_to_delete, const std::vector<topology::calorimeter_hit> & calos);
     bool sequence_is_within_range(topology::node nodeA, topology::node nodeB, topology::sequence seq);
     size_t near_level( const topology::cell & c1, const topology::cell & c2 );
     void reassign_cells_based_on_helix( topology::sequence * seq );
