@@ -17,14 +17,14 @@ namespace CAT {
       //ep_ = experimental_point();
       //r0_= experimental_double();
       //r_= experimental_double();
-      id_ = mybhep::default_integer;
-      layer_ = mybhep::default_integer;
-      block_ = mybhep::default_integer;
-      iid_ = mybhep::default_integer;
-      fast_ = true;
-      free_ = false;
-      begun_ = false;
-      small_radius_= 0.;
+      _id_ = mybhep::default_integer;
+      _side_ = mybhep::default_integer;
+      _layer_ = mybhep::default_integer;
+      _row_ = mybhep::default_integer;
+      _prompt_ = true;
+      _free_ = false;
+      _begun_ = false;
+      _small_radius_= 0.;
       return;
     }
 
@@ -50,20 +50,151 @@ namespace CAT {
         out_ << indent << title_ << std::endl;
       }
 
-      out_ << indent << datatools::i_tree_dumpable::tag << "ID     : " << id() << std::endl;
-      out_ << indent << datatools::i_tree_dumpable::tag << "IID    : " << iid() << std::endl;
-      out_ << indent << datatools::i_tree_dumpable::tag << "Layer  : " << layer() << std::endl;
-      out_ << indent << datatools::i_tree_dumpable::tag << "Block  : " << block() << std::endl;
-      out_ << indent << datatools::i_tree_dumpable::tag << "Prompt : " << fast() << std::endl;
-      out_ << indent << datatools::i_tree_dumpable::tag << "Small  : " << small() << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "ID     : " << get_id() << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "Side   : " << get_side() << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "Row    : " << get_row() << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "Layer  : " << get_layer() << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "Prompt : " << is_prompt() << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::tag << "Small  : " << is_small() << std::endl;
+      const experimental_point & ep = get_position();
       out_ << indent << datatools::i_tree_dumpable::tag << "Position (x,y,z) : ("
-           << ep().x().value()/CLHEP::mm << ", " << ep().y().value()/CLHEP::mm << ", " << ep().z().value()/CLHEP::mm << ") mm" << std::endl;
-      if (small() && fast()) {
-        out_ << indent << datatools::i_tree_dumpable::tag << "Original radius : " << r0().value()/CLHEP::mm << " mm" << std::endl;
+           << ep.x().value()/CLHEP::mm << ", " << ep.y().value()/CLHEP::mm << ", " << ep.z().value()/CLHEP::mm << ") mm" << std::endl;
+      if (is_small() && is_prompt()) {
+        out_ << indent << datatools::i_tree_dumpable::tag << "Original radius : " << get_original_radius().value()/CLHEP::mm << " mm" << std::endl;
       }
-      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_) << "Radius : " << r().value()/CLHEP::mm << " mm" << std::endl;
+      out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_) << "Radius : " << get_radius().value()/CLHEP::mm << " mm" << std::endl;
       return;
     }
+
+    void cell::set_position(const experimental_point & ep_)
+    {
+      _position_ = ep_;
+      return;
+    }
+
+    void cell::set_radius(double r_)
+    {
+      _r0_.set_value(r_);
+      _set_radius_();
+      return;
+    }
+
+    void cell::set_radius_error(double er_)
+    {
+      _r0_.set_error(er_);
+      _set_radius_();
+      return;
+    }
+
+    void cell::set_small_radius(double sr_)
+    {
+      _small_radius_ = sr_;
+      return;
+    }
+
+    void cell::set_id(int id_)
+    {
+      _id_ = id_;
+      return;
+    }
+
+    void cell::set_layer(int layer_)
+    {
+      _layer_ = layer_;
+      return;
+    }
+
+    void cell::set_side(int side_)
+    {
+      _side_ = side_;
+      return;
+    }
+
+    void cell::set_row(int row_)
+    {
+      _row_ = row_;
+      return;
+    }
+
+    void cell::set_prompt(bool p_)
+    {
+      _prompt_ = p_;
+      return;
+    }
+
+    void cell::set_free(bool free_)
+    {
+      _free_ = free_;
+      return;
+    }
+
+    void cell::set_begun(bool begun_)
+    {
+      _begun_ = begun_;
+    }
+
+    bool cell::is_small() const
+    {
+      if (_r0_.value() <= _small_radius_) return true;
+      return false;
+    }
+
+    const experimental_point & cell::get_position() const
+    {
+      return _position_;
+    }
+
+    const experimental_double & cell::get_radius() const
+    {
+      return _r_;
+    }
+
+    const experimental_double & cell::get_original_radius() const
+    {
+      return _r0_;
+    }
+
+    int cell::get_id() const
+    {
+      return _id_;
+    }
+
+    int cell::get_layer() const
+    {
+      return _layer_;
+    }
+
+    int cell::get_side() const
+    {
+      return _side_;
+    }
+
+    int cell::get_row() const
+    {
+      return _row_;
+    }
+
+    bool cell::is_prompt() const
+    {
+      return _prompt_;
+    }
+
+    bool cell::is_free() const
+    {
+      return _free_;
+    }
+
+    bool cell::begun() const
+    {
+      return _begun_;
+    }
+
+    void cell::_set_radius_()
+    {
+      _r_ = _r0_;
+      return;
+    }
+
 
     experimental_point cell::build_from_cell(const experimental_vector & forward_,
                                              const experimental_vector & transverse_,
@@ -73,26 +204,26 @@ namespace CAT {
                                              double max_r_) const
     {
       const experimental_double sin = experimental_sin(experimental_acos(cos_))*sign_;
-      experimental_double radius = r();
+      experimental_double radius = get_radius();
       if (replace_r_) {
         radius.set_value(max_r_);
       }
 
-      const experimental_point p = (experimental_vector(ep()) + radius*(forward_*cos_ + transverse_*sin)).point_from_vector();
+      const experimental_point p = (experimental_vector(get_position()) + radius*(forward_*cos_ + transverse_*sin)).point_from_vector();
       return p;
     }
 
 
     experimental_point cell::angular_average(const experimental_point & epa_, const experimental_point & epb_, experimental_double & angle_)
     {
-      if (small()){
+      if (is_small()){
         angle_.set_value(0.);
         angle_.set_error(0.1); // fictitious value to avoid divergences
-        return ep();
+        return get_position();
       }
 
-      const experimental_vector v1(ep(), epa_);
-      const experimental_vector v2(ep(), epb_);
+      const experimental_vector v1(get_position(), epa_);
+      const experimental_vector v2(get_position(), epb_);
 
       experimental_double phi1 = v1.phi();
       experimental_double phi2 = v2.phi();
@@ -155,8 +286,8 @@ namespace CAT {
       // check if the angular position of points epa and epb
       // is less than 90 degrees apart around the cell
 
-      experimental_double initial_phi1 = experimental_vector(ep(), epa_).phi();
-      experimental_double initial_phi2 = experimental_vector(ep(), epb_).phi();
+      experimental_double initial_phi1 = experimental_vector(get_position(), epa_).phi();
+      experimental_double initial_phi2 = experimental_vector(get_position(), epb_).phi();
 
       double re_initial_phi1 = initial_phi1.value();
       double re_initial_phi2 = initial_phi2.value();
@@ -170,8 +301,8 @@ namespace CAT {
 
       double fraction_limit = 0.9; /// fraction of radius after which cells intersect
 
-      double dist = experimental_vector(ep(), c_.ep()).hor().length().value();
-      experimental_double rsum = r() + c_.r();
+      double dist = experimental_vector(get_position(), c_.get_position()).hor().length().value();
+      experimental_double rsum = get_radius() + c_.get_radius();
 
       if( rsum.value() > dist*fraction_limit ){
         // if( print_level() >= mybhep::VVERBOSE ){

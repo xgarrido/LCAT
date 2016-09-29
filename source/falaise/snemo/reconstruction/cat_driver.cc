@@ -293,14 +293,14 @@ namespace snemo {
 
         // Translate into the CAT's numbering scheme :
         // -1 : negative X side; +1 : positive X side
-        const int block_id = (side == 0) ? -1 : +1;
+        const int side_id = (side == 0) ? -1 : +1;
         /* Later number:
          * negative X side: layer from -8, -7, -6, -5, -4, -3, -2, -1, 0
          * positive X side: layer from 0, 1, 2 , 3, 4, 5, 6, 7, 8
          */
         const int layer_id = side == 0 ? -layer: layer;
         // Cell number :  0:113 is mapped to -56:+56
-        const int cell_id  = row - (_CAT_setup_.num_cells_per_plane / 2);
+        const int row_id  = row - (_CAT_setup_.num_cells_per_plane / 2);
 
         // X-Y position of the anode wire of the hit cell :
         ct::experimental_double z; // == X in sngeometry SN module frame
@@ -319,7 +319,7 @@ namespace snemo {
         y.set_error(_sigma_z_factor_ * snemo_gg_hit.get_sigma_z());
 
         // Prompt/delayed trait of the hit :
-        const bool fast = snemo_gg_hit.is_prompt();
+        const bool prompt = snemo_gg_hit.is_prompt();
 
         // Transverse Geiger drift distance :
         const double rdrift     = snemo_gg_hit.get_r();
@@ -332,21 +332,21 @@ namespace snemo {
         ct::cell & c = _CAT_output_.tracked_data.add_gg_hit();
         c.set_id(ihit++);
         c.set_probmin(_CAT_setup_.probmin);
-        c.set_p(gg_hit_position);
-        c.set_r(fast ? rdrift : 0.25 * gg_locator.get_cell_diameter());
-        c.set_er(fast ? rdrift_err : 0.25 * gg_locator.get_cell_diameter());
+        c.set_position(gg_hit_position);
+        c.set_radius(prompt ? rdrift : 0.25 * gg_locator.get_cell_diameter());
+        c.set_radius_error(prompt ? rdrift_err : 0.25 * gg_locator.get_cell_diameter());
+        c.set_side(side_id);
         c.set_layer(layer_id);
-        c.set_block(block_id);
-        c.set_iid(cell_id);
-        c.set_fast(fast);
+        c.set_row(row_id);
+        c.set_prompt(prompt);
         c.set_small_radius(_CAT_setup_.SmallRadius);
 
         // Store mapping info between both data models :
-        hits_mapping[c.id()] = gg_handle;
+        hits_mapping[c.get_id()] = gg_handle;
 
         DT_LOG_DEBUG (get_logging_priority (),
                       "Geiger cell #" << snemo_gg_hit.get_id() << " has been added "
-                      << "to CAT input data with id number #" << c.id());
+                      << "to CAT input data with id number #" << c.get_id());
       } // for loop over gg_hits_
 
       // Take into account calo hits:
@@ -441,11 +441,7 @@ namespace snemo {
       //   return 1;
       // }
 
-      // // Install the input data model within the algorithm object :
-      // _CAT_clusterizer_.set_cells(_CAT_input_.cells);
-
-      // // Install the input data model within the algorithm object :
-      // _CAT_clusterizer_.set_calorimeter_hits(_CAT_input_.calo_cells);
+      // _CAT_output_.tracked_data.tree_dump();
 
       // Run the clusterizer algorithm :
       _CAT_clusterizer_.clusterize(_CAT_output_.tracked_data);
@@ -470,7 +466,7 @@ namespace snemo {
 
           // Loop on all hits within the cluster(nodes) :
           for (const auto & a_node : a_cluster.nodes()) {
-            const int hit_id = a_node.c().id();
+            const int hit_id = a_node.c().get_id();
             cluster_handle.grab().grab_hits().push_back(hits_mapping[hit_id]);
             DT_LOG_DEBUG(get_logging_priority(), "Add tracker hit with id #" << hit_id);
           }
@@ -518,7 +514,7 @@ namespace snemo {
               // Loop on all hits within the sequence(nodes) :
               for (size_t i = 0; i < seqsz; i++) {
                 const CAT::topology::node & a_node = a_sequence.nodes()[i];
-                const int hit_id = a_node.c().id();
+                const int hit_id = a_node.c().get_id();
                 cluster_handle.grab().grab_hits().push_back(hits_mapping[hit_id]);
                 DT_LOG_DEBUG(get_logging_priority(), "Add tracker hit with id #" << hit_id);
               }

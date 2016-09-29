@@ -75,7 +75,7 @@ namespace CAT {
     {
       cc_index_.clear();
       for(std::vector<cell_couplet>::const_iterator icc=cc_.begin(); icc!=cc_.end(); ++icc){
-        cc_index_[icc->cb().id()] = icc-cc_.begin();
+        cc_index_[icc->cb().get_id()] = icc-cc_.begin();
       }
     }
 
@@ -84,8 +84,8 @@ namespace CAT {
       ccc_ca_index_.clear();
       ccc_cc_index_.clear();
       for(std::vector<cell_triplet>::const_iterator iccc=ccc_.begin(); iccc!=ccc_.end(); ++iccc){
-        ccc_ca_index_[iccc->cb().id()] = iccc-ccc_.begin();
-        ccc_cc_index_[iccc->cc().id()] = iccc-ccc_.begin();
+        ccc_ca_index_[iccc->cb().get_id()] = iccc-ccc_.begin();
+        ccc_cc_index_[iccc->cc().get_id()] = iccc-ccc_.begin();
       }
     }
 
@@ -209,10 +209,10 @@ namespace CAT {
         cell c1 = icc->cb();
         for(std::vector<cell_couplet>::const_iterator jcc=cc_.begin() + (size_t)(icc - cc_.begin()); jcc!=cc_.end(); ++jcc){
           cell c2 = jcc->cb();
-          if( c1.id() == c2.id() ) continue;
+          if( c1.get_id() == c2.get_id() ) continue;
           cell_triplet ccc(c1,c_,c2, probmin());
           // if( print_level() >= mybhep::VVERBOSE ){
-          //   std::clog << appname_ << " calculate triplets for three cells: " << ccc.ca().id() << "  " << ccc.cb().id() << "  " << ccc.cc().id() << std::endl;
+          //   std::clog << appname_ << " calculate triplets for three cells: " << ccc.ca().get_id() << "  " << ccc.cb().get_id() << "  " << ccc.cc().get_id() << std::endl;
           // }
           ccc.calculate_joints(ratio_, phi_limit_);
           if( ccc.joints().size() > 0 ){
@@ -232,8 +232,8 @@ namespace CAT {
     void node::add_triplet(const cell_triplet &ccc)
     {
       ccc_.push_back(ccc);
-      ccc_ca_index_[ccc.ca().id()] = ccc_.size() - 1;
-      ccc_cc_index_[ccc.cc().id()] = ccc_.size() - 1;
+      ccc_ca_index_[ccc.ca().get_id()] = ccc_.size() - 1;
+      ccc_cc_index_[ccc.cc().get_id()] = ccc_.size() - 1;
       return;
     }
 
@@ -309,10 +309,10 @@ namespace CAT {
 
     bool node::has_couplet(const cell & a, cell_couplet * ct)const
     {
-      if( !cc_index_.count(a.id()) ) return false;
-      size_t index=cc_index().find(a.id())->second;
+      if( !cc_index_.count(a.get_id()) ) return false;
+      size_t index=cc_index().find(a.get_id())->second;
       if( index >= cc_.size()) {
-        std::clog << " problem: cc index " << index << " for cell a of id " << a.id() << " is larger than cc size " << cc_.size() << endl;
+        std::clog << " problem: cc index " << index << " for cell a of id " << a.get_id() << " is larger than cc size " << cc_.size() << endl;
         dump();
         return false;
       }
@@ -322,10 +322,10 @@ namespace CAT {
 
     bool node::has_couplet(const cell& a, size_t* index)const
     {
-      if( !cc_index_.count(a.id()) ) return false;
-      *index= cc_index().find(a.id())->second;
+      if( !cc_index_.count(a.get_id()) ) return false;
+      *index= cc_index().find(a.get_id())->second;
       if( *index >= cc_.size() ){
-        std::clog << " problem: cc index " << *index << " for cell of id " << a.id() << " is larger than cc size " << cc_.size() << endl;
+        std::clog << " problem: cc index " << *index << " for cell of id " << a.get_id() << " is larger than cc size " << cc_.size() << endl;
         dump();
         return false;
       }
@@ -367,9 +367,9 @@ namespace CAT {
     bool node::has_triplet(const cell &a)const
     {
       for(std::vector<cell_triplet>::const_iterator iccc=ccc_.begin(); iccc!=ccc_.end(); ++iccc){
-        size_t ida = iccc->ca().id();
-        size_t idc = iccc->cc().id();
-        if( ( ida == a.id() || idc == a.id() ) ){
+        int ida = iccc->ca().get_id();
+        int idc = iccc->cc().get_id();
+        if( ( ida == a.get_id() || idc == a.get_id() ) ){
           return true;
         }
       }
@@ -380,7 +380,7 @@ namespace CAT {
     bool operator==(const node& left,
                     const node& right)
     {
-      return left.c().id() == right.c().id();
+      return left.c().get_id() == right.c().get_id();
     }
 
   }

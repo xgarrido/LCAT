@@ -88,16 +88,17 @@ namespace CAT {
 
       for(std::vector<experimental_double>::iterator it=xi_.begin(); it != xi_.end(); ++it)
         {
-          double w = 1./(mybhep::square(it->error()));
+          double x = it->value();
+          double w = 1./(std::pow(it->error(),2));
           Sw += w;
-          Swxx += w*mybhep::square(it->value());
+          Swxx += w*x*x;
           Swx += w*it->value();
           double y = yi_[it - xi_.begin()].value();
           Swxy += w*it->value()*y;
           Swy += w*y;
         }
 
-      double delta = Sw*Swxx - mybhep::square(Swx);
+      double delta = Sw*Swxx - Swx*Swx;
 
       if( delta == 0.){
         // if( print_level() >= mybhep::NORMAL ){

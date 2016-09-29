@@ -182,7 +182,7 @@ namespace CAT {
          inode != cluster_.nodes_.end(); ++inode) {
       topology::node & a_node = *inode;
 
-      DT_LOG_DEBUG(get_logging_priority(), "First node: " << inode->c().id());
+      DT_LOG_DEBUG(get_logging_priority(), "First node: " << inode->c().get_id());
 
       if (!good_first_node(a_node)) continue;
 
@@ -262,7 +262,7 @@ namespace CAT {
         clock.start(" sequentiator: make copy sequence: part A ","cumulative");
         clock.start(" sequentiator: make copy sequence: part A: alpha ","cumulative");
 
-        DT_LOG_DEBUG(get_logging_priority(), "Begin, with cell" << first_node.c().id() << ", parallel track "
+        DT_LOG_DEBUG(get_logging_priority(), "Begin, with cell" << first_node.c().get_id() << ", parallel track "
                      << sequences_.size() << " to track" << isequence);
 
         clock.stop(" sequentiator: make copy sequence: part A: alpha ");
@@ -288,7 +288,7 @@ namespace CAT {
         clock.start(" sequentiator: manage copy sequence ","cumulative");
 
         DT_LOG_DEBUG(get_logging_priority(), "Checking study case for sequence #" << isequence << " "
-                     << "and node #" << first_node.c().id());;
+                     << "and node #" << first_node.c().get_id());;
 
         // not adding: case 1: new sequence did not evolve
         if (newcopy.nodes().size() == ilfn + 1)
@@ -507,9 +507,9 @@ namespace CAT {
       clock.stop(" sequentiator: evolve ");
 
       if (sequence.nodes().size() == 1){
-        topology::experimental_point ep(sequence.nodes_[0].c().ep());
-        ep.set_ex(sequence.nodes_[0].c().r().value());
-        ep.set_ez(sequence.nodes_[0].c().r().value());
+        topology::experimental_point ep(sequence.nodes_[0].c().get_position());
+        ep.set_ex(sequence.nodes_[0].c().get_radius().value());
+        ep.set_ez(sequence.nodes_[0].c().get_radius().value());
         sequence.nodes_[0].set_ep(ep);
       }
 
@@ -590,13 +590,13 @@ namespace CAT {
           }
           else{ // multi-vertex
             if( iseq->nodes_.size() > 1 ){
-              if( iseq->nodes_[0].c().id() == node_.c().id() )
+              if( iseq->nodes_[0].c().get_id() == node_.c().get_id() )
                 connection_node = 1;
-              else if( iseq->last_node().c().id() == node_.c().id() ){
+              else if( iseq->last_node().c().get_id() == node_.c().get_id() ){
                 connection_node = iseq->nodes_.size() - 2;
               }
               else{
-                DT_LOG_DEBUG(get_logging_priority(), "Problem: multi-vertex " << node_.c().id() << " belongs to sequence "
+                DT_LOG_DEBUG(get_logging_priority(), "Problem: multi-vertex " << node_.c().get_id() << " belongs to sequence "
                              << iseq->name() << " but not as first or last cell");
                 continue;
               }
@@ -604,10 +604,10 @@ namespace CAT {
               // that have already been connected to NODE in other sequences
               fid = std::find(done_connections.begin(),
                               done_connections.end(),
-                              iseq->nodes_[connection_node].c().id());
+                              iseq->nodes_[connection_node].c().get_id());
 
               if( fid == done_connections.end())
-                done_connections.push_back(iseq->nodes_[connection_node].c().id());
+                done_connections.push_back(iseq->nodes_[connection_node].c().get_id());
             }
           }
         }
@@ -618,10 +618,10 @@ namespace CAT {
       for(size_t i=0; i<done_connections.size(); i++){
         cc_index = 0;
         if( !node_.has_couplet(done_connections[i],  &cc_index) ) {
-          DT_LOG_DEBUG(get_logging_priority(), "Problem: multi-vertex " << node_.c().id()
+          DT_LOG_DEBUG(get_logging_priority(), "Problem: multi-vertex " << node_.c().get_id()
                        << " should link to cell " << done_connections[i] << " but has not such couplet");
         } else{
-          DT_LOG_DEBUG(get_logging_priority(), "Multi-vertex " << node_.c().id()
+          DT_LOG_DEBUG(get_logging_priority(), "Multi-vertex " << node_.c().get_id()
                        << " has already been added to a sequence connecting to cell " << done_connections[i]
                        << " so couplet " << cc_index << " will be erased");
           //node_.cc_.erase(node_.cc_.begin() + cc_index);
@@ -1256,8 +1256,8 @@ namespace CAT {
 
     topology::cell_couplet cc;
     if( !newsequence.nodes_[0].has_couplet(newsequence.nodes()[1].c(), &cc) ){
-      DT_LOG_DEBUG(get_logging_priority(), "Problem: node " << newsequence.nodes_[0].c().id() << " has no pair "
-                   << newsequence.nodes()[0].c().id() << "-" << newsequence.nodes()[1].c().id());
+      DT_LOG_DEBUG(get_logging_priority(), "Problem: node " << newsequence.nodes_[0].c().get_id() << " has no pair "
+                   << newsequence.nodes()[0].c().get_id() << "-" << newsequence.nodes()[1].c().get_id());
       clock.stop(" sequentiator: add pair ");
       return;
     }
@@ -1298,8 +1298,8 @@ namespace CAT {
       sequences_.push_back(pair);
 
       DT_LOG_DEBUG(get_logging_priority(), "made track [" << sequences_.size()-1 << "] with cells "
-                   << na.c().id() << " [" << pair.nodes_[0].ep().x().value() << ", " << pair.nodes_[0].ep().z().value() << "]"
-                   <<  "and " << nb.c().id() << " [" << pair.nodes_[1].ep().x().value() << ", " << pair.nodes_[1].ep().z().value() << "]");
+                   << na.c().get_id() << " [" << pair.nodes_[0].ep().x().value() << ", " << pair.nodes_[0].ep().z().value() << "]"
+                   <<  "and " << nb.c().get_id() << " [" << pair.nodes_[1].ep().x().value() << ", " << pair.nodes_[1].ep().z().value() << "]");
       if( erased )
         erased = clean_up_sequences();
     }
@@ -1516,7 +1516,7 @@ namespace CAT {
   {
     clock.start(" sequentiator: there is free sequence beginning with ", "cumulative");
     for(std::vector<topology::sequence>::iterator iseq=sequences_.begin(); iseq != sequences_.end(); ++iseq)
-      if( iseq->nodes()[0].c().id() == c.id() )
+      if( iseq->nodes()[0].c().get_id() == c.get_id() )
         {
           if( iseq->Free() )
             {
@@ -1536,22 +1536,22 @@ namespace CAT {
 
     if( pl.view() == "x" ){
 
-      DT_LOG_DEBUG(get_logging_priority(), "Matching cell " << c.id() << " with cell number " << c.cell_number() << " to calo on view " << pl.view()
+      DT_LOG_DEBUG(get_logging_priority(), "Matching cell " << c.get_id() << " with cell number " << c.get_row() << " to calo on view " << pl.view()
                    << " max cell number " << cell_max_number << " plane norm x " << pl.norm().x().value());
 
       if( pl.norm().x().value() > 0. )
-        return (std::abs(cell_max_number + c.cell_number()) < 1 + NOffLayers);
+        return (std::abs(cell_max_number + c.get_row()) < 1 + NOffLayers);
 
-      return (std::abs(cell_max_number - c.cell_number()) < 1 + NOffLayers);
+      return (std::abs(cell_max_number - c.get_row()) < 1 + NOffLayers);
     }
     else if( pl.view() == "y" ){
 
-      topology::experimental_vector distance(c.ep(), pl.face());
+      topology::experimental_vector distance(c.get_position(), pl.face());
       distance = distance.hor();
       double size_z = CellDistance + pl.sizes().z().value();
       double size_x = CellDistance + pl.sizes().x().value();
 
-      DT_LOG_DEBUG(get_logging_priority(), "Checking if cell " << c.id() << " is near plane: "
+      DT_LOG_DEBUG(get_logging_priority(), "Checking if cell " << c.get_id() << " is near plane: "
                    << pl.center().x().value() << ", " << pl.center().y().value() << ", " << pl.center().z().value()
                    << " on view " << pl.view() << " distance z " << distance.z().value()
                    << " size z " << size_z << " distance x " << distance.x().value() << " size x " << size_x);
@@ -1566,12 +1566,12 @@ namespace CAT {
 
       int g = gap_number(c);
 
-      DT_LOG_DEBUG(get_logging_priority(), "Checking if cell " << c.id() << " on gap " << g << " is near plane: "
+      DT_LOG_DEBUG(get_logging_priority(), "Checking if cell " << c.get_id() << " on gap " << g << " is near plane: "
                    << pl.center().x().value() << ", " << pl.center().y().value() << ", " << pl.center().z().value());
 
-      if( g <= 0 || std::abs(calorimeter_layer - c.layer()) > NOffLayers ) return false; // cell is not on a gap or is facing the foil
+      if( g <= 0 || std::abs(calorimeter_layer - c.get_layer()) > NOffLayers ) return false; // cell is not on a gap or is facing the foil
 
-      if( g == 1 || std::abs(calorimeter_layer - c.layer()) <= NOffLayers ) return true;
+      if( g == 1 || std::abs(calorimeter_layer - c.get_layer()) <= NOffLayers ) return true;
 
       DT_LOG_DEBUG(get_logging_priority(), "Problem: can't match to calo on view " << pl.view());
 
@@ -1579,18 +1579,18 @@ namespace CAT {
     }
     else if( pl.view() == "inner" || pl.view() == "outer"){
 
-      int ln = c.layer();
+      int ln = c.get_layer();
       int g = gap_number(c);
-      DT_LOG_DEBUG(get_logging_priority(), "Checking if cell " << c.id() << " layer and gap: " << ln << " " << g << " is near plane: "
+      DT_LOG_DEBUG(get_logging_priority(), "Checking if cell " << c.get_id() << " layer and gap: " << ln << " " << g << " is near plane: "
                    << pl.center().x().value() << ", " << pl.center().y().value() << ", " << pl.center().z().value() << " on view "<< pl.view());
       if( ln < 0 && (g == 3 ||
                      std::abs(ln - calorimeter_layer) <= NOffLayers )) return true;
       return false;
     }
     else if( pl.view() == "top" ||  pl.view() == "bottom" ){
-      int ln = c.layer();
+      int ln = c.get_layer();
       int g = gap_number(c);
-      DT_LOG_DEBUG(get_logging_priority(), "Checking if cell " << c.id() << " on gap " << g << " is near plane: "
+      DT_LOG_DEBUG(get_logging_priority(), "Checking if cell " << c.get_id() << " on gap " << g << " is near plane: "
                    << pl.center().x().value() << ", " << pl.center().y().value() << ", " << pl.center().z().value() << " on view " << pl.view());
       if( ln > 0 && calorimeter_layer == 3.5 && (g == 1 || std::abs(ln - calorimeter_layer) <= NOffLayers + 0.5 ) ) return true;
       if( ln > 0 && calorimeter_layer == 5.5 && (g == 2 || std::abs(ln - calorimeter_layer) <= NOffLayers + 0.5 ) ) return true;
@@ -1609,9 +1609,9 @@ namespace CAT {
     // ... returns -1 if not on a gap
     // ... returns 0 if the hit is on layer 0, facing the foil
 
-    size_t ln = abs(c.layer());
+    size_t ln = abs(c.get_layer());
 
-    DT_LOG_DEBUG(get_logging_priority(), "Cell " << c.id() << " layer " << c.layer());
+    DT_LOG_DEBUG(get_logging_priority(), "Cell " << c.get_id() << " layer " << c.get_layer());
 
     if( ln == 0 ) return 0;
 
@@ -1641,8 +1641,8 @@ namespace CAT {
 
     int gnA = gap_number(cA);
     int gnB = gap_number(cB);
-    int blockA = cA.block();
-    int blockB = cB.block();
+    int blockA = cA.get_side();
+    int blockB = cB.get_side();
 
     double rmin, rmax;
 
@@ -1654,42 +1654,42 @@ namespace CAT {
          gnA != gnB )){
       // matching is within a single block and not through a gap
       // so helix should be contained in the layers of the two cells
-      rmin = std::min(cA.ep().radius().value(),cB.ep().radius().value()) - CellDistance;
-      rmax = std::max(cA.ep().radius().value(),cB.ep().radius().value()) + CellDistance;
+      rmin = std::min(cA.get_position().radius().value(),cB.get_position().radius().value()) - CellDistance;
+      rmax = std::max(cA.get_position().radius().value(),cB.get_position().radius().value()) + CellDistance;
     }else{
       if( blockA != blockB ){
 
         /*
           if( gnA != -1 && gnB != -1 && gnA != gnB ){
           if( level >= mybhep::VVERBOSE ){
-          std::clog << " connection between cells " << nodeA.c().id() << " and " << nodeB.c().id() << " blocks " << blockA << " and " << blockB << " gaps " << gnA << " and " << gnB << " is forbidden (cells face different gaps) " << std::endl;
+          std::clog << " connection between cells " << nodeA.c().get_id() << " and " << nodeB.c().get_id() << " blocks " << blockA << " and " << blockB << " gaps " << gnA << " and " << gnB << " is forbidden (cells face different gaps) " << std::endl;
           }
           return false;
           }
         */
 
         // matching is between different blocks
-        rmin = std::min(cA.ep().radius().value(),cB.ep().radius().value()) - CellDistance;
-        rmax = std::max(cA.ep().radius().value(),cB.ep().radius().value()) + CellDistance;
+        rmin = std::min(cA.get_position().radius().value(),cB.get_position().radius().value()) - CellDistance;
+        rmax = std::max(cA.get_position().radius().value(),cB.get_position().radius().value()) + CellDistance;
       }
       else if( blockA == blockB && gnA == -1 && gnB != -1 ){ // B is on gap, A is inside
         size_t gn = gnB;
-        if( cA.ep().radius().value() > cB.ep().radius().value() ){ // gap - B - A
-          rmax = cA.ep().radius().value() + CellDistance;
-          rmin = cB.ep().radius().value() - CellDistance - gaps_Z[gn];
+        if( cA.get_position().radius().value() > cB.get_position().radius().value() ){ // gap - B - A
+          rmax = cA.get_position().radius().value() + CellDistance;
+          rmin = cB.get_position().radius().value() - CellDistance - gaps_Z[gn];
         }else{ // A - B - gap
-          rmin = cA.ep().radius().value() - CellDistance;
-          rmax = cB.ep().radius().value() + CellDistance + gaps_Z[gn];
+          rmin = cA.get_position().radius().value() - CellDistance;
+          rmax = cB.get_position().radius().value() + CellDistance + gaps_Z[gn];
         }
       }
       else if( blockA == blockB && gnA != -1 && gnB == -1 ){ // A is on gap, B is inside
         size_t gn = gnA;
-        if( cA.ep().radius().value() < cB.ep().radius().value() ){ // gap - A - B
-          rmax = cB.ep().radius().value() + CellDistance;
-          rmin = cA.ep().radius().value() - CellDistance - gaps_Z[gn];
+        if( cA.get_position().radius().value() < cB.get_position().radius().value() ){ // gap - A - B
+          rmax = cB.get_position().radius().value() + CellDistance;
+          rmin = cA.get_position().radius().value() - CellDistance - gaps_Z[gn];
         }else{ // B - A - gap
-          rmin = cB.ep().radius().value() - CellDistance;
-          rmax = cA.ep().radius().value() + CellDistance + gaps_Z[gn];
+          rmin = cB.get_position().radius().value() - CellDistance;
+          rmax = cA.get_position().radius().value() + CellDistance + gaps_Z[gn];
         }
       }
       else if( blockA == blockB && gnA != -1 && gnB != -1 && gnA == gnB ){ // A and B on same gap
@@ -1700,21 +1700,21 @@ namespace CAT {
         size_t gaplayer=0;
         for(size_t i=0; i<gn; i++)
           gaplayer += (size_t)(planes_per_block[i]+0.5);  // 0, 4, 6, 9
-        if( abs(cA.layer()) < (int)gaplayer ){ // foil - A,B - gap
+        if( abs(cA.get_layer()) < (int)gaplayer ){ // foil - A,B - gap
           if( blockA > 0 ){ // origin - A, B - gap
-            rmin = cA.ep().radius().value() - CellDistance;
-            rmax = cA.ep().radius().value() + CellDistance + gaps_Z[gn];
+            rmin = cA.get_position().radius().value() - CellDistance;
+            rmax = cA.get_position().radius().value() + CellDistance + gaps_Z[gn];
           }else{ // origin - gap - A,B
-            rmin = cA.ep().radius().value() - CellDistance - gaps_Z[gn];
-            rmax = cA.ep().radius().value() + CellDistance;
+            rmin = cA.get_position().radius().value() - CellDistance - gaps_Z[gn];
+            rmax = cA.get_position().radius().value() + CellDistance;
           }
         }else{ // foil - gap - A, B
           if( blockA > 0 ){ // origin - gap - A,B
-            rmax = cA.ep().radius().value() + CellDistance;
-            rmin = cA.ep().radius().value() - CellDistance - gaps_Z[gn];
+            rmax = cA.get_position().radius().value() + CellDistance;
+            rmin = cA.get_position().radius().value() - CellDistance - gaps_Z[gn];
           }else{ // origin - A,B - gap
-            rmin = cA.ep().radius().value() - CellDistance;
-            rmax = cA.ep().radius().value() + CellDistance + gaps_Z[gn];
+            rmin = cA.get_position().radius().value() - CellDistance;
+            rmax = cA.get_position().radius().value() + CellDistance + gaps_Z[gn];
           }
         }
 
@@ -1728,16 +1728,16 @@ namespace CAT {
     seq.point_of_max_min_radius(epA, epB, &ep_maxr, &ep_minr);
 
     if( ep_maxr.radius().value() > rmax || ep_minr.radius().value() < rmin ){
-      DT_LOG_DEBUG(get_logging_priority(), "Sequence penetrates outside of admissible range between cells " << nodeA.c().id()
-                   << " layer " << nodeA.c().layer() << " r " << nodeA.c().ep().radius().value() << " and " << nodeB.c().id()
-                   << " layer " << nodeB.c().layer() << " r " << nodeB.c().ep().radius().value()
+      DT_LOG_DEBUG(get_logging_priority(), "Sequence penetrates outside of admissible range between cells " << nodeA.c().get_id()
+                   << " layer " << nodeA.c().get_layer() << " r " << nodeA.c().get_position().radius().value() << " and " << nodeB.c().get_id()
+                   << " layer " << nodeB.c().get_layer() << " r " << nodeB.c().get_position().radius().value()
                    << ": point of max radius has radius " << ep_maxr.radius().value() << " rmax " << rmax
                    << " point of min radius has radius " << ep_minr.radius().value() << " rmin " << rmin);
       return false;
     }
 
     DT_LOG_DEBUG(get_logging_priority(), "Sequence blockA " << blockA << " blockB " << blockB << " gnA " << gnA << " gnB " << gnB
-                 << " connecting cells " << nodeA.c().id() << " and " << nodeB.c().id()
+                 << " connecting cells " << nodeA.c().get_id() << " and " << nodeB.c().get_id()
                  << ": point of max radius has radius " << ep_maxr.radius().value() << " rmax " << rmax
                  << " point of min radius has radius " << ep_minr.radius().value() << " rmin " << rmin);
     return true;
@@ -2022,13 +2022,13 @@ namespace CAT {
     // Use geiger locator for such research Warning: use integer
     // because uint32_t has strange behavior with absolute value
     // cmath::abs
-    const int hit1_side  = c1.block();  // -1, 1
-    const int hit1_layer = abs(c1.layer()); // 0, 1, ..., 8
-    const int hit1_row   = c1.iid();  // -56, -55, ..., 55, 56
+    const int hit1_side  = c1.get_side();  // -1, 1
+    const int hit1_layer = abs(c1.get_layer()); // 0, 1, ..., 8
+    const int hit1_row   = c1.get_row();  // -56, -55, ..., 55, 56
 
-    const int hit2_side  = c2.block();
-    const int hit2_layer = abs(c2.layer());
-    const int hit2_row   = c2.iid();
+    const int hit2_side  = c2.get_side();
+    const int hit2_layer = abs(c2.get_layer());
+    const int hit2_row   = c2.get_row();
 
     // Do not cross the foil
     if (hit1_side != hit2_side) return 0;
@@ -2066,12 +2066,12 @@ namespace CAT {
       index = inode - seq->nodes_.begin();
 
       DT_LOG_DEBUG(get_logging_priority(), "Sequence of " << seq->nodes_.size() << " nodes, index " << index
-                   << " id " << inode->c().id() << " distance from helix " << distance.value() << " +- " << distance.error());
+                   << " id " << inode->c().get_id() << " distance from helix " << distance.value() << " +- " << distance.error());
 
       if( distance.value() > CellDistance/2. &&
           near_level(seq->nodes_[index-1].c(), seq->nodes_[index+1].c()) ){
         DT_LOG_DEBUG(get_logging_priority(), "Sequence of " << seq->nodes_.size() << " nodes, index " << index
-                     << " id " << inode->c().id() << " distance from helix " << distance.value() << " +- " << distance.error() << " remove node");
+                     << " id " << inode->c().get_id() << " distance from helix " << distance.value() << " +- " << distance.error() << " remove node");
         seq->nodes_.erase(inode);
         inode = seq->nodes_.begin() + (inode - seq->nodes_.begin());
         index = inode - seq->nodes_.begin();

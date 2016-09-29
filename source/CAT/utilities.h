@@ -28,40 +28,11 @@
 
 namespace mybhep {
 
-  enum prlevel{MUTE,CONCISE,NORMAL,WARNING,DETAILED,VERBOSE,VVERBOSE,DUMP};
-
-  inline prlevel get_info_level(std::string info)
-  {
-    if(info == "MUTE")  return MUTE;
-    if(info == "CONCISE")  return CONCISE;
-    if(info == "NORMAL")  return NORMAL;
-    if(info == "WARNING")  return WARNING;
-    if(info == "DETAILED")  return DETAILED;
-    if(info == "VERBOSE")  return VERBOSE;
-    if(info == "VVERBOSE")  return VVERBOSE;
-    if(info == "DUMP")  return DUMP;
-    else return NORMAL;
-  }
-
   static const double plus_infinity   = DBL_MAX;
   static const double small_neg       = -plus_infinity;
-  static const size_t default_integer = INT_MAX;
+  static const int    default_integer = INT_MAX;
   static const double default_min     = plus_infinity;
   static const double default_max     = -default_min;
-
-  /// Square function
-  template <class T>
-  inline T square(T a)
-  {
-    return a*a;
-  }
-
-  /// Cubic power function
-  template <class T>
-  inline T cube(T a)
-  {
-    return a*a*a;
-  }
 
   /// Shift angle values in a limited range
   inline void fix_angles(double & a1_, double & a2_)
@@ -74,13 +45,6 @@ namespace mybhep {
       }
     }
     return;
-  }
-
-  /// Round up a double type to show n decimals
-  inline double round_to(double value, int to = 1)
-  {
-    double places = pow(10.0, to);
-    return round(value * places) / places;
   }
 
 } // namespace mybhep

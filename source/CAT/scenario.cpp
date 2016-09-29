@@ -146,14 +146,14 @@ namespace CAT {
       for(std::vector<sequence>::iterator iseq = sequences_.begin(); iseq != sequences_.end(); ++iseq) {
 
         for(std::vector<node>::iterator in = iseq->nodes_.begin(); in != iseq->nodes_.end(); ++in) {
-          if( in->c().id() >= cells.size() ) {
+          if( in->c().get_id() >= (int)cells.size() ) {
             // if( print_level() >= mybhep::VVERBOSE )
             //   std::clog << " problem: cell " << in->c().id() << " has larger id than n of cells " << cells.size() << std::endl;
             continue;
           }
 
-          if( freecells[in->c().id()] )
-            freecells[in->c().id()] = 0;
+          if( freecells[in->c().get_id()] )
+            freecells[in->c().get_id()] = 0;
           else
             counter ++;
 
@@ -274,13 +274,13 @@ namespace CAT {
       fill(freecalos.begin(), freecalos.end(), 1);
       for(std::vector<sequence>::iterator iseq = sequences_.begin(); iseq != sequences_.end(); ++iseq) {
         for(std::vector<node>::iterator in = iseq->nodes_.begin(); in != iseq->nodes_.end(); ++in) {
-          if( in->c().id() >= cells.size() ) {
+          if( in->c().get_id() >= (int)cells.size() ) {
             // if( print_level() >= mybhep::VVERBOSE )
             //   std::clog << " problem: cell " << in->c().id() << " has larger id than n of cells " << cells.size() << std::endl;
             continue;
           }
           else{
-            freecells[in->c().id()] = 0;
+            freecells[in->c().get_id()] = 0;
           }
         }
 

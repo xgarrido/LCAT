@@ -265,9 +265,9 @@ namespace CAT {
         if( ep.y().error() ) residual.set_y(residual.y()/ep.y().error());
         if( ep.z().error() ) residual.set_z(residual.z()/ep.z().error());
 
-        double res2 = mybhep::square(residual.x().value()) +
-          mybhep::square(residual.y().value()) +
-          mybhep::square(residual.z().value());
+        double res2 = std::pow(residual.x().value(),2) +
+          std::pow(residual.y().value(),2) +
+          std::pow(residual.z().value(),2);
 
         // if( print_level() >= mybhep::VVERBOSE ){
         //   std::clog << " input point: ( "; ep.x().dump(); std::clog << " , "; ep.y().dump(); std::clog << " , "; ep.z().dump(); std::clog << " ) helix: ("; predicted.x().dump(); std::clog << " , "; predicted.y().dump(); std::clog << " , ";predicted.z().dump(); std::clog << " ) local chi2: " << res2  << " " << std::endl;

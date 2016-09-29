@@ -295,7 +295,7 @@ namespace CAT {
     for (int i = 0; i < (int) cells.size (); i++)
       {
         const topology::cell & c = cells.at(i);
-        int cell_id = c.id();
+        int cell_id = c.get_id();
         if (cell_id < 0 || cell_id > 10000)
           {
             std::cerr << "ERROR: CAT::input_data::check: "
@@ -319,7 +319,7 @@ namespace CAT {
     for (int i = 0; i < (int) cells.size (); i++)
       {
         const topology::cell & c = cells.at(i);
-        int cell_id = c.id();
+        int cell_id = c.get_id();
         if ((cell_id < 0) || (cell_id >= (int) cells.size ()))
           {
             std::cerr << "ERROR: CAT::input_data::check: "

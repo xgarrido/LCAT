@@ -68,7 +68,7 @@ namespace CAT{
       if( forward_axis_calculated_ )
         return;
 
-      forward_axis_.set(ca().ep(), cb().ep());
+      forward_axis_.set(ca().get_position(), cb().get_position());
 
       distance_ = forward_axis().length();
 
@@ -131,44 +131,44 @@ void cell_couplet::dump (std::ostream & a_out,
       set_transverse_axis();
 
 
-      if( ca().small() &&
-          cb().small() ){
-        experimental_point pa = ca().ep();
+      if( ca().is_small() &&
+          cb().is_small() ){
+        experimental_point pa = ca().get_position();
         experimental_double newxa = pa.x();
-        newxa.set_error(ca().r().error());
+        newxa.set_error(ca().get_radius().error());
         experimental_double newza = pa.z();
-        newza.set_error(ca().r().error());
+        newza.set_error(ca().get_radius().error());
         pa.set_x(newxa);
         pa.set_z(newza);
 
-        experimental_point pb = cb().ep();
+        experimental_point pb = cb().get_position();
         experimental_double newxb = pb.x();
-        newxb.set_error(cb().r().error());
+        newxb.set_error(cb().get_radius().error());
         experimental_double newzb = pb.z();
-        newzb.set_error(cb().r().error());
+        newzb.set_error(cb().get_radius().error());
         pb.set_x(newxb);
         pb.set_z(newzb);
 
         obtain_tangents_between_point_and_point(pa, pb);
       }
-      else if( !ca().small() &&
-               cb().small() ){
-        experimental_point p = cb().ep();
+      else if( !ca().is_small() &&
+               cb().is_small() ){
+        experimental_point p = cb().get_position();
         experimental_double newx = p.x();
-        newx.set_error(cb().r().error());
+        newx.set_error(cb().get_radius().error());
         experimental_double newz = p.z();
-        newz.set_error(cb().r().error());
+        newz.set_error(cb().get_radius().error());
         p.set_x(newx);
         p.set_z(newz);
         obtain_tangents_between_circle_and_point(ca(),p);
       }
-      else if( ca().small() &&
-               !cb().small() ){
-        experimental_point p = ca().ep();
+      else if( ca().is_small() &&
+               !cb().is_small() ){
+        experimental_point p = ca().get_position();
         experimental_double newx = p.x();
-        newx.set_error(ca().r().error());
+        newx.set_error(ca().get_radius().error());
         experimental_double newz = p.z();
-        newz.set_error(ca().r().error());
+        newz.set_error(ca().get_radius().error());
         p.set_x(newx);
         p.set_z(newz);
         obtain_tangents_between_point_and_circle(p, cb());
@@ -227,7 +227,7 @@ void cell_couplet::dump (std::ostream & a_out,
       // parallel tangents
       for(size_t i=0; i<2; i++){
 
-        cosa = (ca().r() - cb().r()*sign_parallel_crossed[0])/distance_hor();  // parallel tangents
+        cosa = (ca().get_radius() - cb().get_radius()*sign_parallel_crossed[0])/distance_hor();  // parallel tangents
         cosb = cosa*sign_parallel_crossed[0];
         sina = experimental_sin(experimental_acos(cosa))*sign_parallel_crossed[0]*sign_up_down[i];
 
@@ -247,12 +247,12 @@ void cell_couplet::dump (std::ostream & a_out,
         // tangent or intersecting circles
 
 
-        experimental_vector pA = ca().ep() + ca().r()*forward_axis();
-        experimental_vector pB = cb().ep() - cb().r()*forward_axis();
+        experimental_vector pA = ca().get_position() + ca().get_radius()*forward_axis();
+        experimental_vector pB = cb().get_position() - cb().get_radius()*forward_axis();
 
         experimental_vector average = (pA + pB)/2.;
         // a small offset with a big error
-        //experimental_double small_offset(0.1, (ca().r().value() + cb().r().value())/4.);
+        //experimental_double small_offset(0.1, (ca().get_radius().value() + cb().get_radius().value())/4.);
         experimental_double small_offset(0.1, 0.);
 
         for(size_t i=0; i<2; i++){
@@ -270,7 +270,7 @@ void cell_couplet::dump (std::ostream & a_out,
         // crossed tangents
         for(size_t i=0; i<2; i++){
 
-          cosa = (ca().r() - cb().r()*sign_parallel_crossed[1])/distance_hor();  // parallel tangents
+          cosa = (ca().get_radius() - cb().get_radius()*sign_parallel_crossed[1])/distance_hor();  // parallel tangents
           cosb = cosa*sign_parallel_crossed[1];
           sina = experimental_sin(experimental_acos(cosa))*sign_parallel_crossed[1]*sign_up_down[i];
 
@@ -301,7 +301,7 @@ void cell_couplet::dump (std::ostream & a_out,
 
       experimental_double cos, sin;
 
-      cos = c.r()/distance_hor();
+      cos = c.get_radius()/distance_hor();
 
       experimental_point epa;
 
@@ -331,7 +331,7 @@ void cell_couplet::dump (std::ostream & a_out,
 
       experimental_double cos, sin;
 
-      cos = - c.r()/distance_hor();
+      cos = - c.get_radius()/distance_hor();
 
       experimental_point epb;
 
@@ -367,11 +367,11 @@ void cell_couplet::dump (std::ostream & a_out,
 
       experimental_vector forward = forward_axis_.hor().unit();
 
-      experimental_vector faa = (*epa - ca_.ep())/ca_.r().value() + (forward/distance_hor().value() + transverse_axis()*sign_up_down*((sign_parallel_crossed*cb_.r().value()-ca_.r().value())/(sin*pow(distance_hor().value(),2))))*ca_.r().value();
-      experimental_vector fab = (forward*sign_parallel_crossed/(-distance_hor().value()) + transverse_axis()*sign_up_down*((sign_parallel_crossed*ca_.r().value()-cb_.r().value())/(sin*pow(distance_hor().value(),2))))*ca_.r().value();
+      experimental_vector faa = (*epa - ca_.get_position())/ca_.get_radius().value() + (forward/distance_hor().value() + transverse_axis()*sign_up_down*((sign_parallel_crossed*cb_.get_radius().value()-ca_.get_radius().value())/(sin*pow(distance_hor().value(),2))))*ca_.get_radius().value();
+      experimental_vector fab = (forward*sign_parallel_crossed/(-distance_hor().value()) + transverse_axis()*sign_up_down*((sign_parallel_crossed*ca_.get_radius().value()-cb_.get_radius().value())/(sin*pow(distance_hor().value(),2))))*ca_.get_radius().value();
 
-      double errax = sqrt(pow(ca_.r().error()*faa.x().value(),2) + pow(cb_.r().error()*fab.x().value(),2));
-      double erraz = sqrt(pow(ca_.r().error()*faa.z().value(),2) + pow(cb_.r().error()*fab.z().value(),2));
+      double errax = sqrt(pow(ca_.get_radius().error()*faa.x().value(),2) + pow(cb_.get_radius().error()*fab.x().value(),2));
+      double erraz = sqrt(pow(ca_.get_radius().error()*faa.z().value(),2) + pow(cb_.get_radius().error()*fab.z().value(),2));
       epa->set_ex(errax);
       epa->set_ez(erraz);
 
@@ -385,11 +385,11 @@ void cell_couplet::dump (std::ostream & a_out,
 
       experimental_vector forward = forward_axis_.hor().unit();
 
-      experimental_vector fba = (forward*sign_parallel_crossed/distance_hor().value() - transverse_axis()*sign_up_down*((sign_parallel_crossed*ca_.r().value()-cb_.r().value())/(sin*pow(distance_hor().value(),2))))*cb_.r().value();
-      experimental_vector fbb = (*epb - cb_.ep())/cb_.r().value() + (forward/(-distance_hor().value()) - transverse_axis()*sign_up_down*((sign_parallel_crossed*cb_.r().value()-ca_.r().value())/(sin*pow(distance_hor().value(),2))))*cb_.r().value();
+      experimental_vector fba = (forward*sign_parallel_crossed/distance_hor().value() - transverse_axis()*sign_up_down*((sign_parallel_crossed*ca_.get_radius().value()-cb_.get_radius().value())/(sin*pow(distance_hor().value(),2))))*cb_.get_radius().value();
+      experimental_vector fbb = (*epb - cb_.get_position())/cb_.get_radius().value() + (forward/(-distance_hor().value()) - transverse_axis()*sign_up_down*((sign_parallel_crossed*cb_.get_radius().value()-ca_.get_radius().value())/(sin*pow(distance_hor().value(),2))))*cb_.get_radius().value();
 
-      double errbx = sqrt(pow(ca_.r().error()*fba.x().value(),2) + pow(cb_.r().error()*fbb.x().value(),2));
-      double errbz = sqrt(pow(ca_.r().error()*fba.z().value(),2) + pow(cb_.r().error()*fbb.z().value(),2));
+      double errbx = sqrt(pow(ca_.get_radius().error()*fba.x().value(),2) + pow(cb_.get_radius().error()*fbb.x().value(),2));
+      double errbz = sqrt(pow(ca_.get_radius().error()*fba.z().value(),2) + pow(cb_.get_radius().error()*fbb.z().value(),2));
       epb->set_ex(errbx);
       epb->set_ez(errbz);
 
@@ -549,7 +549,7 @@ void cell_couplet::dump (std::ostream & a_out,
                            const cell_couplet& right)
     {
 
-      return left.cb().id() == right.cb().id();
+      return left.cb().get_id() == right.cb().get_id();
 
     }
 

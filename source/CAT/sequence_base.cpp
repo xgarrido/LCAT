@@ -704,7 +704,7 @@ namespace CAT {
     bool sequence::fast()const
     {
       if( !nodes_.empty())
-        return nodes_[0].c().fast();
+        return nodes_[0].c().is_prompt();
 
       return true;
     }
@@ -945,7 +945,7 @@ namespace CAT {
             ilfn = inode - nodes_.begin();
             found = false;
             for(std::vector<cell>::iterator itlink = (*inode).links_.begin(); itlink != (*inode).links_.end(); ++itlink)
-              if( itlink->free() ){
+              if( itlink->is_free() ){
                 ilink = itlink - (*inode).links_.begin();
                 found = true;
                 break;
@@ -1026,13 +1026,13 @@ namespace CAT {
 
       size_t s = nodes().size();
 
-      if( nodes().front().c().id() == big.nodes().front().c().id() ){
+      if( nodes().front().c().get_id() == big.nodes().front().c().get_id() ){
         if( !nodes_[0].c_.same_quadrant( nodes().front().ep(), big.nodes().front().ep() ) )
           return false;
         if( !nodes_[s-1].c_.same_quadrant( nodes().back().ep(), big.nodes().back().ep() ) )
           return false;
       }
-      else if( nodes().front().c().id() == big.nodes().back().c().id() ){
+      else if( nodes().front().c().get_id() == big.nodes().back().c().get_id() ){
         if( !nodes_[0].c_.same_quadrant( nodes().front().ep(), big.nodes().back().ep() ) )
           return false;
         if( !nodes_[s-1].c_.same_quadrant( nodes().back().ep(), big.nodes().front().ep() ) )
@@ -1040,7 +1040,7 @@ namespace CAT {
       }
       else{
         // if( print_level() >= mybhep::NORMAL ){
-        //   std::clog << " problem: sequences with same size and cells have different beginnings or endings: 1st sequence from " << nodes().front().c().id() << " to " << nodes().back().c().id() << ", 2nd from " << big.nodes().front().c().id()  << " to " << big.nodes().back().c().id()   << std::endl;
+        //   std::clog << " problem: sequences with same size and cells have different beginnings or endings: 1st sequence from " << nodes().front().c().get_id() << " to " << nodes().back().c().get_id() << ", 2nd from " << big.nodes().front().c().get_id()  << " to " << big.nodes().back().c().get_id()   << std::endl;
         // }
       }
 
@@ -1120,17 +1120,17 @@ namespace CAT {
       *ilfn = lfn;
       *ilink = link;
 
-      size_t linkid;
+      int linkid;
       if( lfn < 1 )
-        linkid = nodes_[lfn].cc()[link].cb().id();
+        linkid = nodes_[lfn].cc()[link].cb().get_id();
       else{
-        linkid = nodes_[lfn].ccc()[link].ca().id();
-        if( nodes()[lfn-1].c().id() == linkid )
-          linkid = nodes_[lfn].ccc()[link].cc().id();
+        linkid = nodes_[lfn].ccc()[link].ca().get_id();
+        if( nodes()[lfn-1].c().get_id() == linkid )
+          linkid = nodes_[lfn].ccc()[link].cc().get_id();
       }
 
       // if( print_level() >= mybhep::VVERBOSE )
-      //   std::clog << " ilfn: " << lfn << " id: " << nodes_[lfn].c().id()
+      //   std::clog << " ilfn: " << lfn << " id: " << nodes_[lfn].c().get_id()
       //             << " ilink " << link << " id: " << linkid << std::endl;
 
 
@@ -1172,7 +1172,7 @@ namespace CAT {
             }
             if( i == lfn && (size_t)(itlink - newsequence.nodes_[i].links_.begin()) > link ){
               // if( print_level() >= mybhep::VVERBOSE ) {
-              //   std::clog << " removing from node " << newsequence.nodes_[i].c().id()  << "  link " << itlink - newsequence.nodes_[i].links_.begin() << " id " << itlink->id() << " larger than link " << link << " from copied sequence " << std::endl;
+              //   std::clog << " removing from node " << newsequence.nodes_[i].c().get_id()  << "  link " << itlink - newsequence.nodes_[i].links_.begin() << " id " << itlink->id() << " larger than link " << link << " from copied sequence " << std::endl;
               // }
               newsequence.nodes_[i].remove_link(itlink - newsequence.nodes_[i].links_.begin());
             }
@@ -1223,7 +1223,7 @@ namespace CAT {
     void sequence::fill_links_of_node(size_t inode, cluster local_sequence){
 
       // if( print_level() >= mybhep::VVERBOSE )
-      //   std::clog << " filling links for cell " << nodes()[inode].c().id() << std::endl;
+      //   std::clog << " filling links for cell " << nodes()[inode].c().get_id() << std::endl;
 
       if( inode >= nodes().size() ){
         // if( print_level() >= mybhep::NORMAL )
@@ -1265,10 +1265,10 @@ namespace CAT {
       for(std::vector<cell_triplet>::iterator iccc=nodes_[inode].ccc_.begin(); iccc != nodes_[inode].ccc_.end(); ++iccc){
 
         // the new candidate triplet must include the previous node
-        if( iccc->ca().id() == nodes_[inode - 1].c().id() && !has_cell(iccc->cc())){
+        if( iccc->ca().get_id() == nodes_[inode - 1].c().get_id() && !has_cell(iccc->cc())){
           nodes_[inode].links_.push_back(iccc->cc());
         }
-        else if( iccc->cc().id() == nodes_[inode - 1].c().id() && !has_cell(iccc->ca()) ){
+        else if( iccc->cc().get_id() == nodes_[inode - 1].c().get_id() && !has_cell(iccc->ca()) ){
           nodes_[inode].links_.push_back(iccc->ca());
         }
 
@@ -1297,7 +1297,7 @@ namespace CAT {
       size_t iccc, iteration;
       std::vector<joint>::iterator ijoint;
       for(std::vector<cell>::iterator itlink = nodes_[s-1].links_.begin(); itlink != nodes_[s-1].links_.end(); ++itlink){
-        if( itlink->free() || ! itlink->begun() )
+        if( itlink->is_free() || ! itlink->begun() )
           {
             *ilink = (size_t)(itlink - nodes_[s-1].links_.begin());
             itlink->set_begun(true);
@@ -1328,14 +1328,14 @@ namespace CAT {
                 // so get rid of spurious joints
 
                 // if( print_level() >= mybhep::VVERBOSE ){
-                //   std::clog << " initially there are " << nodes_[s-1].ccc_[iccc].joints_.size() << " possible joints to go from cell " << nodes_[s-1].c().id() << " to " << itlink->id()  << std::endl;
+                //   std::clog << " initially there are " << nodes_[s-1].ccc_[iccc].joints_.size() << " possible joints to go from cell " << nodes_[s-1].c().get_id() << " to " << itlink->id()  << std::endl;
                 // }
 
                 ijoint = nodes_[s-1].ccc_[iccc].joints_.begin();
 
                 while( ijoint != nodes_[s-1].ccc_[iccc].joints_.end() ){
 
-                  if( nodes_[s-1].ccc_[iccc].ca().id() == itlink->id() ){
+                  if( nodes_[s-1].ccc_[iccc].ca().get_id() == itlink->get_id() ){
                     *ijoint = ijoint->invert();
                   }
 
@@ -1351,14 +1351,14 @@ namespace CAT {
                 }
 
                 // if( print_level() >= mybhep::VVERBOSE ){
-                //   std::clog << " after cleaning there are " << nodes_[s-1].ccc_[iccc].joints_.size() << " possible joints to go from cell " << nodes_[s-1].c().id() << " to " << itlink->id()  << std::endl;
+                //   std::clog << " after cleaning there are " << nodes_[s-1].ccc_[iccc].joints_.size() << " possible joints to go from cell " << nodes_[s-1].c().get_id() << " to " << itlink->id()  << std::endl;
                 // }
 
               }
 
               if( nodes_[s-1].ccc_[iccc].joints_.empty() ){
                 // if( print_level() >= mybhep::VVERBOSE ){
-                //   std::clog << " no joints to connect cell " << nodes_[s-1].c().id() << " to new cell " << itlink->id()
+                //   std::clog << " no joints to connect cell " << nodes_[s-1].c().get_id() << " to new cell " << itlink->id()
                 //             << std::endl;
                 // }
                 continue;
@@ -1368,7 +1368,7 @@ namespace CAT {
               iteration = nodes_[s-1].ccc_[iccc].iteration();
 
               // if( print_level() >= mybhep::VVERBOSE ){
-              //   std::clog << " connecting cell " << nodes_[s-1].c().id() << " to new cell " << itlink->id()
+              //   std::clog << " connecting cell " << nodes_[s-1].c().get_id() << " to new cell " << itlink->id()
               //             << " with iteration " << iteration << " of " << nodes_[s-1].ccc_[iccc].joints_.size() <<  std::endl;
               // }
 
@@ -1392,13 +1392,13 @@ namespace CAT {
                 double chi2_change_A, chi2_change_alpha;
                 get_chi2_change_for_changing_end_of_sequence(j.epa(), j.epb(), &chi2_change_A, &chi2_change_alpha);
                 // if( print_level() >= mybhep::VVERBOSE ){
-                //   std::clog << " will change for cell A " << nodes_[s-2].c().id() << " chi2 from " << nodes_[s-2].chi2() << " to " << nodes_[s-2].chi2() + chi2_change_A << std::endl; fflush(stdout);
+                //   std::clog << " will change for cell A " << nodes_[s-2].c().get_id() << " chi2 from " << nodes_[s-2].chi2() << " to " << nodes_[s-2].chi2() + chi2_change_A << std::endl; fflush(stdout);
                 // }
 
                 nodes_[s-2].set_chi2(nodes_[s-2].chi2() + chi2_change_A);
                 if( s >= 4 ){ // recalculate chi2 of node alpha
                   // if( print_level() >= mybhep::VVERBOSE ){
-                  //   std::clog << " will change for cell alpha " << nodes_[s-3].c().id() << " chi2 from " << nodes_[s-3].chi2() << " to " << nodes_[s-3].chi2() + chi2_change_alpha << std::endl; fflush(stdout);
+                  //   std::clog << " will change for cell alpha " << nodes_[s-3].c().get_id() << " chi2 from " << nodes_[s-3].chi2() << " to " << nodes_[s-3].chi2() + chi2_change_alpha << std::endl; fflush(stdout);
                   // }
                   nodes_[s-3].set_chi2(nodes_[s-3].chi2() + chi2_change_alpha);
                 }
@@ -1448,8 +1448,8 @@ namespace CAT {
 
       auto unknown_vertical = [] (const topology::cell & cell_) -> bool
         {
-          if (cell_.ep().y().value() == 0. &&
-              cell_.ep().y().error() > 1000.) return true;
+          if (cell_.get_position().y().value() == 0. &&
+              cell_.get_position().y().error() > 1000.) return true;
           return false;
         };
       if (unknown_vertical(ca) || unknown_vertical(cb) || unknown_vertical(cc)) {
@@ -1457,35 +1457,35 @@ namespace CAT {
         ndof --;
       }
 
-      if( !ca.small() && !ca.same_quadrant(second_last_node().ep(), j->epa() ) ){
+      if( !ca.is_small() && !ca.same_quadrant(second_last_node().ep(), j->epa() ) ){
         // if( print_level() >= mybhep::VVERBOSE ){
-        //   std::clog << " connecting cell " << last_node().c().id() << " with this joint is incompatible: points on cell " << ca.id() << " on different quadrants " << std::endl;
+        //   std::clog << " connecting cell " << last_node().c().get_id() << " with this joint is incompatible: points on cell " << ca.get_id() << " on different quadrants " << std::endl;
         // }
         return false;
       }
 
-      if( !cb.small() && !cb.same_quadrant(last_node().ep(), j->epb() ) ){
+      if( !cb.is_small() && !cb.same_quadrant(last_node().ep(), j->epb() ) ){
         // if( print_level() >= mybhep::VVERBOSE ){
-        //   std::clog << " connecting cell " << last_node().c().id() << " with this joint is incompatible: points on cell " << cb.id() << " on different quadrants " << std::endl;
+        //   std::clog << " connecting cell " << last_node().c().get_id() << " with this joint is incompatible: points on cell " << cb.get_id() << " on different quadrants " << std::endl;
         // }
         return false;
       }
 
       if( s > 2 ){
-        if( !ca.small() && !ca.intersect(cb) ){
+        if( !ca.is_small() && !ca.intersect(cb) ){
           pa = ca.angular_average(second_last_node().ep(), j->epa(), local_separation_a);
-          chi2_separation_a = mybhep::square(local_separation_a.value()/local_separation_a.error());
+          chi2_separation_a = std::pow(local_separation_a.value()/local_separation_a.error(),2);
           // if( print_level() >= mybhep::VVERBOSE ){
-          //   std::clog << " separation chi2 for cell " << ca.id() << " is " << chi2_separation_a << std::endl; fflush(stdout);
+          //   std::clog << " separation chi2 for cell " << ca.get_id() << " is " << chi2_separation_a << std::endl; fflush(stdout);
           // }
           ndof ++;
         }
 
-        if( !cb.small() && !cb.intersect(ca) && !cb.intersect(cc) ){
+        if( !cb.is_small() && !cb.intersect(ca) && !cb.intersect(cc) ){
           pb = cb.angular_average(last_node().ep(), j->epb(), local_separation_b);
-          chi2_separation_b = mybhep::square(local_separation_b.value()/local_separation_b.error());
+          chi2_separation_b = std::pow(local_separation_b.value()/local_separation_b.error(),2);
           // if( print_level() >= mybhep::VVERBOSE ){
-          //   std::clog << " separation chi2 for cell " << cb.id() << " is " << chi2_separation_b << std::endl; fflush(stdout);
+          //   std::clog << " separation chi2 for cell " << cb.get_id() << " is " << chi2_separation_b << std::endl; fflush(stdout);
           // }
           ndof ++;
         }
@@ -1503,9 +1503,9 @@ namespace CAT {
         if( s >= 3 ){ // we are changing points A and B, affecting the chi2 of connections alpha0-alpha-A and alpha-A-B
           get_chi2_change_for_changing_end_of_sequence(pa, pb, &chi2_change_A, &chi2_change_alpha);
           // if( print_level() >= mybhep::VVERBOSE ){
-          //   std::clog << " connecting cell " << cb.id() << " to " << cc.id() << " changes chi2 of cell A, i.e. : " << nodes_[s-2].c().id() << " by " << chi2_change_A << std::endl; fflush(stdout);
+          //   std::clog << " connecting cell " << cb.get_id() << " to " << cc.get_id() << " changes chi2 of cell A, i.e. : " << nodes_[s-2].c().get_id() << " by " << chi2_change_A << std::endl; fflush(stdout);
           //   if( s >= 4 ) {
-          //     std::clog << " connecting cell " << cb.id() << " to " << cc.id() << " changes chi2 of cell alpha, i.e." << nodes_[s-3].c().id() << " by " << chi2_change_alpha  << std::endl; fflush(stdout);
+          //     std::clog << " connecting cell " << cb.get_id() << " to " << cc.get_id() << " changes chi2 of cell alpha, i.e." << nodes_[s-3].c().get_id() << " by " << chi2_change_alpha  << std::endl; fflush(stdout);
           //   }
           // }
         }
@@ -1539,7 +1539,7 @@ namespace CAT {
       if( net_local_prob > probmin() && prob_just_phi > probmin() ){
 
         // if( print_level() >= mybhep::VVERBOSE ){
-        //   std::clog << " connecting cell " << last_node().c().id() << " is compatible with chi2 " << chi2 << " prob " << local_prob << " net prob " << net_local_prob << std::endl; fflush(stdout);
+        //   std::clog << " connecting cell " << last_node().c().get_id() << " is compatible with chi2 " << chi2 << " prob " << local_prob << " net prob " << net_local_prob << std::endl; fflush(stdout);
         // }
 
         j->set_epa(pa);
@@ -1550,7 +1550,7 @@ namespace CAT {
       }
 
       // if( print_level() >= mybhep::VVERBOSE ){
-      //   std::clog << " connecting cell " << last_node().c().id() << " with this joint is incompatible: ";
+      //   std::clog << " connecting cell " << last_node().c().get_id() << " with this joint is incompatible: ";
       //   if( s > 2 )
       //     {
       //       std::clog << " separation a: " << local_separation_a.value() << " +- " << local_separation_a.error();
@@ -1583,8 +1583,8 @@ namespace CAT {
       topology::line l_A_B(pa, pb, probmin());
       auto unknown_vertical = [] (const topology::cell & cell_) -> bool
         {
-          if (cell_.ep().y().value() == 0. &&
-              cell_.ep().y().error() > 1000.) return true;
+          if (cell_.get_position().y().value() == 0. &&
+              cell_.get_position().y().error() > 1000.) return true;
           return false;
         };
       bool use_theta_kink_alpha_A_B = !(unknown_vertical(nodes_[s-3].c()) || unknown_vertical(nodes_[s-2].c()) || unknown_vertical(nodes_[s-1].c()));
@@ -1595,7 +1595,7 @@ namespace CAT {
       if( old_chi2 > old_chi2_check ){
         if( std::abs(old_chi2 - old_chi2_check) > tolerance ){
           // if( print_level() >= mybhep::NORMAL ){
-          //   std::clog << " problem: cell A " << second_last_node().c().id() << " has old chi2 " << old_chi2_check << " but just kink component is " << old_chi2 << " delta " <<  old_chi2 - old_chi2_check << std::endl;
+          //   std::clog << " problem: cell A " << second_last_node().c().get_id() << " has old chi2 " << old_chi2_check << " but just kink component is " << old_chi2 << " delta " <<  old_chi2 - old_chi2_check << std::endl;
           // }
         }
         old_chi2 = old_chi2_check;
@@ -1622,7 +1622,7 @@ namespace CAT {
         if( old_chi2 > old_chi2_check ){
           if( std::abs(old_chi2 - old_chi2_check) > tolerance ){
             // if( print_level() >= mybhep::NORMAL ){
-            //   std::clog << " problem: cell alpha " << nodes_[s-3].c().id() << " has old chi2 " << old_chi2_check << " but just kink component is " << old_chi2 << " delta " <<  old_chi2 - old_chi2_check <<  std::endl;
+            //   std::clog << " problem: cell alpha " << nodes_[s-3].c().get_id() << " has old chi2 " << old_chi2_check << " but just kink component is " << old_chi2 << " delta " <<  old_chi2 - old_chi2_check <<  std::endl;
             // }
           }
           old_chi2 = old_chi2_check;
@@ -1669,7 +1669,7 @@ namespace CAT {
         size_t index;
         if( !nodes()[inode].has_couplet(link,&index) ){
           // if( print_level() >= mybhep::NORMAL )
-          //   std::clog << " problem: looking for couplet from cell index " << inode << " to " << link.id() << " but it's not there " << std::endl;
+          //   std::clog << " problem: looking for couplet from cell index " << inode << " to " << link.get_id() << " but it's not there " << std::endl;
           return 0;
         }
 
@@ -1680,7 +1680,7 @@ namespace CAT {
       size_t index;
       if( !nodes()[inode].has_triplet(link,nodes_[inode-1].c(),&index) ){
         // if( print_level() >= mybhep::NORMAL ) {
-        //   std::clog << " problem: looking for triplet from cell index " << inode << " id " << nodes()[inode].c().id()  << " to cell id " << link.id() << " but it's not there " << std::endl; fflush(stdout);
+        //   std::clog << " problem: looking for triplet from cell index " << inode << " id " << nodes()[inode].c().get_id()  << " to cell id " << link.get_id() << " but it's not there " << std::endl; fflush(stdout);
         // }
         return 0;
       }
@@ -1691,14 +1691,14 @@ namespace CAT {
     void sequence::circle_order(double /*Ratio*/)
     {
 
-      std::vector<size_t> original_ids;
+      std::vector<int> original_ids;
       for(std::vector<node>::iterator inode = nodes_.begin(); inode != nodes_.end(); ++inode)
-        original_ids.push_back(inode->c().id());
+        original_ids.push_back(inode->c().get_id());
 
       // if( print_level() >= mybhep::VERBOSE ){
       //   std::clog << " sequence before circle reordering: ";
       //   for(std::vector<node>::const_iterator inode = nodes_.begin(); inode != nodes_.end(); ++inode)
-      //     std::clog << inode->c().id() << " ";
+      //     std::clog << inode->c().get_id() << " ";
       //   std::clog << " " << std::endl;
       // }
 
@@ -1707,13 +1707,13 @@ namespace CAT {
       // if( print_level() >= mybhep::VERBOSE ){
       //   std::clog << " sequence after circle reordering: ";
       //   for(std::vector<node>::const_iterator inode = nodes_.begin(); inode != nodes_.end(); ++inode)
-      //     std::clog << inode->c().id() << " ";
+      //     std::clog << inode->c().get_id() << " ";
       //   std::clog << " " << std::endl;
       // }
 
       for(std::vector<node>::iterator inode = nodes_.begin(); inode != nodes_.end(); ++inode){
         size_t index = inode - nodes_.begin();
-        if( inode->c().id() != original_ids[index] ){
+        if( inode->c().get_id() != original_ids[index] ){
 
           topology::cell c = inode->c();
 
@@ -1760,12 +1760,12 @@ namespace CAT {
       double angle = 0.;
       for(std::vector<node>::iterator inode = nodes_.begin(); inode != nodes_.end(); ++inode){
         if( inode - nodes_.begin() == 0 )
-          angle = helix_.phi_of_point(inode->c().ep()).value();
+          angle = helix_.phi_of_point(inode->c().get_position()).value();
         else
-          angle = helix_.phi_of_point(inode->c().ep(), angle).value();
+          angle = helix_.phi_of_point(inode->c().get_position(), angle).value();
 
         // if( print_level() >= mybhep::VVERBOSE ){
-        //   std::clog << " node " << inode->c().id() << " has circle phi " << angle << std::endl;
+        //   std::clog << " node " << inode->c().get_id() << " has circle phi " << angle << std::endl;
         // }
         inode->set_circle_phi(angle);
       }
@@ -1810,7 +1810,7 @@ namespace CAT {
           cnode = inode;
           --anode; ++cnode;
           // if( print_level() >= mybhep::VVERBOSE ){
-          //   std::clog << " calculate helix for three points " << anode->c().id() << " , " << inode->c().id() << " , " << cnode->c().id() << std::endl;
+          //   std::clog << " calculate helix for three points " << anode->c().get_id() << " , " << inode->c().get_id() << " , " << cnode->c().get_id() << std::endl;
           // }
           helices.push_back(three_points_helix(anode->ep(), inode->ep(), cnode->ep()));
 
@@ -2372,7 +2372,7 @@ namespace CAT {
       }
 
       //no connection if on opposite sides of the foil
-      if( nodes_[0].c().block() * seq.nodes_[0].c().block() < 0 ){
+      if( nodes_[0].c().get_side() * seq.nodes_[0].c().get_side() < 0 ){
         // if( print_level() >= mybhep::VVERBOSE )
         //   std::clog << " ... forbidden, opposite side of foil " << std::endl;
         return false;
@@ -2396,7 +2396,7 @@ namespace CAT {
         invertA = false;
         invertB = false;
 
-        block_distance = last_node().c().block() - seq.nodes_[0].c().block();
+        block_distance = last_node().c().get_side() - seq.nodes_[0].c().get_side();
 
         // connection must be between neighboring blocks or within same block
         if( std::abs( block_distance ) > 1 ){
@@ -2415,14 +2415,14 @@ namespace CAT {
           //   std::clog << " ... forbidden, because 2nd track already has helix_vertex on calo " << std::endl;
           return false;
         }
-        layer_distance = last_node().c().layer() - seq.nodes_[0].c().layer();
-        cell_number_distance = last_node().c().cell_number() - seq.nodes_[0].c().cell_number();
+        layer_distance = last_node().c().get_layer() - seq.nodes_[0].c().get_layer();
+        cell_number_distance = last_node().c().get_row() - seq.nodes_[0].c().get_row();
       }
       else if( distLL <= distFF && distLL <= distFL && distLL <= distLF ){ // last to last  FL -> LF
         invertA = false;
         invertB = true;
 
-        block_distance = last_node().c().block() - seq.last_node().c().block();
+        block_distance = last_node().c().get_side() - seq.last_node().c().get_side();
         // connection must be between neighboring blocks or within same block
         if( std::abs( block_distance ) > 1 ){
           // if( print_level() >= mybhep::VVERBOSE )
@@ -2440,13 +2440,13 @@ namespace CAT {
           //   std::clog << " ... forbidden, because 2nd track already has decay helix_vertex on calo " << std::endl;
           return false;
         }
-        layer_distance = last_node().c().layer() - seq.last_node().c().layer();
-        cell_number_distance = last_node().c().cell_number() - seq.last_node().c().cell_number();
+        layer_distance = last_node().c().get_layer() - seq.last_node().c().get_layer();
+        cell_number_distance = last_node().c().get_row() - seq.last_node().c().get_row();
       }
       else if( distFL <= distFF && distFL <= distLL && distFL <= distLF ){ // first to last  LF -> LF
         invertA = true;
         invertB = true;
-        block_distance = nodes_[0].c().block() - seq.last_node().c().block();
+        block_distance = nodes_[0].c().get_side() - seq.last_node().c().get_side();
         // connection must be between neighboring blocks or within same block
         if( std::abs( block_distance ) > 1 ){
           // if( print_level() >= mybhep::VVERBOSE )
@@ -2464,13 +2464,13 @@ namespace CAT {
           //   std::clog << " ... forbidden, because 2nd track already has decay helix_vertex on calo " << std::endl;
           return false;
         }
-        layer_distance = nodes_[0].c().layer() - seq.last_node().c().layer();
-        cell_number_distance = nodes_[0].c().cell_number() - seq.last_node().c().cell_number();
+        layer_distance = nodes_[0].c().get_layer() - seq.last_node().c().get_layer();
+        cell_number_distance = nodes_[0].c().get_row() - seq.last_node().c().get_row();
       }
       else{ // first to first  LF -> FL
         invertA = true;
         invertB = false;
-        block_distance = nodes_[0].c().block() - seq.nodes_[0].c().block();
+        block_distance = nodes_[0].c().get_side() - seq.nodes_[0].c().get_side();
         // connection must be between neighboring blocks or within same block
         if( std::abs( block_distance ) > 1 ){
           // if( print_level() >= mybhep::VVERBOSE )
@@ -2488,8 +2488,8 @@ namespace CAT {
           //   std::clog << " ... forbidden, because 2nd track already has helix_vertex on calo " << std::endl;
           return false;
         }
-        layer_distance = nodes_[0].c().layer() - seq.nodes_[0].c().layer();
-        cell_number_distance = nodes_[0].c().cell_number() - seq.nodes_[0].c().cell_number();
+        layer_distance = nodes_[0].c().get_layer() - seq.nodes_[0].c().get_layer();
+        cell_number_distance = nodes_[0].c().get_row() - seq.nodes_[0].c().get_row();
       }
 
 
@@ -2517,7 +2517,7 @@ namespace CAT {
     void sequence::remove_first_node()
     {
       // if( print_level() >= mybhep::VVERBOSE ){
-      //   std::clog << " removing first node " << nodes_.begin()->c().id() << std::endl;
+      //   std::clog << " removing first node " << nodes_.begin()->c().get_id() << std::endl;
       // }
       nodes_.erase(nodes_.begin());
     }
@@ -2525,7 +2525,7 @@ namespace CAT {
     void sequence::remove_last_node()
     {
       // if( print_level() >= mybhep::VVERBOSE ){
-      //   std::clog << " removing last node " << nodes_.back().c().id() << std::endl;
+      //   std::clog << " removing last node " << nodes_.back().c().get_id() << std::endl;
       // }
       nodes_.pop_back();
     }
@@ -2676,7 +2676,7 @@ namespace CAT {
       }
 
       //no connection if on opposite sides of the foil
-      if( nodes_[0].c().block() * seq.nodes_[0].c().block() < 0 ){
+      if( nodes_[0].c().get_side() * seq.nodes_[0].c().get_side() < 0 ){
         // if( print_level() >= mybhep::VVERBOSE )
         //   std::clog << " ... forbidden, opposite side of foil " << std::endl;
         return false;
@@ -2698,7 +2698,7 @@ namespace CAT {
         invertA = false;
         invertB = false;
 
-        block_distance = last_node().c().block() - seq.nodes_[0].c().block();
+        block_distance = last_node().c().get_side() - seq.nodes_[0].c().get_side();
         // connection must be between neighboring blocks or within same block
         if( std::abs(block_distance ) > 1 ){
           // if( print_level() >= mybhep::VVERBOSE )
@@ -2717,18 +2717,18 @@ namespace CAT {
           return false;
         }
 
-        if( last_node().c().id() == seq.nodes_[0].c().id() ){
+        if( last_node().c().get_id() == seq.nodes_[0].c().get_id() ){
           cells_to_delete = 1;
-          layer_distance = last_node().c().layer() - seq.nodes_[1].c().layer();
-          cell_number_distance = last_node().c().cell_number() - seq.nodes_[1].c().cell_number();
-        }else if( second_last_node().c().id() == seq.nodes_[0].c().id()
-                  && last_node().c().id() == seq.nodes_[1].c().id()  ){
+          layer_distance = last_node().c().get_layer() - seq.nodes_[1].c().get_layer();
+          cell_number_distance = last_node().c().get_row() - seq.nodes_[1].c().get_row();
+        }else if( second_last_node().c().get_id() == seq.nodes_[0].c().get_id()
+                  && last_node().c().get_id() == seq.nodes_[1].c().get_id()  ){
           cells_to_delete = 2;
-          layer_distance = second_last_node().c().layer() - seq.nodes_[1].c().layer();
-          cell_number_distance = second_last_node().c().cell_number() - seq.nodes_[1].c().cell_number();
+          layer_distance = second_last_node().c().get_layer() - seq.nodes_[1].c().get_layer();
+          cell_number_distance = second_last_node().c().get_row() - seq.nodes_[1].c().get_row();
         }else{
-          layer_distance = last_node().c().layer() - seq.nodes_[0].c().layer();
-          cell_number_distance = last_node().c().cell_number() - seq.nodes_[0].c().cell_number();
+          layer_distance = last_node().c().get_layer() - seq.nodes_[0].c().get_layer();
+          cell_number_distance = last_node().c().get_row() - seq.nodes_[0].c().get_row();
         }
 
         if( std::abs( block_distance ) == 1 )
@@ -2744,7 +2744,7 @@ namespace CAT {
         invertA = false;
         invertB = true;
 
-        block_distance = last_node().c().block() - seq.last_node().c().block();
+        block_distance = last_node().c().get_side() - seq.last_node().c().get_side();
         // connection must be between neighboring blocks or within same block
         if( std::abs( block_distance ) > 1 ){
           // if( print_level() >= mybhep::VVERBOSE )
@@ -2764,18 +2764,18 @@ namespace CAT {
           return false;
         }
 
-        if( last_node().c().id() == seq.last_node().c().id() ){
+        if( last_node().c().get_id() == seq.last_node().c().get_id() ){
           cells_to_delete = 1;
-          layer_distance = last_node().c().layer() - seq.second_last_node().c().layer();
-          cell_number_distance = last_node().c().cell_number() - seq.second_last_node().c().cell_number();
-        }else if( second_last_node().c().id() == seq.last_node().c().id()
-                  && last_node().c().id() == seq.second_last_node().c().id()  ){
+          layer_distance = last_node().c().get_layer() - seq.second_last_node().c().get_layer();
+          cell_number_distance = last_node().c().get_row() - seq.second_last_node().c().get_row();
+        }else if( second_last_node().c().get_id() == seq.last_node().c().get_id()
+                  && last_node().c().get_id() == seq.second_last_node().c().get_id()  ){
           cells_to_delete = 2;
-          layer_distance = second_last_node().c().layer() - seq.second_last_node().c().layer();
-          cell_number_distance = second_last_node().c().cell_number() - seq.second_last_node().c().cell_number();
+          layer_distance = second_last_node().c().get_layer() - seq.second_last_node().c().get_layer();
+          cell_number_distance = second_last_node().c().get_row() - seq.second_last_node().c().get_row();
         }else{
-          layer_distance = last_node().c().layer() - seq.last_node().c().layer();
-          cell_number_distance = last_node().c().cell_number() - seq.last_node().c().cell_number();
+          layer_distance = last_node().c().get_layer() - seq.last_node().c().get_layer();
+          cell_number_distance = last_node().c().get_row() - seq.last_node().c().get_row();
         }
 
         if( std::abs( block_distance ) == 1 )
@@ -2792,7 +2792,7 @@ namespace CAT {
         invertA = true;
         invertB = true;
 
-        block_distance = nodes_[0].c().block() - seq.last_node().c().block();
+        block_distance = nodes_[0].c().get_side() - seq.last_node().c().get_side();
         // connection must be between neighboring blocks or within same block
         if( std::abs( block_distance ) > 1 ){
           // if( print_level() >= mybhep::VVERBOSE )
@@ -2811,18 +2811,18 @@ namespace CAT {
           return false;
         }
 
-        if( nodes_[0].c().id() == seq.last_node().c().id() ){
+        if( nodes_[0].c().get_id() == seq.last_node().c().get_id() ){
           cells_to_delete = 1;
-          layer_distance = nodes_[0].c().layer() - seq.second_last_node().c().layer();
-          cell_number_distance = nodes_[0].c().cell_number() - seq.second_last_node().c().cell_number();
-        }else if( nodes_[1].c().id() == seq.last_node().c().id()
-                  && nodes_[0].c().id() == seq.second_last_node().c().id()  ){
+          layer_distance = nodes_[0].c().get_layer() - seq.second_last_node().c().get_layer();
+          cell_number_distance = nodes_[0].c().get_row() - seq.second_last_node().c().get_row();
+        }else if( nodes_[1].c().get_id() == seq.last_node().c().get_id()
+                  && nodes_[0].c().get_id() == seq.second_last_node().c().get_id()  ){
           cells_to_delete = 2;
-          layer_distance = nodes_[1].c().layer() - seq.second_last_node().c().layer();
-          cell_number_distance = nodes_[1].c().cell_number() - seq.second_last_node().c().cell_number();
+          layer_distance = nodes_[1].c().get_layer() - seq.second_last_node().c().get_layer();
+          cell_number_distance = nodes_[1].c().get_row() - seq.second_last_node().c().get_row();
         }else{
-          layer_distance = nodes_[0].c().layer() - seq.last_node().c().layer();
-          cell_number_distance = nodes_[0].c().cell_number() - seq.last_node().c().cell_number();
+          layer_distance = nodes_[0].c().get_layer() - seq.last_node().c().get_layer();
+          cell_number_distance = nodes_[0].c().get_row() - seq.last_node().c().get_row();
         }
 
         if( std::abs( block_distance ) == 1 )
@@ -2839,7 +2839,7 @@ namespace CAT {
         invertA = true;
         invertB = false;
 
-        block_distance = nodes_[0].c().block() - seq.nodes_[0].c().block();
+        block_distance = nodes_[0].c().get_side() - seq.nodes_[0].c().get_side();
         // connection must be between neighboring blocks or within same block
         if( std::abs( block_distance ) > 1 ){
           // if( print_level() >= mybhep::VVERBOSE )
@@ -2858,18 +2858,18 @@ namespace CAT {
           return false;
         }
 
-        if( nodes_[0].c().id() == seq.nodes_[0].c().id() ){
+        if( nodes_[0].c().get_id() == seq.nodes_[0].c().get_id() ){
           cells_to_delete = 1;
-          layer_distance = nodes_[0].c().layer() - seq.nodes_[1].c().layer();
-          cell_number_distance = nodes_[0].c().cell_number() - seq.nodes_[1].c().cell_number();
-        }else if( nodes_[1].c().id() == seq.nodes_[0].c().id()
-                  && nodes_[0].c().id() == seq.nodes_[1].c().id()  ){
+          layer_distance = nodes_[0].c().get_layer() - seq.nodes_[1].c().get_layer();
+          cell_number_distance = nodes_[0].c().get_row() - seq.nodes_[1].c().get_row();
+        }else if( nodes_[1].c().get_id() == seq.nodes_[0].c().get_id()
+                  && nodes_[0].c().get_id() == seq.nodes_[1].c().get_id()  ){
           cells_to_delete = 2;
-          layer_distance = nodes_[1].c().layer() - seq.nodes_[1].c().layer();
-          cell_number_distance = nodes_[1].c().cell_number() - seq.nodes_[1].c().cell_number();
+          layer_distance = nodes_[1].c().get_layer() - seq.nodes_[1].c().get_layer();
+          cell_number_distance = nodes_[1].c().get_row() - seq.nodes_[1].c().get_row();
         }else{
-          layer_distance = nodes_[0].c().layer() - seq.nodes_[0].c().layer();
-          cell_number_distance = nodes_[0].c().cell_number() - seq.nodes_[0].c().cell_number();
+          layer_distance = nodes_[0].c().get_layer() - seq.nodes_[0].c().get_layer();
+          cell_number_distance = nodes_[0].c().get_row() - seq.nodes_[0].c().get_row();
         }
 
         if( std::abs( block_distance ) == 1 )
@@ -2925,16 +2925,16 @@ namespace CAT {
       int old_block = 0;
       for(std::vector<node>::const_iterator inode=nodes_.begin(); inode != nodes_.end(); ++inode){
         if( inode - nodes_.begin() == 0 ){
-          old_block = inode->c().block();
+          old_block = inode->c().get_side();
           continue;
         }
 
-        if( inode->c().block()*old_block < 0 ){
+        if( inode->c().get_side()*old_block < 0 ){
           // if( print_level() >= mybhep::VVERBOSE )
-          //   std::clog << " old block: " << old_block << " new block: " << inode->c().block() << " the track is not all on one side " << std::endl;
+          //   std::clog << " old block: " << old_block << " new block: " << inode->c().get_side() << " the track is not all on one side " << std::endl;
           return false;
         }
-        old_block = inode->c().block();
+        old_block = inode->c().get_side();
       }
       return true;
     }

@@ -162,7 +162,7 @@ namespace CAT {
 
 
       if( i < nodes_.size() - 1 &&
-          nodes_[i].c().block() != nodes_[i+1].c().block() ) return false; // node does not connect through gap
+          nodes_[i].c().get_side() != nodes_[i+1].c().get_side() ) return false; // node does not connect through gap
 
 
       if( i == 1 ){
@@ -174,10 +174,10 @@ namespace CAT {
       }
 
       if( i > 0 &&
-          nodes_[i].c().block() != nodes_[i-1].c().block() ){
+          nodes_[i].c().get_side() != nodes_[i-1].c().get_side() ){
         // if( print_level() >= mybhep::VERBOSE ){
-        //   std::clog << " CAT::cluster::start_ambiguity: node " << nodes_[i].c().id() << " of index " << i << ", block " << nodes_[i].c().block()
-        //          << " and " << joints.size() << " joints starts ambigous piece connecting from node " << nodes_[i-1].c().id() << " of block " <<  nodes_[i-1].c().block() << std::endl;
+        //   std::clog << " CAT::cluster::start_ambiguity: node " << nodes_[i].c().id() << " of index " << i << ", block " << nodes_[i].c().get_side()
+        //          << " and " << joints.size() << " joints starts ambigous piece connecting from node " << nodes_[i-1].c().id() << " of block " <<  nodes_[i-1].c().get_side() << std::endl;
         // }
         return true; // previous node connects through gap
       }
@@ -226,10 +226,10 @@ namespace CAT {
       }
 
       if( i < nodes_.size() - 1 &&
-          nodes_[i].c().block() != nodes_[i+1].c().block() ){
+          nodes_[i].c().get_side() != nodes_[i+1].c().get_side() ){
         // if( print_level() >= mybhep::VERBOSE ){
-        //   std::clog << " CAT::cluster::end_ambiguity: node " << nodes_[i].c().id() << " of index " << i << ", block " << nodes_[i].c().block()
-        //          << " ends ambigous piece connecting to node " << nodes_[i+1].c().id() << " of block " <<  nodes_[i+1].c().block() << std::endl;
+        //   std::clog << " CAT::cluster::end_ambiguity: node " << nodes_[i].c().id() << " of index " << i << ", block " << nodes_[i].c().get_side()
+        //          << " ends ambigous piece connecting to node " << nodes_[i+1].c().id() << " of block " <<  nodes_[i+1].c().get_side() << std::endl;
         // }
         return true; // node connects through gap
       }
@@ -2193,7 +2193,7 @@ namespace CAT {
       ///  - 2nd node
       ///  - node with previous singular
 
-      bool first_ambiguous_is_after_gap = (nodes_[ifirst - 1].c().block() != nodes_[ifirst].c().block());
+      bool first_ambiguous_is_after_gap = (nodes_[ifirst - 1].c().get_side() != nodes_[ifirst].c().get_side());
       bool first_ambiguous_is_second = (ifirst == 1);
 
 
@@ -2202,7 +2202,7 @@ namespace CAT {
       ///  - last-but-one node
       ///  - node with next singular
 
-      bool last_ambiguous_is_begore_gap = (nodes_[ilast].c().block() != nodes_[ilast+1].c().block());
+      bool last_ambiguous_is_begore_gap = (nodes_[ilast].c().get_side() != nodes_[ilast+1].c().get_side());
       bool last_ambiguous_is_last_but_one = (ilast + 2 == nodes_.size());
 
       // if( print_level() >= mybhep::VERBOSE ){

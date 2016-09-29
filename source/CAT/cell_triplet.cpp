@@ -95,11 +95,11 @@ namespace CAT{
       cb_ = cca.ca();
       ca_ = cca.cb();
       cc_ = ccb.cb();
-      if( cca.ca().id() != ccb.ca().id() ){
-        std::clog << " problem: trying to form a triplet of cell with cells " << cca.ca().id() << " "
-             << cca.cb().id() << " "
-             << ccb.ca().id() << " "
-             << ccb.cb().id() << std::endl;
+      if( cca.ca().get_id() != ccb.ca().get_id() ){
+        std::clog << " problem: trying to form a triplet of cell with cells " << cca.ca().get_id() << " "
+             << cca.cb().get_id() << " "
+             << ccb.ca().get_id() << " "
+             << ccb.cb().get_id() << std::endl;
       }
     }
 
@@ -201,7 +201,7 @@ namespace CAT{
     {
       datatools::logger::priority local_priority = datatools::logger::PRIO_WARNING;
 
-      DT_LOG_DEBUG(local_priority, "Calculate joints for cells: " << ca_.id() << " " << cb_.id() << " " << cc_.id());
+      DT_LOG_DEBUG(local_priority, "Calculate joints for cells: " << ca_.get_id() << " " << cb_.get_id() << " " << cc_.get_id());
 
       joints_.clear();
       std::vector<line> t1 = cca().tangents(); // note: this tangent goes from cell B to cell A
@@ -210,27 +210,27 @@ namespace CAT{
       bool intersect_bc = cb_.intersect(cc_);
       bool intersect_ca = cc_.intersect(ca_);
 
-      const bool is_fast = ca_.fast();
-      if (! is_fast) {
+      const bool is_prompt = ca_.is_prompt();
+      if (! is_prompt) {
 	phi_limit_ = std::max(phi_limit_, 90. * CLHEP::degree);
         DT_LOG_DEBUG(local_priority, "Cells are delayed, reset phi_limit " << phi_limit_/CLHEP::degree);
       }
 
       if (local_priority >= datatools::logger::PRIO_DEBUG) {
-        DT_LOG_DEBUG(local_priority, "Angles of tangents " << ca_.id() << " -> " << cb_.id() << " :");
+        DT_LOG_DEBUG(local_priority, "Angles of tangents " << ca_.get_id() << " -> " << cb_.get_id() << " :");
         // for (std::vector<line>::const_iterator i1 = t1.begin(); i1!=t1.end(); ++i1){
         //   std::clog << i1 - t1.begin() << ":  phi "; ca_.dump_point_phi(i1->epb()); std::clog << " -> "; cb_.dump_point_phi(i1->epa()); std::clog << " " << std::endl;
         // }
-        std::clog << appname_ << " angles of tangents " << cb_.id() << " -> " << cc_.id() << " :" << std::endl;
+        std::clog << appname_ << " angles of tangents " << cb_.get_id() << " -> " << cc_.get_id() << " :" << std::endl;
         // for(std::vector<line>::const_iterator i2=t2.begin(); i2!=t2.end(); ++i2){
         //   std::clog << i2 - t2.begin() << ":  phi ";  cb_.dump_point_phi(i2->epa()); std::clog << " -> " ; cc_.dump_point_phi(i2->epb()); std::clog << " " << std::endl;
         // }
-        if( ca_.small() ) std::clog << " cell " << ca_.id() << " is small " << std::endl;
-        if( cb_.small() ) std::clog << " cell " << cb_.id() << " is small " << std::endl;
-        if( cc_.small() ) std::clog << " cell " << cc_.id() << " is small " << std::endl;
-        if( intersect_ab ) std::clog << " cells " << ca_.id() << " and " << cb_.id() << " intersect " << std::endl;
-        if( intersect_bc ) std::clog << " cells " << cb_.id() << " and " << cc_.id() << " intersect " << std::endl;
-        if( intersect_ca ) std::clog << " cells " << cc_.id() << " and " << ca_.id() << " intersect " << std::endl;
+        if( ca_.is_small() ) std::clog << " cell " << ca_.get_id() << " is small " << std::endl;
+        if( cb_.is_small() ) std::clog << " cell " << cb_.get_id() << " is small " << std::endl;
+        if( cc_.is_small() ) std::clog << " cell " << cc_.get_id() << " is small " << std::endl;
+        if( intersect_ab ) std::clog << " cells " << ca_.get_id() << " and " << cb_.get_id() << " intersect " << std::endl;
+        if( intersect_bc ) std::clog << " cells " << cb_.get_id() << " and " << cc_.get_id() << " intersect " << std::endl;
+        if( intersect_ca ) std::clog << " cells " << cc_.get_id() << " and " << ca_.get_id() << " intersect " << std::endl;
       }
 
       size_t idx1 = 0;
@@ -253,7 +253,7 @@ namespace CAT{
           }
 
           // Middle cell has small radius (< 2 mm)
-          if (cb_.small()) {
+          if (cb_.is_small()) {
             DT_LOG_DEBUG(local_priority, "No separation: middle cells is small");
             shall_include_separation = false;
           } else if (intersect_ab) {
@@ -299,12 +299,12 @@ namespace CAT{
           experimental_double local_separation;
           experimental_point p;
           experimental_double newxa, newza;
-          if (cb_.small()) {
-            p = cb_.ep();
+          if (cb_.is_small()) {
+            p = cb_.get_position();
             newxa = p.x();
-            newxa.set_error(cb_.r().error());
+            newxa.set_error(cb_.get_radius().error());
             newza = p.z();
-            newza.set_error(cb_.r().error());
+            newza.set_error(cb_.get_radius().error());
             p.set_x(newxa);
             p.set_z(newza);
           } else {
@@ -327,8 +327,8 @@ namespace CAT{
 
           auto unknown_vertical = [] (const topology::cell & cell_) -> bool
             {
-              if (cell_.ep().y().value() == 0. &&
-                  cell_.ep().y().error() > 1000.) return true;
+              if (cell_.get_position().y().value() == 0. &&
+                  cell_.get_position().y().error() > 1000.) return true;
               return false;
             };
 
@@ -472,15 +472,15 @@ namespace CAT{
                     const cell_triplet& right)
     {
 
-      return ((left.ca().id() == right.ca().id()) && (left.cc().id() == right.cc().id())) ||
-        ((left.ca().id() == right.cc().id()) && (left.cc().id() == right.ca().id()));
+      return ((left.ca().get_id() == right.ca().get_id()) && (left.cc().get_id() == right.cc().get_id())) ||
+        ((left.ca().get_id() == right.cc().get_id()) && (left.cc().get_id() == right.ca().get_id()));
 
     }
 
 
     bool cell_triplet::same_last_cell(cell c)const{
-      return ((this->ca().id() == c.id()) ||
-              (this->cc().id() == c.id()) );
+      return ((this->ca().get_id() == c.get_id()) ||
+              (this->cc().get_id() == c.get_id()) );
 
     }
 

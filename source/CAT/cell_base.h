@@ -24,12 +24,6 @@ namespace CAT {
 
     public:
 
-      // status of cell couplet
-      bool free_;
-
-      // begun cell couplet
-      bool begun_;
-
       /// Default constructor
       cell();
 
@@ -45,133 +39,71 @@ namespace CAT {
                      const std::string & indent_ = "",
                      bool inherit_               = false) const;
 
-      //! set experimental_point
-      void set_p(const experimental_point & p)
-      {
-        ep_ = p;
-      }
+      /// Set Geiger cell position
+      void set_position(const experimental_point &);
 
-      //! set radius
-      void set_r(double r)
-      {
-        r0_.set_value(r);
-        set_radius();
-      }
+      /// Set Geiger cell radius
+      void set_radius(double);
 
-      //! set radius error
-      void set_er(double er)
-      {
-        r0_.set_error(er);
-        set_radius();
-      }
+      /// Set Geiger cell radius error
+      void set_radius_error(double);
 
-      //! set id
-      void set_id(size_t id)
-      {
-        id_ = id;
-      }
+      /// Set small radius
+      void set_small_radius(double);
 
-      //! set small radius
-      void set_small_radius(double small_radius)
-      {
-        small_radius_ = small_radius;
-      }
+      /// Set Geiger cell id
+      void set_id(int);
 
+      /// Set Geiger cell side
+      void set_side(int);
 
-      //! set layer
-      void set_layer(size_t layer)
-      {
-        layer_ = layer;
-      }
+      /// Set Geiger cell row
+      void set_row(int);
 
-      //! set block
-      void set_block(int block)
-      {
-        block_ = block;
-      }
+      /// Set Geiger cell layer
+      void set_layer(int);
 
-      //! set iid
-      void set_iid(size_t iid)
-      {
-        iid_ = iid;
-      }
-
-      //! set fast flag
-      void set_fast(bool fast)
-      {
-        fast_ = fast;
-      }
-
+      /// Set Geiger as prompt
+      void set_prompt(bool);
 
       //! set free level
-      void set_free(bool free)
-      {
-        free_ = free;
-      }
+      void set_free(bool free);
 
       //! set begun level
-      void set_begun(bool begun)
-      {
-        begun_ = begun;
-      }
-
-      bool small() const
-      {
-        if (r0_.value() <= small_radius_) return true;
-        return false;
-      }
+      void set_begun(bool begun);
 
       //! get experimental_point
-      const experimental_point & ep() const
-      {
-        return ep_;
-      }
+      const experimental_point & get_position() const;
 
       //!get experimental r
-      const experimental_double & r() const
-      {
-        return r_;
-      }
+      const experimental_double & get_radius() const;
 
       //!get original experimental r
-      const experimental_double & r0() const
-      {
-        return r0_;
-      }
+      const experimental_double & get_original_radius() const;
 
       //!get id
-      size_t id() const {return id_;}
-
-      // //!get small_radius
-      //  double small_radius() const {return small_radius_;}
+      int get_id() const;
 
       //!get layer
-      int layer() const {return layer_;}
+      int get_layer() const;
 
-      //!get block
-      int block() const {return block_;}
+      //!get side
+      int get_side() const;
 
-      //!get iid
-      int iid() const {return iid_;}
+      //!get row
+      int get_row() const;
 
       //!get fast flag
-      bool fast() const {return fast_;}
+      bool is_prompt() const;
+
+      //! get small flag
+      bool is_small() const;
 
       //! get free level
-      bool free()const{
-        return free_;
-      }
+      bool is_free() const;
 
       //! get begun level
-      bool begun()const{
-        return begun_;
-      }
-
-      //! get cell number
-      int cell_number() const{
-        return iid();
-      }
-
+      bool begun() const;
 
     public:
 
@@ -188,42 +120,42 @@ namespace CAT {
 
 
     private:
-      void set_radius(){
-        r_ = r0_;
-        /*
-          if( small() && fast() )
-          r_.set_error(std::max(r0_.value(), r0_.error()));
-        */
-      }
+      void _set_radius_();
 
-      private:
+    private:
 
       // experimental point
-      experimental_point ep_;
+      experimental_point _position_;
 
       // radius (original value)
-      experimental_double r0_;
+      experimental_double _r0_;
 
       // radius (modified value if the cell is "small")
-      experimental_double r_;
+      experimental_double _r_;
 
       // id
-      size_t id_;
-
-      // characterize fast and delayed cells
-      bool fast_;
+      int _id_;
 
       // layer number
-      int layer_;
+      int _layer_;
 
-      // block number
-      int block_;
+      // side number
+      int _side_;
 
-      // iid number
-      int iid_;
+      // row number
+      int _row_;
+
+      // characterize fast and delayed cells
+      bool _prompt_;
 
       // radius below which a cell is small
-      double small_radius_;
+      double _small_radius_;
+
+      // status of cell couplet
+      bool _free_;
+
+      // begun cell couplet
+      bool _begun_;
 
     };
   }

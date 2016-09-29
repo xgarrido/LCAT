@@ -110,23 +110,23 @@ namespace CAT {
     std::sort(the_cells.begin(), the_cells.end(),
               [] (const topology::cell & a_, const topology::cell & b_) -> bool
               {
-                if (a_.id() == b_.id()) return false;
-                if (a_.id() > mybhep::default_integer || b_.id() > mybhep::default_integer) {
+                if (a_.get_id() == b_.get_id()) return false;
+                if (a_.get_id() > mybhep::default_integer || b_.get_id() > mybhep::default_integer) {
                   return false;
                 }
                 // side of foil
-                if (a_.block() < 0 && b_.block() > 0) {
+                if (a_.get_side() < 0 && b_.get_side() > 0) {
                   return false;
                 }
-                if (a_.block() > 0 && b_.block() < 0) {
+                if (a_.get_side() > 0 && b_.get_side() < 0) {
                   return true;
                 }
                 // layer
-                if (std::abs(a_.layer()) < std::abs(b_.layer())) {
+                if (std::abs(a_.get_layer()) < std::abs(b_.get_layer())) {
                   return false;
                 }
-                // iid
-                if(a_.iid() < b_.iid()) {
+                // row
+                if(a_.get_row() < b_.get_row()) {
                   return false;
                 }
                 return true;
@@ -140,10 +140,10 @@ namespace CAT {
     std::set<int> flagged;
     for (const auto & icell : the_cells) {
       // Pick a cell that was never added
-      if (flagged.count(icell.id())) continue;
-      flagged.insert(icell.id());
+      if (flagged.count(icell.get_id())) continue;
+      flagged.insert(icell.get_id());
 
-      DT_LOG_DEBUG(get_logging_priority(), "Begin new cluster with cell " << icell.id());
+      DT_LOG_DEBUG(get_logging_priority(), "Begin new cluster with cell " << icell.get_id());
       // Current cell will form a new cluster, i.e. a new list of nodes
       topology::cluster cluster_connected_to_c;
       std::vector<topology::node> nodes_connected_to_c;
@@ -164,11 +164,11 @@ namespace CAT {
         std::vector<topology::cell_couplet> cc;
 
         // Get the list of cells near the connected cell
-        DT_LOG_DEBUG(get_logging_priority(), "Filling list of cells near cell " << cconn.id());
+        DT_LOG_DEBUG(get_logging_priority(), "Filling list of cells near cell " << cconn.get_id());
         std::vector<topology::cell> cells_near_iconn;
         cells_near_iconn.reserve(8);
         for (const auto & jcell : the_cells) {
-          if (jcell.id() == cconn.id()) continue;
+          if (jcell.get_id() == cconn.get_id()) continue;
           const size_t nl = _near_level_(cconn, jcell);
           if (nl > 0) {
             cells_near_iconn.push_back(jcell);
@@ -177,17 +177,17 @@ namespace CAT {
         cc.reserve(cells_near_iconn.size());
 
         DT_LOG_DEBUG(get_logging_priority(), "Cluster " << the_clusters.size()
-                     << " starts with " << icell.id() << " try to add cell " << cconn.id()
+                     << " starts with " << icell.get_id() << " try to add cell " << cconn.get_id()
                      << " with n of neighbours = " << cells_near_iconn.size());
         cells_connected_to_c.reserve(cells_near_iconn.size());
         for (const auto & cnc : cells_near_iconn) {
           if (!_is_good_couplet_(cconn, cnc, cells_near_iconn)) continue;
 
-          DT_LOG_DEBUG(get_logging_priority(), "Creating couplet " << cconn.id() << " -> " << cnc.id());
+          DT_LOG_DEBUG(get_logging_priority(), "Creating couplet " << cconn.get_id() << " -> " << cnc.get_id());
           topology::cell_couplet ccnc(cconn, cnc);
           cc.push_back(ccnc);
-          if (! flagged.count(cnc.id())) {
-            flagged.insert(cnc.id());
+          if (! flagged.count(cnc.get_id())) {
+            flagged.insert(cnc.get_id());
             cells_connected_to_c.push_back(cnc);
           }
         }
@@ -195,8 +195,8 @@ namespace CAT {
         newnode.calculate_triplets(_ratio_, _tangent_phi_);
         nodes_connected_to_c.push_back(newnode);
 
-        DT_LOG_DEBUG(get_logging_priority(), "Cluster started with " << icell.id()
-                     << " has been given cell " << cconn.id() << " with " << cc.size() << " couplets ");
+        DT_LOG_DEBUG(get_logging_priority(), "Cluster started with " << icell.get_id()
+                     << " has been given cell " << cconn.get_id() << " with " << cc.size() << " couplets ");
       }
       cluster_connected_to_c.set_nodes(nodes_connected_to_c);
       the_clusters.push_back(cluster_connected_to_c);
@@ -215,7 +215,7 @@ namespace CAT {
     // that is near to both and can form a triplet between them
 
     for (const auto & c3 : c1_neighbors_) {
-      if (c2_.id() == c3.id()) continue;
+      if (c2_.get_id() == c3.get_id()) continue;
 
       const size_t level23 = _near_level_(c2_, c3);
       if (level23 == 0) continue;
@@ -226,12 +226,12 @@ namespace CAT {
         continue;  // cannot match c1->c3 or c3->c2 if c1->c2 is nearer
 
       DT_LOG_DEBUG(get_logging_priority(),
-                   "... check if near node " << c3.id() << " has triplet " << c1_.id() << " <-> " << c2_.id());
+                   "... check if near node " << c3.get_id() << " has triplet " << c1_.get_id() << " <-> " << c2_.get_id());
       topology::cell_triplet ccc(c1_, c3, c2_);
       ccc.calculate_joints(_ratio_, _tangent_phi_);
       if (ccc.joints().size() > 0) {
         DT_LOG_DEBUG(get_logging_priority(),
-                     "... yes it does: so couplet " << c1_.id() << " and " << c2_.id() << " is not good");
+                     "... yes it does: so couplet " << c1_.get_id() << " and " << c2_.get_id() << " is not good");
         return false;
       }
     }
@@ -246,13 +246,13 @@ namespace CAT {
     // 2 for side-by-side cells
 
     // Use geiger locator for such research
-    const int hit1_side  = c1_.block();  // -1, 1
-    const int hit1_layer = std::abs(c1_.layer()); // 0, 1, ..., 8
-    const int hit1_row   = c1_.iid();  // -56, -55, ..., 55, 56
+    const int hit1_side  = c1_.get_side();  // -1, 1
+    const int hit1_layer = std::abs(c1_.get_layer()); // 0, 1, ..., 8
+    const int hit1_row   = c1_.get_row();  // -56, -55, ..., 55, 56
 
-    const int hit2_side  = c2_.block();
-    const int hit2_layer = std::abs(c2_.layer());
-    const int hit2_row   = c2_.iid();
+    const int hit2_side  = c2_.get_side();
+    const int hit2_layer = std::abs(c2_.get_layer());
+    const int hit2_row   = c2_.get_row();
 
     // Do not cross the foil
     if (hit1_side != hit2_side) return 0;
