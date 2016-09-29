@@ -36,7 +36,7 @@
 
 // This project
 #include <falaise/snemo/processing/base_tracker_clusterizer.h>
-#include <CATAlgorithm/CAT_interface.h>
+#include <CAT/CAT_interface.h>
 
 // Forward declaration :
 namespace datatools {
