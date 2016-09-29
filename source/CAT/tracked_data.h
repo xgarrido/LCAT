@@ -22,7 +22,7 @@ namespace CAT{
     /// A tracked data is composed of a list of cells
     /// a list of clusters
     /// and a list of scenarios.
-    class tracked_data : public tracking_object
+    class tracked_data
     {
     public:
       /// Default constructor
