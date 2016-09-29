@@ -238,6 +238,7 @@ namespace CAT {
     public:
 
       experimental_point angular_average(const experimental_point & epa_, const experimental_point & epb_, experimental_double & angle_);
+
       experimental_point build_from_cell(const experimental_vector & forward_,
                                          const experimental_vector & transverse_,
                                          const experimental_double & cos_,
@@ -245,73 +246,8 @@ namespace CAT {
 
       bool same_quadrant(const experimental_point & epa_, const experimental_point & epb_) const;
 
-      bool same_cell(topology::cell c) const;
-      bool intersect(topology::cell c) const;
+      bool intersect(const topology::cell & c_) const;
 
-
-
-      bool operator<(const topology::cell& c) const{
-
-        if( id_ > mybhep::default_integer || c.id() > mybhep::default_integer ){
-            std::clog << " problem: trying to compare cells with ids " << id_ << " and " << c.id() << " just returning false " << std::endl;
-          return false;
-        }
-
-        if( this->id() == c.id() ) return false;
-
-        // side of foil
-        if( this->block() < 0 && c.block() > 0 ){
-          return false;
-        }
-        if( this->block() > 0 && c.block() < 0 )
-          return true;
-
-
-        // layer
-        if(std::abs(this->layer()) < std::abs(c.layer())){
-          return false;
-        }
-        if(std::abs(this->layer()) > std::abs(c.layer()))
-          return true;
-
-        // iid
-        if(this->iid() < c.iid()){
-          return false;
-        }
-        if(this->iid() > c.iid()){
-          return true;
-        }
-
-
-        return true;
-
-      }
-
-      static bool compare(const topology::cell& c1, const topology::cell& c) {
-
-        // side of foil
-        if( c1.block() < 0 && c.block() > 0 ){
-          return false;
-        }
-
-        // layer
-        if(std::abs(c1.layer()) < std::abs(c.layer())){
-          return false;
-        }
-        if(std::abs(c1.layer()) > std::abs(c.layer()))
-          return true;
-
-        // iid
-        if(c1.iid() < c.iid()){
-          return false;
-        }
-        if(c1.iid() > c.iid())
-          return true;
-
-
-        return true;
-
-      };
 
     private:
       void set_radius(){

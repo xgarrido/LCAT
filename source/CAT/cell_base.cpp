@@ -107,23 +107,12 @@ namespace topology{
     return true;
   }
 
-  bool cell::same_cell(topology::cell c)const{
-
-    if( block() == c.block() &&
-        layer() == c.layer() &&
-        iid() == c.iid())
-      return true;
-
-    return false;
-
-  }
-
-  bool cell::intersect(topology::cell c) const{
+  bool cell::intersect(const topology::cell & c_) const{
 
     double fraction_limit = 0.9; /// fraction of radius after which cells intersect
 
-    double dist = experimental_vector(ep(), c.ep()).hor().length().value();
-    experimental_double rsum = r() + c.r();
+    double dist = experimental_vector(ep(), c_.ep()).hor().length().value();
+    experimental_double rsum = r() + c_.r();
 
     if( rsum.value() > dist*fraction_limit ){
       // if( print_level() >= mybhep::VVERBOSE ){
@@ -132,20 +121,7 @@ namespace topology{
       return true;
     }
 
-    bool test = false;
-
-    /*
-    double chi2 = square((rsum.value() - dist)/rsum.error());
-
-    bool test = probof(chi2, 1) > probmin();
-    if( test )
-      if( print_level() >= mybhep::VVERBOSE ){
-        std::clog <<" cells " << id() << " and " <<c.id() << " intersect: dist " << dist << " radii " << r().value() << " and " <<c.r().value()<< " rsum " << rsum.value() << " +- " << rsum.error() << " prob " << probof(chi2, 1) << " chi2 " << chi2 << " problimit " << probmin() << std::endl;
-      }
-    */
-
-    return test;
-
+    return false;
   }
 
 

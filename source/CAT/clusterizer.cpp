@@ -144,7 +144,30 @@ namespace CAT {
 
     DT_LOG_DEBUG(get_logging_priority(), "Order cells");
     if (_cells_.empty()) return;
-    std::sort(_cells_.begin(), _cells_.end());
+    std::sort(_cells_.begin(), _cells_.end(),
+              [] (const topology::cell & a_, const topology::cell & b_) -> bool
+              {
+                if (a_.id() == b_.id()) return false;
+                if (a_.id() > mybhep::default_integer || b_.id() > mybhep::default_integer) {
+                  return false;
+                }
+                // side of foil
+                if (a_.block() < 0 && b_.block() > 0) {
+                  return false;
+                }
+                if (a_.block() > 0 && b_.block() < 0) {
+                  return true;
+                }
+                // layer
+                if (std::abs(a_.layer()) < std::abs(b_.layer())) {
+                  return false;
+                }
+                // iid
+                if(a_.iid() < b_.iid()) {
+                  return false;
+                }
+                return true;
+              });
 
     // List of cells already used
     std::set<int> flagged;
