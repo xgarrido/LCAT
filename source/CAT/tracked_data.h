@@ -19,9 +19,8 @@ namespace CAT {
 
     /// \brief Tracked data
     ///
-    /// A tracked data is composed of a list of cells
-    /// a list of clusters
-    /// and a list of scenarios.
+    /// A tracked data is composed of a list of cells a list of clusters and a
+    /// list of scenarios.
     class tracked_data
     {
     public:
@@ -29,7 +28,7 @@ namespace CAT {
       tracked_data();
 
       /// Destructor
-      virtual ~tracked_data();
+      ~tracked_data();
 
       /// Reset
       void reset();

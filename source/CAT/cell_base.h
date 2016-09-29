@@ -18,42 +18,11 @@ namespace CAT {
   namespace topology {
 
 
+    /// \brief Cell class
+    // A cell is composed of an experimental point and an experimental radius
     class cell : public tracking_object {
 
-      // a cell is composed of an experimental point
-      // and an experimental radius
-
-    private:
-
-      // experimental point
-      experimental_point ep_;
-
-      // radius (original value)
-      experimental_double r0_;
-
-      // radius (modified value if the cell is "small")
-      experimental_double r_;
-
-      // id
-      size_t id_;
-
-      // characterize fast and delayed cells
-      bool fast_;
-
-      // layer number
-      int layer_;
-
-      // block number
-      int block_;
-
-      // iid number
-      int iid_;
-
-      // radius below which a cell is small
-      double small_radius_;
-
     public:
-
 
       // status of cell couplet
       bool free_;
@@ -61,51 +30,20 @@ namespace CAT {
       // begun cell couplet
       bool begun_;
 
-      //!Default constructor
-      cell()
-      {
-        set_probmin(10.);
-        //ep_ = experimental_point();
-        //r0_= experimental_double();
-        //r_= experimental_double();
-        id_ = mybhep::default_integer;
-        layer_ = mybhep::default_integer;
-        block_ = mybhep::default_integer;
-        iid_ = mybhep::default_integer;
-        fast_ = true;
-        free_ = false;
-        begun_ = false;
-        small_radius_= 0.;
-      }
+      /// Default constructor
+      cell();
 
-      //!Default destructor
-      virtual ~cell(){};
+      /// Destructor
+      virtual ~cell();
 
-      /*** dump ***/
-      virtual void dump (std::ostream & a_out         = std::clog,
-                         const std::string & a_title  = "",
-                         const std::string & a_indent = "",
-                         bool /*a_inherit */         = false) const{
-        {
-          std::string indent;
-          if (! a_indent.empty ()) indent = a_indent;
-          if (! a_title.empty ())
-            {
-              a_out << indent << a_title << std::endl;
-            }
+      /// Reset
+      void reset();
 
-          a_out << indent << "id : " << this->id() << " layer " << this->layer() << " block " << this->block() << " iid " << this->iid() << " fast " << this->fast() << " small " << this->small() << std::endl;
-          a_out << indent << " point " << std::endl;
-          this->ep().dump(a_out,"", indent + "   ");
-          a_out << indent << "radius : "; (r()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
-          if( small() && fast() ){
-            a_out << indent << "original radius : "; (r0()/CLHEP::mm).dump(); a_out << " [mm ] " << std::endl;
-          }
-          a_out << indent << " -------------- " << std::endl;
-
-          return;
-        }
-      }
+      /// Smart dump
+      void tree_dump(std::ostream & out_         = std::clog,
+                     const std::string & title_  = "",
+                     const std::string & indent_ = "",
+                     bool inherit_               = false) const;
 
       //! set experimental_point
       void set_p(const experimental_point & p)
@@ -202,30 +140,30 @@ namespace CAT {
       }
 
       //!get id
-       size_t id() const {return id_;}
+      size_t id() const {return id_;}
 
       // //!get small_radius
       //  double small_radius() const {return small_radius_;}
 
       //!get layer
-       int layer() const {return layer_;}
+      int layer() const {return layer_;}
 
       //!get block
-       int block() const {return block_;}
+      int block() const {return block_;}
 
       //!get iid
-       int iid() const {return iid_;}
+      int iid() const {return iid_;}
 
       //!get fast flag
-       bool fast() const {return fast_;}
+      bool fast() const {return fast_;}
 
       //! get free level
-       bool free()const{
+      bool free()const{
         return free_;
       }
 
       //! get begun level
-       bool begun()const{
+      bool begun()const{
         return begun_;
       }
 
@@ -253,11 +191,39 @@ namespace CAT {
       void set_radius(){
         r_ = r0_;
         /*
-        if( small() && fast() )
+          if( small() && fast() )
           r_.set_error(std::max(r0_.value(), r0_.error()));
         */
       }
 
+      private:
+
+      // experimental point
+      experimental_point ep_;
+
+      // radius (original value)
+      experimental_double r0_;
+
+      // radius (modified value if the cell is "small")
+      experimental_double r_;
+
+      // id
+      size_t id_;
+
+      // characterize fast and delayed cells
+      bool fast_;
+
+      // layer number
+      int layer_;
+
+      // block number
+      int block_;
+
+      // iid number
+      int iid_;
+
+      // radius below which a cell is small
+      double small_radius_;
 
     };
   }

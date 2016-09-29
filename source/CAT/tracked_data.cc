@@ -15,6 +15,7 @@ namespace CAT {
 
     tracked_data::~tracked_data()
     {
+      reset();
       return;
     }
 
@@ -24,6 +25,7 @@ namespace CAT {
       _calo_hits_.clear();
       _clusters_.clear();
       _scenarios_.clear();
+      return;
     }
 
     void tracked_data::tree_dump(std::ostream & out_,
@@ -38,11 +40,21 @@ namespace CAT {
       }
 
       out_ << indent << datatools::i_tree_dumpable::tag << "Geiger hits : " << _gg_hits_.size() << std::endl;
-      std::ostringstream indent_oss;
-      indent_oss << indent;
-      indent_oss << datatools::i_tree_dumpable::skip_tag;
-      for (const auto & ihit : _gg_hits_) {
-        ihit.dump(out_, "", indent_oss.str());
+      for (size_t i = 0; i < _gg_hits_.size(); i++) {
+        out_ << indent << datatools::i_tree_dumpable::skip_tag;
+        std::ostringstream indent_oss;
+        indent_oss << indent;
+        indent_oss << datatools::i_tree_dumpable::skip_tag;
+
+        if (i == _gg_hits_.size() - 1) {
+          out_ << datatools::i_tree_dumpable::last_tag;
+          indent_oss << datatools::i_tree_dumpable::last_skip_tag;
+        } else {
+          out_ << datatools::i_tree_dumpable::tag;
+          indent_oss << datatools::i_tree_dumpable::skip_tag;
+        }
+        out_ << "Hit #" << i << std::endl;
+        _gg_hits_[i].tree_dump(out_, "", indent_oss.str());
       }
       // out_ << indent << " number of calos : " << calos_.size() << std::endl;
       // for(std::vector<calorimeter_hit>::const_iterator icalo=calos_.begin(); icalo!=calos_.end();++icalo)

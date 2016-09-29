@@ -95,9 +95,9 @@ void cell_couplet::dump (std::ostream & a_out,
       a_out << indent << appname_ << " ------------------- " << std::endl;
       a_out << indent  << " free: " << free() << " begun: " << begun() << std::endl;
       a_out << indent  << " first cell " << std::endl;
-      this->ca().dump(a_out,"",indent + "   ");
+      this->ca().tree_dump(a_out,"",indent + "   ");
       a_out << indent << " second cell " << std::endl;
-      this->cb().dump(a_out, "",indent + "   ");
+      this->cb().tree_dump(a_out, "",indent + "   ");
       a_out << indent << " tangents: " << tangents().size() << std::endl;
       for(std::vector<line>::const_iterator itang=tangents_.begin(); itang!=tangents_.end(); ++itang)
         itang->dump(a_out,"",indent + "   ");

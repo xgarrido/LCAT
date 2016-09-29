@@ -259,6 +259,7 @@ namespace snemo {
         _CAT_input_.cells.reserve(gg_hits_.size());
       }
 
+      // Reset data interface model
       _CAT_output_.tracked_data.reset();
 
       // Hit accounting :

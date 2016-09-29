@@ -53,11 +53,11 @@ namespace CAT{
       a_out << indent << appname_ << " -------------- " << std::endl;
       a_out << indent  << " free: " << free() << " begun: " << begun()  << std::endl;
       a_out << indent  << " first cell " << std::endl;
-      ca().dump(a_out,"", indent + "   ");
+      ca().tree_dump(a_out,"", indent + "   ");
       a_out << indent << " second cell " << std::endl;
-      cb().dump(a_out, "",indent + "   ");
+      cb().tree_dump(a_out, "",indent + "   ");
       a_out << indent << " third cell " << std::endl;
-      cc().dump(a_out, "",indent + "   ");
+      cc().tree_dump(a_out, "",indent + "   ");
       for(std::vector<joint>::const_iterator ijoint=joints_.begin(); ijoint!=joints_.end(); ++ijoint)
         ijoint->dump(a_out,"",indent + "   ");
       a_out << indent  << " -------------- " << std::endl;

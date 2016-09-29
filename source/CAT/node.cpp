@@ -59,7 +59,7 @@ namespace CAT {
       }
       a_out << indent << " --------------------- " << std::endl;
       a_out << indent  << " main cell " << " free " << free() << " chi2 " << chi2() << " ndof " << ndof() << std::endl;
-      this->c().dump(a_out,"",indent + "   ");
+      this->c().tree_dump(a_out,"",indent + "   ");
       a_out << indent << " fitted point: "; ep().dump();
       a_out << indent << " cell couplets: " << cc().size() << std::endl;
       for(std::vector<cell_couplet>::const_iterator icc=cc_.begin(); icc!=cc_.end(); ++icc)
