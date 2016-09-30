@@ -1,5 +1,6 @@
 // Ourselves:
 #include <CAT/cluster.h>
+#include <CAT/utilities.h>
 
 namespace CAT {
 

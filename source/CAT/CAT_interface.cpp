@@ -13,6 +13,7 @@
 #include <boost/algorithm/string.hpp>
 // - Bayeux/datatools:
 #include <bayeux/datatools/exception.h>
+#include <bayeux/datatools/clhep_units.h>
 
 // This project:
 #include <CAT/CAT_interface.h>

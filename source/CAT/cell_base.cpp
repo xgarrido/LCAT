@@ -1,4 +1,6 @@
+// Ourselves
 #include <CAT/cell_base.h>
+#include <CAT/utilities.h>
 
 // Standard library
 #include <cmath>
@@ -6,6 +8,7 @@
 // Third party
 // - Bayeux/datatools:
 #include <bayeux/datatools/i_tree_dump.h>
+#include <bayeux/datatools/clhep_units.h>
 
 namespace CAT {
 
@@ -13,7 +16,6 @@ namespace CAT {
 
     cell::cell()
     {
-      set_probmin(10.);
       //ep_ = experimental_point();
       //r0_= experimental_double();
       //r_= experimental_double();
@@ -297,13 +299,12 @@ namespace CAT {
       return true;
     }
 
-    bool cell::intersect(const topology::cell & c_) const{
+    bool cell::intersect(const topology::cell & c_) const
+    {
+      const double dist = experimental_vector(get_position(), c_.get_position()).hor().length().value();
+      const experimental_double rsum = get_radius() + c_.get_radius();
 
-      double fraction_limit = 0.9; /// fraction of radius after which cells intersect
-
-      double dist = experimental_vector(get_position(), c_.get_position()).hor().length().value();
-      experimental_double rsum = get_radius() + c_.get_radius();
-
+      const double fraction_limit = 0.9; /// fraction of radius after which cells intersect
       if( rsum.value() > dist*fraction_limit ){
         // if( print_level() >= mybhep::VVERBOSE ){
         //   std::clog << "CAT::cell::intersect: cells " << id() << " and " << c.id() << " intersect: dist " << dist << " radii " << r().value() << " and " << c.r().value() << " rsum " << rsum.value() << std::endl;

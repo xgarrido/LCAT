@@ -1,12 +1,11 @@
 /* -*- mode: c++ -*- */
 
 #include <CAT/node.h>
+#include <CAT/utilities.h>
 
 namespace CAT {
   namespace topology{
 
-    using namespace std;
-    using namespace mybhep;
 
     node::node()
     {
@@ -312,7 +311,7 @@ namespace CAT {
       if( !cc_index_.count(a.get_id()) ) return false;
       size_t index=cc_index().find(a.get_id())->second;
       if( index >= cc_.size()) {
-        std::clog << " problem: cc index " << index << " for cell a of id " << a.get_id() << " is larger than cc size " << cc_.size() << endl;
+        std::clog << " problem: cc index " << index << " for cell a of id " << a.get_id() << " is larger than cc size " << cc_.size() << std::endl;
         dump();
         return false;
       }
@@ -325,7 +324,7 @@ namespace CAT {
       if( !cc_index_.count(a.get_id()) ) return false;
       *index= cc_index().find(a.get_id())->second;
       if( *index >= cc_.size() ){
-        std::clog << " problem: cc index " << *index << " for cell of id " << a.get_id() << " is larger than cc size " << cc_.size() << endl;
+        std::clog << " problem: cc index " << *index << " for cell of id " << a.get_id() << " is larger than cc size " << cc_.size() << std::endl;
         dump();
         return false;
       }
@@ -337,7 +336,7 @@ namespace CAT {
       if( !cc_index_.count(idd) ) return false;
       *index = cc_index().find(idd)->second;
       if( *index >= cc_.size() ){
-        std::clog << " problem: cc index " << *index << " for id " << idd << " is larger than cc size " << cc_.size() << endl;
+        std::clog << " problem: cc index " << *index << " for id " << idd << " is larger than cc size " << cc_.size() << std::endl;
         dump();
         return false;
       }

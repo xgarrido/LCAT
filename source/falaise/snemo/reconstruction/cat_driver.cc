@@ -331,7 +331,6 @@ namespace snemo {
         // Add a new hit cell in the CAT input data model :
         ct::cell & c = _CAT_output_.tracked_data.add_gg_hit();
         c.set_id(ihit++);
-        c.set_probmin(_CAT_setup_.probmin);
         c.set_position(gg_hit_position);
         c.set_radius(prompt ? rdrift : 0.25 * gg_locator.get_cell_diameter());
         c.set_radius_error(prompt ? rdrift_err : 0.25 * gg_locator.get_cell_diameter());

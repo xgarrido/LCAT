@@ -5,9 +5,6 @@ namespace CAT {
 
   namespace topology {
 
-    using namespace std;
-    using namespace mybhep;
-
     //!Default constructor
     joint::joint()
     {

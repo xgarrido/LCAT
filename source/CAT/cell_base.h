@@ -1,26 +1,21 @@
 /* -*- mode: c++ -*- */
-#ifndef __CATAlgorithm__ICELL
-#define __CATAlgorithm__ICELL
+#ifndef FALAISE_CAT_CELL_BASE_H
+#define FALAISE_CAT_CELL_BASE_H 1
 
+// Standard library
 #include <iostream>
-#include <cmath>
-#include <CAT/utilities.h>
-#include <CAT/tracking_object.h>
+
+// This project
 #include <CAT/experimental_point.h>
 #include <CAT/experimental_vector.h>
-
-// Third party
-// - Bayeux/datatools:
-#include <bayeux/datatools/clhep_units.h>
 
 namespace CAT {
 
   namespace topology {
 
-
     /// \brief Cell class
     // A cell is composed of an experimental point and an experimental radius
-    class cell : public tracking_object {
+    class cell {
 
     public:
 

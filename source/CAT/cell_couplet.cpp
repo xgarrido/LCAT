@@ -1,6 +1,8 @@
 #include <CAT/cell_couplet.h>
+#include <CAT/utilities.h>
 
 namespace CAT{
+
   namespace topology{
 
     cell_couplet::~cell_couplet()
