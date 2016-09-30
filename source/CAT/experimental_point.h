@@ -1,7 +1,7 @@
 // -*- mode: c++ -*-
 
-#ifndef CAT_TOPOLOGY_EXPERIMENTAL_POINT_H
-#define CAT_TOPOLOGY_EXPERIMENTAL_POINT_H
+#ifndef FALAISE_CAT_EXPERIMENTAL_POINT_H
+#define FALAISE_CAT_EXPERIMENTAL_POINT_H 1
 
 // Standard library:
 #include <iostream>
@@ -12,92 +12,88 @@
 
 namespace CAT {
 
-  namespace topology {
+  /// \brief An experimental point is composed of an ordinary point (x, y, z)
+  /// with corresponding error (ex, ey, ez)
+  class experimental_point
+  {
+  public:
+    //!Default constructor
+    experimental_point();
 
-    /// \brief An experimental point is composed of an ordinary point (x, y, z)
-    /// with corresponding error (ex, ey, ez)
-    class experimental_point
-    {
+    //!Default destructor
+    virtual ~experimental_point();
 
-    private:
+    //! constructor
+    experimental_point(const experimental_double &x, const experimental_double &y, const experimental_double &z);
 
-      // x coordinate
-      experimental_double x_;
+    //! constructor from coordinates with error
+    experimental_point(double x, double y, double z, double ex, double ey, double ez);
 
-      // y coordinate
-      experimental_double y_;
+    /*** dump ***/
+    virtual void dump (std::ostream & a_out         = std::clog,
+                       const std::string & a_title  = "",
+                       const std::string & a_indent = "",
+                       bool a_inherit               = false) const;
 
-      // z coordinate
-      experimental_double z_;
+    //! set x
+    void set_x(const experimental_double &x);
 
-      // radius in horizontal view (= x^2 + z^2)
-      experimental_double radius_;
+    //! set ex
+    void set_ex(double ex);
 
-    public:
-      //!Default constructor
-      experimental_point();
+    //! set y
+    void set_y(const experimental_double &y);
 
-      //!Default destructor
-      virtual ~experimental_point();
+    //! set ey
+    void set_ey(double ey);
 
-      //! constructor
-      experimental_point(const experimental_double &x, const experimental_double &y, const experimental_double &z);
+    //! set z
+    void set_z(const experimental_double &z);
 
-      //! constructor from coordinates with error
-      experimental_point(double x, double y, double z, double ex, double ey, double ez);
+    //! set ez
+    void set_ez(double ez);
 
-      /*** dump ***/
-      virtual void dump (std::ostream & a_out         = std::clog,
-                         const std::string & a_title  = "",
-                         const std::string & a_indent = "",
-                         bool a_inherit               = false) const;
+    //!get experimental x
+    const experimental_double& x() const;
 
-      //! set x
-      void set_x(const experimental_double &x);
+    //!get experimental y
+    const experimental_double& y() const;
 
-      //! set ex
-      void set_ex(double ex);
+    //!get experimental z
+    const experimental_double& z() const;
 
-      //! set y
-      void set_y(const experimental_double &y);
+    //!get experimental radius
+    const experimental_double& radius() const;
 
-      //! set ey
-      void set_ey(double ey);
+    //! distance
+    experimental_double distance(const experimental_point& p2) const;
 
-      //! set z
-      void set_z(const experimental_double &z);
+    //! distance
+    experimental_double hor_distance(const experimental_point& p2) const;
 
-      //! set ez
-      void set_ez(double ez);
+  private:
 
-      //!get experimental x
-      const experimental_double& x() const;
+    void set_radius();
 
-      //!get experimental y
-      const experimental_double& y() const;
+  private:
 
-      //!get experimental z
-      const experimental_double& z() const;
+    // x coordinate
+    experimental_double x_;
 
-      //!get experimental radius
-      const experimental_double& radius() const;
+    // y coordinate
+    experimental_double y_;
 
-      //! distance
-      experimental_double distance(const experimental_point& p2) const;
+    // z coordinate
+    experimental_double z_;
 
-      //! distance
-      experimental_double hor_distance(const experimental_point& p2) const;
+    // radius in horizontal view (= x^2 + z^2)
+    experimental_double radius_;
+  };
 
-    private:
+  // average
+  experimental_point average(const std::vector<experimental_point> &vs);
 
-      void set_radius();
-    };
-
-    // average
-    experimental_point average(const std::vector<experimental_point> &vs);
-
-  } // namespace topology
 
 } // namespace CAT
 
-#endif // CAT_TOPOLOGY_EXPERIMENTAL_POINT_H
+#endif // FALAISE_CAT_EXPERIMENTAL_POINT_H

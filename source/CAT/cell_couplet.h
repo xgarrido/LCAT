@@ -1,6 +1,6 @@
 /* -*- mode: c++ -*- */
-#ifndef __CATAlgorithm__ICELLCOUP
-#define __CATAlgorithm__ICELLCOUP
+#ifndef FALAISE_CAT_CELL_COUPLET_H
+#define FALAISE_CAT_CELL_COUPLET_H 1
 #include <iostream>
 #include <cmath>
 #include <CAT/experimental_point.h>
@@ -9,8 +9,6 @@
 #include <CAT/line.h>
 
 namespace CAT{
-  namespace topology{
-
 
     class cell_couplet : public tracking_object{
 
@@ -152,9 +150,6 @@ namespace CAT{
 
     };
 
-
-  }
-
 }
 
-#endif
+#endif // FALAISE_CAT_CELL_COUPLET_H

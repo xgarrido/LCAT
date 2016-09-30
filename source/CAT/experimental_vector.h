@@ -1,7 +1,7 @@
 // -*- mode: c++ -*-
 
-#ifndef CAT_TOPOLOGY_EXPERIMENTAL_VECTOR_H
-#define CAT_TOPOLOGY_EXPERIMENTAL_VECTOR_H
+#ifndef FALAISE_CAT_EXPERIMENTAL_VECTOR_H
+#define FALAISE_CAT_EXPERIMENTAL_VECTOR_H
 
 // Standard library:
 #include <iostream>
@@ -13,176 +13,171 @@
 
 namespace CAT{
 
-  namespace topology {
+  /// \brief An experimental std::vector is composed of an ordinary std::vector (x, y, z)
+  /// with corresponding error (ex, ey, ez)
+  class experimental_vector
+  {
+  public:
 
-    /// \brief An experimental std::vector is composed of an ordinary std::vector (x, y, z)
-    /// with corresponding error (ex, ey, ez)
-    class experimental_vector
-    {
-    private:
+    //!Default constructor
+    experimental_vector();
 
-      //! x coordinate
-      experimental_double x_;
-      //! y coordinate
-      experimental_double y_;
-      //! z coordinate
-      experimental_double z_;
+    //!Default destructor
+    virtual ~experimental_vector();
 
-    public:
+    //! constructor from coordinates
+    experimental_vector(const experimental_double &x, const experimental_double &y, const experimental_double &z);
 
-      //!Default constructor
-      experimental_vector();
+    //! constructor from coordinates with error
+    experimental_vector(double x, double y, double z, double ex, double ey, double ez);
 
-      //!Default destructor
-      virtual ~experimental_vector();
+    //! constructor from two experimental points
+    experimental_vector(const experimental_point &epa, const experimental_point &epb);
 
-      //! constructor from coordinates
-      experimental_vector(const experimental_double &x, const experimental_double &y, const experimental_double &z);
+    //! constructor from one experimental point
+    experimental_vector(const experimental_point &ep);
 
-      //! constructor from coordinates with error
-      experimental_vector(double x, double y, double z, double ex, double ey, double ez);
+    virtual void dump (std::ostream & a_out         = std::clog,
+                       const std::string & a_title  = "",
+                       const std::string & a_indent = "",
+                       bool a_inherit              = false) const;
 
-      //! constructor from two experimental points
-      experimental_vector(const experimental_point &epa, const experimental_point &epb);
+    //! set all coordinates
+    void coordinates(const experimental_double &x,const experimental_double &y, const experimental_double &z);
 
-      //! constructor from one experimental point
-      experimental_vector(const experimental_point &ep);
+    //! set all coordinates
+    void set(const experimental_double &x, const experimental_double &y, const experimental_double &z);
 
-      virtual void dump (std::ostream & a_out         = std::clog,
-                         const std::string & a_title  = "",
-                         const std::string & a_indent = "",
-                         bool a_inherit              = false) const;
+    //! set std::vector and errors
+    void set(double x, double y, double z, double ex,double ey, double ez);
 
-      //! set all coordinates
-      void coordinates(const experimental_double &x,const experimental_double &y, const experimental_double &z);
+    //! set x
+    void set_x(const experimental_double &x);
 
-      //! set all coordinates
-      void set(const experimental_double &x, const experimental_double &y, const experimental_double &z);
+    //! set y
+    void set_y(const experimental_double &y);
 
-      //! set std::vector and errors
-      void set(double x, double y, double z, double ex,double ey, double ez);
+    //! set z
+    void set_z(const experimental_double &z);
 
-      //! set x
-      void set_x(const experimental_double &x);
+    //! set from two points
+    void set(const experimental_point &epa, const experimental_point &epb);
 
-      //! set y
-      void set_y(const experimental_double &y);
+    //! get all coordinates
+    const experimental_vector& coordinates()const;
 
-      //! set z
-      void set_z(const experimental_double &z);
+    const experimental_double& x() const;
 
-      //! set from two points
-      void set(const experimental_point &epa, const experimental_point &epb);
+    //! read x
+    experimental_double& x();
 
-      //! get all coordinates
-      const experimental_vector& coordinates()const;
+    //!get y
+    const experimental_double& y() const;
 
-      const experimental_double& x() const;
+    //! read y
+    experimental_double& y();
 
-      //! read x
-      experimental_double& x();
+    //!get z
+    const experimental_double& z() const;
 
-      //!get y
-      const experimental_double& y() const;
+    //! read z
+    experimental_double& z();
 
-      //! read y
-      experimental_double& y();
+    // Operators
+    // operator () returns/set x,y,z
+    //! read v(i), i = 0,1,2 = x,y,z
+    const experimental_double& operator () (size_t i) const;
 
-      //!get z
-      const experimental_double& z() const;
+    //! write v(i), i = 0,1,2
+    experimental_double& operator () (size_t i);
 
-      //! read z
-      experimental_double& z();
+    // no protection in operator []
+    const experimental_double& operator [] (size_t i) const;
 
-      // Operators
-      // operator () returns/set x,y,z
-      //! read v(i), i = 0,1,2 = x,y,z
-      const experimental_double& operator () (size_t i) const;
+    //! write v(i), i = 0,1,2
+    experimental_double& operator [] (size_t i);
 
-      //! write v(i), i = 0,1,2
-      experimental_double& operator () (size_t i);
+    //! operador +=
+    experimental_vector& operator += (const experimental_vector& p2);
 
-      // no protection in operator []
-      const experimental_double& operator [] (size_t i) const;
+    //! operador -=
+    experimental_vector& operator -= (const experimental_vector& p2);
 
-      //! write v(i), i = 0,1,2
-      experimental_double& operator [] (size_t i);
+    //! operador *=
+    experimental_vector& operator *= (experimental_double a);
 
-      //! operador +=
-      experimental_vector& operator += (const experimental_vector& p2);
+    experimental_vector& operator *= (double a);
 
-      //! operador -=
-      experimental_vector& operator -= (const experimental_vector& p2);
+    //! operador /=
+    experimental_vector& operator /= (experimental_double a);
 
-      //! operador *=
-      experimental_vector& operator *= (experimental_double a);
+    experimental_vector& operator /= (double a);
 
-      experimental_vector& operator *= (double a);
+    //!get horizontal std::vector
+    experimental_vector hor() const;
 
-      //! operador /=
-      experimental_vector& operator /= (experimental_double a);
+    //!get unit std::vector
+    experimental_vector unit() const;
 
-      experimental_vector& operator /= (double a);
+    //! get point from std::vector
+    experimental_point point_from_vector();
 
-      //!get horizontal std::vector
-      experimental_vector hor() const;
+    //! distance
+    experimental_double distance(const experimental_vector& p2) const;
 
-      //!get unit std::vector
-      experimental_vector unit() const;
+    //! length
+    experimental_double length() const;
 
-      //! get point from std::vector
-      experimental_point point_from_vector();
+    //! length squared
+    experimental_double length2() const;
 
-      //! distance
-      experimental_double distance(const experimental_vector& p2) const;
+    experimental_double phi() const;
 
-      //! length
-      experimental_double length() const;
+    experimental_double tan_phi();
 
-      //! length squared
-      experimental_double length2() const;
+    experimental_double theta() const;
 
-      experimental_double phi() const;
+    experimental_double kink_phi(const experimental_vector &v);
 
-      experimental_double tan_phi();
+    experimental_double kink_theta(const experimental_vector &v);
 
-      experimental_double theta() const;
+  private:
 
-      experimental_double kink_phi(const experimental_vector &v);
+    //! x coordinate
+    experimental_double x_;
+    //! y coordinate
+    experimental_double y_;
+    //! z coordinate
+    experimental_double z_;
+  };
 
-      experimental_double kink_theta(const experimental_vector &v);
+  std::ostream& operator<<(std::ostream& s, const experimental_vector& ip);
 
-    };
+  // v1+v2
+  experimental_vector operator+(const experimental_vector& v1, const experimental_vector& v2);
 
-    std::ostream& operator<<(std::ostream& s, const experimental_vector& ip);
+  //! v1-v2
+  experimental_vector operator-(const experimental_vector& v1, const experimental_vector& v2);
 
-    // v1+v2
-    experimental_vector operator+(const experimental_vector& v1, const experimental_vector& v2);
+  // v*d
+  experimental_vector operator*(const experimental_vector& v1, experimental_double d);
 
-    //! v1-v2
-    experimental_vector operator-(const experimental_vector& v1, const experimental_vector& v2);
+  experimental_vector operator*(const experimental_vector& v1, double d);
 
-    // v*d
-    experimental_vector operator*(const experimental_vector& v1, experimental_double d);
+  // v/d
+  experimental_vector operator/(const experimental_vector& v1, experimental_double d);
 
-    experimental_vector operator*(const experimental_vector& v1, double d);
+  experimental_vector operator/(const experimental_vector& v1, double d);
 
-    // v/d
-    experimental_vector operator/(const experimental_vector& v1, experimental_double d);
+  // d*v
+  experimental_vector operator*(experimental_double d, const experimental_vector& v1);
 
-    experimental_vector operator/(const experimental_vector& v1, double d);
+  // scalar product
+  experimental_double operator*(const experimental_vector& a, const experimental_vector& b);
 
-    // d*v
-    experimental_vector operator*(experimental_double d, const experimental_vector& v1);
-
-    // scalar product
-    experimental_double operator*(const experimental_vector& a, const experimental_vector& b);
-
-    // std::vectorial product
-    experimental_vector operator^(const experimental_vector& a, const experimental_vector& b);
-
-  } // namespace topology
+  // std::vectorial product
+  experimental_vector operator^(const experimental_vector& a, const experimental_vector& b);
 
 } // namespace CAT
 
-#endif // CAT_TOPOLOGY_EXPERIMENTAL_VECTOR_H
+#endif // FALAISE_CAT_EXPERIMENTAL_VECTOR_H

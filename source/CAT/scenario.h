@@ -1,7 +1,7 @@
 // -*- mode: c++ -*-
 
-#ifndef CAT_TOPOLOGY_SCENARIO_H
-#define CAT_TOPOLOGY_SCENARIO_H
+#ifndef FALAISE_CAT_SCENARIO_H
+#define FALAISE_CAT_SCENARIO_H
 
 // Standard library:
 #include <iostream>
@@ -21,111 +21,107 @@
 
 namespace CAT {
 
-  namespace topology {
+  /// \broef A reconstruction scenario is composed of
+  /// a collection of tracks.
+  class scenario : public tracking_object
+  {
 
-    /// \broef A reconstruction scenario is composed of
-    /// a collection of tracks.
-    class scenario : public tracking_object
-    {
+  private:
 
-    private:
+    // chi2
+    double helix_chi2_;
+    double tangent_chi2_;
+    int32_t ndof_;
 
-      // chi2
-      double helix_chi2_;
-      double tangent_chi2_;
-      int32_t ndof_;
+    // n of free families
+    size_t n_free_families_;
 
-      // n of free families
-      size_t n_free_families_;
+    // n of overlapping cells
+    size_t n_overlaps_;
 
-      // n of overlapping cells
-      size_t n_overlaps_;
+  public:
 
-    public:
+    // tracks
+    std::vector<sequence> sequences_;
 
-      // tracks
-      std::vector<topology::sequence> sequences_;
+  public:
 
-    public:
+    //!Default constructor
+    scenario();
 
-      //!Default constructor
-      scenario();
+    //!Default destructor
+    virtual ~scenario();
 
-      //!Default destructor
-      virtual ~scenario();
+    //! constructor
+    scenario(const std::vector<sequence> & seqs, double probmin=1.e-200);
 
-      //! constructor
-      scenario(const std::vector<sequence> & seqs, double probmin=1.e-200);
-
-      //! Smart print
-      virtual void dump (std::ostream & a_out         = std::clog,
-                         const std::string & a_title  = "",
-                         const std::string & a_indent = "",
-                         bool a_inherit          = false) const;
+    //! Smart print
+    virtual void dump (std::ostream & a_out         = std::clog,
+                       const std::string & a_title  = "",
+                       const std::string & a_indent = "",
+                       bool a_inherit          = false) const;
 
 
-      //! set experimental_point, radius, error and id;
-      void set(const std::vector<sequence> & seqs);
+    //! set experimental_point, radius, error and id;
+    void set(const std::vector<sequence> & seqs);
 
-      //! set sequences
-      void set_sequences(const std::vector<sequence> & seqs);
+    //! set sequences
+    void set_sequences(const std::vector<sequence> & seqs);
 
-      //! set helix_chi2
-      void set_helix_chi2(double helix_chi2);
+    //! set helix_chi2
+    void set_helix_chi2(double helix_chi2);
 
-      //! set tangent_chi2
-      void set_tangent_chi2(double tangent_chi2);
+    //! set tangent_chi2
+    void set_tangent_chi2(double tangent_chi2);
 
-      //! set n free families
-      void set_n_free_families(size_t n);
+    //! set n free families
+    void set_n_free_families(size_t n);
 
-      //! set n overlaps
-      void set_n_overlaps(size_t n);
+    //! set n overlaps
+    void set_n_overlaps(size_t n);
 
-      //! set ndof
-      void set_ndof(int32_t n);
+    //! set ndof
+    void set_ndof(int32_t n);
 
-      //! get sequences
-      const std::vector<sequence> & sequences() const;
+    //! get sequences
+    const std::vector<sequence> & sequences() const;
 
-      //!get helix_chi2
-      double helix_chi2() const;
+    //!get helix_chi2
+    double helix_chi2() const;
 
-      //!get tangent_chi2
-      double tangent_chi2() const;
+    //!get tangent_chi2
+    double tangent_chi2() const;
 
-      //!get ndof
-      int32_t ndof() const;
+    //!get ndof
+    int32_t ndof() const;
 
-      //!get n free families
-      size_t n_free_families() const;
+    //!get n free families
+    size_t n_free_families() const;
 
-      //!get n overlaps
-      size_t n_overlaps() const;
+    //!get n overlaps
+    size_t n_overlaps() const;
 
 
-      void calculate_n_overlaps(const std::vector<topology::cell> & cells,
-                                const std::vector<topology::calorimeter_hit> & calos);
+    void calculate_n_overlaps(const std::vector<cell> & cells,
+                              const std::vector<calorimeter_hit> & calos);
 
-      void calculate_n_free_families(const std::vector<topology::cell> &cells,
-                                     const std::vector<topology::calorimeter_hit> & calos);
+    void calculate_n_free_families(const std::vector<cell> &cells,
+                                   const std::vector<calorimeter_hit> & calos);
 
-      void calculate_chi2();
+    void calculate_chi2();
 
-      double helix_Prob() const;
+    double helix_Prob() const;
 
-      double tangent_Prob() const;
+    double tangent_Prob() const;
 
-      bool better_scenario_than( const scenario & s, double limit) const;
+    bool better_scenario_than( const scenario & s, double limit) const;
 
-      size_t n_of_common_vertexes(double limit) const;
+    size_t n_of_common_vertexes(double limit) const;
 
-      size_t n_of_ends_on_wire(void) const;
+    size_t n_of_ends_on_wire(void) const;
 
-    };
-
-  } // namespace topology
+  };
 
 } // namespace CAT
 
-#endif // CAT_TOPOLOGY_SCENARIO_H
+#endif // FALAISE_CAT_SCENARIO_H

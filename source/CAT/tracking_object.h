@@ -1,33 +1,29 @@
 // -*- mode: c++ -*-
 
-#ifndef CAT_TOPOLOGY_TRACKING_OBJECT_H
-#define CAT_TOPOLOGY_TRACKING_OBJECT_H
+#ifndef FALAISE_CAT_TRACKING_OBJECT_H
+#define FALAISE_CAT_TRACKING_OBJECT_H 1
 
 namespace CAT {
 
-  namespace topology {
+  /// \brief A generic tracking object
+  class tracking_object
+  {
+  public:
 
-    /// \brief A generic tracking object
-    class tracking_object
-    {
-    public:
+    void set_probmin(double probmin);
 
-      void set_probmin(double probmin);
+    double probmin() const;
 
-      double probmin() const;
+    double probof(double chi2, int ndof) const;
 
-      double probof(double chi2, int ndof) const;
+    double get_probmin() const;
 
-      double get_probmin() const;
+  private:
 
-    private:
+    double probmin_; ///< the minimum probability
 
-      double probmin_; ///< the minimum probability
-
-    };
-
-  } // namespace topology
+  };
 
 } // namespace CAT
 
-#endif // CAT_TOPOLOGY_TRACKING_OBJECT_H
+#endif // FALAISE_CAT_TRACKING_OBJECT_H

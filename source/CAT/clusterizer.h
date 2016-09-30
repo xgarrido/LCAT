@@ -20,9 +20,7 @@ namespace datatools {
 namespace CAT {
 
   // Forward declaration
-  namespace topology {
-    class tracked_data;
-  }
+  class tracked_data;
 
   /// The clusterizer algorithm
   class clusterizer {
@@ -51,7 +49,7 @@ namespace CAT {
     void reset();
 
     /// Main algorithm
-    void clusterize(topology::tracked_data & tracked_data_);
+    void clusterize(tracked_data & tracked_data_);
 
   protected:
 
@@ -64,12 +62,12 @@ namespace CAT {
   private:
 
     /// Return if cells are good couplet given the neighboring
-    bool _is_good_couplet_(const topology::cell & c1_,
-                           const topology::cell & c2_,
-                           const std::vector<topology::cell> & c1_neighbors_) const;
+    bool _is_good_couplet_(const cell & c1_,
+                           const cell & c2_,
+                           const std::vector<cell> & c1_neighbors_) const;
 
     /// Get level of 'closeness' of cells
-    size_t _near_level_(const topology::cell & c1_, const topology::cell & c2_) const;
+    size_t _near_level_(const cell & c1_, const cell & c2_) const;
 
   private:
 

@@ -1,7 +1,7 @@
 // -*- mode: c++ -*-
 
-#ifndef CAT_TOPOLOGY_CLUSTER_H
-#define CAT_TOPOLOGY_CLUSTER_H
+#ifndef FALAISE_CAT_CLUSTER_H
+#define FALAISE_CAT_CLUSTER_H 1
 
 // Standard library:
 #include <iostream>
@@ -21,87 +21,83 @@
 
 namespace CAT {
 
-  namespace topology {
+  /// \brief A cluster is composed of a list of nodes
+  class cluster : public tracking_object
+  {
+  public:
 
-    /// \brief A cluster is composed of a list of nodes
-    class cluster : public tracking_object
-    {
-    public:
+    // list of nodes
+    std::vector<node> nodes_;
 
-      // list of nodes
-      std::vector<node> nodes_;
+    // status of cluster
+    bool free_;
 
-      // status of cluster
-      bool free_;
+    //!Default constructor
+    cluster();
 
-      //!Default constructor
-      cluster();
+    //!Default destructor
+    virtual ~cluster();
 
-      //!Default destructor
-      virtual ~cluster();
+    //! constructor from std::vector of nodes
+    cluster(const std::vector<node> &nodes, double probmin=1.e-200);
 
-      //! constructor from std::vector of nodes
-      cluster(const std::vector<node> &nodes, double probmin=1.e-200);
+    //! constructor from single node
+    cluster(node &a_node, double probmin=1.e-200);
 
-      //! constructor from single node
-      cluster(node &a_node, double probmin=1.e-200);
+    /*** dump ***/
+    virtual void dump (std::ostream & a_out         = std::clog,
+                       const std::string & a_title  = "",
+                       const std::string & a_indent = "",
+                       bool a_inherit          = false) const ;
+    //! set nodes
+    void set_nodes(const std::vector<node> &nodes);
 
-      /*** dump ***/
-      virtual void dump (std::ostream & a_out         = std::clog,
-                         const std::string & a_title  = "",
-                         const std::string & a_indent = "",
-                         bool a_inherit          = false) const ;
-      //! set nodes
-      void set_nodes(const std::vector<node> &nodes);
+    //! set free level
+    void set_free(bool free);
 
-      //! set free level
-      void set_free(bool free);
+    //! get nodes
+    const std::vector<node> & nodes()const;
 
-      //! get nodes
-      const std::vector<node> & nodes()const;
-
-      //! get free level
-      bool Free()const;
+    //! get free level
+    bool Free()const;
 
 
-    public:
+  public:
 
-      bool has_cell(const cell & c)const;
-
-
-      cluster invert();
-
-      topology::node node_of_cell(const topology::cell & c);
+    bool has_cell(const cell & c)const;
 
 
-      void solve_ambiguities(std::vector< std::vector<topology::broken_line> > * sets_of_bl_alternatives);
+    cluster invert();
 
-      bool start_ambiguity(size_t i);
+    node node_of_cell(const cell & c);
 
-      bool end_ambiguity(size_t i);
 
-      std::vector<topology::broken_line> solve_ambiguities_with_ends(size_t ifirst, size_t ilast);
+    void solve_ambiguities(std::vector< std::vector<broken_line> > * sets_of_bl_alternatives);
 
-      std::vector<topology::broken_line> solve_ambiguities_with_ends__1_node(size_t ifirst, size_t ilast, bool first_ambiguous_is_after_gap, bool first_ambiguous_is_second, bool last_ambiguous_is_begore_gap, bool last_ambiguous_is_last_but_one);
+    bool start_ambiguity(size_t i);
 
-      std::vector<topology::broken_line> solve_ambiguities_with_ends__2_nodes(size_t ifirst, size_t ilast, bool first_ambiguous_is_after_gap, bool first_ambiguous_is_second, bool last_ambiguous_is_begore_gap, bool last_ambiguous_is_last_but_one);
+    bool end_ambiguity(size_t i);
 
-      std::vector<topology::broken_line> solve_ambiguities_with_ends__3_nodes(size_t ifirst, size_t ilast, bool first_ambiguous_is_after_gap, bool first_ambiguous_is_second, bool last_ambiguous_is_begore_gap, bool last_ambiguous_is_last_but_one);
+    std::vector<broken_line> solve_ambiguities_with_ends(size_t ifirst, size_t ilast);
 
-      std::vector<topology::broken_line> solve_ambiguities_with_ends__4_nodes(size_t ifirst, size_t ilast, bool first_ambiguous_is_after_gap, bool first_ambiguous_is_second, bool last_ambiguous_is_begore_gap, bool last_ambiguous_is_last_but_one);
+    std::vector<broken_line> solve_ambiguities_with_ends__1_node(size_t ifirst, size_t ilast, bool first_ambiguous_is_after_gap, bool first_ambiguous_is_second, bool last_ambiguous_is_begore_gap, bool last_ambiguous_is_last_but_one);
 
-      void solve_ambiguities_with_ends__more_than_4_nodes(topology::broken_line ACD[2][2][2], size_t ifirst, size_t ilast, bool first_ambiguous_is_after_gap, bool first_ambiguous_is_second);
+    std::vector<broken_line> solve_ambiguities_with_ends__2_nodes(size_t ifirst, size_t ilast, bool first_ambiguous_is_after_gap, bool first_ambiguous_is_second, bool last_ambiguous_is_begore_gap, bool last_ambiguous_is_last_but_one);
 
-      void solve_ambiguities_with_ends__more_than_4_nodes(topology::broken_line aACD[2][2][2][2], size_t ifirst, size_t ilast);
+    std::vector<broken_line> solve_ambiguities_with_ends__3_nodes(size_t ifirst, size_t ilast, bool first_ambiguous_is_after_gap, bool first_ambiguous_is_second, bool last_ambiguous_is_begore_gap, bool last_ambiguous_is_last_but_one);
 
-      void merge__more_than_4_nodes(topology::broken_line ACD[2][2][2], topology::broken_line aACD[2][2][2][2]);
+    std::vector<broken_line> solve_ambiguities_with_ends__4_nodes(size_t ifirst, size_t ilast, bool first_ambiguous_is_after_gap, bool first_ambiguous_is_second, bool last_ambiguous_is_begore_gap, bool last_ambiguous_is_last_but_one);
 
-      std::vector<topology::broken_line> finish__more_than_4_nodes(topology::broken_line ACD[2][2][2], size_t ipivot, size_t n_residuals);
+    void solve_ambiguities_with_ends__more_than_4_nodes(broken_line ACD[2][2][2], size_t ifirst, size_t ilast, bool first_ambiguous_is_after_gap, bool first_ambiguous_is_second);
 
-    };
+    void solve_ambiguities_with_ends__more_than_4_nodes(broken_line aACD[2][2][2][2], size_t ifirst, size_t ilast);
 
-  } // namespace topology
+    void merge__more_than_4_nodes(broken_line ACD[2][2][2], broken_line aACD[2][2][2][2]);
+
+    std::vector<broken_line> finish__more_than_4_nodes(broken_line ACD[2][2][2], size_t ipivot, size_t n_residuals);
+
+  };
 
 } // namespace CAT
 
-#endif // CAT_TOPOLOGY_CLUSTER_H
+#endif // FALAISE_CAT_CLUSTER_H

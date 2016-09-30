@@ -256,7 +256,7 @@ namespace CAT {
 
   /***********************************************************/
 
-  topology::cell & input_data::add_cell ()
+  cell & input_data::add_cell ()
   {
     if (cells.size () == 0)
       {
@@ -264,13 +264,13 @@ namespace CAT {
         cells.reserve (50);
       }
     {
-      topology::cell tmp;
+      cell tmp;
       cells.push_back (tmp);
     }
     return cells.back ();
   }
 
-  topology::calorimeter_hit & input_data::add_calo_cell ()
+  calorimeter_hit & input_data::add_calo_cell ()
   {
 
     if (calo_cells.size () == 0)
@@ -279,7 +279,7 @@ namespace CAT {
         calo_cells.reserve (50);
       }
     {
-      topology::calorimeter_hit tmp;
+      calorimeter_hit tmp;
       calo_cells.push_back (tmp);
     }
     return calo_cells.back ();
@@ -295,7 +295,7 @@ namespace CAT {
     std::map<int,bool> mids;
     for (int i = 0; i < (int) cells.size (); i++)
       {
-        const topology::cell & c = cells.at(i);
+        const cell & c = cells.at(i);
         int cell_id = c.get_id();
         if (cell_id < 0 || cell_id > 10000)
           {
@@ -319,7 +319,7 @@ namespace CAT {
     ids.assign (cells.size (), false);
     for (int i = 0; i < (int) cells.size (); i++)
       {
-        const topology::cell & c = cells.at(i);
+        const cell & c = cells.at(i);
         int cell_id = c.get_id();
         if ((cell_id < 0) || (cell_id >= (int) cells.size ()))
           {
@@ -356,7 +356,7 @@ namespace CAT {
     std::map<int,bool> mids;
     for (int i = 0; i < (int) calo_cells.size (); i++)
       {
-        const topology::calorimeter_hit & c = calo_cells.at(i);
+        const calorimeter_hit & c = calo_cells.at(i);
         int calo_cell_id = c.id();
         if (calo_cell_id < 0 || calo_cell_id > 10000)
           {
@@ -380,7 +380,7 @@ namespace CAT {
     ids.assign (calo_cells.size (), false);
     for (int i = 0; i < (int) calo_cells.size (); i++)
       {
-        const topology::calorimeter_hit & c = calo_cells.at(i);
+        const calorimeter_hit & c = calo_cells.at(i);
         int calo_cell_id = c.id();
         if ((calo_cell_id < 0) || (calo_cell_id >= (int) calo_cells.size ()))
           {

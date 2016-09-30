@@ -1,6 +1,6 @@
 /* -*- mode: c++ -*- */
-#ifndef __CATAlgorithm__ICIRCLEREGRESSION
-#define __CATAlgorithm__ICIRCLEREGRESSION
+#ifndef FALAISE_CAT_CIRCLEREGRESSION_H
+#define FALAISE_CAT_CIRCLEREGRESSION_H 1
 
 #include <iostream>
 #include <cmath>
@@ -9,9 +9,8 @@
 
 
 namespace CAT{
-  namespace topology{
 
-    class CircleRegression : public tracking_object{
+  class CircleRegression : public tracking_object{
 
       // operate weighted circle regression on points (xi, yi)
       // to find center and radius of best fitting circle
@@ -114,8 +113,6 @@ namespace CAT{
 
 
     };
-
-  }
 
 }
 

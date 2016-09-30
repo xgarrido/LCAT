@@ -250,7 +250,6 @@ namespace snemo {
                                   const base_tracker_clusterizer::calo_hit_collection_type & calo_hits_,
                                   snemo::datamodel::tracker_clustering_data & clustering_ )
     {
-      namespace ct = CAT::topology;
       namespace sdm = snemo::datamodel;
 
       // CAT input data model :
@@ -260,7 +259,7 @@ namespace snemo {
       }
 
       // Reset data interface model
-      _CAT_output_.tracked_data.reset();
+      CAT::tracked_data a_tracked_data;
 
       // Hit accounting :
       std::map<int, sdm::calibrated_data::tracker_hit_handle_type> hits_mapping;
@@ -303,8 +302,8 @@ namespace snemo {
         const int row_id  = row - (_CAT_setup_.num_cells_per_plane / 2);
 
         // X-Y position of the anode wire of the hit cell :
-        ct::experimental_double z; // == X in sngeometry SN module frame
-        ct::experimental_double x; // == Y in sngeometry SN module frame
+        CAT::experimental_double z; // == X in sngeometry SN module frame
+        CAT::experimental_double x; // == Y in sngeometry SN module frame
 
         // Center of the cell set in CAT's own reference frame:
         z.set_value(snemo_gg_hit.get_x());
@@ -313,7 +312,7 @@ namespace snemo {
         x.set_error(0.0);
 
         // Transverse Geiger drift distance :
-        ct::experimental_double y;
+        CAT::experimental_double y;
         // Plasma longitudinal origin along the anode wire :
         y.set_value(snemo_gg_hit.get_z());
         y.set_error(_sigma_z_factor_ * snemo_gg_hit.get_sigma_z());
@@ -326,10 +325,10 @@ namespace snemo {
         const double rdrift_err = snemo_gg_hit.get_sigma_r();
 
         // Build the Geiger hit position :
-        ct::experimental_point gg_hit_position(x,y,z);
+        CAT::experimental_point gg_hit_position(x,y,z);
 
         // Add a new hit cell in the CAT input data model :
-        ct::cell & c = _CAT_output_.tracked_data.add_gg_hit();
+        CAT::cell & c = a_tracked_data.add_gg_hit();
         c.set_id(ihit++);
         c.set_position(gg_hit_position);
         c.set_radius(prompt ? rdrift : 0.25 * gg_locator.get_cell_diameter());
@@ -369,7 +368,7 @@ namespace snemo {
         double width = datatools::invalid_real();
         double height = datatools::invalid_real();
         double thickness = datatools::invalid_real();
-        ct::experimental_vector norm(0., 0., 0., 0., 0., 0.);
+        CAT::experimental_vector norm(0., 0., 0., 0., 0., 0.);
         geomtools::vector_3d block_position;
         // Extract the numbering scheme of the scin block from its geom ID :
         if (_calo_locator_->is_calo_block_in_current_module(a_calo_hit_gid)) {
@@ -380,7 +379,7 @@ namespace snemo {
           column    = _calo_locator_->extract_column(a_calo_hit_gid);
           side      = _calo_locator_->extract_side(a_calo_hit_gid);
           const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
-          norm.set_x(ct::experimental_double((double) side_number, 0.));
+          norm.set_x(CAT::experimental_double((double) side_number, 0.));
         } else if (_xcalo_locator_->is_calo_block_in_current_module(a_calo_hit_gid)) {
           _xcalo_locator_->get_block_position(a_calo_hit_gid, block_position);
           width     = _xcalo_locator_->get_block_width();
@@ -389,7 +388,7 @@ namespace snemo {
           column    = _xcalo_locator_->extract_column(a_calo_hit_gid);
           side      = _xcalo_locator_->extract_side(a_calo_hit_gid);
           const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
-          norm.set_y(ct::experimental_double((double) side_number, 0.));
+          norm.set_y(CAT::experimental_double((double) side_number, 0.));
         } else if (_gveto_locator_->is_calo_block_in_current_module(a_calo_hit_gid)) {
           _gveto_locator_->get_block_position(a_calo_hit_gid, block_position);
           width     = _gveto_locator_->get_block_width();
@@ -398,27 +397,27 @@ namespace snemo {
           column    = _gveto_locator_->extract_column(a_calo_hit_gid);
           side      = _xcalo_locator_->extract_side(a_calo_hit_gid);
           const int side_number = (side == snemo::geometry::utils::SIDE_BACK) ? 1: -1;
-          norm.set_z(ct::experimental_double((double) side_number, 0.));
+          norm.set_z(CAT::experimental_double((double) side_number, 0.));
         }
 
-        ct::experimental_double energy(sncore_calo_hit.get_energy(),
+        CAT::experimental_double energy(sncore_calo_hit.get_energy(),
                                        sncore_calo_hit.get_sigma_energy());
-        ct::experimental_double time(sncore_calo_hit.get_time(),
+        CAT::experimental_double time(sncore_calo_hit.get_time(),
                                      sncore_calo_hit.get_sigma_time());
         // size_t id = sncore_calo_hit.get_hit_id();
-        ct::experimental_point center(block_position.x(),
+        CAT::experimental_point center(block_position.x(),
                                       block_position.y(),
                                       block_position.z(),
                                       0., 0., 0.);
-        ct::experimental_vector sizes(width, height, thickness,
+        CAT::experimental_vector sizes(width, height, thickness,
                                       0., 0., 0.);
-        ct::plane pl(center, sizes, norm);
+        CAT::plane pl(center, sizes, norm);
         pl.set_probmin(_CAT_setup_.probmin);
         pl.set_type("SuperNEMO");
 
         // Build the Calo hit position :
         // Add a new hit calo_cell in the CAT input data model :
-        ct::calorimeter_hit & c = _CAT_output_.tracked_data.add_calo_hit();
+        CAT::calorimeter_hit & c = a_tracked_data.add_calo_hit();
         c.set_pl(pl);
         c.set_e(energy);
         c.set_t(time);
@@ -443,7 +442,7 @@ namespace snemo {
       // _CAT_output_.tracked_data.tree_dump();
 
       // Run the clusterizer algorithm :
-      _CAT_clusterizer_.clusterize(_CAT_output_.tracked_data);
+      _CAT_clusterizer_.clusterize(a_tracked_data);
 
       const bool use_only_clusterizer = false;
       if (use_only_clusterizer) {
@@ -454,7 +453,7 @@ namespace snemo {
         sdm::tracker_clustering_solution & clustering_solution = clustering_.grab_default_solution();
         clustering_solution.grab_auxiliaries().update_string(sdm::tracker_clustering_data::clusterizer_id_key(), "LCAT");
 
-        for (const auto & a_cluster : _CAT_output_.tracked_data.get_clusters()) {
+        for (const auto & a_cluster : a_tracked_data.get_clusters()) {
           {
             // Append a new cluster :
             sdm::tracker_cluster::handle_type tch(new sdm::tracker_cluster);
@@ -472,16 +471,14 @@ namespace snemo {
         }
       } else {
         // Run the sequentiator algorithm :
-        _CAT_sequentiator_.sequentiate(_CAT_output_.tracked_data);
+        _CAT_sequentiator_.sequentiate(a_tracked_data);
 
         // _CAT_output_.tracked_data.dump();
 
         // Analyse the sequentiator output i.e. 'scenarios' made of 'sequences' of geiger cells:
-        const std::vector<CAT::topology::scenario> & tss = _CAT_output_.tracked_data.get_scenarios();
+        const std::vector<CAT::scenario> & tss = a_tracked_data.get_scenarios();
 
-        for (std::vector<CAT::topology::scenario>::const_iterator iscenario = tss.begin();
-             iscenario != tss.end();
-             ++iscenario) {
+        for (const auto & iscenario : tss) {
           DT_LOG_DEBUG(get_logging_priority(), "Number of scenarios = " << tss.size());
 
           sdm::tracker_clustering_solution::handle_type htcs(new sdm::tracker_clustering_solution);
@@ -491,13 +488,13 @@ namespace snemo {
           clustering_solution.grab_auxiliaries().update_string(sdm::tracker_clustering_data::clusterizer_id_key(), cat_id());
 
           // Analyse the sequentiator output :
-          const std::vector<CAT::topology::sequence> & the_sequences = iscenario->sequences();
+          const std::vector<CAT::sequence> & the_sequences = iscenario.sequences();
           DT_LOG_DEBUG(get_logging_priority(), "Number of sequences = " << the_sequences.size());
 
-          for (std::vector<CAT::topology::sequence>::const_iterator isequence = the_sequences.begin();
+          for (std::vector<CAT::sequence>::const_iterator isequence = the_sequences.begin();
                isequence != the_sequences.end();
                ++isequence) {
-            const CAT::topology::sequence & a_sequence = *isequence;
+            const CAT::sequence & a_sequence = *isequence;
             const size_t seqsz = a_sequence.nodes().size();
             if (seqsz > 1) {
               // A CAT cluster with more than one hit/cell(node) :
@@ -512,7 +509,7 @@ namespace snemo {
 
               // Loop on all hits within the sequence(nodes) :
               for (size_t i = 0; i < seqsz; i++) {
-                const CAT::topology::node & a_node = a_sequence.nodes()[i];
+                const CAT::node & a_node = a_sequence.nodes()[i];
                 const int hit_id = a_node.c().get_id();
                 cluster_handle.grab().grab_hits().push_back(hits_mapping[hit_id]);
                 DT_LOG_DEBUG(get_logging_priority(), "Add tracker hit with id #" << hit_id);

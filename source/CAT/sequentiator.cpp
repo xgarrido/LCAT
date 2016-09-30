@@ -107,7 +107,7 @@ namespace CAT {
   }
 
 
-  void sequentiator::sequentiate(topology::tracked_data & tracked_data_)
+  void sequentiator::sequentiate(tracked_data & tracked_data_)
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
     DT_THROW_IF(! is_initialized(), std::logic_error, "Sequentiator is not initialized !");
@@ -116,7 +116,7 @@ namespace CAT {
     clock.start(" sequentiator: sequentiation ","restart");
 
     // set_clusters(tracked_data_.get_clusters());
-    std::vector<topology::cluster> & the_clusters = tracked_data_.grab_clusters();
+    std::vector<cluster> & the_clusters = tracked_data_.grab_clusters();
 
     NFAMILY = -1;
     NCOPY = 0;
@@ -128,11 +128,11 @@ namespace CAT {
 
     tracked_data_.grab_scenarios().clear();
 
-    for (std::vector<topology::cluster>::iterator
+    for (std::vector<cluster>::iterator
            icluster = the_clusters.begin();
          icluster != the_clusters.end(); ++icluster)
       {
-        topology::cluster & a_cluster = *icluster;
+        cluster & a_cluster = *icluster;
 
         local_cluster_ = &(*icluster);
 
@@ -176,11 +176,11 @@ namespace CAT {
   }
 
 
-  void sequentiator::sequentiate_cluster(topology::cluster & cluster_)
+  void sequentiator::sequentiate_cluster(cluster & cluster_)
   {
-    for (std::vector<topology::node>::iterator inode = cluster_.nodes_.begin();
+    for (std::vector<node>::iterator inode = cluster_.nodes_.begin();
          inode != cluster_.nodes_.end(); ++inode) {
-      topology::node & a_node = *inode;
+      node & a_node = *inode;
 
       DT_LOG_DEBUG(get_logging_priority(), "First node: " << inode->c().get_id());
 
@@ -197,7 +197,7 @@ namespace CAT {
 
 
   //*************************************************************
-  void sequentiator::make_new_sequence(topology::node & first_node)
+  void sequentiator::make_new_sequence(node & first_node)
   {
     //*************************************************************
 
@@ -207,7 +207,7 @@ namespace CAT {
 
     //  A node is added to the newsequence. It has the given cell but no other
     //  requirement. The free level is set to true.
-    topology::sequence newsequence(first_node);
+    sequence newsequence(first_node);
     newsequence.set_probmin(probmin);
 
     bool updated = true;
@@ -240,7 +240,7 @@ namespace CAT {
   }
 
 
-  void sequentiator::make_name(topology::sequence & sequence_)
+  void sequentiator::make_name(sequence & sequence_)
   {
     std::ostringstream oss;
     oss << "track_" << NFAMILY << "_" << NCOPY;
@@ -248,7 +248,7 @@ namespace CAT {
     return;
   }
 
-  void sequentiator::make_copy_sequence(topology::node & first_node)
+  void sequentiator::make_copy_sequence(node & first_node)
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
@@ -268,7 +268,7 @@ namespace CAT {
         clock.stop(" sequentiator: make copy sequence: part A: alpha ");
         clock.start(" sequentiator: copy to lfn ","cumulative");
         size_t ilink, ilfn;
-        topology::sequence newcopy = sequences_[isequence].copy_to_last_free_node(&ilfn, &ilink);
+        sequence newcopy = sequences_[isequence].copy_to_last_free_node(&ilfn, &ilink);
         clock.stop(" sequentiator: copy to lfn ");
 
         clock.start(" sequentiator: make copy sequence: part A: beta ","cumulative");
@@ -339,24 +339,24 @@ namespace CAT {
                       {
                         newcopy.nodes_[k].set_free( sequences_[isequence].nodes()[k].free());
 
-                        for (std::vector<topology::cell_couplet>::iterator icc = sequences_[isequence].nodes_[k].cc_.begin();
+                        for (std::vector<cell_couplet>::iterator icc = sequences_[isequence].nodes_[k].cc_.begin();
                              icc != sequences_[isequence].nodes_[k].cc_.end(); ++icc)
                           {
                             newcopy.nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].set_free( icc->free());
                             newcopy.nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].set_begun( icc->begun());
 
-                            for(std::vector<topology::line>::iterator itang = sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.begin(); itang != sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.end(); ++itang)
+                            for(std::vector<line>::iterator itang = sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.begin(); itang != sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.end(); ++itang)
                               newcopy.nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_[itang - sequences_[isequence].nodes_[k].cc_[icc - sequences_[isequence].nodes_[k].cc_.begin()].tangents_.begin()].set_used(itang->used() );
 
                           }
 
-                        for (std::vector<topology::cell_triplet>::iterator iccc = sequences_[isequence].nodes_[k].ccc_.begin();
+                        for (std::vector<cell_triplet>::iterator iccc = sequences_[isequence].nodes_[k].ccc_.begin();
                              iccc != sequences_[isequence].nodes_[k].ccc_.end(); ++iccc)
                           {
                             newcopy.nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].set_free( iccc->free());
                             newcopy.nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].set_begun( iccc->begun());
 
-                            for (std::vector<topology::joint>::iterator ijoint = sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.begin(); ijoint != sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.end(); ++ijoint)
+                            for (std::vector<joint>::iterator ijoint = sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.begin(); ijoint != sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.end(); ++ijoint)
                               newcopy.nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_[ijoint - sequences_[isequence].nodes_[k].ccc_[iccc - sequences_[isequence].nodes_[k].ccc_.begin()].joints_.begin()].set_used(ijoint->used() );
 
                           }
@@ -364,27 +364,27 @@ namespace CAT {
 
                     if (ilfn < 2)
                       {
-                        for (std::vector<topology::cell_couplet>::iterator icc = sequences_[isequence].nodes_[ilfn].cc_.begin();
+                        for (std::vector<cell_couplet>::iterator icc = sequences_[isequence].nodes_[ilfn].cc_.begin();
                              icc != sequences_[isequence].nodes_[ilfn].cc_.end(); ++icc)
                           if ((size_t)(icc - sequences_[isequence].nodes_[ilfn].cc_.begin()) != ilink)
                             {
                               newcopy.nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].set_free( icc->free());
                               newcopy.nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].set_begun( icc->begun());
 
-                              for (std::vector<topology::line>::iterator itang = sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.begin(); itang !=sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.end(); ++itang)
+                              for (std::vector<line>::iterator itang = sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.begin(); itang !=sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.end(); ++itang)
                                 newcopy.nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_[itang - sequences_[isequence].nodes_[ilfn].cc_[icc - sequences_[isequence].nodes_[ilfn].cc_.begin()].tangents_.begin()].set_used(itang->used() );
                             }
                       }
                     else
                       {
-                        for (std::vector<topology::cell_triplet>::iterator iccc = sequences_[isequence].nodes_[ilfn].ccc_.begin();
+                        for (std::vector<cell_triplet>::iterator iccc = sequences_[isequence].nodes_[ilfn].ccc_.begin();
                              iccc != sequences_[isequence].nodes_[ilfn].ccc_.end(); ++iccc)
                           if ((size_t)(iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()) != ilink )
                             {
                               newcopy.nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].set_free( iccc->free());
                               newcopy.nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].set_begun( iccc->begun());
 
-                              for (std::vector<topology::joint>::iterator ijoint = sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.begin(); ijoint !=sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.end(); ++ijoint)
+                              for (std::vector<joint>::iterator ijoint = sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.begin(); ijoint !=sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.end(); ++ijoint)
                                 newcopy.nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_[ijoint - sequences_[isequence].nodes_[ilfn].ccc_[iccc - sequences_[isequence].nodes_[ilfn].ccc_.begin()].joints_.begin()].set_used(ijoint->used() );
                             }
                       }
@@ -447,7 +447,7 @@ namespace CAT {
 
   }
 
-  bool sequentiator::evolve(topology::sequence & sequence)
+  bool sequentiator::evolve(sequence & sequence)
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
 
@@ -489,7 +489,7 @@ namespace CAT {
 
     // check if there is a possible link
     size_t ilink;
-    topology::experimental_point newp;
+    experimental_point newp;
     clock.start(" sequentiator: pick new cell ","cumulative");
     bool there_is_link = sequence.pick_new_cell(&ilink, &newp, *local_cluster_);
     clock.stop(" sequentiator: pick new cell ");
@@ -507,7 +507,7 @@ namespace CAT {
       clock.stop(" sequentiator: evolve ");
 
       if (sequence.nodes().size() == 1){
-        topology::experimental_point ep(sequence.nodes_[0].c().get_position());
+        experimental_point ep(sequence.nodes_[0].c().get_position());
         ep.set_ex(sequence.nodes_[0].c().get_radius().value());
         ep.set_ez(sequence.nodes_[0].c().get_radius().value());
         sequence.nodes_[0].set_ep(ep);
@@ -517,10 +517,10 @@ namespace CAT {
       return false;
     }
 
-    topology::cell newcell = sequence.last_node().links()[ilink];
+    cell newcell = sequence.last_node().links()[ilink];
     clock.start(" sequentiator: evolve: part B: noc ","cumulative");
-    topology::node newnode = local_cluster_->node_of_cell(newcell);
-    //  topology::node newnode = local_cluster_->nodes()[local_cluster_->node_index_of_cell(newcell)];
+    node newnode = local_cluster_->node_of_cell(newcell);
+    //  node newnode = local_cluster_->nodes()[local_cluster_->node_index_of_cell(newcell)];
     clock.stop(" sequentiator: evolve: part B: noc ");
     newnode.set_free(false); // standard initialization
 
@@ -558,7 +558,7 @@ namespace CAT {
     return true;
   }
 
-  bool sequentiator::good_first_node(topology::node & node_)
+  bool sequentiator::good_first_node(node & node_)
   {
     clock.start(" sequentiator: good first node ", "cumulative");
 
@@ -578,7 +578,7 @@ namespace CAT {
     size_t connection_node;
     std::vector<size_t>::iterator fid;
     // check that node has never been added to a sequence
-    for(std::vector<topology::sequence>::const_iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq)
+    for(std::vector<sequence>::const_iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq)
       {
         if( iseq->has_cell(node_.c()) ){
           if( type == "VERTEX" ){
@@ -646,7 +646,7 @@ namespace CAT {
     bool found, added;
     size_t ifam;
     std::vector<size_t> Fam;
-    for (std::vector<topology::sequence>::const_iterator iseq = sequences_.begin();
+    for (std::vector<sequence>::const_iterator iseq = sequences_.begin();
          iseq != sequences_.end(); ++iseq){
 
       const size_t ipart = iseq - sequences_.begin();
@@ -694,11 +694,11 @@ namespace CAT {
 
   }
 
-  bool sequentiator::make_scenarios(topology::tracked_data &td)
+  bool sequentiator::make_scenarios(tracked_data &td)
   {
     clock.start(" sequentiator: make scenarios ", "cumulative");
 
-    for(std::vector<topology::sequence>::iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq){
+    for(std::vector<sequence>::iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq){
       if( late() ){
         return false;
       }
@@ -706,7 +706,7 @@ namespace CAT {
 
       DT_LOG_DEBUG(get_logging_priority(), "Begin scenario with sequence " << iseq->name());
 
-      topology::scenario sc;
+      scenario sc;
       sc.set_probmin(probmin);
       sc.sequences_.push_back(*iseq);
       sc.calculate_n_free_families(td.get_gg_hits(), td.get_calo_hits());
@@ -763,7 +763,7 @@ namespace CAT {
 
     size_t index = 0;
 
-    for(std::vector<topology::scenario>::iterator sc=scenarios_.begin(); sc!=scenarios_.end(); ++sc){
+    for(std::vector<scenario>::iterator sc=scenarios_.begin(); sc!=scenarios_.end(); ++sc){
       DT_LOG_DEBUG(get_logging_priority(), " ...scenario " << sc - scenarios_.begin()
                    << " nff " << sc->n_free_families() << " noverls " << sc->n_overlaps()
                    << " common vertexes " << sc->n_of_common_vertexes(2.*CellDistance)
@@ -782,10 +782,10 @@ namespace CAT {
     return index;
   }
 
-  bool sequentiator::can_add_family(topology::scenario &sc,
+  bool sequentiator::can_add_family(scenario &sc,
                                     size_t* jmin, size_t* nfree,
                                     double* Chi2, size_t* noverlaps,
-                                    int* ndof, topology::tracked_data &td)
+                                    int* ndof, tracked_data &td)
   {
 
     if( late() )
@@ -801,15 +801,15 @@ namespace CAT {
     }
 
     clock.start(" sequentiator: copy scenario ", "cumulative");
-    topology::scenario tmpmin = sc;
+    scenario tmpmin = sc;
     clock.stop(" sequentiator: copy scenario ");
-    topology::scenario tmp = sc;
+    scenario tmp = sc;
 
     std::map<std::string,int> scnames;
-    for(std::vector<topology::sequence>::iterator iseq=sc.sequences_.begin(); iseq!=sc.sequences_.end(); ++iseq)
+    for(std::vector<sequence>::iterator iseq=sc.sequences_.begin(); iseq!=sc.sequences_.end(); ++iseq)
       scnames[iseq->name()]=iseq-sc.sequences_.begin();
 
-    for(std::vector<topology::sequence>::iterator jseq=sequences_.begin(); jseq!=sequences_.end(); ++jseq)
+    for(std::vector<sequence>::iterator jseq=sequences_.begin(); jseq!=sequences_.end(); ++jseq)
       {
 
         if( scnames.count(jseq->name()) ) continue;
@@ -851,17 +851,17 @@ namespace CAT {
 
   }
 
-  topology::plane sequentiator::get_foil_plane()
+  plane sequentiator::get_foil_plane()
   {
 
-    topology::experimental_point center(0., 0., 0., 0., 0., 0.);
+    experimental_point center(0., 0., 0., 0., 0., 0.);
 
-    topology::experimental_vector norm(0.,0.,1.,0.,0.,0.);
+    experimental_vector norm(0.,0.,1.,0.,0.,0.);
 
-    topology::experimental_vector sizes(xsize, ysize, 0.,
+    experimental_vector sizes(xsize, ysize, 0.,
                                         0., 0., 0.);
 
-    topology::plane pl(center, sizes, norm);
+    plane pl(center, sizes, norm);
     pl.set_probmin(probmin);
 
     std::string the_type="Nemo3";
@@ -875,9 +875,9 @@ namespace CAT {
 
   }
 
-  void sequentiator::refine_sequences_near_walls(const std::vector<topology::calorimeter_hit> & calos)
+  void sequentiator::refine_sequences_near_walls(const std::vector<calorimeter_hit> & calos)
   {
-    for( std::vector<topology::sequence>::iterator iseq = sequences_.begin(); iseq!=sequences_.end(); ++iseq){
+    for( std::vector<sequence>::iterator iseq = sequences_.begin(); iseq!=sequences_.end(); ++iseq){
 
       if( iseq->nodes_.size() < 3 ) continue;
       if( gap_number( iseq->second_last_node().c() ) == 0 &&
@@ -899,7 +899,7 @@ namespace CAT {
 
 
       if( iseq->nodes_.size() < 3 ) continue;
-      for(std::vector<topology::calorimeter_hit>::const_iterator ic=calos.begin(); ic != calos.end(); ++ic){
+      for(std::vector<calorimeter_hit>::const_iterator ic=calos.begin(); ic != calos.end(); ++ic){
         if( near(iseq->nodes_[1].c(), *ic) &&
             iseq->phi_kink(1)*180./M_PI > 45 &&
             belongs_to_other_family(iseq->nodes_[0].c(), &(*iseq)) ){
@@ -911,7 +911,7 @@ namespace CAT {
       }
 
       if( iseq->nodes_.size() < 3 ) continue;
-      for(std::vector<topology::calorimeter_hit>::const_iterator ic=calos.begin(); ic != calos.end(); ++ic){
+      for(std::vector<calorimeter_hit>::const_iterator ic=calos.begin(); ic != calos.end(); ++ic){
         if( near(iseq->second_last_node().c(), *ic) &&
             iseq->phi_kink(iseq->nodes_.size()-2)*180./M_PI > 45 &&
             belongs_to_other_family(iseq->last_node().c(), &(*iseq)) ){
@@ -926,9 +926,9 @@ namespace CAT {
   }
 
 
-  bool sequentiator::belongs_to_other_family(topology::cell c, topology::sequence *iseq)
+  bool sequentiator::belongs_to_other_family(cell c, sequence *iseq)
   {
-    for( std::vector<topology::sequence>::iterator jseq = sequences_.begin(); jseq!=sequences_.end(); ++jseq){
+    for( std::vector<sequence>::iterator jseq = sequences_.begin(); jseq!=sequences_.end(); ++jseq){
       if( iseq->same_families(*jseq) ) continue;
       if( !jseq->has_cell(c) ) continue;
       return true;
@@ -936,7 +936,7 @@ namespace CAT {
     return false;
   }
 
-  void sequentiator::interpret_physics(const std::vector<topology::calorimeter_hit> & calos)
+  void sequentiator::interpret_physics(const std::vector<calorimeter_hit> & calos)
   {
     clock.start(" sequentiator: interpret physics ", "cumulative");
 
@@ -953,18 +953,18 @@ namespace CAT {
     double tangent_min_from_begin = mybhep::default_min;
     size_t itangent_min_from_begin = mybhep::default_integer;
 
-    topology::experimental_point helix_extrapolation_from_end, helix_extrapolation_local_from_end;
+    experimental_point helix_extrapolation_from_end, helix_extrapolation_local_from_end;
     bool helix_found_from_end = false;
-    topology::experimental_point helix_extrapolation_from_begin, helix_extrapolation_local_from_begin;
+    experimental_point helix_extrapolation_from_begin, helix_extrapolation_local_from_begin;
     bool helix_found_from_begin = false;
 
-    topology::experimental_point tangent_extrapolation_from_end, tangent_extrapolation_local_from_end;
+    experimental_point tangent_extrapolation_from_end, tangent_extrapolation_local_from_end;
     bool tangent_found_from_end = false;
-    topology::experimental_point tangent_extrapolation_from_begin, tangent_extrapolation_local_from_begin;
+    experimental_point tangent_extrapolation_from_begin, tangent_extrapolation_local_from_begin;
     bool tangent_found_from_begin = false;
 
     double dist_from_end, dist_from_begin;
-    std::vector<topology::sequence>::iterator iseq = sequences_.begin();
+    std::vector<sequence>::iterator iseq = sequences_.begin();
     while( iseq != sequences_.end() )
       {
         DT_LOG_DEBUG(get_logging_priority(), " ... interpreting physics of sequence " << iseq->name());
@@ -1008,7 +1008,7 @@ namespace CAT {
             tangent_found_from_end = false;
             tangent_found_from_begin = false;
 
-            for(std::vector<topology::calorimeter_hit>::const_iterator ic=calos.begin(); ic != calos.end(); ++ic){
+            for(std::vector<calorimeter_hit>::const_iterator ic=calos.begin(); ic != calos.end(); ++ic){
 
               DT_LOG_DEBUG(get_logging_priority(), "Trying to extrapolate to calo hit " << ic - calos.begin()
                            << " id " << ic->id() << " on view " << ic->pl_.view() << " energy " << ic->e().value());
@@ -1243,7 +1243,7 @@ namespace CAT {
     return;
   }
 
-  void sequentiator::add_pair(const topology::sequence & newsequence)
+  void sequentiator::add_pair(const sequence & newsequence)
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
     clock.start(" sequentiator: add pair ", "cumulative");
@@ -1254,7 +1254,7 @@ namespace CAT {
       return;
     }
 
-    topology::cell_couplet cc;
+    cell_couplet cc;
     if( !newsequence.nodes_[0].has_couplet(newsequence.nodes()[1].c(), &cc) ){
       DT_LOG_DEBUG(get_logging_priority(), "Problem: node " << newsequence.nodes_[0].c().get_id() << " has no pair "
                    << newsequence.nodes()[0].c().get_id() << "-" << newsequence.nodes()[1].c().get_id());
@@ -1262,19 +1262,19 @@ namespace CAT {
       return;
     }
 
-    topology::node na = newsequence.nodes()[0];
-    topology::node nb = newsequence.nodes()[1];
+    node na = newsequence.nodes()[0];
+    node nb = newsequence.nodes()[1];
 
-    std::vector<topology::node> nodes;
+    std::vector<node> nodes;
     nodes.push_back(na);
     nodes.push_back(nb);
 
     bool erased = true;
 
     DT_LOG_DEBUG(get_logging_priority(), "n of tangents: " << cc.tangents_.size());
-    topology::sequence pair(nodes);
+    sequence pair(nodes);
     pair.set_probmin(probmin);
-    for(std::vector<topology::line>::iterator itangent=cc.tangents_.begin(); itangent != cc.tangents_.end(); ++itangent){
+    for(std::vector<line>::iterator itangent=cc.tangents_.begin(); itangent != cc.tangents_.end(); ++itangent){
 
       pair.nodes_[0].set_ep(itangent->epa());
       pair.nodes_[0].set_free(false);
@@ -1284,9 +1284,9 @@ namespace CAT {
 
       if( itangent - cc.tangents_.begin() > 0 ){
         NCOPY ++;
-        for(std::vector<topology::cell_couplet>::iterator icc=pair.nodes_[0].cc_.begin(); icc!=pair.nodes_[0].cc_.end(); ++icc)
+        for(std::vector<cell_couplet>::iterator icc=pair.nodes_[0].cc_.begin(); icc!=pair.nodes_[0].cc_.end(); ++icc)
           icc->set_all_used();
-        for(std::vector<topology::cell_triplet>::iterator iccc=pair.nodes_[1].ccc_.begin(); iccc!=pair.nodes_[1].ccc_.end(); ++iccc)
+        for(std::vector<cell_triplet>::iterator iccc=pair.nodes_[1].ccc_.begin(); iccc!=pair.nodes_[1].ccc_.end(); ++iccc)
           iccc->set_all_used();
       }
 
@@ -1318,7 +1318,7 @@ namespace CAT {
 
     bool changed = false;
 
-    std::vector<topology::sequence>::iterator iseq = sequences_.begin();
+    std::vector<sequence>::iterator iseq = sequences_.begin();
 
     while( iseq != sequences_.end() ){
 
@@ -1366,11 +1366,11 @@ namespace CAT {
 
 
       DT_LOG_DEBUG(get_logging_priority(), "Should we erase sequence [" << iseq - sequences_.begin() << "] " << iseq->name() << " because of connection out of range ?");
-      for(std::vector<topology::node>::iterator in=iseq->nodes_.begin(); in!=iseq->nodes_.end();in++){
+      for(std::vector<node>::iterator in=iseq->nodes_.begin(); in!=iseq->nodes_.end();in++){
         if( changed ) continue;
         if( in-iseq->nodes_.begin() +1 >= (int) iseq->nodes_.size()) break;
-        topology::node nA = *in;
-        topology::node nB = iseq->nodes_[in-iseq->nodes_.begin()+1];
+        node nA = *in;
+        node nB = iseq->nodes_[in-iseq->nodes_.begin()+1];
         if( !sequence_is_within_range(nA,nB,*iseq) ){
           DT_LOG_DEBUG(get_logging_priority(), "Erased sequence " << iseq - sequences_.begin() << " not in range");
           sequences_.erase(iseq);
@@ -1382,7 +1382,7 @@ namespace CAT {
       }
       // arrive here if no sequences have been deleted
       // now check (kseq, iseq, lastseq) for bridges
-      std::vector<topology::sequence>::iterator kseq = sequences_.begin();
+      std::vector<sequence>::iterator kseq = sequences_.begin();
       while( kseq != sequences_.end() ){
 
         if( iseq==kseq ){
@@ -1452,7 +1452,7 @@ namespace CAT {
     return changed;
   }
 
-  double sequentiator::distance_from_foil(const topology::experimental_point &ep)
+  double sequentiator::distance_from_foil(const experimental_point &ep)
   {
     if( SuperNemo )
       return std::abs(ep.z().value());
@@ -1463,12 +1463,12 @@ namespace CAT {
   {
     clock.start(" sequentiator: direct out of foil ", "cumulative");
 
-    for(std::vector<topology::sequence>::iterator iseq = sequences_.begin(); iseq != sequences_.end(); ++iseq){
+    for(std::vector<sequence>::iterator iseq = sequences_.begin(); iseq != sequences_.end(); ++iseq){
 
       if( distance_from_foil(iseq->nodes().front().ep()) >
           distance_from_foil(iseq->nodes().back().ep()) ){
         DT_LOG_DEBUG(get_logging_priority(), "Sequence " << iseq - sequences_.begin() << " will be directed out of foil");
-        topology::sequence is = iseq->invert();
+        sequence is = iseq->invert();
         std::swap(*iseq, is);
       }
     }
@@ -1495,14 +1495,14 @@ namespace CAT {
   bool sequentiator::direct_scenarios_out_of_foil(void)
   {
     clock.start(" sequentiator: direct scenarios out of foil ", "cumulative");
-    for(std::vector<topology::scenario>::iterator isc = scenarios_.begin(); isc != scenarios_.end(); ++isc){
+    for(std::vector<scenario>::iterator isc = scenarios_.begin(); isc != scenarios_.end(); ++isc){
 
-      for(std::vector<topology::sequence>::iterator iseq = isc->sequences_.begin(); iseq != isc->sequences_.end(); ++iseq){
+      for(std::vector<sequence>::iterator iseq = isc->sequences_.begin(); iseq != isc->sequences_.end(); ++iseq){
 
         if( distance_from_foil(iseq->nodes().front().ep()) >
             distance_from_foil(iseq->nodes().back().ep()) ){
           DT_LOG_DEBUG(get_logging_priority(), "Sequence " << iseq - sequences_.begin() << " in scenario " << isc - scenarios_.begin() << " will be directed out of foil");
-          topology::sequence is = iseq->invert();
+          sequence is = iseq->invert();
           std::swap(*iseq, is);
         }
       }
@@ -1512,10 +1512,10 @@ namespace CAT {
   }
 
 
-  bool sequentiator::there_is_free_sequence_beginning_with(const topology::cell &c, size_t *index)
+  bool sequentiator::there_is_free_sequence_beginning_with(const cell &c, size_t *index)
   {
     clock.start(" sequentiator: there is free sequence beginning with ", "cumulative");
-    for(std::vector<topology::sequence>::iterator iseq=sequences_.begin(); iseq != sequences_.end(); ++iseq)
+    for(std::vector<sequence>::iterator iseq=sequences_.begin(); iseq != sequences_.end(); ++iseq)
       if( iseq->nodes()[0].c().get_id() == c.get_id() )
         {
           if( iseq->Free() )
@@ -1529,9 +1529,9 @@ namespace CAT {
     return false;
   }
 
-  bool sequentiator::near(const topology::cell &c, const topology::calorimeter_hit &ch)
+  bool sequentiator::near(const cell &c, const calorimeter_hit &ch)
   {
-    topology::plane pl = ch.pl();
+    plane pl = ch.pl();
     double calorimeter_layer = ch.layer();
 
     if( pl.view() == "x" ){
@@ -1546,7 +1546,7 @@ namespace CAT {
     }
     else if( pl.view() == "y" ){
 
-      topology::experimental_vector distance(c.get_position(), pl.face());
+      experimental_vector distance(c.get_position(), pl.face());
       distance = distance.hor();
       double size_z = CellDistance + pl.sizes().z().value();
       double size_x = CellDistance + pl.sizes().x().value();
@@ -1603,7 +1603,7 @@ namespace CAT {
   }
 
 
-  int sequentiator::gap_number(const topology::cell &c)
+  int sequentiator::gap_number(const cell &c)
   {
     // returns the index of the gap on which the hit is facing: 1, 2, 3
     // ... returns -1 if not on a gap
@@ -1628,16 +1628,16 @@ namespace CAT {
     return -1;
   }
 
-  bool sequentiator::sequence_is_within_range(topology::node nodeA,
-                                              topology::node nodeB,
-                                              topology::sequence seq)
+  bool sequentiator::sequence_is_within_range(node nodeA,
+                                              node nodeB,
+                                              sequence seq)
   {
     if( gaps_Z.size() == 0 ) return true;
 
-    topology::experimental_point epA = nodeA.ep();
-    topology::experimental_point epB = nodeB.ep();
-    topology::cell cA = nodeA.c();
-    topology::cell cB = nodeB.c();
+    experimental_point epA = nodeA.ep();
+    experimental_point epB = nodeB.ep();
+    cell cA = nodeA.c();
+    cell cB = nodeB.c();
 
     int gnA = gap_number(cA);
     int gnB = gap_number(cB);
@@ -1646,7 +1646,7 @@ namespace CAT {
 
     double rmin, rmax;
 
-    topology::experimental_point ep_maxr, ep_minr;
+    experimental_point ep_maxr, ep_minr;
 
     // get the index of the gap through which the matching should occurr
     if( blockA == blockB &&
@@ -1743,7 +1743,7 @@ namespace CAT {
     return true;
   }
 
-  bool sequentiator::good_first_to_be_matched(topology::sequence& seq)
+  bool sequentiator::good_first_to_be_matched(sequence& seq)
   {
     if( !seq.fast() ) return false;
 
@@ -1755,7 +1755,7 @@ namespace CAT {
     return true;
   }
 
-  bool sequentiator::match_gaps(const std::vector<topology::calorimeter_hit> & calos)
+  bool sequentiator::match_gaps(const std::vector<calorimeter_hit> & calos)
   {
     //if( gaps_Z.size() <= 1 ) return true;
     if( sequences_.size() < 2 ) return true;
@@ -1765,11 +1765,11 @@ namespace CAT {
     std::vector<bool> matched;
     matched.assign (families_.size(), false);
 
-    std::vector<topology::sequence> newseqs;
+    std::vector<sequence> newseqs;
 
     size_t jmin;
     bool invertA, invertB, first;
-    for(std::vector<topology::sequence>::iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq){
+    for(std::vector<sequence>::iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq){
 
       if( late() )
         return false;
@@ -1789,7 +1789,7 @@ namespace CAT {
       DT_LOG_DEBUG(get_logging_priority(), "Begin matching with sequence " << iseq->name());
 
       first = true;
-      topology::sequence newseq = *iseq;
+      sequence newseq = *iseq;
       int with_kink = 0;
       int cells_to_delete = 0;
       while( can_match(newseq, &jmin, invertA, invertB, with_kink, cells_to_delete, calos) )
@@ -1826,7 +1826,7 @@ namespace CAT {
 
     DT_LOG_DEBUG(get_logging_priority(), "Made matching through gaps");
 
-    for(std::vector<topology::sequence>::iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq){
+    for(std::vector<sequence>::iterator iseq=sequences_.begin(); iseq!=sequences_.end(); ++iseq){
       size_t ifam;
       std::istringstream iss(iseq->family());
       iss >> ifam;
@@ -1841,13 +1841,13 @@ namespace CAT {
     return true;
   }
 
-  bool sequentiator::can_match(topology::sequence &s,
+  bool sequentiator::can_match(sequence &s,
                                size_t* jmin,
                                bool& bestinvertA,
                                bool& bestinvertB,
                                int &with_kink,
                                int &cells_to_delete_best,
-                               const std::vector<topology::calorimeter_hit> & calos)
+                               const std::vector<calorimeter_hit> & calos)
   {
     if( late() )
       return false;
@@ -1867,9 +1867,9 @@ namespace CAT {
     double p;
     double c;
     int n;
-    topology::node nodeA, nodeB;
+    node nodeA, nodeB;
 
-    for(std::vector<topology::sequence>::iterator jseq=sequences_.begin(); jseq!=sequences_.end(); ++jseq)
+    for(std::vector<sequence>::iterator jseq=sequences_.begin(); jseq!=sequences_.end(); ++jseq)
       {
 
         cells_to_delete = 0;
@@ -1887,7 +1887,7 @@ namespace CAT {
         bool ok_match = s.good_match(*jseq, invertA, invertB, NOffLayers);
         bool ok_kink_match=false;
         bool ok_kink_match_chi2 = false;
-        topology::sequence news;
+        sequence news;
         if( ok_match )
           news = s.match(*jseq, invertA, invertB, &ok_match,with_kink,0, Ratio);
 
@@ -1949,7 +1949,7 @@ namespace CAT {
             }
 
             DT_LOG_DEBUG(get_logging_priority(), "Possible match with kink, across GAP" << acrossGAP << ", cells to delete " << cells_to_delete << ", try to extrapolate");
-            for(std::vector<topology::calorimeter_hit>::const_iterator ic=calos.begin(); ic != calos.end(); ++ic){
+            for(std::vector<calorimeter_hit>::const_iterator ic=calos.begin(); ic != calos.end(); ++ic){
               if( near(nodeA.c(), *ic) ||  near(nodeB.c(), *ic) ){
                 ok_kink_match = false;
                 DT_LOG_DEBUG(get_logging_priority(), "  will not match with kink because end cell is near calo " << ic - calos.begin());
@@ -1961,7 +1961,7 @@ namespace CAT {
               DT_LOG_DEBUG(get_logging_priority(), "  will not match with kink because end cell is near foil");
             }
 
-            topology::experimental_point kink_point;
+            experimental_point kink_point;
             ok_kink_match = ok_kink_match && s.intersect_sequence(*jseq, invertA, invertB, acrossGAP, &kink_point, limit_diagonal, &with_kink, cells_to_delete, Ratio);
 
             if( ok_kink_match ){
@@ -2012,7 +2012,7 @@ namespace CAT {
     return ok;
   }
 
-  size_t sequentiator::near_level( const topology::cell & c1, const topology::cell & c2 )
+  size_t sequentiator::near_level( const cell & c1, const cell & c2 )
   {
 
     // returns 0 for far-away cell
@@ -2049,15 +2049,15 @@ namespace CAT {
     return 0;
   }
 
-  void sequentiator::reassign_cells_based_on_helix( topology::sequence * seq )
+  void sequentiator::reassign_cells_based_on_helix( sequence * seq )
   {
 
     if( seq->nodes_.size() < 3 ) return;
 
-    topology::experimental_point helix_pos;
-    topology::experimental_double distance;
+    experimental_point helix_pos;
+    experimental_double distance;
     size_t index;
-    std::vector<topology::node>::iterator inode = seq->nodes_.begin();
+    std::vector<node>::iterator inode = seq->nodes_.begin();
     inode ++;
     while( (size_t)(inode - seq->nodes_.begin()) < seq->nodes_.size()-1 && seq->nodes_.size() >= 3){
 

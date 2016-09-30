@@ -99,16 +99,16 @@ namespace CAT {
     return;
   }
 
-  void clusterizer::clusterize(topology::tracked_data & tracked_data_)
+  void clusterizer::clusterize(tracked_data & tracked_data_)
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
     DT_THROW_IF(! is_initialized(), std::logic_error, "Clusterizer is not initialized !");
 
     DT_LOG_DEBUG(get_logging_priority(), "Order cells");
-    std::vector<topology::cell> & the_cells = tracked_data_.grab_gg_hits();
+    std::vector<cell> & the_cells = tracked_data_.grab_gg_hits();
     if (the_cells.empty()) return;
     std::sort(the_cells.begin(), the_cells.end(),
-              [] (const topology::cell & a_, const topology::cell & b_) -> bool
+              [] (const cell & a_, const cell & b_) -> bool
               {
                 if (a_.get_id() == b_.get_id()) return false;
                 if (a_.get_id() > mybhep::default_integer || b_.get_id() > mybhep::default_integer) {
@@ -133,7 +133,7 @@ namespace CAT {
               });
 
     DT_LOG_DEBUG(get_logging_priority(), "Fill clusters");
-    std::vector<topology::cluster> & the_clusters = tracked_data_.grab_clusters();
+    std::vector<cluster> & the_clusters = tracked_data_.grab_clusters();
     the_clusters.clear();
 
     // List of cells already used
@@ -145,27 +145,27 @@ namespace CAT {
 
       DT_LOG_DEBUG(get_logging_priority(), "Begin new cluster with cell " << icell.get_id());
       // Current cell will form a new cluster, i.e. a new list of nodes
-      topology::cluster cluster_connected_to_c;
-      std::vector<topology::node> nodes_connected_to_c;
+      cluster cluster_connected_to_c;
+      std::vector<node> nodes_connected_to_c;
 
       // Let's get the list of all the cells that can be reached from current
       // cell without jumps
-      std::vector<topology::cell> cells_connected_to_c;
+      std::vector<cell> cells_connected_to_c;
       cells_connected_to_c.push_back(icell);
 
       // Loop on connected cells
       for (size_t i = 0; i < cells_connected_to_c.size(); i++) {
         // Take a connected cell by value since the array size will change and
         // thus the allocation space too : reference will change during the loop!
-        const topology::cell cconn = cells_connected_to_c[i];
+        const cell cconn = cells_connected_to_c[i];
 
         // The connected cell composes a new node
-        topology::node newnode(cconn);
-        std::vector<topology::cell_couplet> cc;
+        node newnode(cconn);
+        std::vector<cell_couplet> cc;
 
         // Get the list of cells near the connected cell
         DT_LOG_DEBUG(get_logging_priority(), "Filling list of cells near cell " << cconn.get_id());
-        std::vector<topology::cell> cells_near_iconn;
+        std::vector<cell> cells_near_iconn;
         cells_near_iconn.reserve(8);
         for (const auto & jcell : the_cells) {
           if (jcell.get_id() == cconn.get_id()) continue;
@@ -184,7 +184,7 @@ namespace CAT {
           if (!_is_good_couplet_(cconn, cnc, cells_near_iconn)) continue;
 
           DT_LOG_DEBUG(get_logging_priority(), "Creating couplet " << cconn.get_id() << " -> " << cnc.get_id());
-          topology::cell_couplet ccnc(cconn, cnc);
+          cell_couplet ccnc(cconn, cnc);
           cc.push_back(ccnc);
           if (! flagged.count(cnc.get_id())) {
             flagged.insert(cnc.get_id());
@@ -207,8 +207,8 @@ namespace CAT {
     return;
   }
 
-  bool clusterizer::_is_good_couplet_(const topology::cell & c1_, const topology::cell & c2_,
-                                      const std::vector<topology::cell> & c1_neighbors_) const
+  bool clusterizer::_is_good_couplet_(const cell & c1_, const cell & c2_,
+                                      const std::vector<cell> & c1_neighbors_) const
   {
     DT_LOG_TRACE(get_logging_priority(), "Entering...");
     // the couplet mainc -> candidatec is good only if there is no other cell
@@ -227,7 +227,7 @@ namespace CAT {
 
       DT_LOG_DEBUG(get_logging_priority(),
                    "... check if near node " << c3.get_id() << " has triplet " << c1_.get_id() << " <-> " << c2_.get_id());
-      topology::cell_triplet ccc(c1_, c3, c2_);
+      cell_triplet ccc(c1_, c3, c2_);
       ccc.calculate_joints(_ratio_, _tangent_phi_);
       if (ccc.joints().size() > 0) {
         DT_LOG_DEBUG(get_logging_priority(),
@@ -239,7 +239,7 @@ namespace CAT {
     return true;
   }
 
-  size_t clusterizer::_near_level_(const topology::cell & c1_, const topology::cell & c2_) const
+  size_t clusterizer::_near_level_(const cell & c1_, const cell & c2_) const
   {
     // returns 0 for far-away cell
     // 1 for diagonal cells

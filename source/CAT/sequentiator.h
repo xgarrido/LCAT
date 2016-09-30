@@ -57,36 +57,36 @@ namespace CAT {
     /// Reset the sequentiator
     void reset();
 
-    void sequentiate(topology::tracked_data & tracked_data);
-    void sequentiate_cluster(topology::cluster & cluster);
-    void make_new_sequence(topology::node & first_node);
-    void make_copy_sequence(topology::node & first_node);
-    bool evolve(topology::sequence & sequence);
-    bool good_first_node(topology::node & node_);
-    bool good_first_to_be_matched(topology::sequence& seq);
-    bool match_gaps(const std::vector<topology::calorimeter_hit> & calos);
+    void sequentiate(tracked_data & tracked_data);
+    void sequentiate_cluster(cluster & cluster);
+    void make_new_sequence(node & first_node);
+    void make_copy_sequence(node & first_node);
+    bool evolve(sequence & sequence);
+    bool good_first_node(node & node_);
+    bool good_first_to_be_matched(sequence& seq);
+    bool match_gaps(const std::vector<calorimeter_hit> & calos);
 
     //! get clusters
-    const std::vector<topology::cluster> & get_clusters() const
+    const std::vector<cluster> & get_clusters() const
     {
       return clusters_;
     }
 
     //! set clusters
-    void set_clusters(std::vector<topology::cluster> clusters)
+    void set_clusters(std::vector<cluster> clusters)
     {
       clusters_.clear();
       clusters_ = clusters;
     }
 
     //! get sequences
-    const std::vector<topology::sequence>& get_sequences() const
+    const std::vector<sequence>& get_sequences() const
     {
       return sequences_;
     }
 
     //! set sequences
-    void set_sequences(std::vector<topology::sequence> sequences)
+    void set_sequences(std::vector<sequence> sequences)
     {
       sequences_.clear();
       sequences_ = sequences;
@@ -405,27 +405,27 @@ namespace CAT {
 
   private:
 
-    bool make_scenarios(topology::tracked_data &td);
-    void interpret_physics(const std::vector<topology::calorimeter_hit> & calos);
-    void refine_sequences_near_walls(const std::vector<topology::calorimeter_hit> & calos);
-    bool belongs_to_other_family(topology::cell c, topology::sequence *iseq);
-    topology::plane get_foil_plane();
-    void add_pair(const topology::sequence & sequence);
+    bool make_scenarios(tracked_data &td);
+    void interpret_physics(const std::vector<calorimeter_hit> & calos);
+    void refine_sequences_near_walls(const std::vector<calorimeter_hit> & calos);
+    bool belongs_to_other_family(cell c, sequence *iseq);
+    plane get_foil_plane();
+    void add_pair(const sequence & sequence);
     bool clean_up_sequences();
-    bool there_is_free_sequence_beginning_with(const topology::cell &c, size_t *index);
-    int gap_number(const topology::cell &c);
-    void make_name(topology::sequence & seq);
-    bool near(const topology::cell &c, const topology::calorimeter_hit &ch);
-    double distance_from_foil(const topology::experimental_point &ep);
+    bool there_is_free_sequence_beginning_with(const cell &c, size_t *index);
+    int gap_number(const cell &c);
+    void make_name(sequence & seq);
+    bool near(const cell &c, const calorimeter_hit &ch);
+    double distance_from_foil(const experimental_point &ep);
     bool direct_out_of_foil(void);
     bool direct_scenarios_out_of_foil(void);
     void make_families();
-    bool can_add_family(topology::scenario &sc, size_t* jmin, size_t* nfree, double* Chi2, size_t* noverlaps, int32_t* ndof, topology::tracked_data &td);
+    bool can_add_family(scenario &sc, size_t* jmin, size_t* nfree, double* Chi2, size_t* noverlaps, int32_t* ndof, tracked_data &td);
     size_t pick_best_scenario();
-    bool can_match(topology::sequence &s, size_t* jmin, bool& bestinvertA, bool& bestinvertB, int& with_kink, int &cells_to_delete, const std::vector<topology::calorimeter_hit> & calos);
-    bool sequence_is_within_range(topology::node nodeA, topology::node nodeB, topology::sequence seq);
-    size_t near_level( const topology::cell & c1, const topology::cell & c2 );
-    void reassign_cells_based_on_helix( topology::sequence * seq );
+    bool can_match(sequence &s, size_t* jmin, bool& bestinvertA, bool& bestinvertB, int& with_kink, int &cells_to_delete, const std::vector<calorimeter_hit> & calos);
+    bool sequence_is_within_range(node nodeA, node nodeB, sequence seq);
+    size_t near_level( const cell & c1, const cell & c2 );
+    void reassign_cells_based_on_helix( sequence * seq );
 
   private:
 
@@ -435,17 +435,17 @@ namespace CAT {
 
     int NFAMILY, NCOPY;
 
-    topology::cluster * local_cluster_;
+    cluster * local_cluster_;
 
-    std::vector<topology::cluster> clusters_;
-    std::vector<topology::sequence> sequences_;
+    std::vector<cluster> clusters_;
+    std::vector<sequence> sequences_;
 
     // tables from switching from true to reco sequences
     std::vector<size_t> reco_sequence_of_true_;
     std::vector<size_t> true_sequence_of_reco_;
     std::vector<size_t> n_common_hits_for_reco_track_;
     std::vector<std::vector<size_t> > families_;
-    std::vector<topology::scenario> scenarios_;
+    std::vector<scenario> scenarios_;
 
 
   };

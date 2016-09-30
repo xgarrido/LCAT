@@ -107,16 +107,16 @@ namespace CAT {
   struct input_data
   {
   public:
-    topology::cell & add_cell ();
-    topology::calorimeter_hit & add_calo_cell ();
+    cell & add_cell ();
+    calorimeter_hit & add_calo_cell ();
     input_data ();
     bool check () const;
     bool gg_check () const;
     bool calo_check () const;
 
   public:
-    std::vector<topology::cell> cells;
-    std::vector<topology::calorimeter_hit> calo_cells;
+    std::vector<cell> cells;
+    std::vector<calorimeter_hit> calo_cells;
   };
 
   /// Output data model
@@ -125,7 +125,7 @@ namespace CAT {
   public:
     output_data ();
   public:
-    topology::tracked_data tracked_data;
+    tracked_data tracked_data_;
   };
 
 }
