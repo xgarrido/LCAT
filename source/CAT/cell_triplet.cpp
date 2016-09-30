@@ -138,14 +138,14 @@ namespace CAT{
   //! get first cell couplet
   cell_couplet cell_triplet::cca()
   {
-    cell_couplet cc1(cb_, ca_, probmin());
+    cell_couplet cc1(cb_, ca_);
     return cc1;
   }
 
   //! get second cell couplet
   cell_couplet cell_triplet::ccb()
   {
-    cell_couplet cc2(cb_, cc_, probmin());
+    cell_couplet cc2(cb_, cc_);
     return cc2;
   }
 
@@ -156,7 +156,7 @@ namespace CAT{
   }
 
   //! get first cell
-  const cell& cell_triplet::ca()const
+  const cell& cell_triplet::ca() const
   {
     return ca_;
   }

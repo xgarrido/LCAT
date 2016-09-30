@@ -9,7 +9,6 @@ namespace CAT{
 
   cell_couplet::cell_couplet()
   {
-    appname_= "cell_couplet: ";
     ca_ = cell();
     cb_ = cell();
     tangents_.clear();
@@ -26,7 +25,6 @@ namespace CAT{
   }
 
   cell_couplet::cell_couplet(const cell &ca,const cell &cb,const std::vector<line> &tangents){
-    appname_= "cell_couplet: ";
     ca_ = ca;
     cb_ = cb;
     for(std::vector<line>::const_iterator itang=tangents.begin(); itang!=tangents.end(); ++itang)
@@ -39,9 +37,7 @@ namespace CAT{
     begun_ = false;
   }
 
-  cell_couplet::cell_couplet(const cell &ca, const cell &cb, double probmin){
-    set_probmin(probmin);
-    appname_= "cell_couplet: ";
+  cell_couplet::cell_couplet(const cell &ca, const cell &cb){
     ca_ = ca;
     cb_ = cb;
     forward_axis_calculated_ = false;
@@ -92,7 +88,6 @@ namespace CAT{
         a_out << indent << a_title << std::endl;
       }
 
-    a_out << indent << appname_ << " ------------------- " << std::endl;
     a_out << indent  << " free: " << free() << " begun: " << begun() << std::endl;
     a_out << indent  << " first cell " << std::endl;
     this->ca().tree_dump(a_out,"",indent + "   ");
@@ -237,7 +232,7 @@ namespace CAT{
       set_first_error_in_build_from_cell(sina.value(), sign_parallel_crossed[0], sign_up_down[i], &epa);
       set_second_error_in_build_from_cell(sina.value(), sign_parallel_crossed[0], sign_up_down[i], &epb);
 
-      line l(epa, epb, probmin());
+      line l(epa, epb);
 
       tangents_.push_back( l );
     }
@@ -260,7 +255,7 @@ namespace CAT{
         epa = (average + transverse_axis()*sign_up_down[i]*small_offset).point_from_vector();
         epb = (average - transverse_axis()*sign_up_down[i]*small_offset).point_from_vector();
 
-        line l(epa, epb, probmin());
+        line l(epa, epb);
 
         tangents_.push_back( l );
       }
@@ -280,7 +275,7 @@ namespace CAT{
         set_first_error_in_build_from_cell(sina.value(), sign_parallel_crossed[1], sign_up_down[i], &epa);
         set_second_error_in_build_from_cell(sina.value(), sign_parallel_crossed[1], sign_up_down[i], &epb);
 
-        line l(epa, epb, probmin());
+        line l(epa, epb);
 
         tangents_.push_back( l );
       }
@@ -311,7 +306,7 @@ namespace CAT{
       sin = experimental_sin(experimental_acos(cos))*sign_up_down[i];
       set_first_error_in_build_from_cell(sin.value(), 1, sign_up_down[i], &epa);
 
-      line l(epa, ep, probmin());
+      line l(epa, ep);
 
       tangents_.push_back( l );
     }
@@ -341,7 +336,7 @@ namespace CAT{
       sin = experimental_sin(experimental_acos(cos))*sign_up_down[i];
       set_second_error_in_build_from_cell(sin.value(), 1, sign_up_down[i], &epb);
 
-      line l(ep, epb, probmin());
+      line l(ep, epb);
 
       tangents_.push_back( l );
     }
@@ -353,7 +348,7 @@ namespace CAT{
 
   void cell_couplet::obtain_tangents_between_point_and_point(experimental_point &epa, experimental_point &epb){
 
-    line l(epa, epb, probmin());
+    line l(epa, epb);
 
     tangents_.push_back( l );
 
