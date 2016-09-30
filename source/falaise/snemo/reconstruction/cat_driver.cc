@@ -95,11 +95,6 @@ namespace snemo {
                     std::logic_error, "Invalid logging priority label '" << _CAT_setup_.level << "' !");
       }
 
-      // Process calorimeter hits
-      if (setup_.has_key("CAT.process_calo_hits")) {
-        _process_calo_hits_ = setup_.fetch_boolean("CAT.process_calo_hits");
-      }
-
       // Maximum processing time
       if (setup_.has_key("CAT.max_time")) {
         _CAT_setup_.MaxTime = setup_.fetch_real("CAT.max_time");
@@ -222,7 +217,6 @@ namespace snemo {
       _CAT_setup_.reset();
       _sigma_z_factor_ = 1.0;
       datatools::invalidate(_magfield_);
-      _process_calo_hits_ = true;
       _calo_locator_  = 0;
       _xcalo_locator_ = 0;
       _gveto_locator_ = 0;
@@ -252,19 +246,17 @@ namespace snemo {
     {
       namespace sdm = snemo::datamodel;
 
-      // CAT input data model :
-      _CAT_input_.cells.clear();
-      if (_CAT_input_.cells.capacity() < gg_hits_.size()){
-        _CAT_input_.cells.reserve(gg_hits_.size());
-      }
-
-      // Reset data interface model
+      // Declare tracked data
       CAT::tracked_data a_tracked_data;
+
+      // Reserve enough space for faster filling
+      a_tracked_data.grab_gg_hits().reserve(gg_hits_.size());
+      a_tracked_data.grab_calo_hits().reserve(calo_hits_.size());
 
       // Hit accounting :
       std::map<int, sdm::calibrated_data::tracker_hit_handle_type> hits_mapping;
-
       size_t ihit = 0;
+
       // GG hit loop :
       for (const auto & gg_handle : gg_hits_) {
         // Skip NULL handle :
@@ -477,9 +469,8 @@ namespace snemo {
 
         // Analyse the sequentiator output i.e. 'scenarios' made of 'sequences' of geiger cells:
         const std::vector<CAT::scenario> & tss = a_tracked_data.get_scenarios();
-
+        DT_LOG_DEBUG(get_logging_priority(), "Number of scenarios = " << tss.size());
         for (const auto & iscenario : tss) {
-          DT_LOG_DEBUG(get_logging_priority(), "Number of scenarios = " << tss.size());
 
           sdm::tracker_clustering_solution::handle_type htcs(new sdm::tracker_clustering_solution);
           clustering_.add_solution(htcs, true);
@@ -491,11 +482,8 @@ namespace snemo {
           const std::vector<CAT::sequence> & the_sequences = iscenario.sequences();
           DT_LOG_DEBUG(get_logging_priority(), "Number of sequences = " << the_sequences.size());
 
-          for (std::vector<CAT::sequence>::const_iterator isequence = the_sequences.begin();
-               isequence != the_sequences.end();
-               ++isequence) {
-            const CAT::sequence & a_sequence = *isequence;
-            const size_t seqsz = a_sequence.nodes().size();
+          for (const auto & isequence : the_sequences) {
+            const size_t seqsz = isequence.nodes().size();
             if (seqsz > 1) {
               // A CAT cluster with more than one hit/cell(node) :
               {
@@ -509,7 +497,7 @@ namespace snemo {
 
               // Loop on all hits within the sequence(nodes) :
               for (size_t i = 0; i < seqsz; i++) {
-                const CAT::node & a_node = a_sequence.nodes()[i];
+                const CAT::node & a_node = isequence.nodes()[i];
                 const int hit_id = a_node.c().get_id();
                 cluster_handle.grab().grab_hits().push_back(hits_mapping[hit_id]);
                 DT_LOG_DEBUG(get_logging_priority(), "Add tracker hit with id #" << hit_id);
