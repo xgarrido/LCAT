@@ -17,7 +17,7 @@ namespace CAT {
   /// \brief Operate weighted linear regression with formula:
   ///  y = y0 + tangent x
   /// to find coefficients y0 and tangent
-  class LinearRegression : public tracking_object
+  class LinearRegression
   {
 
   private:
@@ -33,21 +33,18 @@ namespace CAT {
     virtual ~LinearRegression(){};
 
     //!Default constructor
-    LinearRegression(const double probmin=1.e-200)
+    LinearRegression()
     {
       y0_ = experimental_double(small_neg, small_neg);
       tangent_ = experimental_double(small_neg, small_neg);
       xi_.clear();
       yi_.clear();
-      set_probmin(probmin);
     }
 
     //! constructor
     LinearRegression(const std::vector<experimental_double> &xi,
-                     const std::vector<experimental_double> &yi,
-                     const double probmin=1.e-200)
+                     const std::vector<experimental_double> &yi)
     {
-      set_probmin(probmin);
       xi_ = xi;
       yi_ = yi;
     }

@@ -218,7 +218,7 @@ namespace CAT{
       xc.set(XC, 0.);
       yc.set(YC, 0.);
       r.set(rsum , 0. );
-      c_ = circle(experimental_point(xc, experimental_double(0.,0.), yc), r, probmin());
+      c_ = circle(experimental_point(xc, experimental_double(0.,0.), yc), r);
 
       double mean_error_x = 0.;
       double mean_error_y = 0.;
@@ -242,7 +242,7 @@ namespace CAT{
       // }
     }
 
-    c_ = circle(experimental_point(xc, experimental_double(0.,0.), yc), r, probmin());
+    c_ = circle(experimental_point(xc, experimental_double(0.,0.), yc), r);
 
     return points_in_good_order();
 

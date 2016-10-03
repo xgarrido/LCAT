@@ -1847,7 +1847,7 @@ namespace CAT {
         zs.push_back(inode->ep().z());
       }
 
-      CircleRegression cl(xs, zs, probmin());
+      CircleRegression cl(xs, zs);
       // if a clustering is given from nemor or sultan, accept it as good although it does not look like a circle
       // otherwise the cluster will not be made into a track
       bool good_circle_fit = cl.fit();
@@ -1889,7 +1889,7 @@ namespace CAT {
 
 
 
-      LinearRegression l(phis, ys, probmin());
+      LinearRegression l(phis, ys);
 
       // if root does not work or is not used
       // fit best helix with through all points (vertical view)

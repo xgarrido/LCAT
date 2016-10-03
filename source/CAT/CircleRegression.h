@@ -12,11 +12,10 @@ namespace CAT {
 
   // Operate weighted circle regression on points (xi, yi) to find center and
   // radius of best fitting circle
-  class CircleRegression : public tracking_object{
+  class CircleRegression
+  {
 
     private:
-
-      std::string appname_;
 
       circle c_;
 
@@ -26,23 +25,19 @@ namespace CAT {
     public:
 
       //!Default constructor
-      CircleRegression(double probmin=1.e-200)
+      CircleRegression()
       {
-        appname_= "CircleRegression: ";
         c_ = circle();
         xi_.clear();
         yi_.clear();
-        set_probmin(probmin);
       }
 
 
       //!Default destructor
-      virtual ~CircleRegression(){};
+      virtual ~CircleRegression(){}
 
       //! constructor
-      CircleRegression(std::vector<experimental_double> &xi, std::vector<experimental_double> &yi, double probmin=1.e-200){
-        set_probmin(probmin);
-        appname_= "CircleRegression: ";
+      CircleRegression(std::vector<experimental_double> &xi, std::vector<experimental_double> &yi){
         xi_ = xi;
         yi_ = yi;
       }
@@ -62,7 +57,6 @@ namespace CAT {
               a_out << indent << a_title << std::endl;
             }
 
-          a_out << indent << appname_ << " -------------- " << std::endl;
           a_out << indent << " points: " << std::endl;
           experimental_double phi(0.,0.);
           double phi_ref = 0.;
