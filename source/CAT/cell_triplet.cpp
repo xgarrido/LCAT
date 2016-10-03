@@ -372,7 +372,7 @@ namespace CAT{
   {
     std::vector<joint> _joints;
 
-    // if( print_level() > mybhep::VERBOSE ){
+    // if( print_level() > VERBOSE ){
     //   std::clog << " refining " << joints.size() << " joints " << std::endl;
     // }
     experimental_double delta_phi;
@@ -385,7 +385,7 @@ namespace CAT{
         if( ca_.same_quadrant(ijoint->epa(), jjoint->epa() ) &&
             cc_.same_quadrant(ijoint->epc(), jjoint->epc() ) &&
             ijoint->p() < jjoint->p() ){
-          // if( print_level() > mybhep::VERBOSE ){
+          // if( print_level() > VERBOSE ){
           //   std::clog << " ... removing joint " << ijoint - joints.begin()  << " with prob " << ijoint->p() << " because joint " << jjoint - joints.begin()  <<  " with prob " << jjoint->p() << " has the same initial and final quadrant " << std::endl;
           // }
           found = true;
@@ -415,7 +415,7 @@ namespace CAT{
       while( ijoint != _joints.end() ){
         if( (size_t)(ijoint - _joints.begin() + 1) > _joints.size() ) break;
         if( _joints[0].p() / ijoint->p() > ratio_ ){
-          // if( print_level() > mybhep::VERBOSE )
+          // if( print_level() > VERBOSE )
           //   std::clog << " remove joint with p " << ijoint->p() << " in favor of 1st joint with p " << _joints[0].p() << std::endl;
           _joints.erase(ijoint);
           ijoint = _joints.begin() + (ijoint - _joints.begin());
@@ -425,7 +425,7 @@ namespace CAT{
       }
     }
 
-    // if( print_level() > mybhep::VERBOSE ){
+    // if( print_level() > VERBOSE ){
     //   std::clog << " after refining there are " << _joints.size() << " joints " << std::endl;
     //   for(std::vector<joint>::const_iterator ij=_joints.begin(); ij!=_joints.end(); ++ij){
     //     std::clog << " joint " << ij - _joints.begin() << " : "; dump_joint(*ij);

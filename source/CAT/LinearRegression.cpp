@@ -62,7 +62,7 @@ namespace CAT {
   bool LinearRegression::fit(void)
   {
     if( xi_.size() != yi_.size() ){
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << "CAT::LinearRegression::fit: problem: in least square regression, sizes x " << xi_.size() << " y " << yi_.size() << std::endl;
       // }
       return false;
@@ -89,7 +89,7 @@ namespace CAT {
     double delta = Sw*Swxx - Swx*Swx;
 
     if( delta == 0.){
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << "CAT::LinearRegression::fit: problem: in least square regression, delta " << delta << " Sw " << Sw << " Swx " << Swx << " Swxx " << Swxx << std::endl;
       // }
       return false;
@@ -103,7 +103,7 @@ namespace CAT {
       erra = std::sqrt(Swxx/delta);
     }
     else{
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << "CAT::LinearRegression::fit: problem: linear regression sy02 " << Swxx/delta << " Swxx " << Swxx << " delta " << delta << std::endl;
       // }
       return false;
@@ -113,7 +113,7 @@ namespace CAT {
       errb = std::sqrt(Sw/delta);
     }
     else{
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << "CAT::LinearRegression::fit: problem: linear regression stangent2 " << Sw/delta << " Sw " << Sw << " delta " << delta << std::endl;
       // }
       return false;

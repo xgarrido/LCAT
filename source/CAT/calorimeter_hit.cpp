@@ -9,12 +9,12 @@ namespace CAT {
   calorimeter_hit::calorimeter_hit(double probmin)
   {
     appname_= "calorimeter_hit: ";
-    e_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    t_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
+    e_ = experimental_double(small_neg, small_neg);
+    t_ = experimental_double(small_neg, small_neg);
     set_probmin(probmin);
-    id_ = mybhep::default_integer;
-    user_id_ = mybhep::default_integer;
-    layer_ = mybhep::small_neg;
+    id_ = default_integer;
+    user_id_ = default_integer;
+    layer_ = small_neg;
     return;
   }
 

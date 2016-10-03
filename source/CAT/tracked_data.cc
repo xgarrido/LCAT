@@ -1,6 +1,9 @@
 // Ourselves
 #include <CAT/tracked_data.h>
 
+// Standard library
+#include <sstream>
+
 // Third party
 // - Bayeux/datatools:
 #include <bayeux/datatools/i_tree_dump.h>

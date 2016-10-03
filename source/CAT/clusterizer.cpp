@@ -111,7 +111,7 @@ namespace CAT {
               [] (const cell & a_, const cell & b_) -> bool
               {
                 if (a_.get_id() == b_.get_id()) return false;
-                if (a_.get_id() > mybhep::default_integer || b_.get_id() > mybhep::default_integer) {
+                if (a_.get_id() > default_integer || b_.get_id() > default_integer) {
                   return false;
                 }
                 // side of foil

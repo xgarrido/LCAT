@@ -18,10 +18,10 @@ namespace CAT {
 
   plane::plane(double probmin)
   {
-    sizes_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                 mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
-    norm_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    sizes_ = experimental_vector(small_neg,small_neg,small_neg,
+                                 small_neg, small_neg, small_neg);
+    norm_ = experimental_vector(small_neg,small_neg,small_neg,
+                                small_neg, small_neg, small_neg);
     set_probmin(probmin);
     type_="undefined";
     return;
@@ -187,7 +187,7 @@ namespace CAT {
       else if( view() == "top" || view() == "bottom" )
         the_size = sizes().y();
       else{
-        // if( print_level() >= mybhep::NORMAL ){
+        // if( print_level() >= NORMAL ){
         //   std::clog << " problem: unknown calo view " << view() << std::endl;
         // }
         the_size = sizes().x();
@@ -248,7 +248,7 @@ namespace CAT {
       experimental_double dist_transv = pv.hor().length(); // transverse distance
       experimental_double dist_vert = pv.y(); // vertical distance
 
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   std::clog << " check intersection plane/point: face (" << face().x().value() << ", " << face().y().value() << ", " << face().z().value() << ") point ( "
       //             << ep.x().value() << ", " << ep.y().value() << ", " << ep.z().value() << ") dist_norm " << dist_norm.value() << " +- " << dist_norm.error()
       //             << " dist_transv " << dist_transv.value() << " +- " << dist_transv.error() << " dist_vert " << dist_vert.value() << " +- " << dist_vert.error()

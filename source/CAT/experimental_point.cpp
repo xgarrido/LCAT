@@ -166,9 +166,9 @@ namespace CAT {
     //  dr/dz = z/r
 
     double rr = std::hypot(x_.value(), z_.value());
-    if( std::isnan(rr) ) rr = mybhep::small_neg;
+    if( std::isnan(rr) ) rr = small_neg;
     double err = std::hypot(x_.value()*x_.error(), z_.value()*z_.error())/rr;
-    if( std::isnan(err) ) err = mybhep::small_neg;
+    if( std::isnan(err) ) err = small_neg;
 
     radius_.set_value(rr);
     radius_.set_error(err);

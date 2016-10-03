@@ -8,12 +8,11 @@
 #include <CAT/circle_base.h>
 
 
-namespace CAT{
+namespace CAT {
 
+  // Operate weighted circle regression on points (xi, yi) to find center and
+  // radius of best fitting circle
   class CircleRegression : public tracking_object{
-
-      // operate weighted circle regression on points (xi, yi)
-      // to find center and radius of best fitting circle
 
     private:
 

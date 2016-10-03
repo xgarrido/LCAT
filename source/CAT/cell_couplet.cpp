@@ -12,10 +12,10 @@ namespace CAT{
     ca_ = cell();
     cb_ = cell();
     tangents_.clear();
-    forward_axis_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                        mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
-    transverse_axis_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                           mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    forward_axis_ = experimental_vector(small_neg,small_neg,small_neg,
+                                        small_neg, small_neg, small_neg);
+    transverse_axis_ = experimental_vector(small_neg,small_neg,small_neg,
+                                           small_neg, small_neg, small_neg);
     forward_axis_calculated_ = false;
     transverse_axis_calculated_ = false;
     distance_ = experimental_double();

@@ -17,10 +17,10 @@ namespace CAT {
     //ep_ = experimental_point();
     //r0_= experimental_double();
     //r_= experimental_double();
-    _id_ = mybhep::default_integer;
-    _side_ = mybhep::default_integer;
-    _layer_ = mybhep::default_integer;
-    _row_ = mybhep::default_integer;
+    _id_ = default_integer;
+    _side_ = default_integer;
+    _layer_ = default_integer;
+    _row_ = default_integer;
     _prompt_ = true;
     _free_ = false;
     _begun_ = false;
@@ -231,7 +231,7 @@ namespace CAT {
     double rephi1 = phi1.value();
     double rephi2 = phi2.value();
 
-    mybhep::fix_angles(rephi1, rephi2);
+    fix_angles(rephi1, rephi2);
 
     phi1.set_value(rephi1);
     phi2.set_value(rephi2);
@@ -243,7 +243,7 @@ namespace CAT {
 
     const experimental_double ave_phi = weighted_average(phis);
 
-    // if( print_level() >= mybhep::VVERBOSE ){
+    // if( print_level() >= VVERBOSE ){
     //   std::clog << "CAT::cell::angular_average: averaging phi1: "; (phi1*180./M_PI).dump();
     //   std::clog << " and phi2: "; (phi2*180./M_PI).dump();
     //   std::clog << " to phi_ave: "; (ave_phi*180./M_PI).dump();
@@ -291,7 +291,7 @@ namespace CAT {
 
     double re_initial_phi1 = initial_phi1.value();
     double re_initial_phi2 = initial_phi2.value();
-    mybhep::fix_angles(re_initial_phi1, re_initial_phi2);
+    fix_angles(re_initial_phi1, re_initial_phi2);
 
     if (std::abs(re_initial_phi1 - re_initial_phi2) > M_PI/2.) return false;
     return true;
@@ -304,7 +304,7 @@ namespace CAT {
 
     const double fraction_limit = 0.9; /// fraction of radius after which cells intersect
     if( rsum.value() > dist*fraction_limit ){
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   std::clog << "CAT::cell::intersect: cells " << id() << " and " << c.id() << " intersect: dist " << dist << " radii " << r().value() << " and " << c.r().value() << " rsum " << rsum.value() << std::endl;
       // }
       return true;

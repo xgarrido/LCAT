@@ -9,8 +9,8 @@ namespace CAT {
   //!Default constructor
   line::line(double probmin)
   {
-    forward_axis_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                        mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    forward_axis_ = experimental_vector(small_neg,small_neg,small_neg,
+                                        small_neg, small_neg, small_neg);
     used_ = false;
     set_probmin(probmin);
   }
@@ -137,7 +137,7 @@ namespace CAT {
       result += std::pow(theta_kink.value()/theta_kink.error(),2);
     }
 
-    // if( print_level() > mybhep::VERBOSE ){
+    // if( print_level() > VERBOSE ){
     //   std::clog << appname_ << " calculate chi2: phi kink : "; (phi_kink*180./M_PI).dump();
     //   if( use_theta_kink ){
     //     std::clog << " theta kink : "; (theta_kink*180./M_PI).dump();

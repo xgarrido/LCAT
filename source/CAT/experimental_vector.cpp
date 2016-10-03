@@ -12,13 +12,13 @@ namespace CAT {
 
   experimental_vector::experimental_vector()
   {
-    x_.set_value( mybhep::small_neg );
-    y_.set_value( mybhep::small_neg );
-    z_.set_value( mybhep::small_neg );
+    x_.set_value( small_neg );
+    y_.set_value( small_neg );
+    z_.set_value( small_neg );
 
-    x_.set_error( mybhep::small_neg );
-    y_.set_error( mybhep::small_neg );
-    z_.set_error( mybhep::small_neg );
+    x_.set_error( small_neg );
+    y_.set_error( small_neg );
+    z_.set_error( small_neg );
   }
 
   experimental_vector::~experimental_vector()
@@ -305,7 +305,7 @@ namespace CAT {
     result.set_error( std::sqrt(std::pow(x_.value()*x_.error(),2) +
                                 std::pow(y_.value()*y_.error(),2) +
                                 std::pow(z_.value()*z_.error(),2) )/result.value());
-    if( std::isnan(result.error()) || std::isinf(result.error())  ) result.set_error(mybhep::small_neg);
+    if( std::isnan(result.error()) || std::isinf(result.error())  ) result.set_error(small_neg);
     return result;
 
   }
@@ -329,7 +329,7 @@ namespace CAT {
   experimental_double experimental_vector::tan_phi()
   {
     if( x_.value() == 0. )
-      return experimental_double(mybhep::plus_infinity, 0.);
+      return experimental_double(plus_infinity, 0.);
     return z_/x_;
   }
 
@@ -345,7 +345,7 @@ namespace CAT {
     experimental_double p2 = v.phi();
     double phi1 = p1.value();
     double phi2 = p2.value();
-    mybhep::fix_angles(phi1, phi2);
+    fix_angles(phi1, phi2);
     result.set_value(phi2 - phi1);
     result.set_error(std::hypot(p1.error(), p2.error()));
     return result;
@@ -359,7 +359,7 @@ namespace CAT {
     experimental_double t2 = v.theta();
     double theta1 = t1.value();
     double theta2 = t2.value();
-    mybhep::fix_angles(theta1, theta2);
+    fix_angles(theta1, theta2);
     result.set_value(theta2 - theta1);
     result.set_error(std::hypot(t1.error(), t2.error()));
     return result;

@@ -71,6 +71,7 @@ list(APPEND LCAT_SOURCES
   source/CAT/sequentiator.cpp
   source/CAT/tracked_data.cc
   source/CAT/tracking_object.cpp
+  source/CAT/utilities.cc
   )
 
 # Build a dynamic library from our sources

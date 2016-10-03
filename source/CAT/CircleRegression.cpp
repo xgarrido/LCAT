@@ -53,7 +53,7 @@ namespace CAT{
 
 
     if( xi_.size() != yi_.size() ){
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << "CAT::CircleRegression::fit: problem: in circle regression, sizes x " << xi_.size() << " y " << yi_.size() << std::endl;
       // }
       return false;
@@ -133,7 +133,7 @@ namespace CAT{
       delta = Swuu*Swvv - Swuv*Swuv;
 
       if( delta == 0.){
-        // if( print_level() >= mybhep::NORMAL ){
+        // if( print_level() >= NORMAL ){
         //   std::clog << "CAT::CircleRegression::fit: problem: in circle regression, delta " << delta << " Swuu " << Swuu << " Swvv " << Swvv << " Swuv " << Swuv << std::endl;
         // }
         return false;
@@ -161,34 +161,34 @@ namespace CAT{
       delta = A*C - B*B;
 
       if( std::isnan(A) || std::isinf(A) ){
-        // if( print_level() >= mybhep::NORMAL ){
+        // if( print_level() >= NORMAL ){
         //   std::clog << "CAT::CircleRegression::fit: problem: in circle regression, A " << A << " Sw " << Sw << " Swxx " << Swxx << " Swx " << Swx << std::endl;
         // }
         return false;
       }
       if( std::isnan(B) || std::isinf(B) ){
-        // if( print_level() >= mybhep::NORMAL ){
+        // if( print_level() >= NORMAL ){
         //   std::clog << "CAT::CircleRegression::fit: problem: in circle regression, B " << B << " Sw " << Sw << " Swxy " << Swxy << " Swx " << Swx << " Swy " << Swy << std::endl;
         // }
         return false;
 
       }
       if( std::isnan(C) || std::isinf(C) ){
-        // if( print_level() >= mybhep::NORMAL ){
+        // if( print_level() >= NORMAL ){
         //   std::clog << "CAT::CircleRegression::fit: problem: in circle regression, C " << C << " Sw " << Sw << " Swyy " << Swyy << " Swy " << Swy << std::endl;
         // }
         return false;
 
       }
       if( std::isnan(D) || std::isinf(D) ){
-        // if( print_level() >= mybhep::NORMAL ){
+        // if( print_level() >= NORMAL ){
         //   std::clog << "CAT::CircleRegression::fit: problem: in circle regression, D " << D << " Sw " << Sw << " Swxyy " << Swxyy << " Swx " << Swx << " Swyy " << Swyy << " Swxxx " << Swxxx << " Swxx " << Swxx <<std::endl;
         // }
         return false;
 
       }
       if( std::isnan(E) || std::isinf(E) ){
-        // if( print_level() >= mybhep::NORMAL ){
+        // if( print_level() >= NORMAL ){
         //   std::clog << "CAT::CircleRegression::fit: problem: in circle regression, E " << E << " Sw " << Sw << " Swxxy " << Swxxy << " Swy " << Swy << " Swxx " << Swxx << " Swyyy " << Swyyy << " Swyy " << Swyy <<std::endl;
         // }
         return false;
@@ -197,7 +197,7 @@ namespace CAT{
 
 
       if( delta == 0.){
-        // if( print_level() >= mybhep::NORMAL ){
+        // if( print_level() >= NORMAL ){
         //   std::clog << "CAT::CircleRegression::fit: problem: in circle regression, delta " << delta << " A " << A << " C " << C << " B " << B << std::endl;
         // }
         return false;
@@ -237,7 +237,7 @@ namespace CAT{
       yc.set_error(std::sqrt(mean_error_y/xi_.size()));
       r.set_error(std::sqrt(mean_error_r/xi_.size()));
 
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   std::clog << "CAT::CircleRegression::fit: fitted circle through " << xi_.size() << " points: xc: "; xc.dump(); std::clog << " yc: "; yc.dump(); std::clog << " r: "; r.dump(); std::clog << " " << std::endl;
       // }
     }
@@ -279,7 +279,7 @@ namespace CAT{
           deltaphiAB = phiB-phiA;
           deltaphi_product = deltaphiAB*deltaphi_overall;
           if( deltaphi_product.value() < - deltaphi_product.error() ){
-            // if( print_level() >= mybhep::VVERBOSE ){
+            // if( print_level() >= VVERBOSE ){
             //   std::clog << "CAT::CircleRegression::points_in_good_order: points are not in good order: phi[ " << index-1 << "] = " << phiA.value() << ", phi[" << index << "] = " << phiB.value() << ", deltaphi_overall = " << deltaphi_overall.value() << std::endl;
             // }
             return false;

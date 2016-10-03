@@ -6,11 +6,11 @@ namespace CAT {
   scenario::scenario()
   {
     set_probmin(10.);
-    helix_chi2_ = mybhep::small_neg;
-    tangent_chi2_ = mybhep::small_neg;
-    ndof_ = mybhep::default_integer;
-    n_free_families_ = mybhep::default_integer;
-    n_overlaps_ = mybhep::default_integer;
+    helix_chi2_ = small_neg;
+    tangent_chi2_ = small_neg;
+    ndof_ = default_integer;
+    n_free_families_ = default_integer;
+    n_overlaps_ = default_integer;
   }
 
   scenario::~scenario()
@@ -21,11 +21,11 @@ namespace CAT {
   {
     set_probmin(probmin);
     sequences_ = seqs;
-    helix_chi2_ = mybhep::small_neg;
-    tangent_chi2_ = mybhep::small_neg;
-    ndof_ = mybhep::default_integer;
-    n_free_families_ = mybhep::default_integer;
-    n_overlaps_ = mybhep::default_integer;
+    helix_chi2_ = small_neg;
+    tangent_chi2_ = small_neg;
+    ndof_ = default_integer;
+    n_free_families_ = default_integer;
+    n_overlaps_ = default_integer;
   }
 
   void scenario::dump (std::ostream & a_out      ,
@@ -55,10 +55,10 @@ namespace CAT {
   void scenario::set(const std::vector<sequence> & seqs)
   {
     sequences_ = seqs;
-    helix_chi2_ = mybhep::small_neg;
-    tangent_chi2_ = mybhep::small_neg;
-    n_free_families_ = mybhep::default_integer;
-    n_overlaps_ = mybhep::default_integer;
+    helix_chi2_ = small_neg;
+    tangent_chi2_ = small_neg;
+    n_free_families_ = default_integer;
+    n_overlaps_ = default_integer;
   }
 
   void scenario::set_sequences(const std::vector<sequence> & seqs)
@@ -145,7 +145,7 @@ namespace CAT {
 
       for(std::vector<node>::iterator in = iseq->nodes_.begin(); in != iseq->nodes_.end(); ++in) {
         if( in->c().get_id() >= (int)cells.size() ) {
-          // if( print_level() >= mybhep::VVERBOSE )
+          // if( print_level() >= VVERBOSE )
           //   std::clog << " problem: cell " << in->c().id() << " has larger id than n of cells " << cells.size() << std::endl;
           continue;
         }
@@ -159,7 +159,7 @@ namespace CAT {
 
       if( iseq->has_decay_helix_vertex() && iseq->decay_helix_vertex_type() == "calo" ) {
         if( iseq->calo_helix_id() >= calos.size() ) {
-          // if( print_level() >= mybhep::VVERBOSE )
+          // if( print_level() >= VVERBOSE )
           //   std::clog << " problem: helix calo " << iseq->calo_helix_id() << " has larger id than n of calos " << calos.size() << std::endl;
           continue;
         }
@@ -172,7 +172,7 @@ namespace CAT {
 
       if( iseq->has_helix_vertex() && iseq->helix_vertex_type() == "calo" ) {
         if( iseq->helix_vertex_id() >= calos.size() ) {
-          // if( print_level() >= mybhep::VVERBOSE )
+          // if( print_level() >= VVERBOSE )
           //   std::clog << " problem: helix calo-vertex " << iseq->helix_vertex_id() << " has larger id than n of calos " << calos.size() << std::endl;
           continue;
         }
@@ -187,7 +187,7 @@ namespace CAT {
 
       if( iseq->has_decay_tangent_vertex() && iseq->decay_tangent_vertex_type() == "calo" ) {
         if( iseq->calo_tangent_id() >= calos.size() ) {
-          // if( print_level() >= mybhep::VVERBOSE )
+          // if( print_level() >= VVERBOSE )
           //   std::clog << " problem: tangent calo " << iseq->calo_tangent_id() << " has larger id than n of calos " << calos.size() << std::endl;
           continue;
         }
@@ -203,7 +203,7 @@ namespace CAT {
 
       if( iseq->has_tangent_vertex() && iseq->tangent_vertex_type() == "calo" ) {
         if( iseq->tangent_vertex_id() >= calos.size() ) {
-          // if( print_level() >= mybhep::VVERBOSE )
+          // if( print_level() >= VVERBOSE )
           //   std::clog << " problem: tangent calo-vertex " << iseq->tangent_vertex_id() << " has larger id than n of calos " << calos.size() << std::endl;
           continue;
         }
@@ -273,7 +273,7 @@ namespace CAT {
     for(std::vector<sequence>::iterator iseq = sequences_.begin(); iseq != sequences_.end(); ++iseq) {
       for(std::vector<node>::iterator in = iseq->nodes_.begin(); in != iseq->nodes_.end(); ++in) {
         if( in->c().get_id() >= (int)cells.size() ) {
-          // if( print_level() >= mybhep::VVERBOSE )
+          // if( print_level() >= VVERBOSE )
           //   std::clog << " problem: cell " << in->c().id() << " has larger id than n of cells " << cells.size() << std::endl;
           continue;
         }
@@ -285,7 +285,7 @@ namespace CAT {
       if( iseq->has_decay_helix_vertex() && iseq->decay_helix_vertex_type() == "calo" ) {
 
         if( iseq->calo_helix_id() >= calos.size() ) {
-          // if( print_level() >= mybhep::VVERBOSE )
+          // if( print_level() >= VVERBOSE )
           //   std::clog << " problem: helix calo " << iseq->calo_helix_id() << " has larger id than n of calos " << calos.size() << std::endl;
           continue;
         }
@@ -295,7 +295,7 @@ namespace CAT {
       if( iseq->has_helix_vertex() && iseq->helix_vertex_type() == "calo" ) {
 
         if( iseq->helix_vertex_id() >= calos.size() ) {
-          // if( print_level() >= mybhep::VVERBOSE )
+          // if( print_level() >= VVERBOSE )
           //   std::clog << " problem: helix calo-vertex " << iseq->helix_vertex_id() << " has larger id than n of calos " << calos.size() << std::endl;
           continue;
         }
@@ -305,7 +305,7 @@ namespace CAT {
       if( iseq->has_decay_tangent_vertex() && iseq->decay_tangent_vertex_type() == "calo" ) {
 
         if( iseq->calo_tangent_id() >= calos.size() ) {
-          // if( print_level() >= mybhep::VVERBOSE )
+          // if( print_level() >= VVERBOSE )
           //   std::clog << " problem: tangent calo " << iseq->calo_tangent_id() << " has larger id than n of calos " << calos.size() << std::endl;
           continue;
         }
@@ -315,7 +315,7 @@ namespace CAT {
       if( iseq->has_tangent_vertex() && iseq->tangent_vertex_type() == "calo" ) {
 
         if( iseq->tangent_vertex_id() >= calos.size() ) {
-          // if( print_level() >= mybhep::VVERBOSE )
+          // if( print_level() >= VVERBOSE )
           //   std::clog << " problem: tangent calo-vertex " << iseq->tangent_vertex_id() << " has larger id than n of calos " << calos.size() << std::endl;
           continue;
         }
@@ -380,7 +380,7 @@ namespace CAT {
     double deltaprob_tangent = tangent_Prob() - s.tangent_Prob();
     double deltachi_tangent = tangent_chi2() - s.tangent_chi2();
 
-    // if( print_level() >= mybhep::VVERBOSE ) {
+    // if( print_level() >= VVERBOSE ) {
     //   std::clog << " delta n_free_families = (" << n_free_families()  << " - " << s.n_free_families() << ")= " << deltanfree
     //             << " dela n_overlaps = (" << n_overlaps() << " - " << s.n_overlaps() << ")= " << deltanoverls
     //          << " delta prob_helix = (" << helix_Prob()  << " - " << s.helix_Prob() << ") = " << deltaprob_helix
@@ -394,13 +394,13 @@ namespace CAT {
     if( deltanoverls == - 2*deltanfree ) {
 
       int delta_n_common_vertexes = n_of_common_vertexes(limit) - s.n_of_common_vertexes(limit);
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " delta n common vertex = " << delta_n_common_vertexes << std::endl;
       if( delta_n_common_vertexes > 0 ) return true;
       if( delta_n_common_vertexes < 0 ) return false;
 
       int delta_n_of_ends_on_wire = n_of_ends_on_wire() - s.n_of_ends_on_wire();
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " delta n ends on wire = " << delta_n_of_ends_on_wire << std::endl;
       if( delta_n_of_ends_on_wire < 0 ) return true;
       if( delta_n_of_ends_on_wire > 0 ) return false;

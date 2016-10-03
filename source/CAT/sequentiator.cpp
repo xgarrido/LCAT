@@ -316,7 +316,7 @@ namespace CAT {
                 clock.start(" sequentiator: get link index ","cumulative");
                 size_t it2 = newcopy.get_link_index_of_cell(1, newcopy.nodes()[2].c());
                 clock.stop(" sequentiator: get link index ");
-                m.message(" setting as used original node 1  ccc ", it2, mybhep::VVERBOSE);
+                m.message(" setting as used original node 1  ccc ", it2, VVERBOSE);
                 sequences_[isequence].nodes_[1].ccc_[it2].set_all_used();
                 }
               */
@@ -943,15 +943,15 @@ namespace CAT {
     DT_LOG_DEBUG(get_logging_priority(), "Interpreting physics of " << sequences_.size() << " sequences with "
                  << calos.size() << " calorimeter hits");
 
-    double helix_min_from_end = mybhep::default_min;
-    size_t ihelix_min_from_end = mybhep::default_integer;
-    double tangent_min_from_end = mybhep::default_min;
-    size_t itangent_min_from_end = mybhep::default_integer;
+    double helix_min_from_end = default_min;
+    size_t ihelix_min_from_end = default_integer;
+    double tangent_min_from_end = default_min;
+    size_t itangent_min_from_end = default_integer;
 
-    double helix_min_from_begin = mybhep::default_min;
-    size_t ihelix_min_from_begin = mybhep::default_integer;
-    double tangent_min_from_begin = mybhep::default_min;
-    size_t itangent_min_from_begin = mybhep::default_integer;
+    double helix_min_from_begin = default_min;
+    size_t ihelix_min_from_begin = default_integer;
+    double tangent_min_from_begin = default_min;
+    size_t itangent_min_from_begin = default_integer;
 
     experimental_point helix_extrapolation_from_end, helix_extrapolation_local_from_end;
     bool helix_found_from_end = false;
@@ -992,15 +992,15 @@ namespace CAT {
 
             DT_LOG_DEBUG(get_logging_priority(), "Extrapolate decay vertex with " << calos.size() << " calo hits");
 
-            helix_min_from_end = mybhep::default_min;
-            ihelix_min_from_end = mybhep::default_integer;
-            tangent_min_from_end = mybhep::default_min;
-            itangent_min_from_end = mybhep::default_integer;
+            helix_min_from_end = default_min;
+            ihelix_min_from_end = default_integer;
+            tangent_min_from_end = default_min;
+            itangent_min_from_end = default_integer;
 
-            helix_min_from_begin = mybhep::default_min;
-            ihelix_min_from_begin = mybhep::default_integer;
-            tangent_min_from_begin = mybhep::default_min;
-            itangent_min_from_begin = mybhep::default_integer;
+            helix_min_from_begin = default_min;
+            ihelix_min_from_begin = default_integer;
+            tangent_min_from_begin = default_min;
+            itangent_min_from_begin = default_integer;
 
             helix_found_from_end = false;
             helix_found_from_begin = false;
@@ -1334,7 +1334,7 @@ namespace CAT {
       if( !sequences_.back().contained( *iseq )){
         DT_LOG_DEBUG(get_logging_priority(), "No, it's not contained");
         //}else if( sequences_.back().Free() && !sequences_.back().contained_same_extreme_quadrants( *iseq ) ){
-        //      m.message("no, it's a free sequence with different extreme quadrants " ,mybhep::VVERBOSE); fflush(stdout);
+        //      m.message("no, it's a free sequence with different extreme quadrants " ,VVERBOSE); fflush(stdout);
       }else if( sequences_.back().Free() ){
         DT_LOG_DEBUG(get_logging_priority(), "No, it's a free sequence");
       }else
@@ -1351,7 +1351,7 @@ namespace CAT {
       if( !iseq->contained( sequences_.back() ) ){
         DT_LOG_DEBUG(get_logging_priority(), "No, it's not contained");
         //}else if( iseq->Free() && !iseq->contained_same_extreme_quadrants( sequences_.back() ) ){
-        //m.message("no, it's a free sequence with different extreme quadrants " ,mybhep::VVERBOSE); fflush(stdout);
+        //m.message("no, it's a free sequence with different extreme quadrants " ,VVERBOSE); fflush(stdout);
       }else if( iseq->Free() ){
         DT_LOG_DEBUG(get_logging_priority(), "No, it's a free sequence");
       }else
@@ -1478,7 +1478,7 @@ namespace CAT {
 
       if( distance_from_foil(sequences_[iseq].nodes().front().ep()) <
       distance_from_foil(sequences_[iseq].nodes().back().ep()) ){
-      m.message(" sequence ", iseq, " will be directed out of foil ", mybhep::VVERBOSE);
+      m.message(" sequence ", iseq, " will be directed out of foil ", VVERBOSE);
       print_a_sequence(&sequences_[iseq]);
       sequences_[iseq] = sequences_[iseq].invert();
       print_a_sequence(&sequences_[iseq]);
@@ -1661,7 +1661,7 @@ namespace CAT {
 
         /*
           if( gnA != -1 && gnB != -1 && gnA != gnB ){
-          if( level >= mybhep::VVERBOSE ){
+          if( level >= VVERBOSE ){
           std::clog << " connection between cells " << nodeA.c().get_id() << " and " << nodeB.c().get_id() << " blocks " << blockA << " and " << blockB << " gaps " << gnA << " and " << gnB << " is forbidden (cells face different gaps) " << std::endl;
           }
           return false;
@@ -1858,7 +1858,7 @@ namespace CAT {
     double limit_diagonal = sqrt(2.)*cos(M_PI/8.)*CellDistance;
 
     double probmax = -1.;
-    double chi2min = mybhep::default_min;
+    double chi2min = default_min;
     int ndofbest = 1;
     int cells_to_delete;
 

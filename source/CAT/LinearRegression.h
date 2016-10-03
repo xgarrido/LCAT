@@ -35,8 +35,8 @@ namespace CAT {
     //!Default constructor
     LinearRegression(const double probmin=1.e-200)
     {
-      y0_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-      tangent_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
+      y0_ = experimental_double(small_neg, small_neg);
+      tangent_ = experimental_double(small_neg, small_neg);
       xi_.clear();
       yi_.clear();
       set_probmin(probmin);

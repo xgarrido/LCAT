@@ -221,7 +221,7 @@ namespace CAT {
     *modified = lj;
     //double local_chi2 = pow(angle_AA.value()/angle_AA.error(),2) + pow(angle_BB.value()/angle_BB.error(),2) + pow(angle_phi.value()/angle_phi.error(),2) + pow(angle_theta.value()/angle_theta.error(),2);
     double local_chi2 = pow(angle_phi.value(),2);
-    // if (print_level() >= mybhep::VVERBOSE){
+    // if (print_level() >= VVERBOSE){
     //   std::clog << " CAT::joint::calculate_chi2: phiA " << experimental_vector(A.ep(), lj.epa()).phi().value()*180./acos(-1.) <<  " phiB " << experimental_vector(B.ep(), lj.epb()).phi().value()*180./acos(-1.) << " phiC " << experimental_vector(C.ep(), lj.epc()).phi().value()*180./acos(-1.) << " cell A_is_on_gap " << A_is_on_gap << " A " << A.id() << " angle_AA " << angle_AA.value() << " +- " << angle_AA.error() <<  " B_is_on_gap " << B_is_on_gap << " B " << B.id() << " angle_BB " << angle_BB.value() << " +- " << angle_BB.error() << " angle_phi " << angle_phi.value() << " +- " << angle_phi.error() << " angle_theta " << angle_theta.value() << " +- " << angle_theta.error() << " local chi2 " << local_chi2 << std::endl;
     // }
     return local_chi2;

@@ -2,6 +2,7 @@
 
 // Standard library:
 #include <limits>
+#include <sstream>
 #include <sys/time.h>
 
 // This project:
@@ -34,40 +35,40 @@ namespace CAT {
     has_momentum_ = false;
     has_helix_ = false;
     has_helix_vertex_ = false;
-    helix_vertex_ = experimental_point(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                       mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    helix_vertex_ = experimental_point(small_neg,small_neg,small_neg,
+                                       small_neg, small_neg, small_neg);
     helix_vertex_type_="default";
-    helix_vertex_id_ = mybhep::default_integer;
+    helix_vertex_id_ = default_integer;
     has_decay_helix_vertex_ = false;
-    decay_helix_vertex_ = experimental_point(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                             mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    decay_helix_vertex_ = experimental_point(small_neg,small_neg,small_neg,
+                                             small_neg, small_neg, small_neg);
     decay_helix_vertex_type_="default";
-    calo_helix_id_ = mybhep::default_integer;
+    calo_helix_id_ = default_integer;
 
     has_tangent_vertex_ = false;
-    tangent_vertex_ = experimental_point(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                         mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    tangent_vertex_ = experimental_point(small_neg,small_neg,small_neg,
+                                         small_neg, small_neg, small_neg);
     tangent_vertex_type_="default";
-    tangent_vertex_id_ = mybhep::default_integer;
+    tangent_vertex_id_ = default_integer;
     has_decay_tangent_vertex_ = false;
-    decay_tangent_vertex_ = experimental_point(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                               mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    decay_tangent_vertex_ = experimental_point(small_neg,small_neg,small_neg,
+                                               small_neg, small_neg, small_neg);
     decay_tangent_vertex_type_="default";
-    calo_tangent_id_ = mybhep::default_integer;
+    calo_tangent_id_ = default_integer;
 
     chi2s_all_.clear();
     helix_chi2s_.clear();
     probs_all_.clear();
     helix_ = helix();
-    charge_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    helix_charge_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    detailed_charge_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    tangent_length_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    helix_length_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    momentum_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                    mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
-    helix_momentum_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                          mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    charge_ = experimental_double(small_neg, small_neg);
+    helix_charge_ = experimental_double(small_neg, small_neg);
+    detailed_charge_ = experimental_double(small_neg, small_neg);
+    tangent_length_ = experimental_double(small_neg, small_neg);
+    helix_length_ = experimental_double(small_neg, small_neg);
+    momentum_ = experimental_vector(small_neg,small_neg,small_neg,
+                                    small_neg, small_neg, small_neg);
+    helix_momentum_ = experimental_vector(small_neg,small_neg,small_neg,
+                                          small_neg, small_neg, small_neg);
     primary_ = true;
   }
 
@@ -90,38 +91,38 @@ namespace CAT {
     has_momentum_ = false;
     has_helix_ = false;
     has_helix_vertex_ = false;
-    helix_vertex_ = experimental_point(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                       mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    helix_vertex_ = experimental_point(small_neg,small_neg,small_neg,
+                                       small_neg, small_neg, small_neg);
     helix_vertex_type_="default";
-    helix_vertex_id_ = mybhep::default_integer;
+    helix_vertex_id_ = default_integer;
     has_decay_helix_vertex_ = false;
-    decay_helix_vertex_ = experimental_point(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                             mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    decay_helix_vertex_ = experimental_point(small_neg,small_neg,small_neg,
+                                             small_neg, small_neg, small_neg);
     decay_helix_vertex_type_="default";
-    calo_helix_id_ = mybhep::default_integer;
+    calo_helix_id_ = default_integer;
     has_tangent_vertex_ = false;
-    tangent_vertex_ = experimental_point(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                         mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    tangent_vertex_ = experimental_point(small_neg,small_neg,small_neg,
+                                         small_neg, small_neg, small_neg);
     tangent_vertex_type_="default";
-    tangent_vertex_id_ = mybhep::default_integer;
+    tangent_vertex_id_ = default_integer;
     has_decay_tangent_vertex_ = false;
-    decay_tangent_vertex_ = experimental_point(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                               mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    decay_tangent_vertex_ = experimental_point(small_neg,small_neg,small_neg,
+                                               small_neg, small_neg, small_neg);
     decay_tangent_vertex_type_="default";
-    calo_tangent_id_ = mybhep::default_integer;
+    calo_tangent_id_ = default_integer;
     chi2s_all_.clear();
     helix_chi2s_.clear();
     probs_all_.clear();
     helix_ = helix();
-    charge_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    helix_charge_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    detailed_charge_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    tangent_length_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    helix_length_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    momentum_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                    mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
-    helix_momentum_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                          mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    charge_ = experimental_double(small_neg, small_neg);
+    helix_charge_ = experimental_double(small_neg, small_neg);
+    detailed_charge_ = experimental_double(small_neg, small_neg);
+    tangent_length_ = experimental_double(small_neg, small_neg);
+    helix_length_ = experimental_double(small_neg, small_neg);
+    momentum_ = experimental_vector(small_neg,small_neg,small_neg,
+                                    small_neg, small_neg, small_neg);
+    helix_momentum_ = experimental_vector(small_neg,small_neg,small_neg,
+                                          small_neg, small_neg, small_neg);
     primary_ = true;
   }
 
@@ -143,38 +144,38 @@ namespace CAT {
     has_momentum_ = false;
     has_helix_ = false;
     has_helix_vertex_ = false;
-    helix_vertex_ = experimental_point(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                       mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    helix_vertex_ = experimental_point(small_neg,small_neg,small_neg,
+                                       small_neg, small_neg, small_neg);
     helix_vertex_type_="default";
-    helix_vertex_id_ = mybhep::default_integer;
+    helix_vertex_id_ = default_integer;
     has_decay_helix_vertex_ = false;
-    decay_helix_vertex_ = experimental_point(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                             mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    decay_helix_vertex_ = experimental_point(small_neg,small_neg,small_neg,
+                                             small_neg, small_neg, small_neg);
     decay_helix_vertex_type_="default";
-    calo_helix_id_ = mybhep::default_integer;
+    calo_helix_id_ = default_integer;
     has_tangent_vertex_ = false;
-    tangent_vertex_ = experimental_point(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                         mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    tangent_vertex_ = experimental_point(small_neg,small_neg,small_neg,
+                                         small_neg, small_neg, small_neg);
     tangent_vertex_type_="default";
-    tangent_vertex_id_ = mybhep::default_integer;
+    tangent_vertex_id_ = default_integer;
     has_decay_tangent_vertex_ = false;
-    decay_tangent_vertex_ = experimental_point(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                               mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    decay_tangent_vertex_ = experimental_point(small_neg,small_neg,small_neg,
+                                               small_neg, small_neg, small_neg);
     decay_tangent_vertex_type_="default";
-    calo_tangent_id_ = mybhep::default_integer;
+    calo_tangent_id_ = default_integer;
     chi2s_all_.clear();
     helix_chi2s_.clear();
     probs_all_.clear();
     helix_ = helix();
-    charge_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    helix_charge_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    detailed_charge_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    tangent_length_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    helix_length_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-    momentum_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                    mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
-    helix_momentum_ = experimental_vector(mybhep::small_neg,mybhep::small_neg,mybhep::small_neg,
-                                          mybhep::small_neg, mybhep::small_neg, mybhep::small_neg);
+    charge_ = experimental_double(small_neg, small_neg);
+    helix_charge_ = experimental_double(small_neg, small_neg);
+    detailed_charge_ = experimental_double(small_neg, small_neg);
+    tangent_length_ = experimental_double(small_neg, small_neg);
+    helix_length_ = experimental_double(small_neg, small_neg);
+    momentum_ = experimental_vector(small_neg,small_neg,small_neg,
+                                    small_neg, small_neg, small_neg);
+    helix_momentum_ = experimental_vector(small_neg,small_neg,small_neg,
+                                          small_neg, small_neg, small_neg);
     primary_ = true;
   }
 
@@ -900,7 +901,7 @@ namespace CAT {
                 ilink->set_free(true);
                 inode->set_free(true);
                 set_free( true);
-                // if( print_level() >= mybhep::VVERBOSE ){
+                // if( print_level() >= VVERBOSE ){
                 //   std::clog << " sequence is free, for cell " << inode->c().id() << " is free, for link to cell " << ilink->id() << " is free, for tangent " << itang - (*inode).cc_[iccc].tangents_.begin() << " is unused " << std::endl;
                 // }
               }
@@ -917,7 +918,7 @@ namespace CAT {
                 ilink->set_free(true);
                 inode->set_free(true);
                 set_free( true);
-                // if( print_level() >= mybhep::VVERBOSE ){
+                // if( print_level() >= VVERBOSE ){
                 //   std::clog << " sequence is free, for cell " << (*inode).c().id() << " is free, for triplet with cells " << (*inode).ccc_[iccc].ca().id() << "<->" << (*inode).ccc_[iccc].cc().id() << " is free, for joint " << ijoint - (*inode).ccc_[iccc].joints_.begin() << " is unused " << std::endl;
                 // }
               }
@@ -951,7 +952,7 @@ namespace CAT {
         }
 
     if( !found ){
-      // if( print_level() >= mybhep::NORMAL )
+      // if( print_level() >= NORMAL )
       //   std::clog << " problem: sequence has no last free node. free status is " << Free() << std::endl;
       *lfn = 0;
       *link = 0;
@@ -974,7 +975,7 @@ namespace CAT {
                                                   c);
 
     if( fnode == nodes_.end()){
-      // if( print_level() >= mybhep::NORMAL )
+      // if( print_level() >= NORMAL )
       //   std::clog << " problem: requested cell " << c.id() << " has no node in sequence " << std::endl;;
 
       node null;
@@ -1037,7 +1038,7 @@ namespace CAT {
         return false;
     }
     else{
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << " problem: sequences with same size and cells have different beginnings or endings: 1st sequence from " << nodes().front().c().get_id() << " to " << nodes().back().c().get_id() << ", 2nd from " << big.nodes().front().c().get_id()  << " to " << big.nodes().back().c().get_id()   << std::endl;
       // }
     }
@@ -1068,14 +1069,14 @@ namespace CAT {
 
   void sequence::increase_iteration(size_t inode, size_t ilink){
     if( inode >= nodes().size() ){
-      // if( print_level() >= mybhep::NORMAL )
+      // if( print_level() >= NORMAL )
       //   std::clog << " problem: increasing iteration of node " << inode << " but size is " << nodes().size() << std::endl;
       return;
     }
 
     if( inode < 1 ){
       if( ilink >= nodes()[inode].cc().size() ){
-        // if( print_level() >= mybhep::NORMAL )
+        // if( print_level() >= NORMAL )
         //   std::clog << " problem: increasing iteration of link " << ilink << " but couplet size is " << nodes()[inode].cc().size() << std::endl;
         return;
       }
@@ -1091,7 +1092,7 @@ namespace CAT {
     }
 
     if( ilink >= nodes()[inode].ccc().size() ){
-      // if( print_level() >= mybhep::NORMAL )
+      // if( print_level() >= NORMAL )
       //   std::clog << " problem: increasing iteration of link " << ilink << " but triplet size is " << nodes()[inode].ccc().size() << std::endl;
       return;
     }
@@ -1127,7 +1128,7 @@ namespace CAT {
         linkid = nodes_[lfn].ccc()[link].cc().get_id();
     }
 
-    // if( print_level() >= mybhep::VVERBOSE )
+    // if( print_level() >= VVERBOSE )
     //   std::clog << " ilfn: " << lfn << " id: " << nodes_[lfn].c().get_id()
     //             << " ilink " << link << " id: " << linkid << std::endl;
 
@@ -1169,7 +1170,7 @@ namespace CAT {
             itlink->set_begun( true);
           }
           if( i == lfn && (size_t)(itlink - newsequence.nodes_[i].links_.begin()) > link ){
-            // if( print_level() >= mybhep::VVERBOSE ) {
+            // if( print_level() >= VVERBOSE ) {
             //   std::clog << " removing from node " << newsequence.nodes_[i].c().get_id()  << "  link " << itlink - newsequence.nodes_[i].links_.begin() << " id " << itlink->id() << " larger than link " << link << " from copied sequence " << std::endl;
             // }
             newsequence.nodes_[i].remove_link(itlink - newsequence.nodes_[i].links_.begin());
@@ -1220,11 +1221,11 @@ namespace CAT {
 
   void sequence::fill_links_of_node(size_t inode, cluster local_sequence){
 
-    // if( print_level() >= mybhep::VVERBOSE )
+    // if( print_level() >= VVERBOSE )
     //   std::clog << " filling links for cell " << nodes()[inode].c().get_id() << std::endl;
 
     if( inode >= nodes().size() ){
-      // if( print_level() >= mybhep::NORMAL )
+      // if( print_level() >= NORMAL )
       //   std::clog << " problem: asking for links for node with index " << inode << " but nodes size is " << nodes().size() << std::endl;
       return;
     }
@@ -1284,7 +1285,7 @@ namespace CAT {
     if( nodes_[s-1].links().empty() )
       fill_links_of_node(s-1, local_cluster);
 
-    // if( print_level() >= mybhep::VVERBOSE ){
+    // if( print_level() >= VVERBOSE ){
     //   std::clog << " possible links: ";
     //   for(std::vector<cell>::iterator itlink=nodes_[s-1].links_.begin(); itlink != nodes_[s-1].links_.end(); ++itlink){
     //     std::clog << " " << itlink->id();
@@ -1303,7 +1304,7 @@ namespace CAT {
 
           if( s == 1 ){
             ok = true;
-            // if( print_level() >= mybhep::VVERBOSE )
+            // if( print_level() >= VVERBOSE )
             //   std::clog << " new cell is " << itlink->id() << std::endl;
             break;
           }else{
@@ -1313,7 +1314,7 @@ namespace CAT {
             iteration = nodes_[s-1].ccc_[iccc].iteration();
 
             if( iteration >= nodes_[s-1].ccc_[iccc].joints().size() ){
-              // if( print_level() >= mybhep::NORMAL ){
+              // if( print_level() >= NORMAL ){
               //   std::clog << "problem: iteration" << iteration << " joints size " << nodes_[s-1].ccc_[iccc].joints_.size() << "... stop evolving" << std::endl;
               // }
 
@@ -1325,7 +1326,7 @@ namespace CAT {
               // first time this connection is tried
               // so get rid of spurious joints
 
-              // if( print_level() >= mybhep::VVERBOSE ){
+              // if( print_level() >= VVERBOSE ){
               //   std::clog << " initially there are " << nodes_[s-1].ccc_[iccc].joints_.size() << " possible joints to go from cell " << nodes_[s-1].c().get_id() << " to " << itlink->id()  << std::endl;
               // }
 
@@ -1338,7 +1339,7 @@ namespace CAT {
                 }
 
                 if( !compatible(& (*ijoint) , *itlink) ){
-                  // if( print_level() >= mybhep::VVERBOSE ){
+                  // if( print_level() >= VVERBOSE ){
                   //   std::clog << " erase joint " << ijoint - nodes_[s-1].ccc_[iccc].joints_.begin() << std::endl;
                   // }
                   nodes_[s-1].ccc_[iccc].joints_.erase(ijoint);
@@ -1348,14 +1349,14 @@ namespace CAT {
 
               }
 
-              // if( print_level() >= mybhep::VVERBOSE ){
+              // if( print_level() >= VVERBOSE ){
               //   std::clog << " after cleaning there are " << nodes_[s-1].ccc_[iccc].joints_.size() << " possible joints to go from cell " << nodes_[s-1].c().get_id() << " to " << itlink->id()  << std::endl;
               // }
 
             }
 
             if( nodes_[s-1].ccc_[iccc].joints_.empty() ){
-              // if( print_level() >= mybhep::VVERBOSE ){
+              // if( print_level() >= VVERBOSE ){
               //   std::clog << " no joints to connect cell " << nodes_[s-1].c().get_id() << " to new cell " << itlink->id()
               //             << std::endl;
               // }
@@ -1365,7 +1366,7 @@ namespace CAT {
 
             iteration = nodes_[s-1].ccc_[iccc].iteration();
 
-            // if( print_level() >= mybhep::VVERBOSE ){
+            // if( print_level() >= VVERBOSE ){
             //   std::clog << " connecting cell " << nodes_[s-1].c().get_id() << " to new cell " << itlink->id()
             //             << " with iteration " << iteration << " of " << nodes_[s-1].ccc_[iccc].joints_.size() <<  std::endl;
             // }
@@ -1382,20 +1383,20 @@ namespace CAT {
             increase_iteration(s-1,iccc);
 
             joint j = nodes_[s-1].ccc_[iccc].joints_[iteration];
-            // if( print_level() >= mybhep::VVERBOSE ){
+            // if( print_level() >= VVERBOSE ){
             //   nodes_[s-1].ccc_[iccc].dump_joint(j);
             // }
 
             if( s >= 3 ){ // recalculate chi2 of node A
               double chi2_change_A, chi2_change_alpha;
               get_chi2_change_for_changing_end_of_sequence(j.epa(), j.epb(), &chi2_change_A, &chi2_change_alpha);
-              // if( print_level() >= mybhep::VVERBOSE ){
+              // if( print_level() >= VVERBOSE ){
               //   std::clog << " will change for cell A " << nodes_[s-2].c().get_id() << " chi2 from " << nodes_[s-2].chi2() << " to " << nodes_[s-2].chi2() + chi2_change_A << std::endl; fflush(stdout);
               // }
 
               nodes_[s-2].set_chi2(nodes_[s-2].chi2() + chi2_change_A);
               if( s >= 4 ){ // recalculate chi2 of node alpha
-                // if( print_level() >= mybhep::VVERBOSE ){
+                // if( print_level() >= VVERBOSE ){
                 //   std::clog << " will change for cell alpha " << nodes_[s-3].c().get_id() << " chi2 from " << nodes_[s-3].chi2() << " to " << nodes_[s-3].chi2() + chi2_change_alpha << std::endl; fflush(stdout);
                 // }
                 nodes_[s-3].set_chi2(nodes_[s-3].chi2() + chi2_change_alpha);
@@ -1422,7 +1423,7 @@ namespace CAT {
 
     size_t s = nodes().size();
     if( s < 2 ){
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << " problem: checking compatibility for sequence of size " << s << std::endl;
       // }
       return false;
@@ -1456,14 +1457,14 @@ namespace CAT {
     }
 
     if( !ca.is_small() && !ca.same_quadrant(second_last_node().ep(), j->epa() ) ){
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   std::clog << " connecting cell " << last_node().c().get_id() << " with this joint is incompatible: points on cell " << ca.get_id() << " on different quadrants " << std::endl;
       // }
       return false;
     }
 
     if( !cb.is_small() && !cb.same_quadrant(last_node().ep(), j->epb() ) ){
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   std::clog << " connecting cell " << last_node().c().get_id() << " with this joint is incompatible: points on cell " << cb.get_id() << " on different quadrants " << std::endl;
       // }
       return false;
@@ -1473,7 +1474,7 @@ namespace CAT {
       if( !ca.is_small() && !ca.intersect(cb) ){
         pa = ca.angular_average(second_last_node().ep(), j->epa(), local_separation_a);
         chi2_separation_a = std::pow(local_separation_a.value()/local_separation_a.error(),2);
-        // if( print_level() >= mybhep::VVERBOSE ){
+        // if( print_level() >= VVERBOSE ){
         //   std::clog << " separation chi2 for cell " << ca.get_id() << " is " << chi2_separation_a << std::endl; fflush(stdout);
         // }
         ndof ++;
@@ -1482,7 +1483,7 @@ namespace CAT {
       if( !cb.is_small() && !cb.intersect(ca) && !cb.intersect(cc) ){
         pb = cb.angular_average(last_node().ep(), j->epb(), local_separation_b);
         chi2_separation_b = std::pow(local_separation_b.value()/local_separation_b.error(),2);
-        // if( print_level() >= mybhep::VVERBOSE ){
+        // if( print_level() >= VVERBOSE ){
         //   std::clog << " separation chi2 for cell " << cb.get_id() << " is " << chi2_separation_b << std::endl; fflush(stdout);
         // }
         ndof ++;
@@ -1492,7 +1493,7 @@ namespace CAT {
       experimental_vector B_C = experimental_vector(last_node().ep(), j->epc());
       experimental_double phi_kink = alpha_A.kink_phi(B_C);
       if( std::abs(phi_kink.value())*180./M_PI > 90. ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " incompatible connection: kink between alpha_A and B_C is " << phi_kink.value()*180./M_PI << std::endl;
         return false;
       }
@@ -1500,7 +1501,7 @@ namespace CAT {
 
       if( s >= 3 ){ // we are changing points A and B, affecting the chi2 of connections alpha0-alpha-A and alpha-A-B
         get_chi2_change_for_changing_end_of_sequence(pa, pb, &chi2_change_A, &chi2_change_alpha);
-        // if( print_level() >= mybhep::VVERBOSE ){
+        // if( print_level() >= VVERBOSE ){
         //   std::clog << " connecting cell " << cb.get_id() << " to " << cc.get_id() << " changes chi2 of cell A, i.e. : " << nodes_[s-2].c().get_id() << " by " << chi2_change_A << std::endl; fflush(stdout);
         //   if( s >= 4 ) {
         //     std::clog << " connecting cell " << cb.get_id() << " to " << cc.get_id() << " changes chi2 of cell alpha, i.e." << nodes_[s-3].c().get_id() << " by " << chi2_change_alpha  << std::endl; fflush(stdout);
@@ -1536,7 +1537,7 @@ namespace CAT {
 
     if( net_local_prob > probmin() && prob_just_phi > probmin() ){
 
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   std::clog << " connecting cell " << last_node().c().get_id() << " is compatible with chi2 " << chi2 << " prob " << local_prob << " net prob " << net_local_prob << std::endl; fflush(stdout);
       // }
 
@@ -1547,7 +1548,7 @@ namespace CAT {
 
     }
 
-    // if( print_level() >= mybhep::VVERBOSE ){
+    // if( print_level() >= VVERBOSE ){
     //   std::clog << " connecting cell " << last_node().c().get_id() << " with this joint is incompatible: ";
     //   if( s > 2 )
     //     {
@@ -1566,7 +1567,7 @@ namespace CAT {
     // sequence: [ ... alpha0 alpha A B ]
     size_t s = nodes_.size();
     if( s < 3 ){
-      // if( print_level() >= mybhep::NORMAL )
+      // if( print_level() >= NORMAL )
       //   std::clog << " problem: ask prob change for second last node but nnodes is " << s << std::endl;
       return;
     }
@@ -1592,7 +1593,7 @@ namespace CAT {
     double old_chi2_check = second_last_node().chi2();
     if( old_chi2 > old_chi2_check ){
       if( std::abs(old_chi2 - old_chi2_check) > tolerance ){
-        // if( print_level() >= mybhep::NORMAL ){
+        // if( print_level() >= NORMAL ){
         //   std::clog << " problem: cell A " << second_last_node().c().get_id() << " has old chi2 " << old_chi2_check << " but just kink component is " << old_chi2 << " delta " <<  old_chi2 - old_chi2_check << std::endl;
         // }
       }
@@ -1605,7 +1606,7 @@ namespace CAT {
     double new_chi2 = new_l_alpha_A.chi2(new_l_A_B, use_theta_kink_alpha_A_B, &chi2_just_phi);
     *delta_chi_A = new_chi2 - old_chi2;
     if( *delta_chi_A + old_chi2 <= 0 ){
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << " problem: node A has old chi2 " << old_chi2 << " new " << new_chi2 << " delta " << *delta_chi_A << std::endl;
       // }
       *delta_chi_A = 0.;
@@ -1619,7 +1620,7 @@ namespace CAT {
       old_chi2_check = nodes_[s-3].chi2();
       if( old_chi2 > old_chi2_check ){
         if( std::abs(old_chi2 - old_chi2_check) > tolerance ){
-          // if( print_level() >= mybhep::NORMAL ){
+          // if( print_level() >= NORMAL ){
           //   std::clog << " problem: cell alpha " << nodes_[s-3].c().get_id() << " has old chi2 " << old_chi2_check << " but just kink component is " << old_chi2 << " delta " <<  old_chi2 - old_chi2_check <<  std::endl;
           // }
         }
@@ -1629,7 +1630,7 @@ namespace CAT {
       new_chi2 = l_alpha0_alpha.chi2(new_l_alpha_A, use_theta_kink_alpha0_alpha_A, &chi2_just_phi);
       *delta_chi_alpha = new_chi2 - old_chi2;
       if( old_chi2 + *delta_chi_alpha <= 0. ){
-        // if( print_level() >= mybhep::NORMAL )
+        // if( print_level() >= NORMAL )
         //   std::clog << " problem: node alpha has old chi2 " << old_chi2 << " new " << new_chi2  << " delta " << *delta_chi_alpha << std::endl;
         *delta_chi_alpha = 0.;
       }
@@ -1647,7 +1648,7 @@ namespace CAT {
 
 
     if( inode >= nodes().size() ){
-      // if( print_level() >= mybhep::NORMAL )
+      // if( print_level() >= NORMAL )
       //   std::clog << " problem: getting link index for node index " << inode << " but size is " << nodes().size() << std::endl;
       return 0;
     }
@@ -1666,7 +1667,7 @@ namespace CAT {
 
       size_t index;
       if( !nodes()[inode].has_couplet(link,&index) ){
-        // if( print_level() >= mybhep::NORMAL )
+        // if( print_level() >= NORMAL )
         //   std::clog << " problem: looking for couplet from cell index " << inode << " to " << link.get_id() << " but it's not there " << std::endl;
         return 0;
       }
@@ -1677,7 +1678,7 @@ namespace CAT {
 
     size_t index;
     if( !nodes()[inode].has_triplet(link,nodes_[inode-1].c(),&index) ){
-      // if( print_level() >= mybhep::NORMAL ) {
+      // if( print_level() >= NORMAL ) {
       //   std::clog << " problem: looking for triplet from cell index " << inode << " id " << nodes()[inode].c().get_id()  << " to cell id " << link.get_id() << " but it's not there " << std::endl; fflush(stdout);
       // }
       return 0;
@@ -1693,7 +1694,7 @@ namespace CAT {
     for(std::vector<node>::iterator inode = nodes_.begin(); inode != nodes_.end(); ++inode)
       original_ids.push_back(inode->c().get_id());
 
-    // if( print_level() >= mybhep::VERBOSE ){
+    // if( print_level() >= VERBOSE ){
     //   std::clog << " sequence before circle reordering: ";
     //   for(std::vector<node>::const_iterator inode = nodes_.begin(); inode != nodes_.end(); ++inode)
     //     std::clog << inode->c().get_id() << " ";
@@ -1702,7 +1703,7 @@ namespace CAT {
 
     std::sort(nodes_.begin(),nodes_.end(),node::circle_order);
 
-    // if( print_level() >= mybhep::VERBOSE ){
+    // if( print_level() >= VERBOSE ){
     //   std::clog << " sequence after circle reordering: ";
     //   for(std::vector<node>::const_iterator inode = nodes_.begin(); inode != nodes_.end(); ++inode)
     //     std::clog << inode->c().get_id() << " ";
@@ -1736,7 +1737,7 @@ namespace CAT {
         // recalculate position closest to helix
         experimental_point helix_point = helix_.position(inode->c().ep());
         double local_diff;
-        double diff = mybhep::default_min;
+        double diff = default_min;
         for(std::vector<cell_couplet>::const_iterator icc = cc.begin(); icc!=cc.end(); ++icc){
         std::vector<line> tangents = icc->tangents();
         for( std::vector<line>::const_iterator il=tangents.begin(); il!=tangents.end(); ++il){
@@ -1762,7 +1763,7 @@ namespace CAT {
       else
         angle = helix_.phi_of_point(inode->c().get_position(), angle).value();
 
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   std::clog << " node " << inode->c().get_id() << " has circle phi " << angle << std::endl;
       // }
       inode->set_circle_phi(angle);
@@ -1807,7 +1808,7 @@ namespace CAT {
         anode = inode;
         cnode = inode;
         --anode; ++cnode;
-        // if( print_level() >= mybhep::VVERBOSE ){
+        // if( print_level() >= VVERBOSE ){
         //   std::clog << " calculate helix for three points " << anode->c().get_id() << " , " << inode->c().get_id() << " , " << cnode->c().get_id() << std::endl;
         // }
         helices.push_back(three_points_helix(anode->ep(), inode->ep(), cnode->ep()));
@@ -1856,7 +1857,7 @@ namespace CAT {
         good_fit = good_circle_fit;
       //      cl.minuit_fit();
 
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   cl.dump();
       // }
 
@@ -1899,7 +1900,7 @@ namespace CAT {
       // then invert the result to have y = y(phi)
 
 
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   l.dump();
       // }
 
@@ -1915,7 +1916,7 @@ namespace CAT {
       break;
     }
     default:
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << " problem: unknonw method "<< method << " to fit a helix " << std::endl;
       // }
       break;
@@ -1932,12 +1933,12 @@ namespace CAT {
 
 
       double prob = helix_Prob();
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   std::clog << " helix prob " << prob << " min " << probmin() << std::endl;
       // }
 
       if( prob < probmin() ){
-        // if( print_level() >= mybhep::VVERBOSE ){
+        // if( print_level() >= VVERBOSE ){
         //   std::clog << " so reject helix " << std::endl;
         // }
         good_fit = false;
@@ -1976,7 +1977,7 @@ namespace CAT {
       has_momentum_ = true;
     }
 
-    // if( print_level() >= mybhep::VVERBOSE ){
+    // if( print_level() >= VVERBOSE ){
     //   std::clog << " sequence radius " << radius().value() << " pitch " << pitch().value() << " bfield " << bfield
     //             << " mom " << mom.value() << " dir (" << initial_dir(SuperNEMO, ref_value).x().value() << ", " <<  initial_dir(SuperNEMO, ref_value).y().value() << ", " << initial_dir(SuperNEMO, ref_value).z().value() << ")" << std::endl;
     // }
@@ -1991,7 +1992,7 @@ namespace CAT {
 
     double phi1 = vi.phi().value();
     double phi2 = vf.phi().value();
-    mybhep::fix_angles(phi1, phi2);
+    fix_angles(phi1, phi2);
 
     experimental_double deltaphi = vf.phi() - vi.phi();
     deltaphi.set_value(phi2 - phi1);
@@ -2001,7 +2002,7 @@ namespace CAT {
       charge_ = deltaphi/std::abs(deltaphi.value());
     }
 
-    // if( print_level() >= mybhep::VVERBOSE ){
+    // if( print_level() >= VVERBOSE ){
     //   std::clog << " calculate tangent charge: initial phi " << phi1*180./acos(-1.) << " final phi " << phi2*180./acos(-1.) << " deltaphi " << deltaphi.value() << " charge " << charge_.value() << " +- " << charge_.error() << std::endl;
     // }
 
@@ -2010,7 +2011,7 @@ namespace CAT {
 
     double helix_phi1 = first_helix_phi.value();
     double helix_phi2 = last_helix_phi.value();
-    mybhep::fix_angles(helix_phi1, helix_phi2);
+    fix_angles(helix_phi1, helix_phi2);
 
     experimental_double deltahelix_phi = last_helix_phi - first_helix_phi;
     deltahelix_phi.set_value(helix_phi2 - helix_phi1);
@@ -2020,7 +2021,7 @@ namespace CAT {
       helix_charge_ = deltahelix_phi/std::abs(deltahelix_phi.value());
     }
 
-    // if( print_level() >= mybhep::VVERBOSE ){
+    // if( print_level() >= VVERBOSE ){
     //   std::clog << " calculate helix charge: initial helix phi " << helix_phi1*180./acos(-1.) << " final phi " << helix_phi2*180./acos(-1.) << " deltaphi " << deltahelix_phi.value() << " charge " << helix_charge_.value() << " +- " << helix_charge_.error() << std::endl;
     //   std::clog << " calculate detailed charges: " << std::endl;
     // }
@@ -2032,7 +2033,7 @@ namespace CAT {
 
       phi1 = a_vi.phi().value();
       phi2 = a_vf.phi().value();
-      mybhep::fix_angles(phi1, phi2);
+      fix_angles(phi1, phi2);
 
       deltaphi = vf.phi() - vi.phi();
       deltaphi.set_value(phi2 - phi1);
@@ -2040,7 +2041,7 @@ namespace CAT {
       if( deltaphi.value() ){
         has_detailed_charge_ = true;
         angles.push_back(deltaphi/std::abs(deltaphi.value()));
-        // if( print_level() >= mybhep::VVERBOSE ){
+        // if( print_level() >= VVERBOSE ){
         //   std::clog << " triplet: " << i << " q " << angles.back().value() << " +- " << angles.back().error() << std::endl;
         // }
       }
@@ -2056,7 +2057,7 @@ namespace CAT {
         detailed_charge_.set(0.,0.);
     }
 
-    // if( print_level() >= mybhep::VVERBOSE ){
+    // if( print_level() >= VVERBOSE ){
     //   std::clog << " detailed charge " << detailed_charge_.value() << " +- " << detailed_charge_.error() << std::endl;
     // }
     return;
@@ -2163,7 +2164,7 @@ namespace CAT {
     experimental_double local_distance;
     *with_kink = 0;
 
-    // if( print_level() >= mybhep::VVERBOSE )
+    // if( print_level() >= VVERBOSE )
     //   std::clog << " ... intersecting sequences, acrossGap " << acrossGAP << std::endl;
 
     if( !has_helix() ) calculate_helix(Ratio);
@@ -2194,7 +2195,7 @@ namespace CAT {
       }
       distanceA = std::abs(std::max(local_distance.value()-local_distance.error(), 0.));
 
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... result of circles intersection: " << result << std::endl;
 
       if(!result){
@@ -2215,7 +2216,7 @@ namespace CAT {
       }
       distanceB = std::abs(std::max(local_distance.value()-local_distance.error(), 0.));
 
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << "ep (" << ep->x().value() << ", " << ep->y().value() << ", " << ep->z().value() << ") ... distanceA " << distanceA << " distanceB " << distanceB << " limit " << limit_distance << std::endl;
 
       return (result && distanceA <= limit_distance && distanceB <= limit_distance );
@@ -2264,7 +2265,7 @@ namespace CAT {
     if( result_tangent_B ){
       resultB=true;
       local_distance = pB.hor_distance(ep_tangent_B);
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... extrapolation through tangent B, pB (" << pB.x().value() << ", " << pB.y().value() << ", " << pB.z().value() << ") distance " << local_distance.value() << " +- " << local_distance.error()  << std::endl;
       distanceB = std::min(local_distance.value(), distanceB);
       distance_error_B = local_distance.error();
@@ -2283,7 +2284,7 @@ namespace CAT {
     if( result_tangent_A ){
       resultA=true;
       local_distance = pA.hor_distance(ep_tangent_A);
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... extrapolation through tangent A, pA (" << pA.x().value() << ", " << pA.y().value() << ", " << pA.z().value() << ") distance " << local_distance.value() << " +- " << local_distance.error()  << std::endl;
       distanceA = std::min(local_distance.value(), distanceA);
       distance_error_A = local_distance.error();
@@ -2320,7 +2321,7 @@ namespace CAT {
       }
     }
 
-    // if( print_level() >= mybhep::VVERBOSE )
+    // if( print_level() >= VVERBOSE )
     //   std::clog << " ... resultA " << resultA << " ... resultB " << resultB << " distanceA " << distanceA << " distanceB " << distanceB << " distance " << distance << " +- " << distance_error << " limit " << 2.*limit_distance << std::endl;
 
     if ((distance != distance) || (distance_error != distance_error)) {
@@ -2358,27 +2359,27 @@ namespace CAT {
                             size_t NOffLayers) const
   {
     if( !seq.fast() ){
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... forbidden, delayed track " << std::endl;
       return false;
     }
 
     if( seq.nodes().size() < 1 ){
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... forbidden, hits size is " << seq.nodes().size() << std::endl;
       return false;
     }
 
     //no connection if on opposite sides of the foil
     if( nodes_[0].c().get_side() * seq.nodes_[0].c().get_side() < 0 ){
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... forbidden, opposite side of foil " << std::endl;
       return false;
     }
 
 
     if( family() == seq.family() ){
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... forbidden, belongs to same family " << family() << std::endl;
       return false;
     }
@@ -2398,18 +2399,18 @@ namespace CAT {
 
       // connection must be between neighboring blocks or within same block
       if( std::abs( block_distance ) > 1 ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because blocks are far away " << std::endl;
         return false;
       }
 
       if( has_decay_helix_vertex() && decay_helix_vertex_type() == "calo" ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 1st track already has decay helix_vertex on calo " << std::endl;
         return false;
       }
       if( seq.has_helix_vertex() && seq.helix_vertex_type() == "calo" ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 2nd track already has helix_vertex on calo " << std::endl;
         return false;
       }
@@ -2423,18 +2424,18 @@ namespace CAT {
       block_distance = last_node().c().get_side() - seq.last_node().c().get_side();
       // connection must be between neighboring blocks or within same block
       if( std::abs( block_distance ) > 1 ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because blocks are far away " << std::endl;
         return false;
       }
 
       if( has_decay_helix_vertex() && decay_helix_vertex_type() == "calo" ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 1st track already has decay helix_vertex on calo " << std::endl;
         return false;
       }
       if( seq.has_decay_helix_vertex() && seq.decay_helix_vertex_type() == "calo" ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 2nd track already has decay helix_vertex on calo " << std::endl;
         return false;
       }
@@ -2447,18 +2448,18 @@ namespace CAT {
       block_distance = nodes_[0].c().get_side() - seq.last_node().c().get_side();
       // connection must be between neighboring blocks or within same block
       if( std::abs( block_distance ) > 1 ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because blocks are far away " << std::endl;
         return false;
       }
 
       if( has_helix_vertex() && helix_vertex_type() == "calo" ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 1st track already has helix_vertex on calo " << std::endl;
         return false;
       }
       if( seq.has_decay_helix_vertex() && seq.decay_helix_vertex_type() == "calo" ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 2nd track already has decay helix_vertex on calo " << std::endl;
         return false;
       }
@@ -2471,18 +2472,18 @@ namespace CAT {
       block_distance = nodes_[0].c().get_side() - seq.nodes_[0].c().get_side();
       // connection must be between neighboring blocks or within same block
       if( std::abs( block_distance ) > 1 ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because blocks are far away " << std::endl;
         return false;
       }
 
       if( has_helix_vertex() && helix_vertex_type() == "calo" ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 1st track already has helix_vertex on calo " << std::endl;
         return false;
       }
       if( seq.has_helix_vertex() && seq.helix_vertex_type() == "calo" ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 2nd track already has helix_vertex on calo " << std::endl;
         return false;
       }
@@ -2493,19 +2494,19 @@ namespace CAT {
 
     // connection must be between neighboring layers
     if( static_cast<size_t>(std::abs(layer_distance)) > 1 + NOffLayers){
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... forbidden, because layers are far away by " << layer_distance << " planes " << std::endl;
       return false;
     }
 
     // connection in the same block must be between neighbouring cell numbers
     if( block_distance == 0 && static_cast<size_t>(std::abs(cell_number_distance)) > 1 + NOffLayers){
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... forbidden, because block is the same and cell numbers are far away by " << cell_number_distance << " cells " << std::endl;
       return false;
     }
 
-    // if( print_level() >= mybhep::VVERBOSE ){
+    // if( print_level() >= VVERBOSE ){
     //   std::clog << " ... good match, distances: FF " << distFF << " FL " << distFL << " LF " << distLF << " LL " << distLL << " so invertA " << invertA << " invertB " << invertB << " layerdistance " << layer_distance << std::endl;
     // }
     return true;
@@ -2514,7 +2515,7 @@ namespace CAT {
 
   void sequence::remove_first_node()
   {
-    // if( print_level() >= mybhep::VVERBOSE ){
+    // if( print_level() >= VVERBOSE ){
     //   std::clog << " removing first node " << nodes_.begin()->c().get_id() << std::endl;
     // }
     nodes_.erase(nodes_.begin());
@@ -2522,7 +2523,7 @@ namespace CAT {
 
   void sequence::remove_last_node()
   {
-    // if( print_level() >= mybhep::VVERBOSE ){
+    // if( print_level() >= VVERBOSE ){
     //   std::clog << " removing last node " << nodes_.back().c().get_id() << std::endl;
     // }
     nodes_.pop_back();
@@ -2662,20 +2663,20 @@ namespace CAT {
                                       int &cells_to_delete) const
   {
     if( !seq.fast() ) {
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... forbidden, delayed track " << std::endl;
       return false;
     }
 
     if( nodes_.size() < 2 || seq.nodes().size() < 2 ){
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... forbidden, hits sizes are " << nodes_.size() << " and " << seq.nodes().size() << std::endl;
       return false;
     }
 
     //no connection if on opposite sides of the foil
     if( nodes_[0].c().get_side() * seq.nodes_[0].c().get_side() < 0 ){
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... forbidden, opposite side of foil " << std::endl;
       return false;
     }
@@ -2699,18 +2700,18 @@ namespace CAT {
       block_distance = last_node().c().get_side() - seq.nodes_[0].c().get_side();
       // connection must be between neighboring blocks or within same block
       if( std::abs(block_distance ) > 1 ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because blocks are far away " << std::endl;
         return false;
       }
 
       if( has_decay_helix_vertex() && (decay_helix_vertex_type() == "calo" || decay_helix_vertex_type() == "foil") ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 1st track already has decay helix_vertex on calo or foil " << std::endl;
         return false;
       }
       if( seq.has_helix_vertex() && (seq.helix_vertex_type() == "calo" || seq.helix_vertex_type() == "foil") ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 2nd track already has helix_vertex on calo or foil " << std::endl;
         return false;
       }
@@ -2732,7 +2733,7 @@ namespace CAT {
       if( std::abs( block_distance ) == 1 )
         acrossGAP=true;
       else if( distLF > limit_distance*(cells_to_delete + 1)){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because distance " << distLF << " is larger than limit " << limit_distance*(cells_to_delete + 1) << std::endl;
         return false;
       }
@@ -2745,19 +2746,19 @@ namespace CAT {
       block_distance = last_node().c().get_side() - seq.last_node().c().get_side();
       // connection must be between neighboring blocks or within same block
       if( std::abs( block_distance ) > 1 ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because blocks are far away " << std::endl;
         return false;
       }
 
 
       if( has_decay_helix_vertex() && (decay_helix_vertex_type() == "calo" || decay_helix_vertex_type() == "foil") ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 1st track already has decay helix_vertex on calo or foil " << std::endl;
         return false;
       }
       if( seq.has_decay_helix_vertex() && (seq.decay_helix_vertex_type() == "calo" || seq.decay_helix_vertex_type() == "foil") ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 2nd track already has decay helix_vertex on calo or foil " << std::endl;
         return false;
       }
@@ -2779,7 +2780,7 @@ namespace CAT {
       if( std::abs( block_distance ) == 1 )
         acrossGAP=true;
       else if( distLL > limit_distance*(cells_to_delete + 1)){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because distance " << distLL << " is larger than limit " << limit_distance*(cells_to_delete + 1) << std::endl;
         return false;
       }
@@ -2793,18 +2794,18 @@ namespace CAT {
       block_distance = nodes_[0].c().get_side() - seq.last_node().c().get_side();
       // connection must be between neighboring blocks or within same block
       if( std::abs( block_distance ) > 1 ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because blocks are far away " << std::endl;
         return false;
       }
 
       if( has_helix_vertex() && (helix_vertex_type() == "calo" || helix_vertex_type() == "foil") ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 1st track already has helix_vertex on calo or foil " << std::endl;
         return false;
       }
       if( seq.has_decay_helix_vertex() && (seq.decay_helix_vertex_type() == "calo" || seq.decay_helix_vertex_type() == "foil") ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 2nd track already has decay helix_vertex on calo or foil " << std::endl;
         return false;
       }
@@ -2826,7 +2827,7 @@ namespace CAT {
       if( std::abs( block_distance ) == 1 )
         acrossGAP = true;
       else if( distFL > limit_distance*(cells_to_delete + 1)){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because distance " << distFL << " is larger than limit " << limit_distance*(cells_to_delete + 1) << std::endl;
         return false;
       }
@@ -2840,18 +2841,18 @@ namespace CAT {
       block_distance = nodes_[0].c().get_side() - seq.nodes_[0].c().get_side();
       // connection must be between neighboring blocks or within same block
       if( std::abs( block_distance ) > 1 ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because blocks are far away " << std::endl;
         return false;
       }
 
       if( has_helix_vertex() && (helix_vertex_type() == "calo" || helix_vertex_type() == "foil") ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 1st track already has helix_vertex on calo or foil " << std::endl;
         return false;
       }
       if( seq.has_helix_vertex() && (seq.helix_vertex_type() == "calo" || seq.helix_vertex_type() == "foil") ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because 2nd track already has helix_vertex on calo or foil " << std::endl;
         return false;
       }
@@ -2873,7 +2874,7 @@ namespace CAT {
       if( std::abs( block_distance ) == 1 )
         acrossGAP=true;
       else if( distFF > limit_distance*(cells_to_delete + 1)){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " ... forbidden, because distance " << distFF << " is larger than limit " << limit_distance*(cells_to_delete + 1) << std::endl;
         return false;
       }
@@ -2881,19 +2882,19 @@ namespace CAT {
 
     // connection must be between neighboring layers
     if( static_cast<size_t>(std::abs(layer_distance)) > 1 + NOffLayers){
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... forbidden, because layers are far away by " << layer_distance << " planes " << std::endl;
       return false;
     }
 
     // connection in the same block must be between neighbouring cell numbers
     if( !acrossGAP && static_cast<size_t>(std::abs(cell_number_distance)) > 1 + NOffLayers){
-      // if( print_level() >= mybhep::VVERBOSE )
+      // if( print_level() >= VVERBOSE )
       //   std::clog << " ... forbidden, because block is the same and cell numbers are far away by " << cell_number_distance << " cells " << std::endl;
       return false;
     }
 
-    // if( print_level() >= mybhep::VVERBOSE ){
+    // if( print_level() >= VVERBOSE ){
     //   std::clog << " ... good kink match, distances: FF " << distFF << " FL " << distFL << " LF " << distLF << " LL " << distLL << " so invertA " << invertA << " invertB " << invertB << " across gap " << acrossGAP << " cells_to_delete " << cells_to_delete << std::endl;
     // }
     return true;
@@ -2928,7 +2929,7 @@ namespace CAT {
       }
 
       if( inode->c().get_side()*old_block < 0 ){
-        // if( print_level() >= mybhep::VVERBOSE )
+        // if( print_level() >= VVERBOSE )
         //   std::clog << " old block: " << old_block << " new block: " << inode->c().get_side() << " the track is not all on one side " << std::endl;
         return false;
       }
@@ -2942,7 +2943,7 @@ namespace CAT {
   {
     size_t s = nodes_.size();
     if( s < 1 ){
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << " problem: asking for initial dir of sequence with " << s << " nodes " << std::endl;
       // }
       return experimental_vector();
@@ -2958,7 +2959,7 @@ namespace CAT {
       return experimental_vector(helix_vertex_, p_last).unit();
     }
     if( s < 2 ){
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << " problem: asking for initial dir of sequence with " << s << " nodes " << std::endl;
       // }
       return experimental_vector();
@@ -2986,7 +2987,7 @@ namespace CAT {
     }
     size_t s = nodes_.size();
     if( s < 1 ){
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << " problem: asking for initial helix dir of sequence with " << s << " nodes " << std::endl;
       // }
       return experimental_vector();
@@ -3017,7 +3018,7 @@ namespace CAT {
   {
     if( has_decay_helix_vertex() ){
       if( nodes_.size() < 1 ){
-        // if( print_level() >= mybhep::NORMAL ){
+        // if( print_level() >= NORMAL ){
         //   std::clog << " problem: asking for final dir of sequence with " << nodes_.size() << " nodes " << std::endl;
         // }
         return experimental_vector();
@@ -3025,7 +3026,7 @@ namespace CAT {
       return experimental_vector(nodes_.back().ep(), decay_helix_vertex_).unit();
     }
     if( nodes_.size() < 2 ){
-      // if( print_level() >= mybhep::NORMAL ){
+      // if( print_level() >= NORMAL ){
       //   std::clog << " problem: asking for final dir of sequence with " << nodes_.size() << " nodes " << std::endl;
       // }
       return experimental_vector();
@@ -3040,7 +3041,7 @@ namespace CAT {
   {
     if( nodes_.size() <= 2 ) return false;
     int index = -1;
-    double chi2max = mybhep::default_max;
+    double chi2max = default_max;
     for(std::vector<node>::const_iterator in = nodes_.begin(); in != nodes_.end(); ++in){
       if( in->chi2() > chi2max ){
         chi2max = in->chi2();
@@ -3070,7 +3071,7 @@ namespace CAT {
     if( nodes_.size() <= 2 ) return false;
     int nindex = -1;
 
-    double phimax = mybhep::default_max;
+    double phimax = default_max;
     size_t index;
     double local_phi;
     for(std::vector<node>::const_iterator in = nodes_.begin(); in != nodes_.end(); ++in){
@@ -3170,7 +3171,7 @@ namespace CAT {
 
     bool found = false;
     double distance;
-    double min_distance = mybhep::default_min;
+    double min_distance = default_min;
 
     for(std::vector<experimental_point>::const_iterator vA=foil_vertex_A.begin(); vA!=foil_vertex_A.end(); vA++)
       for(std::vector<experimental_point>::const_iterator vB=foil_vertex_B.begin(); vB!=foil_vertex_B.end(); vB++)
@@ -3184,7 +3185,7 @@ namespace CAT {
 
     if( found ){
       *the_distance = min_distance;
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   std::clog << " sequences " << this->name() << " and " << seqB->name() << " have vertex on foil with distance " << min_distance << std::endl;
       // }
     }

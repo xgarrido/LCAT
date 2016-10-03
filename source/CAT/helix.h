@@ -44,8 +44,8 @@ namespace CAT {
     helix(double probmin=1.e-200)
     {
       center_ = experimental_point();
-      radius_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
-      pitch_ = experimental_double(mybhep::small_neg, mybhep::small_neg);
+      radius_ = experimental_double(small_neg, small_neg);
+      pitch_ = experimental_double(small_neg, small_neg);
       set_probmin(probmin);
     }
 
@@ -194,7 +194,7 @@ namespace CAT {
       double vphi1 = phi1.value();
       double vphi2 = phi2.value();
 
-      mybhep::fix_angles(vphi1, vphi2);
+      fix_angles(vphi1, vphi2);
 
       dp.set_value(vphi2 - vphi1);
       return dp;
@@ -251,9 +251,9 @@ namespace CAT {
       experimental_point predicted = position(phi_of_point(ep, phi_ref));
       experimental_vector residual(ep , predicted);
       /*
-        double res2 = mybhep::square(residual.x().value()/residual.x().error()) +
-        mybhep::square(residual.y().value()/residual.y().error()) +
-        mybhep::square(residual.z().value()/residual.z().error());
+        double res2 = square(residual.x().value()/residual.x().error()) +
+        square(residual.y().value()/residual.y().error()) +
+        square(residual.z().value()/residual.z().error());
       */
       // the helix errors are based on fluctuation of points from helix curve
       // so they cannot be used for chi2 (they are large for a bad helix giving it a good chi2)
@@ -266,7 +266,7 @@ namespace CAT {
         std::pow(residual.y().value(),2) +
         std::pow(residual.z().value(),2);
 
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   std::clog << " input point: ( "; ep.x().dump(); std::clog << " , "; ep.y().dump(); std::clog << " , "; ep.z().dump(); std::clog << " ) helix: ("; predicted.x().dump(); std::clog << " , "; predicted.y().dump(); std::clog << " , ";predicted.z().dump(); std::clog << " ) local chi2: " << res2  << " " << std::endl;
       // }
 
@@ -318,7 +318,7 @@ namespace CAT {
 
       if( pl.view() == "x" || pl.view() == "z" || pl.view() == "inner" || pl.view() == "outer" ){
         bool result = get_circle().intersect_plane(pl, ep, _phi);
-        // if( print_level() >= mybhep::VVERBOSE ){
+        // if( print_level() >= VVERBOSE ){
         //   std::clog << " helix intersected point y " << ep->y().value() << " _phi " << _phi.value() << " y_ref " << y_ref << " -> y " << position(*ep,_phi.value(), y_ref).y().value() << std::endl;
         // }
         ep->set_y(position(*ep,_phi.value(), y_ref).y());
@@ -339,7 +339,7 @@ namespace CAT {
 
         // vector from center of plane face to extrapolated point
         experimental_vector dist = experimental_vector(pl.face(), *ep).hor();
-        // if( print_level() >= mybhep::VVERBOSE ){
+        // if( print_level() >= VVERBOSE ){
         //   std::clog << " helix distance from extrapolation to plane face: " << dist.x().value() << ", " << dist.y().value() << ", " << dist.z().value() << " plane sizes: " << pl.sizes().x().value() << " " << pl.sizes().y().value() << " " << pl.sizes().z().value() << std::endl;
         // }
 
@@ -395,7 +395,7 @@ namespace CAT {
       *ep = c.position(phi0 + sign*alpha);
       ep->set_y(position(*ep, phi0.value(),start.y().value()).y());
 
-      // if( print_level() >= mybhep::VVERBOSE ){
+      // if( print_level() >= VVERBOSE ){
       //   std::clog << " center (" << c.center().x().value() << ", " << c.center().y().value() << ", " << c.center().z().value() << ") r " << c.radius().value() << " +- " << c.radius().error() << " start (" << start.x().value() << ", " << start.y().value() << ", " << start.z().value() << ") cts (" << center_to_start.x().value() << ", " << center_to_start.y().value() << ", " << center_to_start.z().value() << ") length " << center_to_start.length().value() << " +- " << center_to_start.length().error() <<  " beta " << beta.value()*180./acos(-1.) << " +- " << beta.error()*180./acos(-1.) << " phi0 " << phi0.value()*180./acos(-1.) << " angle " << angle.value() << " +- " << angle.error() << " alpha " << alpha.value()*180./acos(-1.) << " sign " << sign.value() << " newangle " << (phi0+sign*alpha).value()*180./acos(-1.) << " pos: (" << ep->x().value() << ", " << ep->y().value() << ", " << ep->z().value() << ") " << std::endl;
       // }
 
@@ -478,7 +478,7 @@ namespace CAT {
     experimental_double _radius = experimental_sqrt(experimental_square(Xc - epa.x()) + experimental_square(Zc - epa.z()));
 
     if( std::isnan(_radius.value()) || std::isinf(_radius.value()) )
-      _radius.set_value(mybhep::small_neg);
+      _radius.set_value(small_neg);
 
     experimental_double dist = epc.distance(epa);
 

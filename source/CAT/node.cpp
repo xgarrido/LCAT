@@ -11,7 +11,7 @@ namespace CAT {
     is_kink_ = false;
     chi2_ = 0.;
     ndof_=0;
-    circle_phi_ = mybhep::small_neg;
+    circle_phi_ = small_neg;
   }
 
   node::~node()
@@ -30,7 +30,7 @@ namespace CAT {
     ndof_ = 0;
     setup_cc_maps();
     setup_ccc_maps();
-    circle_phi_ = mybhep::small_neg;
+    circle_phi_ = small_neg;
   }
 
   node::node(const cell &c, double probmin)
@@ -41,7 +41,7 @@ namespace CAT {
     is_kink_ = false;
     chi2_ = 0.;
     ndof_=0;
-    circle_phi_ = mybhep::small_neg;
+    circle_phi_ = small_neg;
   }
 
   void node::dump(std::ostream & a_out,
@@ -208,12 +208,12 @@ namespace CAT {
         cell c2 = jcc->cb();
         if( c1.get_id() == c2.get_id() ) continue;
         cell_triplet ccc(c1,c_,c2, probmin());
-        // if( print_level() >= mybhep::VVERBOSE ){
+        // if( print_level() >= VVERBOSE ){
         //   std::clog << appname_ << " calculate triplets for three cells: " << ccc.ca().get_id() << "  " << ccc.cb().get_id() << "  " << ccc.cc().get_id() << std::endl;
         // }
         ccc.calculate_joints(ratio_, phi_limit_);
         if( ccc.joints().size() > 0 ){
-          // if( print_level() >= mybhep::VVERBOSE ){
+          // if( print_level() >= VVERBOSE ){
           //   std::clog << appname_ << " adding joints " << std::endl;
           //   for(std::vector<joint>::iterator ijoint = ccc.joints_.begin(); ijoint != ccc.joints_.end(); ++ ijoint )
           //     std::clog << " joint " << ijoint - ccc.joints_.begin() << " phia: " << experimental_vector(ccc.ca().ep(), ijoint->epa()).phi().value()*180./M_PI

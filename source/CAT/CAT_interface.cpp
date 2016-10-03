@@ -206,7 +206,7 @@ namespace CAT {
     // std::string leveltmp = setup_.level;
     // boost::to_upper(leveltmp);
 
-    // stor_.set_level (leveltmp); //mybhep::get_info_level (leveltmp));
+    // stor_.set_level (leveltmp); //get_info_level (leveltmp));
 
     // Algorithm parameters :
     stor_.set_SmallRadius (setup_.SmallRadius / CLHEP::mm);

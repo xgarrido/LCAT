@@ -14,39 +14,36 @@
  * General Public License for more details.
  */
 
-#ifndef LCAT_UTILITIES
-#define LCAT_UTILITIES
+#ifndef FALAISE_CAT_UTILITIES_H
+#define FALAISE_CAT_UTILITIES_H 1
 
 // Standard library:
-#include <string>
-#include <vector>
-#include <sstream>
-#include <cmath>
-#include <cstdlib>
-#include <cfloat>
-#include <limits.h>
+#include <limits>
 
-namespace mybhep {
+namespace CAT {
 
-  static const double plus_infinity   = DBL_MAX;
+  static const double plus_infinity   = std::numeric_limits<double>::max();
   static const double small_neg       = -plus_infinity;
-  static const int    default_integer = INT_MAX;
+  static const int    default_integer = std::numeric_limits<int>::max();
   static const double default_min     = plus_infinity;
   static const double default_max     = -default_min;
 
+  // \brief Singleton holding constants
+  class constants {
+  public:
+    double get_minimal_probability() const;
+    constants();
+    static const constants & instance();
+  private:
+    double _min_probability_;
+  };
+
   /// Shift angle values in a limited range
-  inline void fix_angles(double & a1_, double & a2_)
-  {
-    if (std::abs(a1_ - a2_) > M_PI) {
-      if (a1_ < a2_) {
-        a1_ += 2.*M_PI;
-      } else {
-        a2_ += 2.*M_PI;
-      }
-    }
-    return;
-  }
+  void fix_angles(double & a1_, double & a2_);
 
-} // namespace mybhep
+  /// Return probability given chi2 value and number of degree of freedom
+  double probof(double chi2_, int ndof_);
 
-#endif // LCAT_UTILITIES
+} // namespace CAT
+
+#endif // FALAISE_CAT_UTILITIES_H
