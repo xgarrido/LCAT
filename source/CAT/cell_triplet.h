@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <CAT/cell_base.h>
+#include <CAT/cell.h>
 #include <CAT/cell_couplet.h>
 #include <CAT/joint.h>
 

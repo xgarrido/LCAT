@@ -10,7 +10,7 @@
 
 #include <CAT/tracked_data.h>
 #include <CAT/experimental_point.h>
-#include <CAT/cell_base.h>
+#include <CAT/cell.h>
 #include <CAT/clusterizer.h>
 #include <CAT/sequentiator.h>
 

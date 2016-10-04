@@ -10,7 +10,7 @@
 // This project:
 #include <CAT/experimental_point.h>
 #include <CAT/experimental_vector.h>
-#include <CAT/cell_base.h>
+#include <CAT/cell.h>
 
 namespace CAT {
 

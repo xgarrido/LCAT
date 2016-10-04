@@ -8,7 +8,7 @@
 #include <vector>
 
 // This project:
-#include <CAT/cell_base.h>
+#include <CAT/cell.h>
 #include <CAT/calorimeter_hit.h>
 #include <CAT/cluster.h>
 #include <CAT/scenario.h>

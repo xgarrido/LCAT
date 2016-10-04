@@ -14,7 +14,7 @@
 #include <bayeux/datatools/logger.h>
 
 // This project:
-#include <CAT/cell_base.h>
+#include <CAT/cell.h>
 #include <CAT/line.h>
 #include <CAT/cell_couplet.h>
 #include <CAT/cell_triplet.h>

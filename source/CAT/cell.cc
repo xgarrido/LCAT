@@ -1,5 +1,5 @@
 // Ourselves
-#include <CAT/cell_base.h>
+#include <CAT/cell.h>
 #include <CAT/utilities.h>
 
 // Standard library

@@ -19,7 +19,7 @@ list(APPEND LCAT_HEADERS
   source/CAT/broken_line.h
   source/CAT/calorimeter_hit.h
   source/CAT/CAT_interface.h
-  source/CAT/cell_base.h
+  source/CAT/cell.h
   source/CAT/cell_couplet.h
   source/CAT/cell_triplet.h
   source/CAT/circle_base.h
@@ -48,7 +48,7 @@ list(APPEND LCAT_SOURCES
   source/CAT/broken_line.cpp
   source/CAT/calorimeter_hit.cpp
   source/CAT/CAT_interface.cpp
-  source/CAT/cell_base.cpp
+  source/CAT/cell.cc
   source/CAT/cell_couplet.cpp
   source/CAT/cell_triplet.cpp
   source/CAT/circle_base.cpp
