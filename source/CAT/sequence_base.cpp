@@ -1928,17 +1928,17 @@ namespace CAT {
 
 
 
-      double prob = helix_Prob();
-      // if( print_level() >= VVERBOSE ){
-      //   std::clog << " helix prob " << prob << " min " << probmin() << std::endl;
-      // }
+      // double prob = helix_Prob();
+      // // if( print_level() >= VVERBOSE ){
+      // //   std::clog << " helix prob " << prob << " min " << probmin() << std::endl;
+      // // }
 
-      if( prob < probmin() ){
-        // if( print_level() >= VVERBOSE ){
-        //   std::clog << " so reject helix " << std::endl;
-        // }
-        good_fit = false;
-      }
+      // if( prob < probmin()) {//constants::instance().get_minimal_probability()){
+      //   // if( print_level() >= VVERBOSE ){
+      //   //   std::clog << " so reject helix " << std::endl;
+      //   // }
+      //   good_fit = false;
+      // }
     }
     return good_fit;
   }
