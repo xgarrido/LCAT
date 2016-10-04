@@ -64,20 +64,6 @@ namespace CAT {
     }
   }
 
-
-
-  //! set
-  void plane::set(const experimental_point &center,
-                  const experimental_vector &sizes,
-                  const experimental_vector &norm)
-  {
-    center_ = center;
-    sizes_ = sizes;
-    norm_ = norm;
-    return;
-  }
-
-
   //! set center
   void plane::set_center(const experimental_point &center)
   {

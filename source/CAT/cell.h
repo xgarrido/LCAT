@@ -1,6 +1,6 @@
 /* -*- mode: c++ -*- */
-#ifndef FALAISE_CAT_CELL_BASE_H
-#define FALAISE_CAT_CELL_BASE_H 1
+#ifndef FALAISE_CAT_CELL_H
+#define FALAISE_CAT_CELL_H 1
 
 // Standard library
 #include <iostream>

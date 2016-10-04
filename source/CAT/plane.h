@@ -59,12 +59,6 @@ namespace CAT {
                bool a_inherit               = false) const;
 
 
-    //! set
-    void set(const experimental_point &center,
-             const experimental_vector &sizes,
-             const experimental_vector &norm);
-
-
     //! set center
     void set_center(const experimental_point &center);
 
