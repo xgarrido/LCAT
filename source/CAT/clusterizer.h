@@ -2,11 +2,8 @@
 #ifndef CAT_CLUSTERIZER_H
 #define CAT_CLUSTERIZER_H 1
 
-#include <stdexcept>
-#include <iostream>
+// Standard library
 #include <vector>
-
-#include <CAT/cell_base.h>
 
 // Third party
 // - Bayeux/datatools:
@@ -21,6 +18,7 @@ namespace CAT {
 
   // Forward declaration
   class tracked_data;
+  class cell;
 
   /// The clusterizer algorithm
   class clusterizer {

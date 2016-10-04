@@ -56,7 +56,7 @@ list(APPEND LCAT_SOURCES
   source/CAT/clockable.cpp
   source/CAT/Clock.cpp
   source/CAT/cluster.cpp
-  source/CAT/clusterizer.cpp
+  source/CAT/clusterizer.cc
   source/CAT/experimental_double.cpp
   source/CAT/experimental_point.cpp
   source/CAT/experimental_vector.cpp
