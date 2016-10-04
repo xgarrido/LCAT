@@ -15,17 +15,15 @@ namespace CAT {
   }
 
   //! constructor from std::vector of nodes
-  cluster::cluster(const std::vector<node> &nodes, double probmin)
+  cluster::cluster(const std::vector<node> &nodes)
   {
-    set_probmin(probmin);
     nodes_ = nodes;
     free_ = false;
   }
 
   //! constructor from single node
-  cluster::cluster(node &a_node, double probmin)
+  cluster::cluster(node &a_node)
   {
-    set_probmin(probmin);
     a_node.set_free(false);
     nodes_.clear();
     nodes_.push_back(a_node);
@@ -83,21 +81,6 @@ namespace CAT {
       return true;
 
     return false;
-  }
-
-
-  cluster cluster::invert()
-  {
-    cluster inverted;
-    inverted.set_probmin(probmin());
-    inverted.set_free(Free());
-    std::vector<node> inverted_nodes;
-    for(std::vector<node>::iterator inode = nodes_.end(); inode != nodes_.begin(); --inode){
-      inverted_nodes.push_back(*inode);
-    }
-    inverted.set_nodes( inverted_nodes );
-    return inverted;
-
   }
 
   node cluster::node_of_cell(const cell & c)

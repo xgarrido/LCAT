@@ -12,7 +12,6 @@
 #include <boost/cstdint.hpp>
 
 // This project:
-#include <CAT/tracking_object.h>
 #include <CAT/experimental_point.h>
 #include <CAT/experimental_vector.h>
 #include <CAT/sequence_base.h>
@@ -23,7 +22,7 @@ namespace CAT {
 
   /// \broef A reconstruction scenario is composed of
   /// a collection of tracks.
-  class scenario : public tracking_object
+  class scenario
   {
 
   private:
@@ -53,7 +52,7 @@ namespace CAT {
     virtual ~scenario();
 
     //! constructor
-    scenario(const std::vector<sequence> & seqs, double probmin=1.e-200);
+    scenario(const std::vector<sequence> & seqs);
 
     //! Smart print
     virtual void dump (std::ostream & a_out         = std::clog,

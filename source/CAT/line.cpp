@@ -7,12 +7,12 @@
 namespace CAT {
 
   //!Default constructor
-  line::line(double probmin)
+  line::line()
   {
     forward_axis_ = experimental_vector(small_neg,small_neg,small_neg,
                                         small_neg, small_neg, small_neg);
     used_ = false;
-    set_probmin(probmin);
+    return;
   }
 
   //!Default destructor
@@ -22,9 +22,8 @@ namespace CAT {
   }
 
   //! constructor
-  line::line(const experimental_point & epa, const experimental_point & epb, double probmin)
+  line::line(const experimental_point & epa, const experimental_point & epb)
   {
-    set_probmin(probmin);
     epa_ = epa;
     epb_ = epb;
     set_forward_axis();
@@ -156,7 +155,7 @@ namespace CAT {
 
   line line::invert()
   {
-    line inverted(probmin());
+    line inverted;
     inverted.set_epa(epb());
     inverted.set_epb(epa());
     inverted.set_used(used());
@@ -164,7 +163,6 @@ namespace CAT {
     inverted.set_a_forward_axis(O-forward_axis());
     return inverted;
   }
-
 
   void line::set_forward_axis()
   {

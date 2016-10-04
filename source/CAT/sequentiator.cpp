@@ -208,7 +208,6 @@ namespace CAT {
     //  A node is added to the newsequence. It has the given cell but no other
     //  requirement. The free level is set to true.
     sequence newsequence(first_node);
-    newsequence.set_probmin(probmin);
 
     bool updated = true;
 
@@ -707,7 +706,6 @@ namespace CAT {
       DT_LOG_DEBUG(get_logging_priority(), "Begin scenario with sequence " << iseq->name());
 
       scenario sc;
-      sc.set_probmin(probmin);
       sc.sequences_.push_back(*iseq);
       sc.calculate_n_free_families(td.get_gg_hits(), td.get_calo_hits());
       sc.calculate_n_overlaps(td.get_gg_hits(), td.get_calo_hits());
@@ -862,7 +860,6 @@ namespace CAT {
                                         0., 0., 0.);
 
     plane pl(center, sizes, norm);
-    pl.set_probmin(probmin);
 
     std::string the_type="Nemo3";
     if( SuperNemo )
@@ -1273,7 +1270,6 @@ namespace CAT {
 
     DT_LOG_DEBUG(get_logging_priority(), "n of tangents: " << cc.tangents_.size());
     sequence pair(nodes);
-    pair.set_probmin(probmin);
     for(std::vector<line>::iterator itangent=cc.tangents_.begin(); itangent != cc.tangents_.end(); ++itangent){
 
       pair.nodes_[0].set_ep(itangent->epa());
@@ -1911,7 +1907,7 @@ namespace CAT {
           DT_LOG_DEBUG(get_logging_priority(), "... matched to " << jseq->name() << ", chi2 =" << c << " ndof " << n << " prob "<< p);
         }
 
-        if( ok_match && (p > news.probmin())) {
+        if( ok_match && (p > constants::instance().get_minimal_probability())) {
           DT_LOG_DEBUG(get_logging_priority(), "Good helix match");
         } else {
           DT_LOG_DEBUG(get_logging_priority(), " ... no good helix match, try to match with kink");
@@ -1990,7 +1986,7 @@ namespace CAT {
                      << " probmax " << probmax << " chi2min " << chi2min);
 
         if( (p > probmax || (p == probmax && c < chi2min ))  &&
-            ((ok_match && p > news.probmin()) || ok_kink_match ) )
+            ((ok_match && p > constants::instance().get_minimal_probability()) || ok_kink_match ) )
           {
             *jmin = jseq - sequences_.begin();
             probmax = p;

@@ -8,7 +8,6 @@
 #include <string>
 
 // This project:
-#include <CAT/tracking_object.h>
 #include <CAT/experimental_vector.h>
 #include <CAT/experimental_point.h>
 
@@ -23,7 +22,7 @@ namespace CAT {
   /// a view = ("x" or "y" or "z" for SuperNemo,
   ///           "inner", "outer", "bottom" or "top" for Nemo3)
   /// "face" returns the center of the face towards the foil
-  class plane : public tracking_object
+  class plane
   {
 
   private:
@@ -43,7 +42,7 @@ namespace CAT {
   public:
 
     //!Default constructor
-    plane(double probmin = 1.e-200);
+    plane();
 
     //!Default destructor
     virtual ~plane();
@@ -51,8 +50,7 @@ namespace CAT {
     //! constructor
     plane(const experimental_point &center,
           const experimental_vector &sizes,
-          const experimental_vector &norm,
-          double probmin = 1.e-200);
+          const experimental_vector &norm);
 
     /// Smart print
     void dump (std::ostream & a_out         = std::clog,

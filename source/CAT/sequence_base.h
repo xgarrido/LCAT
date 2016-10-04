@@ -29,7 +29,7 @@
 namespace CAT {
 
   /// \brief A sequence is composed of a list of nodes
-  class sequence : public tracking_object
+  class sequence
   {
 
   protected:
@@ -114,10 +114,10 @@ namespace CAT {
     virtual ~sequence();
 
     //! constructor from std::vector of nodes
-    sequence(const std::vector<node>&  nodes, double probmin=1.e-200);
+    sequence(const std::vector<node>&  nodes);
 
     //! constructor from single node
-    sequence(const node &node, double probmin=1.e-200);
+    sequence(const node &node);
 
     /*** dump ***/
     virtual void dump (std::ostream & a_out         = std::clog,

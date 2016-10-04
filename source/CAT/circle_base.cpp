@@ -6,12 +6,10 @@
 namespace CAT{
 
   //!Default constructor
-  circle::circle(double probmin)
+  circle::circle()
   {
-    appname_= "circle: ";
     center_ = experimental_point();
     radius_ = experimental_double(small_neg, small_neg);
-    set_probmin(probmin);
   }
 
   //!Default destructor
@@ -21,9 +19,7 @@ namespace CAT{
   }
 
   //! constructor
-  circle::circle(const experimental_point &center, const experimental_double &radius, double probmin){
-    set_probmin(probmin);
-    appname_= "circle: ";
+  circle::circle(const experimental_point &center, const experimental_double &radius){
     center_ = center;
     radius_ = radius;
   }
@@ -41,7 +37,6 @@ namespace CAT{
           a_out << indent << a_title << std::endl;
         }
 
-      a_out << indent << appname_ << " -------------- " << std::endl;
       a_out << indent << " center " << std::endl;
       this->center().dump(a_out, "", indent + "    ");
       a_out << indent << " radius: "; radius().dump(); a_out << " " << std::endl;

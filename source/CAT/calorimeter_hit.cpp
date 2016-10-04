@@ -6,12 +6,10 @@
 namespace CAT {
 
   //!Default constructor
-  calorimeter_hit::calorimeter_hit(double probmin)
+  calorimeter_hit::calorimeter_hit()
   {
-    appname_= "calorimeter_hit: ";
     e_ = experimental_double(small_neg, small_neg);
     t_ = experimental_double(small_neg, small_neg);
-    set_probmin(probmin);
     id_ = default_integer;
     user_id_ = default_integer;
     layer_ = small_neg;
@@ -22,24 +20,6 @@ namespace CAT {
   calorimeter_hit::~calorimeter_hit()
   {
     return;
-  }
-
-  //! constructor
-  calorimeter_hit::calorimeter_hit(const plane & pl,
-                                   const experimental_double & e,
-                                   const experimental_double & t,
-                                   size_t id,
-                                   double layer,
-                                   double probmin)
-  {
-    set_probmin(probmin);
-    appname_= "calorimeter_hit: ";
-    pl_ = pl;
-    e_ = e;
-    t_ = t;
-    id_ = id;
-    user_id_ = id;
-    layer_ = layer;
   }
 
   /*** dump ***/
@@ -55,7 +35,6 @@ namespace CAT {
         a_out << indent << a_title << std::endl;
       }
 
-    a_out << indent << appname_ << " -------------- " << std::endl;
     a_out << indent << " id " << id() << " plane " << std::endl;
     pl_.dump(a_out, "", indent + "    ");
     a_out << indent << " energy "; this->e().dump(a_out, "", indent + "    ");

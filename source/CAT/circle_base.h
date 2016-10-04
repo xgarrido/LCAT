@@ -11,13 +11,11 @@
 
 namespace CAT{
 
-  class circle : public tracking_object {
-
-    // a circle is identified by origin and radius
+  /// \brief A circle is identified by origin and radius
+  class circle
+  {
 
   private:
-
-    std::string appname_;
 
     // experimental point
     experimental_point center_;
@@ -32,14 +30,14 @@ namespace CAT{
   public:
 
     //!Default constructor
-    circle(double probmin=1.e-200);
+    circle();
 
 
     //!Default destructor
     virtual ~circle();
 
     //! constructor
-    circle(const experimental_point &center, const experimental_double &radius, double probmin=1.e-200);
+    circle(const experimental_point &center, const experimental_double &radius);
 
     /*** dump ***/
     virtual void dump (std::ostream & a_out         = std::clog,

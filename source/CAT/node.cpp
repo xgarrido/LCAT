@@ -33,9 +33,8 @@ namespace CAT {
     circle_phi_ = small_neg;
   }
 
-  node::node(const cell &c, double probmin)
+  node::node(const cell &c)
   {
-    set_probmin(probmin);
     c_ = c;
     free_ = false;
     is_kink_ = false;
@@ -207,7 +206,7 @@ namespace CAT {
       for(std::vector<cell_couplet>::const_iterator jcc=cc_.begin() + (size_t)(icc - cc_.begin()); jcc!=cc_.end(); ++jcc){
         cell c2 = jcc->cb();
         if( c1.get_id() == c2.get_id() ) continue;
-        cell_triplet ccc(c1,c_,c2, probmin());
+        cell_triplet ccc(c1,c_,c2);
         // if( print_level() >= VVERBOSE ){
         //   std::clog << appname_ << " calculate triplets for three cells: " << ccc.ca().get_id() << "  " << ccc.cb().get_id() << "  " << ccc.cc().get_id() << std::endl;
         // }
@@ -253,21 +252,6 @@ namespace CAT {
     links_.erase(links_.begin() + index);
     return;
   }
-
-  node node::invert()
-  {
-    node inverted;
-    inverted.set_probmin(probmin());
-    inverted.set_c(c());
-    inverted.set_cc(cc());
-    inverted.set_ccc(ccc());
-    inverted.set_free(free());
-    inverted.set_chi2(chi2());
-    inverted.set_ndof(ndof());
-    inverted.set_ep(ep());
-    return inverted;
-  }
-
 
   std::string node::topological_type() const
   {

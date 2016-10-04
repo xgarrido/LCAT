@@ -22,7 +22,7 @@
 namespace CAT {
 
   /// \brief A cluster is composed of a list of nodes
-  class cluster : public tracking_object
+  class cluster
   {
   public:
 
@@ -39,10 +39,10 @@ namespace CAT {
     virtual ~cluster();
 
     //! constructor from std::vector of nodes
-    cluster(const std::vector<node> &nodes, double probmin=1.e-200);
+    cluster(const std::vector<node> &nodes);
 
     //! constructor from single node
-    cluster(node &a_node, double probmin=1.e-200);
+    cluster(node &a_node);
 
     /*** dump ***/
     virtual void dump (std::ostream & a_out         = std::clog,
@@ -66,11 +66,7 @@ namespace CAT {
 
     bool has_cell(const cell & c)const;
 
-
-    cluster invert();
-
     node node_of_cell(const cell & c);
-
 
     void solve_ambiguities(std::vector< std::vector<broken_line> > * sets_of_bl_alternatives);
 

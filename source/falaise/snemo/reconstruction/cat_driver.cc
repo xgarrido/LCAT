@@ -404,7 +404,6 @@ namespace snemo {
         CAT::experimental_vector sizes(width, height, thickness,
                                       0., 0., 0.);
         CAT::plane pl(center, sizes, norm);
-        pl.set_probmin(_CAT_setup_.probmin);
         pl.set_type("SuperNEMO");
 
         // Build the Calo hit position :
@@ -413,7 +412,6 @@ namespace snemo {
         c.set_pl(pl);
         c.set_e(energy);
         c.set_t(time);
-        c.set_probmin(_CAT_setup_.probmin);
         c.set_layer(column);
         c.set_id(jhit++);
 

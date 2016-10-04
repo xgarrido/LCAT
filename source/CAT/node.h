@@ -22,10 +22,9 @@ namespace CAT {
 
   /// \brief Tracking node
   ///
-  /// A node is composed of a main cell,
-  /// a list of cell couplets
-  /// and a list of cell triplets
-  class node : public tracking_object
+  /// A node is composed of a main cell, a list of cell couplets and a list of
+  /// cell triplets
+  class node
   {
   public:
 
@@ -72,7 +71,7 @@ namespace CAT {
     node(const cell & c, const std::vector<cell_couplet> & cc, const std::vector<cell_triplet> & ccc);
 
     //! Constructor
-    node(const cell &c, double probmin=1.e-200);
+    node(const cell &c);
 
     //! Smart print
     void dump(std::ostream & a_out         = std::clog,
@@ -171,8 +170,6 @@ namespace CAT {
     void remove_link(size_t index);
 
     void calculate_triplets(double ratio_, double phi_limit_);
-
-    node invert();
 
     std::string topological_type() const;
 

@@ -2,7 +2,6 @@
 #ifndef FALAISE_CAT_CELL_TRIPLET_H
 #define FALAISE_CAT_CELL_TRIPLET_H 1
 
-#include <CAT/tracking_object.h>
 #include <string>
 #include <iostream>
 #include <vector>
@@ -13,14 +12,12 @@
 
 namespace CAT{
 
-  class cell_triplet : public tracking_object{
+  /// \brief A cell_triplet is composed of three cells and a list of joints
+  class cell_triplet
+  {
 
-    // a cell_triplet is composed of three cells
-    // and a list of joints
 
   protected:
-
-    std::string appname_;
 
     // first cell
     cell ca_;
@@ -55,7 +52,7 @@ namespace CAT{
     virtual ~cell_triplet();
 
     //! constructor
-    cell_triplet(const cell &ca, const cell &cb, const cell &cc, double probmin=1.e-200);
+    cell_triplet(const cell &ca, const cell &cb, const cell &cc);
 
     /*** dump ***/
     virtual void dump (std::ostream & a_out         = std::clog,

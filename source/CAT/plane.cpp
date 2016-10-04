@@ -16,13 +16,12 @@
 
 namespace CAT {
 
-  plane::plane(double probmin)
+  plane::plane()
   {
     sizes_ = experimental_vector(small_neg,small_neg,small_neg,
                                  small_neg, small_neg, small_neg);
     norm_ = experimental_vector(small_neg,small_neg,small_neg,
                                 small_neg, small_neg, small_neg);
-    set_probmin(probmin);
     type_="undefined";
     return;
   }
@@ -34,10 +33,8 @@ namespace CAT {
 
   plane::plane(const experimental_point &center,
                const experimental_vector &sizes,
-               const experimental_vector &norm,
-               double probmin)
+               const experimental_vector &norm)
   {
-    set_probmin(probmin);
     center_ = center;
     sizes_ = sizes;
     norm_ = norm;

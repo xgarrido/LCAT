@@ -10,13 +10,12 @@
 // This project:
 #include <CAT/experimental_point.h>
 #include <CAT/experimental_vector.h>
-#include <CAT/tracking_object.h>
 #include <CAT/cell_base.h>
 
 namespace CAT {
 
   /// \brief A joint is composed of three experimental points
-  class joint : public tracking_object
+  class joint
   {
   private:
 
@@ -52,7 +51,7 @@ namespace CAT {
     virtual ~joint();
 
     //! constructor
-    joint(const experimental_point &epa, const experimental_point &epb, const experimental_point &epc, double probmin=1.e-200);
+    joint(const experimental_point &epa, const experimental_point &epb, const experimental_point &epc);
 
     /*** dump ***/
     virtual void dump (std::ostream & a_out         = std::clog,

@@ -2,6 +2,7 @@
 
 // Ourselves
 #include <CAT/cell_triplet.h>
+#include <CAT/utilities.h>
 
 // Standard library
 #include <algorithm>
@@ -16,7 +17,6 @@ namespace CAT{
   //!Default constructor
   cell_triplet::cell_triplet()
   {
-    appname_= "cell_triplet: ";
     free_ = false;
     begun_ = false;
   }
@@ -25,9 +25,7 @@ namespace CAT{
   cell_triplet::~cell_triplet(){}
 
   //! constructor
-  cell_triplet::cell_triplet(const cell &ca, const cell &cb, const cell &cc, double probmin){
-    set_probmin(probmin);
-    appname_= "cell_triplet: ";
+  cell_triplet::cell_triplet(const cell &ca, const cell &cb, const cell &cc){
     ca_ = ca;
     cb_ = cb;
     cc_ = cc;
@@ -49,7 +47,6 @@ namespace CAT{
         a_out << indent << a_title << std::endl;
       }
 
-    a_out << indent << appname_ << " -------------- " << std::endl;
     a_out << indent  << " free: " << free() << " begun: " << begun()  << std::endl;
     a_out << indent  << " first cell " << std::endl;
     ca().tree_dump(a_out,"", indent + "   ");
@@ -220,7 +217,7 @@ namespace CAT{
       // for (std::vector<line>::const_iterator i1 = t1.begin(); i1!=t1.end(); ++i1){
       //   std::clog << i1 - t1.begin() << ":  phi "; ca_.dump_point_phi(i1->epb()); std::clog << " -> "; cb_.dump_point_phi(i1->epa()); std::clog << " " << std::endl;
       // }
-      std::clog << appname_ << " angles of tangents " << cb_.get_id() << " -> " << cc_.get_id() << " :" << std::endl;
+      std::clog << " angles of tangents " << cb_.get_id() << " -> " << cc_.get_id() << " :" << std::endl;
       // for(std::vector<line>::const_iterator i2=t2.begin(); i2!=t2.end(); ++i2){
       //   std::clog << i2 - t2.begin() << ":  phi ";  cb_.dump_point_phi(i2->epa()); std::clog << " -> " ; cc_.dump_point_phi(i2->epb()); std::clog << " " << std::endl;
       // }
@@ -346,7 +343,8 @@ namespace CAT{
 
         const double local_prob = probof(chi2, ndof);
         probs_.push_back(local_prob);
-        if (local_prob > probmin() && prob_just_phi > probmin() && std::abs(phi_kink.value()) <= phi_limit_) {
+        const double probmin = constants::instance().get_minimal_probability();
+        if (local_prob > probmin && prob_just_phi > probmin && std::abs(phi_kink.value()) <= phi_limit_) {
           ok = true;
         }
 
@@ -355,7 +353,7 @@ namespace CAT{
                      << phi_kink.value()/CLHEP::degree << "° limit " << phi_limit_/CLHEP::degree << "° accepted: " << ok);
 
         if (ok) {
-          joint j(newt1.epa(),p,newt2.epb(), get_probmin());
+          joint j(newt1.epa(),p,newt2.epb());
           j.set_chi2(chi2);
           j.set_ndof(ndof);
           j.set_p(probof(chi2, ndof));

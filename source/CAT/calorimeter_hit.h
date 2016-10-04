@@ -7,18 +7,14 @@
 #include <CAT/experimental_point.h>
 #include <CAT/experimental_vector.h>
 #include <CAT/plane.h>
-#include <CAT/tracking_object.h>
 
 namespace CAT {
 
-  class calorimeter_hit : public tracking_object {
-
-    // a calorimeter_hit is identified by one plane
-    // energy and time
+  /// \brief A calorimeter_hit is identified by one plane energy and time
+  class calorimeter_hit
+  {
 
   private:
-
-    std::string appname_;
 
     // energy
     experimental_double e_;
@@ -37,18 +33,10 @@ namespace CAT {
     double layer_;
 
     //!Default constructor
-    calorimeter_hit(double probmin=1.e-200);
+    calorimeter_hit();
 
     //!Default destructor
     virtual ~calorimeter_hit();
-
-    //! constructor
-    calorimeter_hit(const plane & pl,
-                    const experimental_double & e,
-                    const experimental_double & t,
-                    size_t id,
-                    double layer,
-                    double probmin=1.e-200);
 
     /*** dump ***/
     void dump (std::ostream & a_out         = std::clog,

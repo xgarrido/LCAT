@@ -76,9 +76,8 @@ namespace CAT {
   {
   }
 
-  sequence::sequence(const std::vector<node> & nodes, double probmin)
+  sequence::sequence(const std::vector<node> & nodes)
   {
-    set_probmin(probmin);
     nodes_ = nodes;
     free_ = false;
     names_.clear();
@@ -127,9 +126,8 @@ namespace CAT {
   }
 
   //! constructor from single node
-  sequence::sequence(const node &node, double probmin)
+  sequence::sequence(const node &node)
   {
-    set_probmin(probmin);
     //node.set_free(false);
     nodes_.clear();
     nodes_.push_back(node);
@@ -776,7 +774,6 @@ namespace CAT {
 
   sequence sequence::invert(){
     sequence inverted;
-    inverted.set_probmin(probmin());
     inverted.set_free(Free());
     inverted.set_helix(helix_.invert());
 
@@ -1112,7 +1109,6 @@ namespace CAT {
   sequence sequence::copy_to_last_free_node(size_t *ilfn, size_t *ilink){
 
     sequence newsequence;
-    newsequence.set_probmin(probmin());
 
     size_t lfn , link;
     last_free_node(&lfn, &link);
@@ -1510,8 +1506,8 @@ namespace CAT {
       }
     }
 
-    line l1(pa, pb, probmin());
-    line l2(pb, j->epc(), probmin());
+    line l1(pa, pb);
+    line l2(pb, j->epc());
 
     double chi2_just_phi;
     double chi2_kink = l1.chi2(l2, use_theta_kink, &chi2_just_phi);
@@ -1535,7 +1531,8 @@ namespace CAT {
     probs_all_.push_back(local_prob);
 
 
-    if( net_local_prob > probmin() && prob_just_phi > probmin() ){
+    const double probmin = constants::instance().get_minimal_probability();
+    if( net_local_prob > probmin && prob_just_phi > probmin ){
 
       // if( print_level() >= VVERBOSE ){
       //   std::clog << " connecting cell " << last_node().c().get_id() << " is compatible with chi2 " << chi2 << " prob " << local_prob << " net prob " << net_local_prob << std::endl; fflush(stdout);
@@ -1578,8 +1575,8 @@ namespace CAT {
     experimental_point pa = second_last_node().ep();
     experimental_point pb = last_node().ep();
 
-    line l_alpha_A(palpha, pa, probmin());
-    line l_A_B(pa, pb, probmin());
+    line l_alpha_A(palpha, pa);
+    line l_A_B(pa, pb);
     auto unknown_vertical = [] (const cell & cell_) -> bool
       {
         if (cell_.get_position().y().value() == 0. &&
@@ -1600,8 +1597,8 @@ namespace CAT {
       old_chi2 = old_chi2_check;
     }
 
-    line new_l_alpha_A(palpha, new_pa, probmin());
-    line new_l_A_B(new_pa, new_pb, probmin());
+    line new_l_alpha_A(palpha, new_pa);
+    line new_l_A_B(new_pa, new_pb);
 
     double new_chi2 = new_l_alpha_A.chi2(new_l_A_B, use_theta_kink_alpha_A_B, &chi2_just_phi);
     *delta_chi_A = new_chi2 - old_chi2;
@@ -1615,7 +1612,7 @@ namespace CAT {
     if( s >= 4 ){
       bool use_theta_kink_alpha0_alpha_A = !(unknown_vertical(nodes_[s-4].c()) || unknown_vertical(nodes_[s-3].c()) || unknown_vertical(nodes_[s-2].c()));
       experimental_point palpha0 = nodes_[s-4].ep();
-      line l_alpha0_alpha(palpha0, palpha, probmin());
+      line l_alpha0_alpha(palpha0, palpha);
       old_chi2 = l_alpha0_alpha.chi2(l_alpha_A, use_theta_kink_alpha0_alpha_A, &chi2_just_phi);
       old_chi2_check = nodes_[s-3].chi2();
       if( old_chi2 > old_chi2_check ){
@@ -2239,10 +2236,10 @@ namespace CAT {
     experimental_point origin(0.,0.,0.,0.,0.,0.);
 
     // a circle along the gap of the 1st sequence
-    circle cA(origin, pA.radius(), probmin());
+    circle cA(origin, pA.radius());
 
     // a circle along the gap of the 2nd sequence
-    circle cB(origin, pB.radius(), probmin());
+    circle cB(origin, pB.radius());
 
     bool resultA(false), resultB(false), result_tangent_A(false), result_tangent_B(false);
     double distance_error_A, distance_error_B;

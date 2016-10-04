@@ -8,14 +8,13 @@
 #include <cmath>
 
 // This project:
-#include <CAT/tracking_object.h>
 #include <CAT/experimental_vector.h>
 #include <CAT/experimental_vector.h>
 
 namespace CAT {
 
   /// \brief A line is composed of two experimental points
-  class line : public tracking_object
+  class line
   {
   private:
 
@@ -33,15 +32,13 @@ namespace CAT {
 
   public:
     //!Default constructor
-    line(double probmin=1.e-200);
+    line();
 
     //!Default destructor
     virtual ~line();
 
     //! constructor
-    line(const experimental_point & epa,
-         const experimental_point & epb,
-         double probmin=1.e-200);
+    line(const experimental_point & epa, const experimental_point & epb);
 
     virtual void dump (std::ostream & a_out         = std::clog,
                        const std::string & a_title  = "",

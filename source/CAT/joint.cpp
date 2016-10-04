@@ -22,10 +22,8 @@ namespace CAT {
   //! constructor
   joint::joint(const experimental_point &epa,
                const experimental_point &epb,
-               const experimental_point &epc,
-               double probmin)
+               const experimental_point &epc)
   {
-    set_probmin(probmin);
     epa_ = epa;
     epb_ = epb;
     epc_ = epc;
@@ -176,7 +174,6 @@ namespace CAT {
   joint joint::invert()
   {
     joint inverted;
-    inverted.set_probmin(probmin());
     inverted.set_epa(epc());
     inverted.set_epb(epb());
     inverted.set_epc(epa());

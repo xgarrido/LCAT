@@ -5,7 +5,6 @@ namespace CAT {
 
   scenario::scenario()
   {
-    set_probmin(10.);
     helix_chi2_ = small_neg;
     tangent_chi2_ = small_neg;
     ndof_ = default_integer;
@@ -17,9 +16,8 @@ namespace CAT {
   {
   }
 
-  scenario::scenario(const std::vector<sequence> & seqs, double probmin)
+  scenario::scenario(const std::vector<sequence> & seqs)
   {
-    set_probmin(probmin);
     sequences_ = seqs;
     helix_chi2_ = small_neg;
     tangent_chi2_ = small_neg;
