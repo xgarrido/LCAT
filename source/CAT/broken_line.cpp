@@ -1,14 +1,14 @@
 /* -*- mode: c++ -*- */
 
 #include <CAT/broken_line.h>
-
+#include <CAT/experimental_vector.h>
+#include <CAT/utilities.h>
 
 namespace CAT {
 
   //!Default constructor
   broken_line::broken_line()
   {
-    appname_= "broken_line: ";
     chi2_ = 0.;
     ndof_ = 0;
     p_ = 0.;
@@ -24,10 +24,8 @@ namespace CAT {
   }
 
   //! constructor
-  broken_line::broken_line(const std::vector<experimental_point> &eps, double probmin)
+  broken_line::broken_line(const std::vector<experimental_point> &eps)
   {
-    set_probmin(probmin);
-    appname_= "broken_line: ";
     eps_ = eps;
     chi2_ = 0.;
     ndof_ = 0;
@@ -49,7 +47,6 @@ namespace CAT {
         a_out << indent << a_title << std::endl;
       }
 
-    a_out << indent << appname_ << " -------------- " << std::endl;
     a_out << indent << " chi2 " << chi2() << " ndof " << ndof() << " prob " << p() << " ifirst " << ifirst() << " ilast " << ilast() << " points: " << std::endl;
     for(std::vector<experimental_point>::const_iterator p = eps_.begin(); p!=eps_.end(); ++p)
       p->dump(a_out, "", indent + "    ");

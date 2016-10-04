@@ -1,24 +1,19 @@
 /* -*- mode: c++ -*- */
 #ifndef FALAISE_CAT_BROKEN_LINE_H
 #define FALAISE_CAT_BROKEN_LINE_H 1
-#include <iostream>
-#include <cmath>
-#include <CAT/experimental_point.h>
-#include <CAT/experimental_vector.h>
-#include <CAT/tracking_object.h>
-#include <CAT/cell_base.h>
 
+// Standard library
+#include <iostream>
+
+// This project
+#include <CAT/experimental_point.h>
 
 namespace CAT {
 
 
-  class broken_line : public tracking_object{
-
-    // a broken_line is composed of a vector of experimental points
-
-  private:
-    std::string appname_;
-
+  /// \brief A broken_line is composed of a vector of experimental points
+  class broken_line
+  {
   public:
 
     // points
@@ -38,7 +33,7 @@ namespace CAT {
     virtual ~broken_line();
 
     //! constructor
-    broken_line(const std::vector<experimental_point> &eps, double probmin=1.e-200);
+    broken_line(const std::vector<experimental_point> &eps);
 
     /*** dump ***/
     virtual void dump (std::ostream & a_out         = std::clog,
