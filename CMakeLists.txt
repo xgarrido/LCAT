@@ -41,7 +41,6 @@ list(APPEND LCAT_HEADERS
   source/CAT/sequence_base.h
   source/CAT/sequentiator.h
   source/CAT/tracked_data.h
-  source/CAT/tracking_object.h
   source/CAT/utilities.h
   )
 
@@ -70,7 +69,6 @@ list(APPEND LCAT_SOURCES
   source/CAT/sequence_base.cpp
   source/CAT/sequentiator.cpp
   source/CAT/tracked_data.cc
-  source/CAT/tracking_object.cpp
   source/CAT/utilities.cc
   )
 
