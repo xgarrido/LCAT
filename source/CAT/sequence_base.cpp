@@ -1816,7 +1816,6 @@ namespace CAT {
       }
 
       helix_ = average(helices);
-      helix_.set_probmin(probmin());
 
       experimental_point _center = helix_.center();
       experimental_double Yc = middle_node().ep().y() - helix_.pitch()*experimental_vector(_center, middle_node().ep()).phi();
@@ -1907,7 +1906,7 @@ namespace CAT {
 
       // build helix
       ci.set_center(experimental_point(ci.center().x(), l.y0(), ci.center().z()));
-      helix_ = helix(ci, l.tangent(), probmin());
+      helix_ = helix(ci, l.tangent());
 
 
 

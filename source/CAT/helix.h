@@ -17,7 +17,7 @@ namespace CAT {
   // a helix is identified by origin,
   // radius
   // and pitch
-  class helix : public tracking_object
+  class helix
   {
 
   private:
@@ -41,29 +41,26 @@ namespace CAT {
   public:
 
     //!Default constructor
-    helix(double probmin=1.e-200)
+    helix()
     {
       center_ = experimental_point();
       radius_ = experimental_double(small_neg, small_neg);
       pitch_ = experimental_double(small_neg, small_neg);
-      set_probmin(probmin);
     }
 
     //!Default destructor
     virtual ~helix(){};
 
     //! constructor
-    helix(const experimental_point &center, const experimental_double &radius, const experimental_double &pitch, double probmin=1.e-200)
+    helix(const experimental_point &center, const experimental_double &radius, const experimental_double &pitch)
     {
-      set_probmin(probmin);
       center_ = center;
       radius_ = radius;
       pitch_ = pitch;
     }
 
     //! constructor from a circle and a pitch
-    helix(const circle &c, const experimental_double  &pitch, double probmin=1.e-200){
-      set_probmin(probmin);
+    helix(const circle &c, const experimental_double  &pitch){
       center_ = c.center();
       radius_ = c.radius();
       pitch_ = pitch;
@@ -156,7 +153,7 @@ namespace CAT {
     //! get circle
     circle get_circle()const
     {
-      return circle(center(), radius(), probmin());
+      return circle(center(), radius());
     }
 
     // get the phi of a point
@@ -407,7 +404,6 @@ namespace CAT {
 
     helix invert(){
       helix inverted;
-      inverted.set_probmin(probmin());
       inverted.set_center(center());
       inverted.set_radius(radius());
       inverted.set_pitch(pitch());
