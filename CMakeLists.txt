@@ -10,7 +10,6 @@ project(FalaiseLCATPlugin VERSION "2.1.0")
 # Ensure our code can see the Falaise headers
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/source/CAT)
 
 ############################################################################################
 # - LCAT library:
