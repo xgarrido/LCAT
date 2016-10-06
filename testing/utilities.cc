@@ -3,14 +3,14 @@
 
 // Third party:
 // - Bayeux/datatools:
-#include <datatools/temporary_files.h>
-#include <datatools/clhep_units.h>
+#include <bayeux/datatools/temporary_files.h>
+#include <bayeux/datatools/clhep_units.h>
 // - Bayeux/geomtools:
-#include <geomtools/manager.h>
-#include <geomtools/gnuplot_draw.h>
-#include <geomtools/gnuplot_drawer.h>
-#include <geomtools/gnuplot_i.h>
-#include <geomtools/color.h>
+#include <bayeux/geomtools/manager.h>
+#include <bayeux/geomtools/gnuplot_draw.h>
+#include <bayeux/geomtools/gnuplot_drawer.h>
+#include <bayeux/geomtools/gnuplot_i.h>
+#include <bayeux/geomtools/color.h>
 
 void generate_gg_hits(const snemo::geometry::gg_locator & ggloc_,
                       snemo::datamodel::calibrated_data::tracker_hit_collection_type & gghits_)
