@@ -16,7 +16,7 @@ if(FalaiseLCATPlugin_ENABLE_TESTING)
     get_filename_component(_testname "${_testsource}" NAME_WE)
     set(_testname "falaiselcatplugin-${_testname}")
     add_executable(${_testname} ${_testsource} ${testing_SOURCES})
-    target_link_libraries(${_testname} Falaise_LCAT Falaise)
+    target_link_libraries(${_testname} LCAT Falaise)
     # - On Apple, ensure dynamic_lookup of undefined symbols
     if(APPLE)
       set_target_properties(${_testname} PROPERTIES LINK_FLAGS "-undefined dynamic_lookup")
