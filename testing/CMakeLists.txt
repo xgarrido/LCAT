@@ -2,6 +2,7 @@
 set(FalaiseLCATPlugin_TESTS
   # test_cat_driver.cxx
   # test_cat_tracker_clustering_module.cxx
+  test_gg_cell.cxx
   )
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
