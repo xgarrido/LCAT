@@ -74,7 +74,7 @@ list(APPEND LCAT_SOURCES
 # Build a dynamic library from our sources
 add_library(LCAT SHARED ${LCAT_HEADERS} ${LCAT_SOURCES})
 
-target_link_libraries(LCAT ${Bayeux_LIBRARIES})
+target_link_libraries(LCAT Bayeux::Bayeux)
 
 # Apple linker requires dynamic lookup of symbols, so we
 # add link flags on this platform
@@ -85,7 +85,7 @@ if(APPLE)
 endif()
 
 # Install it:
-install(TARGETS LCAT DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FALAISE_PLUGINLIBDIR})
+install(TARGETS LCAT DESTINATION ${CMAKE_INSTALL_PLUGINDIR})
 
 
 ############################################################################################
@@ -124,7 +124,7 @@ list(APPEND FalaiseLCATPlugin_SOURCES
 # endif()
 
 # # Install it:
-# install(TARGETS Falaise_LCAT DESTINATION ${CMAKE_INSTALL_LIBDIR}/${FALAISE_PLUGINLIBDIR})
+# install(TARGETS LCAT Falaise_LCAT DESTINATION ${CMAKE_INSTALL_PLUGINDIR})
 
 # Test support:
 option(FalaiseLCATPlugin_ENABLE_TESTING "Build unit testing system for FalaiseLCATPlugin" ON)
