@@ -40,7 +40,7 @@ list(APPEND LCAT_HEADERS
   # source/CAT/sequence_base.h
   # source/CAT/sequentiator.h
   # source/CAT/tracked_data.h
-  # source/CAT/utilities.h
+  source/CAT/utilities.h
   )
 
 list(APPEND LCAT_SOURCES
@@ -68,7 +68,7 @@ list(APPEND LCAT_SOURCES
   # source/CAT/sequence_base.cpp
   # source/CAT/sequentiator.cpp
   # source/CAT/tracked_data.cc
-  # source/CAT/utilities.cc
+  source/CAT/utilities.cc
   )
 
 # Build a dynamic library from our sources

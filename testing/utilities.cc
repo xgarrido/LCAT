@@ -25,7 +25,6 @@ void generate_gg_hits(const snemo::geometry::gg_locator & ggloc_,
     gghit.set_z((25.0 + 1.2 * drand48()) * CLHEP::cm);
     gghit.set_sigma_z(0.7 * CLHEP::cm);
     gghit.set_r((0.1 + 2.1 * drand48()) * CLHEP::cm);
-    gghit.set_r(2.2 * CLHEP::cm);
     gghit.set_sigma_r(0.3 * CLHEP::mm);
     gghit.set_delayed(false);
     gghit.set_bottom_cathode_missing(false);
@@ -47,7 +46,6 @@ void generate_gg_hits(const snemo::geometry::gg_locator & ggloc_,
     gghit.set_z((25.0 - 1.8 * i + 3.2 * drand48()) * CLHEP::cm);
     gghit.set_sigma_z(1.3 * CLHEP::cm);
     gghit.set_r((0.1 + 2.1 * drand48()) * CLHEP::cm);
-    gghit.set_r(2.2 * CLHEP::cm);
     gghit.set_sigma_r(0.3 * CLHEP::mm);
     gghit.set_delayed(false);
     gghit.set_bottom_cathode_missing(false);
@@ -69,7 +67,6 @@ void generate_gg_hits(const snemo::geometry::gg_locator & ggloc_,
     gghit.set_z((17.0 + 1.3 * i + 1.7 * drand48()) * CLHEP::cm);
     gghit.set_sigma_z(1.3 * CLHEP::cm);
     gghit.set_r((0.1 + 2.1 * drand48()) * CLHEP::cm);
-    gghit.set_r(2.2 * CLHEP::cm);
     gghit.set_sigma_r(0.3 * CLHEP::mm);
     gghit.set_delayed(false);
     gghit.set_bottom_cathode_missing(false);
@@ -91,7 +88,6 @@ void generate_gg_hits(const snemo::geometry::gg_locator & ggloc_,
     gghit.set_z((27.0 + 2.5 * i * drand48()) * CLHEP::cm);
     gghit.set_sigma_z(0.7 * CLHEP::cm);
     gghit.set_r((0.1 + 2.1 * drand48()) * CLHEP::cm);
-    gghit.set_r(2.2 * CLHEP::cm);
     gghit.set_sigma_r(0.3 * CLHEP::mm);
     gghit.set_delayed(false);
     gghit.set_bottom_cathode_missing(false);

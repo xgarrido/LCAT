@@ -11,6 +11,7 @@
 #include <gsl/gsl_cdf.h>
 
 namespace CAT {
+
   // static
   const constants & constants::instance ()
   {
@@ -33,6 +34,17 @@ namespace CAT {
   }
 
 
+  void invalidate(int32_t & i_)
+  {
+    i_ = invalid_integer();
+    return;
+  }
+
+  int32_t invalid_integer()
+  {
+    return std::numeric_limits<int32_t>::max();
+  }
+
   double probof(double chi2_, int ndof_)
   {
     double p = 0.;
@@ -52,6 +64,4 @@ namespace CAT {
     }
     return;
   }
-
-
 }

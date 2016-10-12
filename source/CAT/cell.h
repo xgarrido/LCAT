@@ -36,6 +36,12 @@ namespace CAT {
                    const std::string & indent_ = "",
                    bool inherit_               = false) const;
 
+    /// Invalidate cell
+    void invalidate();
+
+    /// Check cell validity
+    bool is_valid() const;
+
     /// Set Geiger cell position
     void set_position(const geomtools::vector_3d &);
 
@@ -78,31 +84,28 @@ namespace CAT {
     /// Get experimental radius error
     double get_radius_error() const;
 
-    // //!get original experimental r
-    // const experimental_double & get_original_radius() const;
-
-    //!get id
+    /// Get id
     int get_id() const;
 
-    //!get layer
+    /// Get layer
     int get_layer() const;
 
-    //!get side
+    /// Get side
     int get_side() const;
 
-    //!get row
+    /// Get row
     int get_row() const;
 
-    //!get fast flag
+    /// Get fast flag
     bool is_prompt() const;
 
-    //! get small flag
+    /// Get small flag
     bool is_small() const;
 
-    //! get free level
+    /// Get free level
     bool is_free() const;
 
-    //! get begun level
+    /// Get begun level
     bool begun() const;
 
   public:
@@ -120,17 +123,17 @@ namespace CAT {
 
   private:
 
-    geomtools::vector_3d _position_; /// Cell position
-    double _radius_; /// Radius
-    double _radius_error_; /// Error on radius
-    int _id_;/// Cell id
-    int _layer_;/// Layer number
-    int _side_;/// Side number
-    int _row_;/// Row number
-    bool _prompt_;    // characterize fast and delayed cells
-    double _small_radius_;    // radius below which a cell is small
-    bool _free_;    // status of cell
-    bool _begun_;    // begun cell
+    geomtools::vector_3d _position_; //!< Cell position
+    double _radius_;                 //!< Radius
+    double _radius_error_;           //!< Error on radius
+    int32_t _id_;                        //!< Cell id
+    int32_t _layer_;                     //!< Layer number
+    int32_t _side_;                      //!< Side number
+    int32_t _row_;                       //!< Row number
+    bool _prompt_;                   //!< Characterize fast and delayed cells
+    double _small_radius_;           //!< Radius below which a cell is small
+    bool _free_;                     //!< Status of cell
+    bool _begun_;                    //!< Begun cell
 
   };
 }

@@ -9,18 +9,15 @@
 // - Bayeux/datatools:
 #include <bayeux/datatools/i_tree_dump.h>
 #include <bayeux/datatools/clhep_units.h>
+#include <bayeux/datatools/utils.h>
+// - Bayeux/geomtools:
+#include <bayeux/geomtools/utils.h>
 
 namespace CAT {
 
   cell::cell()
   {
-    //ep_ = experimental_point();
-    //r0_= experimental_double();
-    //r_= experimental_double();
-    _id_ = default_integer;
-    _side_ = default_integer;
-    _layer_ = default_integer;
-    _row_ = default_integer;
+    invalidate();
     _prompt_ = true;
     _free_ = false;
     _begun_ = false;
@@ -64,6 +61,30 @@ namespace CAT {
     //   out_ << indent << datatools::i_tree_dumpable::tag << "Original radius : " << get_original_radius().value()/CLHEP::mm << " mm" << std::endl;
     // }
     // out_ << indent << datatools::i_tree_dumpable::inherit_tag(inherit_) << "Radius : " << get_radius().value()/CLHEP::mm << " mm" << std::endl;
+    return;
+  }
+
+  bool cell::is_valid() const
+  {
+    if (! geomtools::is_valid(_position_)) {
+      return false;
+    }
+
+    if (! datatools::is_valid(_radius_) || ! datatools::is_valid(_radius_error_)) {
+      return false;
+    }
+    return true;
+  }
+
+  void cell::invalidate()
+  {
+    geomtools::invalidate(_position_);
+    datatools::invalidate(_radius_);
+    datatools::invalidate(_radius_error_);
+    CAT::invalidate(_id_);
+    CAT::invalidate(_side_);
+    CAT::invalidate(_layer_);
+    CAT::invalidate(_row_);
     return;
   }
 
