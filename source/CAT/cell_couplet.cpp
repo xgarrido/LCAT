@@ -215,7 +215,7 @@ namespace CAT{
     }
 
 
-    if( intersecting() ){
+    if( ca_.intersect(cb_)){
       // tangent or intersecting circles
 
 
@@ -467,34 +467,6 @@ namespace CAT{
     return tangents().size();
   }
 
-
-  cell_couplet cell_couplet::invert(){
-
-    //      clock.start(" cell couplet: invert ","cumulative");
-
-
-    cell_couplet inverted(cb(),ca());
-    inverted.set_free(free());
-    inverted.set_begun(begun());
-
-    std::vector<line> inverted_lines;
-    for(std::vector<line>::iterator itang=tangents_.begin(); itang!=tangents_.end(); ++itang){
-      inverted_lines.push_back(itang->invert());
-    }
-    inverted.set_tangents( inverted_lines );
-
-    experimental_vector O(0.,0.,0.,0.,0.,0.);
-    inverted.set_a_forward_axis(O-forward_axis());
-    inverted.set_a_transverse_axis(O-transverse_axis());
-    inverted.set_a_distance(-distance());
-    inverted.set_a_hor_distance(-distance_hor());
-
-    //      clock.stop(" cell couplet: invert ");
-
-    return inverted;
-  }
-
-
   void cell_couplet::set_all_used(){
     //      clock.start(" cell couplet: set all used ","cumulative");
     for(std::vector<line>::iterator itang=tangents_.begin(); itang != tangents_.end(); ++itang)
@@ -503,21 +475,6 @@ namespace CAT{
     set_begun(true);
     //      clock.stop(" cell couplet: set all used ");
     return;
-  }
-
-  bool operator==(const cell_couplet& left,
-
-                  const cell_couplet& right)
-  {
-
-    return left.cb().get_id() == right.cb().get_id();
-
-  }
-
-  //! are the two circles tangent or intersecting?
-  bool cell_couplet::intersecting()const{
-
-    return ca_.intersect(cb_);
   }
 
 }

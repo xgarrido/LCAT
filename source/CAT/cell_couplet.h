@@ -126,14 +126,7 @@ namespace CAT{
     void set_forward_axis(void);
     void set_transverse_axis(void);
     size_t iteration()const;
-    cell_couplet invert();
     void set_all_used();
-
-    friend bool operator==(const cell_couplet& left,
-                           const cell_couplet& right);
-
-    //! are the two circles tangent or intersecting?
-    bool intersecting()const;
 
 
 
