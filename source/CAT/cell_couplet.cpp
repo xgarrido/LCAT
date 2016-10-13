@@ -24,19 +24,6 @@ namespace CAT{
     begun_ = false;
   }
 
-  cell_couplet::cell_couplet(const cell &ca,const cell &cb,const std::vector<line> &tangents){
-    ca_ = ca;
-    cb_ = cb;
-    for(std::vector<line>::const_iterator itang=tangents.begin(); itang!=tangents.end(); ++itang)
-      tangents_.push_back(*itang);
-    forward_axis_calculated_ = false;
-    transverse_axis_calculated_ = false;
-    set_forward_axis();
-    set_transverse_axis();
-    free_ = false;
-    begun_ = false;
-  }
-
   cell_couplet::cell_couplet(const cell &ca, const cell &cb){
     ca_ = ca;
     cb_ = cb;
@@ -47,34 +34,6 @@ namespace CAT{
     obtain_tangents();
     free_ = false;
     begun_ = false;
-  }
-
-  //! set cells and tangents
-  void cell_couplet::set(const cell &ca, const cell &cb, const std::vector<line> &tangents){
-    ca_ = ca;
-    cb_ = cb;
-    for(std::vector<line>::const_iterator itang=tangents.begin(); itang!=tangents.end(); ++itang)
-      tangents_.push_back(*itang);
-    set_forward_axis();
-    set_transverse_axis();
-  }
-
-  void cell_couplet::set_forward_axis(){
-
-    if( forward_axis_calculated_ )
-      return;
-
-    forward_axis_.set(ca().get_position(), cb().get_position());
-
-    distance_ = forward_axis().length();
-
-    distance_hor_ = forward_axis_.hor().length();
-
-    forward_axis_ /= distance_.value();
-
-    forward_axis_calculated_ = true;
-
-    return;
   }
 
   void cell_couplet::dump (std::ostream & a_out,
@@ -101,6 +60,24 @@ namespace CAT{
     a_out << indent << " transverse axis " << std::endl;
     this->transverse_axis().dump(a_out,"",indent + "   ");
     a_out << indent  << " ------------------- " << std::endl;
+
+    return;
+  }
+
+  void cell_couplet::set_forward_axis(){
+
+    if( forward_axis_calculated_ )
+      return;
+
+    forward_axis_.set(ca().get_position(), cb().get_position());
+
+    distance_ = forward_axis().length();
+
+    distance_hor_ = forward_axis_.hor().length();
+
+    forward_axis_ /= distance_.value();
+
+    forward_axis_calculated_ = true;
 
     return;
   }
@@ -307,7 +284,6 @@ namespace CAT{
       set_first_error_in_build_from_cell(sin.value(), 1, sign_up_down[i], &epa);
 
       line l(epa, ep);
-
       tangents_.push_back( l );
     }
 
@@ -337,7 +313,6 @@ namespace CAT{
       set_second_error_in_build_from_cell(sin.value(), 1, sign_up_down[i], &epb);
 
       line l(ep, epb);
-
       tangents_.push_back( l );
     }
 
@@ -391,14 +366,6 @@ namespace CAT{
     return;
 
   }
-
-  //! set cells
-  void cell_couplet::set(const cell &ca, const cell &cb){
-    ca_ = ca;
-    cb_ = cb;
-    obtain_tangents();
-  }
-
 
   //! set free level
   void cell_couplet::set_free(bool free){
@@ -506,8 +473,7 @@ namespace CAT{
     //      clock.start(" cell couplet: invert ","cumulative");
 
 
-    cell_couplet inverted;
-    inverted.set(cb(),ca());
+    cell_couplet inverted(cb(),ca());
     inverted.set_free(free());
     inverted.set_begun(begun());
 
