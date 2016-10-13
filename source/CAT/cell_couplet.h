@@ -54,9 +54,6 @@ namespace CAT{
     virtual ~cell_couplet();
 
     //! constructor
-    cell_couplet(const cell &ca,const cell &cb,const std::vector<line> &tangents);
-
-    //! constructor
     cell_couplet(const cell &ca, const cell &cb);
 
     /*** dump ***/
@@ -64,12 +61,6 @@ namespace CAT{
                        const std::string & a_title  = "",
                        const std::string & a_indent = "",
                        bool a_inherit          = false) const;
-
-    //! set cells and tangents
-    void set(const cell &ca, const cell &cb, const std::vector<line> &tangents);
-
-    //! set cells
-    void set(const cell &ca, const cell &cb);
 
 
     //! set free level
@@ -135,14 +126,7 @@ namespace CAT{
     void set_forward_axis(void);
     void set_transverse_axis(void);
     size_t iteration()const;
-    cell_couplet invert();
     void set_all_used();
-
-    friend bool operator==(const cell_couplet& left,
-                           const cell_couplet& right);
-
-    //! are the two circles tangent or intersecting?
-    bool intersecting()const;
 
 
 
