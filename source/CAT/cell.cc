@@ -33,6 +33,7 @@ namespace CAT {
 
   void cell::reset()
   {
+    invalidate();
     return;
   }
 
@@ -54,9 +55,6 @@ namespace CAT {
     out_ << indent << datatools::i_tree_dumpable::tag << "Prompt : " << (is_prompt() ? "Yes" : "No") << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "Small  : " << (is_small() ? "Yes" : "No") << std::endl;
     out_ << indent << datatools::i_tree_dumpable::tag << "Position : " << get_position()/CLHEP::mm << " [mm]" << std::endl;
-    // const experimental_point & ep = get_position();
-    // out_ << indent << datatools::i_tree_dumpable::tag << "Position (x,y,z) : ("
-    //      << ep.x().value()/CLHEP::mm << ", " << ep.y().value()/CLHEP::mm << ", " << ep.z().value()/CLHEP::mm << ") mm" << std::endl;
     // if (is_small() && is_prompt()) {
     //   out_ << indent << datatools::i_tree_dumpable::tag << "Original radius : " << get_original_radius().value()/CLHEP::mm << " mm" << std::endl;
     // }
