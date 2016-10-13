@@ -99,9 +99,6 @@ namespace CAT{
     //! get transverse axis
     const experimental_vector& transverse_axis()const;
 
-    //! get distance
-    const experimental_double& distance()const;
-
     //! get horizontal distance
     const experimental_double& distance_hor()const;
 

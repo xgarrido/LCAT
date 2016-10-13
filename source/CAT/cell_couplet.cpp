@@ -437,12 +437,6 @@ namespace CAT{
     return transverse_axis_;
   }
 
-  //! get distance
-  const experimental_double& cell_couplet::distance()const
-  {
-    return distance_;
-  }
-
   //! get horizontal distance
   const experimental_double& cell_couplet::distance_hor()const
   {
