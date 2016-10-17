@@ -145,15 +145,14 @@ namespace CAT{
       p.set_z(newz);
       obtain_tangents_between_point_and_circle(p, cb());
     }
-    else
+    else {
       obtain_tangents_between_circle_and_circle();
-
-
+    }
     return;
-
   }
 
-  void cell_couplet::obtain_tangents_between_circle_and_circle(){
+  void cell_couplet::obtain_tangents_between_circle_and_circle()
+  {
 
     /////////////////////////////////////////////////////////////////
     //
@@ -185,40 +184,26 @@ namespace CAT{
     //
     /////////////////////////////////////////////////////////////////
 
-
-    int sign_parallel_crossed[2], sign_up_down[2];
-    sign_parallel_crossed[0] = 1;  // parallel tangents
-    sign_parallel_crossed[1] = -1; // crossed tangents
-    sign_up_down[0] = 1;  // upper tangent
-    sign_up_down[1] = -1;  // lower tangent
-
-
-    experimental_double cosa, cosb, sina;
-    experimental_point epa, epb;
+    // upper tangent & lower tangent
+    const int sign_up_down[2] = {1, -1};
 
     // parallel tangents
-    for(size_t i=0; i<2; i++){
+    for (size_t i=0; i<2; i++) {
 
-      cosa = (ca().get_radius() - cb().get_radius()*sign_parallel_crossed[0])/distance_hor();  // parallel tangents
-      cosb = cosa*sign_parallel_crossed[0];
-      sina = experimental_sin(experimental_acos(cosa))*sign_parallel_crossed[0]*sign_up_down[i];
+      experimental_double cosa = (ca().get_radius() - cb().get_radius())/distance_hor();  // parallel tangents
+      experimental_double sina = experimental_sin(experimental_acos(cosa))*sign_up_down[i];
 
-      epa = ca_.build_from_cell(forward_axis_.hor().unit(), transverse_axis(), cosa, sign_parallel_crossed[0]*sign_up_down[i], false, 0.);
-      epb = cb_.build_from_cell(forward_axis_.hor().unit(), transverse_axis(), cosb, sign_parallel_crossed[0]*sign_up_down[i], false, 0.);
+      experimental_point epa = ca_.build_from_cell(forward_axis_.hor().unit(), transverse_axis(), cosa, sign_up_down[i], false, 0.);
+      experimental_point epb = cb_.build_from_cell(forward_axis_.hor().unit(), transverse_axis(), cosa, sign_up_down[i], false, 0.);
 
-      set_first_error_in_build_from_cell(sina.value(), sign_parallel_crossed[0], sign_up_down[i], &epa);
-      set_second_error_in_build_from_cell(sina.value(), sign_parallel_crossed[0], sign_up_down[i], &epb);
-
-      line l(epa, epb);
-
-      tangents_.push_back( l );
+      set_first_error_in_build_from_cell(sina.value(), 1, sign_up_down[i], &epa);
+      set_second_error_in_build_from_cell(sina.value(), 1, sign_up_down[i], &epb);
+      tangents_.push_back(line(epa, epb));
     }
 
 
-    if( ca_.intersect(cb_)){
+    if (ca_.intersect(cb_)) {
       // tangent or intersecting circles
-
-
       experimental_vector pA = ca().get_position() + ca().get_radius()*forward_axis();
       experimental_vector pB = cb().get_position() - cb().get_radius()*forward_axis();
 
@@ -227,40 +212,27 @@ namespace CAT{
       //experimental_double small_offset(0.1, (ca().get_radius().value() + cb().get_radius().value())/4.);
       experimental_double small_offset(0.1, 0.);
 
-      for(size_t i=0; i<2; i++){
-
-        epa = (average + transverse_axis()*sign_up_down[i]*small_offset).point_from_vector();
-        epb = (average - transverse_axis()*sign_up_down[i]*small_offset).point_from_vector();
-
-        line l(epa, epb);
-
-        tangents_.push_back( l );
+      for (size_t i=0; i<2; i++) {
+        experimental_point epa = (average + transverse_axis()*sign_up_down[i]*small_offset).point_from_vector();
+        experimental_point epb = (average - transverse_axis()*sign_up_down[i]*small_offset).point_from_vector();
+        tangents_.push_back(line(epa, epb));
       }
-
-    }
-    else{
+    } else {
       // crossed tangents
-      for(size_t i=0; i<2; i++){
+      for (size_t i=0; i<2; i++) {
+        experimental_double cosa = (ca().get_radius() + cb().get_radius())/distance_hor();  // parallel tangents
+        experimental_double sina = -experimental_sin(experimental_acos(cosa))*sign_up_down[i];
 
-        cosa = (ca().get_radius() - cb().get_radius()*sign_parallel_crossed[1])/distance_hor();  // parallel tangents
-        cosb = cosa*sign_parallel_crossed[1];
-        sina = experimental_sin(experimental_acos(cosa))*sign_parallel_crossed[1]*sign_up_down[i];
+        experimental_point epa = ca_.build_from_cell(forward_axis_.hor().unit(), transverse_axis(), cosa, -sign_up_down[i], false, 0.);
+        experimental_point epb = cb_.build_from_cell(forward_axis_.hor().unit(), transverse_axis(), -cosa, +sign_up_down[i], false, 0.);
 
-        epa = ca_.build_from_cell(forward_axis_.hor().unit(), transverse_axis(), cosa, sign_parallel_crossed[1]*sign_up_down[i], false, 0.);
-        epb = cb_.build_from_cell(forward_axis_.hor().unit(), transverse_axis(), cosb, sign_up_down[i], false, 0.);
+        set_first_error_in_build_from_cell(sina.value(), -1, sign_up_down[i], &epa);
+        set_second_error_in_build_from_cell(sina.value(), -1, sign_up_down[i], &epb);
 
-        set_first_error_in_build_from_cell(sina.value(), sign_parallel_crossed[1], sign_up_down[i], &epa);
-        set_second_error_in_build_from_cell(sina.value(), sign_parallel_crossed[1], sign_up_down[i], &epb);
-
-        line l(epa, epb);
-
-        tangents_.push_back( l );
+        tangents_.push_back(line(epa, epb));
       }
     }
-
-
     return;
-
   }
 
 
@@ -286,7 +258,6 @@ namespace CAT{
       line l(epa, ep);
       tangents_.push_back( l );
     }
-
 
     return;
 
@@ -435,12 +406,6 @@ namespace CAT{
   const experimental_vector& cell_couplet::transverse_axis()const
   {
     return transverse_axis_;
-  }
-
-  //! get distance
-  const experimental_double& cell_couplet::distance()const
-  {
-    return distance_;
   }
 
   //! get horizontal distance
